@@ -10,12 +10,12 @@ public class AppFlow: Flow {
         return self.window
     }
     public var container: Container
-    
+
     public init(window: UIWindow, container: Container) {
         self.window = window
         self.container = container
     }
-    
+
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AppStep else { return .none }
         switch step {
@@ -29,6 +29,13 @@ public class AppFlow: Flow {
         Flows.use(mainFlow, when: .created) { (root) in
             self.window.rootViewController = root
         }
-        return .one(flowContributor: .contribute(withNextPresentable: mainFlow, withNextStepper: OneStepper(withSingleStep: MainStep.loginIsRequired)))
+        return .one(
+            flowContributor: .contribute(
+                withNextPresentable: mainFlow,
+                withNextStepper: OneStepper(
+                    withSingleStep: MainStep.loginIsRequired
+                )
+            )
+        )
     }
 }
