@@ -14,5 +14,4 @@ public class AppStepper: Stepper {
     public var initialStep: Step {
         return AppStep.mainIsRequired
     }
-    
 }

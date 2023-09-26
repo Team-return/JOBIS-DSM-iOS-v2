@@ -15,30 +15,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScence)
         window?.windowScene = windowScence
         window?.backgroundColor = .white
-    
+
         let appFlow = AppFlow(window: window!, container: AppDelegate.container)
         self.coordinator.coordinate(flow: appFlow, with: AppStepper())
         window?.makeKeyAndVisible()
     }
-    
-    func sceneDidDisconnect(_ scene: UIScene) {
 
-    }
+    func sceneDidDisconnect(_ scene: UIScene) { }
 
-    func sceneDidBecomeActive(_ scene: UIScene) {
+    func sceneDidBecomeActive(_ scene: UIScene) { }
 
-    }
+    func sceneWillResignActive(_ scene: UIScene) { }
 
-    func sceneWillResignActive(_ scene: UIScene) {
+    func sceneWillEnterForeground(_ scene: UIScene) { }
 
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-
-    }
+    func sceneDidEnterBackground(_ scene: UIScene) { }
 
 }
