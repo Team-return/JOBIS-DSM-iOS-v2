@@ -5,7 +5,7 @@ public protocol JobisAPI: TargetType, JwtAuthorizable {
     associatedtype ErrorType: Error
     var domain: JobisDomain { get }
     var urlPath: String { get }
-    var errorMap: [Int: ErrorType] { get }
+    var errorMap: [Int: ErrorType]? { get }
 }
 
 public extension JobisAPI {
@@ -46,4 +46,10 @@ extension JobisDomain {
     var asURLString: String {
         "/\(self.rawValue)"
     }
+}
+
+private class BundleFinder {}
+
+extension Foundation.Bundle {
+    static let module = Bundle(for: BundleFinder.self)
 }
