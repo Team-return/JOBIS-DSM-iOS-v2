@@ -24,10 +24,12 @@ public class MainFlow: Flow {
             return navigateToLoginScreen()
         }
     }
+}
 
-    private func navigateToLoginScreen() -> FlowContributors {
+private extension MainFlow {
+    func navigateToLoginScreen() -> FlowContributors {
         let mainViewController = container.resolve(MainViewController.self)!
-        self.rootViewController.pushViewController(mainViewController, animated: true)
+        self.rootViewController.setViewControllers([mainViewController], animated: true)
         return .one(flowContributor: .contribute(
             withNextPresentable: mainViewController,
             withNextStepper: mainViewController.viewModel
