@@ -1,6 +1,6 @@
 import Foundation
 
-struct TokenDTO: Equatable, Decodable {
+public struct TokenDTO: Equatable, Decodable {
     let accessToken: String
     let refreshToken: String
     let accessExpiresAt: String
