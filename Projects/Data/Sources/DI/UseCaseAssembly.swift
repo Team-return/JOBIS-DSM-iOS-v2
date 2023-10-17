@@ -4,6 +4,7 @@ import Domain
 
 public final class UseCaseAssembly: Assembly {
     public init() {}
+
 // swiftlint:disable function_body_length
     public func assemble(container: Container) {
         // Auth
@@ -63,6 +64,23 @@ public final class UseCaseAssembly: Assembly {
         }
         container.register(StudentExistsUseCase.self) { reslover in
             StudentExistsUseCase(studentsRepository: reslover.resolve(StudentsRepository.self)!
+
+        // Companies
+        container.register(FetchCompanyListUseCase.self) { resolver in
+            FetchCompanyListUseCase(
+                companiesRepository: resolver.resolve(CompaniesRepository.self)!
+            )
+        }
+
+        container.register(FetchCompanyInfoDetailUseCase.self) { resolver in
+            FetchCompanyInfoDetailUseCase(
+                companiesRepository: resolver.resolve(CompaniesRepository.self)!
+            )
+        }
+
+        container.register(FetchWritableReviewListUseCase.self) { resolver in
+            FetchWritableReviewListUseCase(
+                companiesRepository: resolver.resolve(CompaniesRepository.self)!
             )
         }
     }
