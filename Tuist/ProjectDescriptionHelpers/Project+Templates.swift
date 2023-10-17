@@ -48,8 +48,9 @@ public extension Project {
             bundleId: "\(env.organizationName).\(name)",
             deploymentTarget: deploymentTarget,
             infoPlist: infoPlist,
-            sources: sources,
-            resources: resources,
+            sources: sources, 
+            resources: resources, 
+            scripts: [.swiftLint],
             dependencies: dependencies
         )
         
