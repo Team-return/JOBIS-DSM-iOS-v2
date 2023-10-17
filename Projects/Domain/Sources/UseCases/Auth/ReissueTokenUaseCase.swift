@@ -7,7 +7,7 @@ public struct ReissueTokenUaseCase {
 
     private let authRepository: AuthRepository
 
-    public func execute() -> Single<ReissueAuthorityEntity> {
+    public func execute() -> Single<AuthorityType> {
         return authRepository.reissueToken()
     }
 }
