@@ -1,28 +1,20 @@
 import Foundation
 import Domain
 
-public struct CompanyListResponseDTO: Decodable {
-    public let companies: [CompanyResponseDTO]
+struct CompanyListResponseDTO: Decodable {
+    let companies: [CompanyResponseDTO]
 
-    public init(companies: [CompanyResponseDTO]) {
+    init(companies: [CompanyResponseDTO]) {
         self.companies = companies
     }
 }
 
-public struct CompanyResponseDTO: Decodable {
-    public let id: Int
-    public let name: String
-    public let logoURL: String
-    public let take: Double
-    public let hasRecruitment: Bool
-
-    public init(id: Int, name: String, logoURL: String, take: Double, hasRecruitment: Bool) {
-        self.id = id
-        self.name = name
-        self.logoURL = logoURL
-        self.take = take
-        self.hasRecruitment = hasRecruitment
-    }
+struct CompanyResponseDTO: Decodable {
+    let id: Int
+    let name: String
+    let logoURL: String
+    let take: Double
+    let hasRecruitment: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
