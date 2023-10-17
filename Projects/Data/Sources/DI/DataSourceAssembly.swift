@@ -14,6 +14,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(AuthRemote.self) { resolver in
             AuthRemoteImpl(keychainLocal: self.keychain(resolver))
         }
+
+        container.register(UsersRemote.self) { resolver in
+            UsersRemoteImpl(keychainLocal: self.keychain(resolver))
         }
     }
 }
