@@ -86,6 +86,25 @@ public final class UseCaseAssembly: Assembly {
                 companiesRepository: resolver.resolve(CompaniesRepository.self)!
             )
         }
+
+        // Reviews
+        container.register(FetchReviewListUseCase.self) { resolver in
+            FetchReviewListUseCase(
+                reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
+
+        container.register(FetchReviewDetailUseCase.self) { resolver in
+            FetchReviewDetailUseCase(
+                reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
+
+        container.register(PostReviewUseCase.self) { resolver in
+            PostReviewUseCase(
+                reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
