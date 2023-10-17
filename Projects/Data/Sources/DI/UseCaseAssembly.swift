@@ -63,8 +63,10 @@ public final class UseCaseAssembly: Assembly {
             )
         }
         container.register(StudentExistsUseCase.self) { reslover in
-            StudentExistsUseCase(studentsRepository: reslover.resolve(StudentsRepository.self)!
-
+            StudentExistsUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
         // Companies
         container.register(FetchCompanyListUseCase.self) { resolver in
             FetchCompanyListUseCase(
