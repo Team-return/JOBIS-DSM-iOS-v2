@@ -4,9 +4,9 @@ import Domain
 
 public final class UseCaseAssembly: Assembly {
     public init() {}
-
+// swiftlint:disable function_body_length
     public func assemble(container: Container) {
-        //Auth
+        // Auth
         container.register(SendAuthCodeUseCase.self) { resolver in
             SendAuthCodeUseCase(
                 authRepository: resolver.resolve(AuthRepository.self)!
@@ -29,5 +29,42 @@ public final class UseCaseAssembly: Assembly {
                 usersRepository: resolver.resolve(UsersRepository.self)!
             )
         }
+
+        // Students
+        container.register(ChangePasswordUseCase.self) { reslover in
+            ChangePasswordUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(ChangeProfileImageUseCase.self) { reslover in
+            ChangeProfileImageUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(CompareCurrentPassswordUseCase.self) { reslover in
+            CompareCurrentPassswordUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(FetchStudentInfoUseCase.self) { reslover in
+            FetchStudentInfoUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(RenewalPasswordUseCase.self) { reslover in
+            RenewalPasswordUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(SignupUseCase.self) { reslover in
+            SignupUseCase(
+                studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
+        container.register(StudentExistsUseCase.self) { reslover in
+            StudentExistsUseCase(studentsRepository: reslover.resolve(StudentsRepository.self)!
+            )
+        }
     }
+    // swiftlint:enable function_body_length
 }
