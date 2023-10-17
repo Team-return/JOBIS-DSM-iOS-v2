@@ -1,22 +1,13 @@
 import Foundation
 import Domain
 
-public struct WritableReviewListResponseDTO: Decodable {
-    public let companies: [WritableReviewCompanyResponseDTO]
-
-    public init(companies: [WritableReviewCompanyResponseDTO]) {
-        self.companies = companies
-    }
+struct WritableReviewListResponseDTO: Decodable {
+    let companies: [WritableReviewCompanyResponseDTO]
 }
 
-public struct WritableReviewCompanyResponseDTO: Decodable {
-    public let id: Int
-    public let name: String
-
-    public init(id: Int, name: String) {
-        self.id = id
-        self.name = name
-    }
+struct WritableReviewCompanyResponseDTO: Decodable {
+    let id: Int
+    let name: String
 }
 
 extension WritableReviewListResponseDTO {
