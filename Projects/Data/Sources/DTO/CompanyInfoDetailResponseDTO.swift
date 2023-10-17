@@ -1,71 +1,21 @@
 import Foundation
 import Domain
 
-public struct CompanyInfoDetailResponseDTO: Decodable {
-    public let businessNumber: String
-    public let companyName: String
-    public let companyProfileURL: String
-    public let companyIntroduce: String
-    public let mainZipCode, mainAddress, mainAddressDetail: String
-    public let subZipCode, subAddress, subAddressDetail: String?
-    public let managerName, managerPhoneNo: String
-    public let subManagerName, subManagerPhoneNo, fax: String?
-    public let email, representativeName, foundedAt: String
-    public let workerNumber: Int
-    public let take: Double
-    public let recruitmentID: Int?
-    public let serviceName: String
-    public let businessArea: String
-
-    public init(
-        businessNumber: String,
-        companyName: String,
-        companyProfileURL: String,
-        companyIntroduce: String,
-        mainZipCode: String,
-        mainAddress: String,
-        mainAddressDetail: String,
-        subZipCode: String?,
-        subAddress: String?,
-        subAddressDetail: String?,
-        managerName: String,
-        managerPhoneNo: String,
-        subManagerName: String?,
-        subManagerPhoneNo: String?,
-        fax: String?,
-        email: String,
-        representativeName: String,
-        foundedAt: String,
-        workerNumber: Int,
-        take: Double,
-        recruitmentID: Int?,
-        serviceName: String,
-        businessArea: String
-    ) {
-        self.businessNumber = businessNumber
-        self.companyName = companyName
-        self.companyProfileURL = companyProfileURL
-        self.companyIntroduce = companyIntroduce
-        self.mainZipCode = mainZipCode
-        self.mainAddress = mainAddress
-        self.mainAddressDetail = mainAddressDetail
-        self.subZipCode = subZipCode
-        self.subAddress = subAddress
-        self.subAddressDetail = subAddressDetail
-        self.managerName = managerName
-        self.managerPhoneNo = managerPhoneNo
-        self.subManagerName = subManagerName
-        self.subManagerPhoneNo = subManagerPhoneNo
-        self.fax = fax
-        self.email = email
-        self.representativeName = representativeName
-        self.foundedAt = foundedAt
-        self.workerNumber = workerNumber
-        self.take = take
-        self.recruitmentID = recruitmentID
-        self.serviceName = serviceName
-        self.businessArea = businessArea
-    }
+struct CompanyInfoDetailResponseDTO: Decodable {
+    let businessNumber: String
+    let companyName: String
+    let companyProfileURL: String
+    let companyIntroduce: String
+    let mainZipCode, mainAddress, mainAddressDetail: String
+    let subZipCode, subAddress, subAddressDetail: String?
+    let managerName, managerPhoneNo: String
+    let subManagerName, subManagerPhoneNo, fax: String?
+    let email, representativeName, foundedAt: String
+    let workerNumber: Int
+    let take: Double
+    let recruitmentID: Int?
+    let serviceName: String
+    let businessArea: String
 
     enum CodingKeys: String, CodingKey {
         case businessNumber = "business_number"

@@ -2,15 +2,11 @@ import Foundation
 import Domain
 import AppNetwork
 
-public struct AuthTokenResponseDTO: Decodable {
-    public let authority: AuthorityType
-
-    public init(authority: AuthorityType) {
-        self.authority = authority
-    }
+struct AuthTokenResponseDTO: Decodable {
+    let authority: AuthorityType
 }
 
-public extension AuthTokenResponseDTO {
+extension AuthTokenResponseDTO {
     func toDomain() -> AuthorityType {
         return authority
     }
