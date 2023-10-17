@@ -16,6 +16,7 @@ public struct KeychainImpl: Keychain {
             kSecValueData: value.data(using: .utf8, allowLossyConversion: false) ?? .init(),
             kSecAttrAccessGroup: accessGroup
         ]
+        print("accessGroup:", accessGroup)
         SecItemDelete(query)
         SecItemAdd(query, nil)
     }
