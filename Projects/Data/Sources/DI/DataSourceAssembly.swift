@@ -22,5 +22,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(CompaniesRemote.self) { resolver in
             CompaniesRemoteImpl(keychainLocal: self.keychain(resolver))
         }
+
+        container.register(ReviewsRemote.self) { resolver in
+            ReviewsRemoteImpl(keychainLocal: self.keychain(resolver))
+        }
     }
 }
