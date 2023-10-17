@@ -29,6 +29,10 @@ let dependencies = Dependencies(
         .remote(
             url: "https://github.com/Swinject/Swinject.git",
             requirement: .upToNextMajor(from: "2.8.3")
+        ),
+        .remote(
+            url: "https://github.com/Moya/Moya.git",
+            requirement: .upToNextMajor(from: "15.0.0")
         )
     ]),
     platforms: [.iOS]

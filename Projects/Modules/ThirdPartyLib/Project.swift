@@ -13,6 +13,8 @@ let project = Project.makeModule(
         .SPM.RxSwift,
         .SPM.SnapKit,
         .SPM.Then,
-        .SPM.Swinject
+        .SPM.Swinject,
+        .SPM.Moya,
+        .SPM.RxMoya
     ], sources: []
 )

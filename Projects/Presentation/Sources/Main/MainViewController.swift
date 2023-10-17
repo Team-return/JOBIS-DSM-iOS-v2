@@ -10,20 +10,19 @@ public class MainViewController: BaseViewController<MainViewModel> {
         $0.setTitle("sdf", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
-    
+
     public override func layout() {
         button.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
-    
+
     public override func addView() {
         self.view.addSubview(button)
     }
-    
+
     public override func bind() {
-        let input = MainViewModel.Input(ButtonDidTap: button.rx.tap.asSignal())
+        let input = MainViewModel.Input(buttonDidTap: button.rx.tap.asSignal())
         _ = viewModel.transform(input)
     }
-    
 }
