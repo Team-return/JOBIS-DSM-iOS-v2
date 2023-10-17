@@ -12,7 +12,7 @@ final class AuthRepositoryImpl: AuthRepository {
         authRemote.sendAuthCode(req: req)
     }
 
-    func reissueToken() -> Single<ReissueAuthorityEntity> {
+    func reissueToken() -> Single<AuthorityType> {
         authRemote.reissueToken()
     }
 

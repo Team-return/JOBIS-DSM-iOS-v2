@@ -4,7 +4,7 @@ import AppNetwork
 
 public protocol AuthRemote {
     func sendAuthCode(req: SendAuthCodeRequestQuery) -> Completable
-    func reissueToken() -> Single<ReissueAuthorityEntity>
+    func reissueToken() -> Single<AuthorityType>
     func verifyAuthCode(email: String, authCode: String) -> Completable
 }
 
@@ -14,9 +14,9 @@ final class AuthRemoteImpl: BaseRemote<AuthAPI>, AuthRemote {
             .asCompletable()
     }
 
-    func reissueToken() -> Single<ReissueAuthorityEntity> {
+    func reissueToken() -> Single<AuthorityType> {
         return request(.reissueToken)
-            .map(ReissueTokenResponseDTO.self)
+            .map(AuthTokenResponseDTO.self)
             .map { $0.toDomain() }
     }
 
