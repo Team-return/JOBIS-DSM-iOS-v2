@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-public protocol UsersRemote {
+protocol UsersRemote {
     func signin(req: SigninRequestQuery) -> Single<AuthorityType>
 }
 
