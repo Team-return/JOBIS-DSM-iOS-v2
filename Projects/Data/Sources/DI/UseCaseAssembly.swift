@@ -141,6 +141,18 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
+        // Bookmarks
+        container.register(FetchBookmarkListUseCase.self) { resolver in
+            FetchBookmarkListUseCase(
+                bookmarksRepository: resolver.resolve(BookmarksRepository.self)!
+            )
+        }
+        container.register(BookmarkUseCase.self) { resolver in
+            BookmarkUseCase(
+                bookmarksRepository: resolver.resolve(BookmarksRepository.self)!
+            )
+        }
+
         // Recruitments
         container.register(FetchRecruitmentListUseCase.self) { resolver in
             FetchRecruitmentListUseCase(
