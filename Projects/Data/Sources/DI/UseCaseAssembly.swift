@@ -125,6 +125,13 @@ public final class UseCaseAssembly: Assembly {
                 codesRepository: resolver.resolve(CodesRepository.self)!
             )
         }
+
+        // Files
+        container.register(UploadFilesUseCase.self) { resolver in
+            UploadFilesUseCase(
+                filesRepository: resolver.resolve(FilesRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
