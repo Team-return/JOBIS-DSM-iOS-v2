@@ -130,6 +130,20 @@ public final class UseCaseAssembly: Assembly {
                 recruitmentsRepository: resolver.resolve(RecruitmentsRepository.self)!
             )
         }
+
+        // Codes
+        container.register(FetchCodeListUseCase.self) { resolver in
+            FetchCodeListUseCase(
+                codesRepository: resolver.resolve(CodesRepository.self)!
+            )
+        }
+
+        // Files
+        container.register(UploadFilesUseCase.self) { resolver in
+            UploadFilesUseCase(
+                filesRepository: resolver.resolve(FilesRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
