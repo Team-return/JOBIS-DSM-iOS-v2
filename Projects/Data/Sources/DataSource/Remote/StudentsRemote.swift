@@ -2,7 +2,7 @@ import Domain
 import RxCocoa
 import RxSwift
 
-public protocol StudentsRemote {
+protocol StudentsRemote {
     func signup(req: SignupRequestQuery) -> Completable
     func renewalPassword(req: RenewalPasswordRequestQuery) -> Completable
     func studentExists(gcn: Int, name: String) -> Completable

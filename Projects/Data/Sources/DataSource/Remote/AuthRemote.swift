@@ -2,7 +2,7 @@ import RxSwift
 import Domain
 import AppNetwork
 
-public protocol AuthRemote {
+protocol AuthRemote {
     func sendAuthCode(req: SendAuthCodeRequestQuery) -> Completable
     func reissueToken() -> Single<AuthorityType>
     func verifyAuthCode(email: String, authCode: String) -> Completable
