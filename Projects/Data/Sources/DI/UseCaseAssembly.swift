@@ -118,6 +118,18 @@ public final class UseCaseAssembly: Assembly {
                 bugsRepository: resolver.resolve(BugsRepository.self)!
             )
         }
+
+        // Bookmarks
+        container.register(FetchBookmarkListUseCase.self) { resolver in
+            FetchBookmarkListUseCase(
+                bookmarksRepository: resolver.resolve(BookmarksRepository.self)!
+            )
+        }
+        container.register(BookmarkUseCase.self) { resolver in
+            BookmarkUseCase(
+                bookmarksRepository: resolver.resolve(BookmarksRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
