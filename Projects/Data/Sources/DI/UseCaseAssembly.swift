@@ -141,6 +141,18 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
+        // Recruitments
+        container.register(FetchRecruitmentListUseCase.self) { resolver in
+            FetchRecruitmentListUseCase(
+                recruitmentsRepository: resolver.resolve(RecruitmentsRepository.self)!
+            )
+        }
+        container.register(FetchRecruitmentDetailUseCase.self) { resolver in
+            FetchRecruitmentDetailUseCase(
+                recruitmentsRepository: resolver.resolve(RecruitmentsRepository.self)!
+            )
+        }
+
         // Codes
         container.register(FetchCodeListUseCase.self) { resolver in
             FetchCodeListUseCase(
