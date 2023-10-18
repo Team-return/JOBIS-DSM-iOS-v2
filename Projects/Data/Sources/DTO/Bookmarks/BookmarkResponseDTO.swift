@@ -3,26 +3,12 @@ import Domain
 
 struct BookmarkListResponseDTO: Decodable {
     let bookmarks: [BookmarkResponseDTO]
-
-    init(bookmarks: [BookmarkResponseDTO]) {
-        self.bookmarks = bookmarks
-    }
 }
 
 struct BookmarkResponseDTO: Decodable {
     let companyName: String
     let recruitmentID: Int
     let createdAt: String
-
-    init(
-        companyName: String,
-        recruitmentID: Int,
-        createdAt: String
-    ) {
-        self.companyName = companyName
-        self.recruitmentID = recruitmentID
-        self.createdAt = createdAt
-    }
 
     enum CodingKeys: String, CodingKey {
         case companyName = "company_name"
