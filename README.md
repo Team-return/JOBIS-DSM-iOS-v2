@@ -3,7 +3,7 @@
 ![iOS badge](https://img.shields.io/badge/iOS-15.0%2B-green) ![swift badge](https://img.shields.io/badge/swift-5-orange)
 
 
-DSM 취업 관리 시스템
+DSM 취업 관리 시스템 - v2
 
 
 ## Screen
@@ -13,52 +13,10 @@ DSM 취업 관리 시스템
 
 ## Library
 - [Moya](https://github.com/Moya/Moya.git)
-- [Quick](https://github.com/Quick/Quick.git)
-- [Nimble](https://github.com/Quick/Nimble.git)
-- [Needle](https://github.com/uber/needle.git)
+- [Snapkit](https://github.com/SnapKit/SnapKit.git)
+- [Then](https://github.com/devxoul/Then.git)
+- [RxSwift](https://github.com/ReactiveX/RxSwift.git)
+- [RxFlow](https://github.com/RxSwiftCommunity/RxFlow.git)
 - [Moya](https://github.com/team-aliens/Moya.git)
 - [Kingfisher](https://github.com/onevcat/Kingfisher.git)
-- [SwiftUIFlowLayout](https://github.com/globulus/swiftui-flow-layout)
-
-
-## File structure
-```bash
-|-- App
-|   |-- Derived
-|   |-- JOBIS-DSM-IOS.xcodeproj
-|   |-- Project.swift
-|   |-- Resources
-|   |-- Sources
-|   |-- Support
-|   `-- Tests
-|-- Core
-|   |-- DesignSystem
-|   `-- JwtStore
-|-- Domain
-|   |-- ApplicationsDomain
-|   |-- AuthDomain
-|   |-- BaseDomain
-|   |-- BookmarksDomain
-|   |-- CodesDomain
-|   |-- CompaniesDomain
-|   |-- RecruitmentsDomain
-|   |-- ReviewsDomain
-|   |-- StudentsDomain
-|   `-- UsersDomain
-|-- Feature
-|   |-- BaseFeature
-|   |-- BookmarkFeature
-|   |-- BookmarkListFeature
-|   |-- FindCompanyFeature
-|   |-- HomeFeature
-|   |-- MainTabFeature
-|   |-- MenuFeature
-|   |-- MyPageFeature
-|   |-- RecruitmentFeature
-|   |-- RootFeature
-|   |-- SigninFeature
-|   |-- SignupFeature
-|   `-- SplashFeature
-`-- Shared
-    |-- GlobalThirdPartyLibrary
-    `-- UtilityModule
+- [Swinject](https://github.com/Swinject/Swinject.git)
