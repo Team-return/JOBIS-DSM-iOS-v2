@@ -118,6 +118,13 @@ public final class UseCaseAssembly: Assembly {
                 bugsRepository: resolver.resolve(BugsRepository.self)!
             )
         }
+
+        // Codes
+        container.register(FetchCodeListUseCase.self) { resolver in
+            FetchCodeListUseCase(
+                codesRepository: resolver.resolve(CodesRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
