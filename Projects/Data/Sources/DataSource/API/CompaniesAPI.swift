@@ -2,20 +2,20 @@ import Moya
 import Domain
 import AppNetwork
 
-public enum CompaniesAPI {
+enum CompaniesAPI {
     case fetchCompanyList(page: Int, name: String?)
     case fetchCompanyInfoDetail(id: String)
     case fetchWritableReviewList
 }
 
 extension CompaniesAPI: JobisAPI {
-    public typealias ErrorType = JobisError
+    typealias ErrorType = JobisError
 
-    public var domain: JobisDomain {
+    var domain: JobisDomain {
         .companies
     }
 
-    public var urlPath: String {
+    var urlPath: String {
         switch self {
         case .fetchCompanyList:
             return "/student"
@@ -28,14 +28,14 @@ extension CompaniesAPI: JobisAPI {
         }
     }
 
-    public var method: Method {
+    var method: Method {
         switch self {
         case .fetchCompanyList, .fetchCompanyInfoDetail, .fetchWritableReviewList:
             return .get
         }
     }
 
-    public var task: Task {
+    var task: Task {
         switch self {
         case let .fetchCompanyList(page, name):
             return .requestParameters(
@@ -49,11 +49,11 @@ extension CompaniesAPI: JobisAPI {
         }
     }
 
-    public var jwtTokenType: JwtTokenType {
+    var jwtTokenType: JwtTokenType {
         .accessToken
     }
 
-    public var errorMap: [Int: ErrorType]? {
+    var errorMap: [Int: ErrorType]? {
         switch self {
         case .fetchCompanyList:
             return [:]

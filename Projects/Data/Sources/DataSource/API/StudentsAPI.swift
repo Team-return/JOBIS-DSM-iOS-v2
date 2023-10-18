@@ -2,7 +2,7 @@ import Moya
 import AppNetwork
 import Domain
 
-public enum StudentsAPI {
+enum StudentsAPI {
     case signup(SignupRequestQuery)
     case renewalPassword(RenewalPasswordRequestQuery)
     case studentExists(gcn: Int, name: String)
@@ -13,13 +13,13 @@ public enum StudentsAPI {
 }
 
 extension StudentsAPI: JobisAPI {
-    public typealias ErrorType = JobisError
+    typealias ErrorType = JobisError
 
-    public var domain: JobisDomain {
+    var domain: JobisDomain {
         .students
     }
 
-    public var urlPath: String {
+    var urlPath: String {
         switch self {
         case .signup:
             return ""
@@ -41,7 +41,7 @@ extension StudentsAPI: JobisAPI {
         }
     }
 
-    public var method: Method {
+    var method: Method {
         switch self {
         case .signup:
             return .post
@@ -54,7 +54,7 @@ extension StudentsAPI: JobisAPI {
         }
     }
 
-    public var task: Task {
+    var task: Task {
         switch self {
         case let .signup(req):
             return .requestJSONEncodable(req)
@@ -90,7 +90,7 @@ extension StudentsAPI: JobisAPI {
         }
     }
 
-    public var jwtTokenType: JwtTokenType {
+    var jwtTokenType: JwtTokenType {
         switch self {
         case .fetchStudentInfo, .compareCurrentPasssword, .changePassword, .changeProfileImage:
             return .accessToken
@@ -99,7 +99,7 @@ extension StudentsAPI: JobisAPI {
         }
     }
 
-    public var errorMap: [Int: ErrorType]? {
+    var errorMap: [Int: ErrorType]? {
         return nil
     }
 }

@@ -2,20 +2,20 @@ import Moya
 import Domain
 import AppNetwork
 
-public enum AuthAPI {
+enum AuthAPI {
     case verifyAuthCode(email: String, authCode: String)
     case sendAuthCode(SendAuthCodeRequestQuery)
     case reissueToken
 }
 
 extension AuthAPI: JobisAPI {
-    public typealias ErrorType = JobisError
+    typealias ErrorType = JobisError
 
-    public var domain: JobisDomain {
+    var domain: JobisDomain {
         .auth
     }
 
-    public var urlPath: String {
+    var urlPath: String {
         switch self {
         case .sendAuthCode, .verifyAuthCode:
             return "/code"
@@ -25,7 +25,7 @@ extension AuthAPI: JobisAPI {
         }
     }
 
-    public var method: Method {
+    var method: Method {
         switch self {
         case .sendAuthCode:
             return .post
@@ -38,7 +38,7 @@ extension AuthAPI: JobisAPI {
         }
     }
 
-    public var task: Task {
+    var task: Task {
         switch self {
         case let .sendAuthCode(req):
             return .requestJSONEncodable(req)
@@ -56,7 +56,7 @@ extension AuthAPI: JobisAPI {
         }
     }
 
-    public var jwtTokenType: JwtTokenType {
+    var jwtTokenType: JwtTokenType {
         switch self {
         case .reissueToken:
             return .refreshToken
@@ -66,7 +66,7 @@ extension AuthAPI: JobisAPI {
         }
     }
 
-    public var errorMap: [Int: ErrorType]? {
+    var errorMap: [Int: ErrorType]? {
         return nil
     }
 }
