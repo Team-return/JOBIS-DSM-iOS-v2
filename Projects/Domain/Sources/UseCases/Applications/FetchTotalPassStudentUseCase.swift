@@ -7,6 +7,7 @@ public struct FetchTotalPassStudentUseCase {
     public init(applicationRepository: any ApplicationsRepository) {
         self.applicationRepository = applicationRepository
     }
+
     func execute() -> Single<TotalPassStudentEntity> {
         applicationRepository.fetchTotalPassStudent()
     }
