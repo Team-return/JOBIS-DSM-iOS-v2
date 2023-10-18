@@ -26,6 +26,10 @@ public final class RepositoryAssembly: Assembly {
             ReviewsRepositoryImpl(reviewsRemote: resolver.resolve(ReviewsRemote.self)!)
         }
 
+        container.register(ApplicationsRepository.self) { resolver in
+            ApplicationsRepositoryImpl(applicationsRemote: resolver.resolve(ApplicationsRemote.self)!)
+        }
+
         container.register(BugsRepository.self) { resolver in
             BugsRepositoryImpl(bugsRemote: resolver.resolve(BugsRemote.self)!)
         }
