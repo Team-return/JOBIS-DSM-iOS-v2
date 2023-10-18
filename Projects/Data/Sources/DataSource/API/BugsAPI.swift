@@ -2,20 +2,20 @@ import Moya
 import Domain
 import AppNetwork
 
-public enum BugsAPI {
+enum BugsAPI {
     case reportBug(ReportBugRequestQuery)
     case fetchBugList(DevelopmentType)
     case fetchBugDetail(id: Int)
 }
 
 extension BugsAPI: JobisAPI {
-    public typealias ErrorType = JobisError
+    typealias ErrorType = JobisError
 
-    public var domain: JobisDomain {
+    var domain: JobisDomain {
         return .bugs
     }
 
-    public var urlPath: String {
+    var urlPath: String {
         switch self {
         case .reportBug, .fetchBugList:
             return "/"
@@ -25,7 +25,7 @@ extension BugsAPI: JobisAPI {
         }
     }
 
-    public var method: Method {
+    var method: Method {
         switch self {
         case .reportBug:
             return .post
@@ -35,7 +35,7 @@ extension BugsAPI: JobisAPI {
         }
     }
 
-    public var task: Task {
+    var task: Task {
         switch self {
         case let .reportBug(req):
             return .requestJSONEncodable(req)
@@ -52,14 +52,14 @@ extension BugsAPI: JobisAPI {
         }
     }
 
-    public var jwtTokenType: JwtTokenType {
+    var jwtTokenType: JwtTokenType {
         switch self {
         default:
             return .accessToken
         }
     }
 
-    public var errorMap: [Int: ErrorType]? {
+    var errorMap: [Int: ErrorType]? {
         switch self {
         default:
             return [:]
