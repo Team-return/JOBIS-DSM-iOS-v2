@@ -102,6 +102,28 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
+        // Applications
+        container.register(ApplyCompanyUseCase.self) { resolver in
+            ApplyCompanyUseCase(
+                applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+            )
+        }
+        container.register(CancelApplyUseCase.self) { resolver in
+            CancelApplyUseCase(
+                applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+            )
+        }
+        container.register(FetchApplicationUseCase.self) { resolver in
+            FetchApplicationUseCase(
+                applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+            )
+        }
+        container.register(FetchTotalPassStudentUseCase.self) { resolver in
+            FetchTotalPassStudentUseCase(
+                applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+            )
+        }
+
         // Bugs
         container.register(ReportBugUseCase.self) { resolver in
             ReportBugUseCase(
@@ -128,6 +150,20 @@ public final class UseCaseAssembly: Assembly {
         container.register(BookmarkUseCase.self) { resolver in
             BookmarkUseCase(
                 bookmarksRepository: resolver.resolve(BookmarksRepository.self)!
+            )
+        }
+
+        // Codes
+        container.register(FetchCodeListUseCase.self) { resolver in
+            FetchCodeListUseCase(
+                codesRepository: resolver.resolve(CodesRepository.self)!
+            )
+        }
+
+        // Files
+        container.register(UploadFilesUseCase.self) { resolver in
+            UploadFilesUseCase(
+                filesRepository: resolver.resolve(FilesRepository.self)!
             )
         }
     }
