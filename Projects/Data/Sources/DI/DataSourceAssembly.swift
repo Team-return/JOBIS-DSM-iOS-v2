@@ -30,5 +30,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(BugsRemote.self) { resolver in
             BugsRemoteImpl(keychainLocal: self.keychain(resolver))
         }
+
+        container.register(CodesRemote.self) { resolver in
+            CodesRemoteImpl(keychainLocal: self.keychain(resolver))
+        }
     }
 }
