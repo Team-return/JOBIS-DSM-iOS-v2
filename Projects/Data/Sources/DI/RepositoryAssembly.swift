@@ -38,6 +38,10 @@ public final class RepositoryAssembly: Assembly {
             BookmarksRepositoryImpl(bookmarksRemote: resolver.resolve(BookmarksRemote.self)!)
         }
 
+        container.register(RecruitmentsRepository.self) { resolver in
+            RecruitmentsRepositoryImpl(recruitmentsRemote: resolver.resolve(RecruitmentsRemote.self)!)
+        }
+
         container.register(CodesRepository.self) { resolver in
             CodesRepositoryImpl(codesRemote: resolver.resolve(CodesRemote.self)!)
         }

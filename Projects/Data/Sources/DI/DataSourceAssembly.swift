@@ -39,6 +39,10 @@ public final class DataSourceAssembly: Assembly {
             BookmarksRemoteImpl(keychainLocal: self.keychain(resolver))
         }
 
+        container.register(RecruitmentsRemote.self) { resolver in
+            RecruitmentsRemoteImpl(keychainLocal: self.keychain(resolver))
+        }
+
         container.register(CodesRemote.self) { resolver in
             CodesRemoteImpl(keychainLocal: self.keychain(resolver))
         }
