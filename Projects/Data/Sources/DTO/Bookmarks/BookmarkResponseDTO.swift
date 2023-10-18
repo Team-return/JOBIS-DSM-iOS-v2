@@ -1,20 +1,20 @@
 import Foundation
 import Domain
 
-public struct BookmarkListResponseDTO: Decodable {
-    public let bookmarks: [BookmarkResponseDTO]
+struct BookmarkListResponseDTO: Decodable {
+    let bookmarks: [BookmarkResponseDTO]
 
-    public init(bookmarks: [BookmarkResponseDTO]) {
+    init(bookmarks: [BookmarkResponseDTO]) {
         self.bookmarks = bookmarks
     }
 }
 
-public struct BookmarkResponseDTO: Decodable {
-    public let companyName: String
-    public let recruitmentID: Int
-    public let createdAt: String
+struct BookmarkResponseDTO: Decodable {
+    let companyName: String
+    let recruitmentID: Int
+    let createdAt: String
 
-    public init(
+    init(
         companyName: String,
         recruitmentID: Int,
         createdAt: String
@@ -31,7 +31,7 @@ public struct BookmarkResponseDTO: Decodable {
     }
 }
 
-public extension BookmarkListResponseDTO {
+extension BookmarkListResponseDTO {
     func toDomain() -> [BookmarkEntity] {
         bookmarks.map {
             let inputDateFormatter = DateFormatter()
