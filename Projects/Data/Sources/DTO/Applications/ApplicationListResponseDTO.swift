@@ -5,7 +5,6 @@ struct ApplicationListResponseDTO: Decodable {
     let applications: [ApplicationResponseDTO]
 }
 
-
 public struct ApplicationResponseDTO: Decodable {
     public let applicationID: Int
     public let company: String
