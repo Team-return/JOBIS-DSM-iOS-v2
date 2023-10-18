@@ -2,7 +2,7 @@ import Moya
 import Domain
 import AppNetwork
 
-public enum ReviewsAPI {
+enum ReviewsAPI {
     case fetchReviewDetail(id: String)
     case fetchReviewList(id: String)
     case postReview(PostReviewRequestQuery)
@@ -15,7 +15,7 @@ extension ReviewsAPI: JobisAPI {
         .reviews
     }
 
-    public var urlPath: String {
+    var urlPath: String {
         switch self {
         case let .fetchReviewDetail(id):
             return "/details/\(id)"
@@ -28,7 +28,7 @@ extension ReviewsAPI: JobisAPI {
         }
     }
 
-    public var method: Method {
+    var method: Method {
         switch self {
         case .fetchReviewList, .fetchReviewDetail:
             return .get
@@ -38,7 +38,7 @@ extension ReviewsAPI: JobisAPI {
         }
     }
 
-    public var task: Task {
+    var task: Task {
         switch self {
         case let .postReview(req):
             return .requestJSONEncodable(req)
@@ -47,14 +47,14 @@ extension ReviewsAPI: JobisAPI {
         }
     }
 
-    public var jwtTokenType: JwtTokenType {
+    var jwtTokenType: JwtTokenType {
         switch self {
         default:
             return .accessToken
         }
     }
 
-    public var errorMap: [Int: ErrorType]? {
+    var errorMap: [Int: ErrorType]? {
         switch self {
         default:
             return [:]
