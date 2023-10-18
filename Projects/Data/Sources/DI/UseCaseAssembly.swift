@@ -119,6 +119,13 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
+        // Codes
+        container.register(FetchCodeListUseCase.self) { resolver in
+            FetchCodeListUseCase(
+                codesRepository: resolver.resolve(CodesRepository.self)!
+            )
+        }
+
         // Files
         container.register(UploadFilesUseCase.self) { resolver in
             UploadFilesUseCase(
