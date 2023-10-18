@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-public protocol ReviewsRemote {
+protocol ReviewsRemote {
     func fetchReviewDetail(id: String) -> Single<[QnaEntity]>
     func fetchReviewList(id: String) -> Single<[ReviewEntity]>
     func postReview(req: PostReviewRequestQuery) -> Completable

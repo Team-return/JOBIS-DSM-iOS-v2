@@ -74,13 +74,11 @@ public final class UseCaseAssembly: Assembly {
                 companiesRepository: resolver.resolve(CompaniesRepository.self)!
             )
         }
-
         container.register(FetchCompanyInfoDetailUseCase.self) { resolver in
             FetchCompanyInfoDetailUseCase(
                 companiesRepository: resolver.resolve(CompaniesRepository.self)!
             )
         }
-
         container.register(FetchWritableReviewListUseCase.self) { resolver in
             FetchWritableReviewListUseCase(
                 companiesRepository: resolver.resolve(CompaniesRepository.self)!
@@ -93,16 +91,31 @@ public final class UseCaseAssembly: Assembly {
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }
-
         container.register(FetchReviewDetailUseCase.self) { resolver in
             FetchReviewDetailUseCase(
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }
-
         container.register(PostReviewUseCase.self) { resolver in
             PostReviewUseCase(
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
+
+        // Bugs
+        container.register(ReportBugUseCase.self) { resolver in
+            ReportBugUseCase(
+                bugsRepository: resolver.resolve(BugsRepository.self)!
+            )
+        }
+        container.register(FetchBugListUseCase.self) { resolver in
+            FetchBugListUseCase(
+                bugsRepository: resolver.resolve(BugsRepository.self)!
+            )
+        }
+        container.register(FetchBugDetailUseCase.self) { resolver in
+            FetchBugDetailUseCase(
+                bugsRepository: resolver.resolve(BugsRepository.self)!
             )
         }
     }

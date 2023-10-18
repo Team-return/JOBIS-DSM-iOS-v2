@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-public protocol CompaniesRemote {
+protocol CompaniesRemote {
     func fetchCompanyList(page: Int, name: String?) -> Single<[CompanyEntity]>
     func fetchCompanyInfoDetail(id: String) -> Single<CompanyInfoDetailEntity>
     func fetchWritableReviewList() -> Single<[WritableReviewCompanyEntity]>
