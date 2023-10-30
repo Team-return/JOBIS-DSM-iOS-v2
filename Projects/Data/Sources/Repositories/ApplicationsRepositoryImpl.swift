@@ -12,7 +12,7 @@ public struct ApplicationsRepositoryImpl: ApplicationsRepository {
     }
 
     public func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
-        applicationsRemote.applyCompany(id: id, req: req )
+        applicationsRemote.applyCompany(id: id, req: req)
     }
 
     public func cancelApply(id: String) -> Completable {
