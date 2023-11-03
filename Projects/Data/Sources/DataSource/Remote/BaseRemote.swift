@@ -8,14 +8,14 @@ import Core
 import Alamofire
 
 class BaseRemote<API: JobisAPI> {
-    private let keychainLocal: any Keychain
+    private let keychain: any Keychain
 
     private let provider: MoyaProvider<API>
 
-    init(keychainLocal: any Keychain) {
-        self.keychainLocal = keychainLocal
+    init(keychain: any Keychain) {
+        self.keychain = keychain
 #if DEBUG
-        self.provider = MoyaProvider<API>(plugins: [JwtPlugin(keychain: keychainLocal), MoyaLogginPlugin()])
+        self.provider = MoyaProvider<API>(plugins: [JwtPlugin(keychain: keychain), MoyaLogginPlugin()])
 #else
         self.provider = MoyaProvider<API>(plugins: [JwtPlugin()])
 #endif
@@ -96,13 +96,13 @@ private extension BaseRemote {
     }
 
     func checkTokenIsValid() -> Bool {
-        let expired = keychainLocal.load(type: .accessExpiresAt).toJobisDate()
+        let expired = keychain.load(type: .accessExpiresAt).toJobisDate()
         print(Date(), expired)
         return Date() < expired
     }
 
     func reissueToken() -> Completable {
-        return AuthRemoteImpl(keychainLocal: keychainLocal).reissueToken()
+        return AuthRemoteImpl(keychain: keychain).reissueToken()
             .asCompletable()
     }
 }
