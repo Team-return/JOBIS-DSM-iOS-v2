@@ -2,13 +2,22 @@ import RxSwift
 import Domain
 
 final class UsersRepositoryImpl: UsersRepository {
-    private let usersRemote: any UsersRemote
+    private let remoteUsersDataSource: any RemoteUsersDataSource
+    private let localUsersDataSource: any LocalUsersDataSource
 
-    init(usersRemote: any UsersRemote) {
-        self.usersRemote = usersRemote
+    init(
+        remoteUsersDataSource: any RemoteUsersDataSource,
+        localUsersDataSource: any LocalUsersDataSource
+    ) {
+        self.remoteUsersDataSource = remoteUsersDataSource
+        self.localUsersDataSource = localUsersDataSource
     }
 
     func signin(req: SigninRequestQuery) -> Single<AuthorityType> {
-        usersRemote.signin(req: req)
+        remoteUsersDataSource.signin(req: req)
+    }
+
+    func logout() {
+        localUsersDataSource.clearTokens()
     }
 }

@@ -2,13 +2,13 @@ import RxSwift
 import Domain
 
 final class CodesRepositoryImpl: CodesRepository {
-    private let codesRemote: any CodesRemote
+    private let remoteCodesDataSource: any RemoteCodesDataSource
 
-    init(codesRemote: any CodesRemote) {
-        self.codesRemote = codesRemote
+    init(remoteCodesDataSource: any RemoteCodesDataSource) {
+        self.remoteCodesDataSource = remoteCodesDataSource
     }
 
     func fetchCodeList(keyword: String?, type: CodeType, parentCode: String?) -> Single<[CodeEntity]> {
-        codesRemote.fetchCodeList(keyword: keyword, type: type, parentCode: parentCode)
+        remoteCodesDataSource.fetchCodeList(keyword: keyword, type: type, parentCode: parentCode)
     }
 }

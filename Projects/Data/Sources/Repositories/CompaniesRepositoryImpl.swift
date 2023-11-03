@@ -2,21 +2,21 @@ import RxSwift
 import Domain
 
 final class CompaniesRepositoryImpl: CompaniesRepository {
-    private let companiesRemote: any CompaniesRemote
+    private let remoteCompaniesDataSource: any RemoteCompaniesDataSource
 
-    init(companiesRemote: any CompaniesRemote) {
-        self.companiesRemote = companiesRemote
+    init(remoteCompaniesDataSource: any RemoteCompaniesDataSource) {
+        self.remoteCompaniesDataSource = remoteCompaniesDataSource
     }
 
     func fetchWritableReviewList() -> Single<[WritableReviewCompanyEntity]> {
-        companiesRemote.fetchWritableReviewList()
+        remoteCompaniesDataSource.fetchWritableReviewList()
     }
 
     func fetchCompanyInfoDetail(id: String) -> Single<CompanyInfoDetailEntity> {
-        companiesRemote.fetchCompanyInfoDetail(id: id)
+        remoteCompaniesDataSource.fetchCompanyInfoDetail(id: id)
     }
 
     func fetchCompanyList(page: Int, name: String?) -> Single<[CompanyEntity]> {
-        companiesRemote.fetchCompanyList(page: page, name: name)
+        remoteCompaniesDataSource.fetchCompanyList(page: page, name: name)
     }
 }

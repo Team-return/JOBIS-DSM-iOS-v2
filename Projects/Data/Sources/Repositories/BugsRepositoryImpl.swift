@@ -2,21 +2,21 @@ import RxSwift
 import Domain
 
 final class BugsRepositoryImpl: BugsRepository {
-    private let bugsRemote: any BugsRemote
+    private let remoteBugsDataSource: any RemoteBugsDataSource
 
-    init(bugsRemote: any BugsRemote) {
-        self.bugsRemote = bugsRemote
+    init(remoteBugsDataSource: any RemoteBugsDataSource) {
+        self.remoteBugsDataSource = remoteBugsDataSource
     }
 
     func reportBug(req: ReportBugRequestQuery) -> Completable {
-        bugsRemote.reportBug(req: req)
+        remoteBugsDataSource.reportBug(req: req)
     }
 
     func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugEntity]> {
-        bugsRemote.fetchBugList(developmentArea: developmentArea)
+        remoteBugsDataSource.fetchBugList(developmentArea: developmentArea)
     }
 
     func fetchBugDetail(id: Int) -> Single<BugDetailEntity> {
-        bugsRemote.fetchBugDetail(id: id)
+        remoteBugsDataSource.fetchBugDetail(id: id)
     }
 }

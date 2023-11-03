@@ -3,13 +3,13 @@ import Domain
 import Foundation
 
 final class FilesRepositoryImpl: FilesRepository {
-    private let filesRemote: any FilesRemote
+    private let remoteFilesDataSource: any RemoteFilesDataSource
 
-    init(filesRemote: any FilesRemote) {
-        self.filesRemote = filesRemote
+    init(remoteFilesDataSource: any RemoteFilesDataSource) {
+        self.remoteFilesDataSource = remoteFilesDataSource
     }
 
     func uploadFiles(data: [Data], fileName: String) -> Single<[String]> {
-        filesRemote.uploadFiles(data: data, fileName: fileName)
+        remoteFilesDataSource.uploadFiles(data: data, fileName: fileName)
     }
 }

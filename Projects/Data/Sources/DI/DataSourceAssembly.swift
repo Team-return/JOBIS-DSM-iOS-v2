@@ -11,44 +11,48 @@ public final class DataSourceAssembly: Assembly {
     }
 
     public func assemble(container: Container) {
-        container.register(AuthRemote.self) { resolver in
-            AuthRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteAuthDataSource.self) { resolver in
+            RemoteAuthDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(UsersRemote.self) { resolver in
-            UsersRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteUsersDataSource.self) { resolver in
+            RemoteUsersDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(CompaniesRemote.self) { resolver in
-            CompaniesRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(LocalUsersDataSource.self) { resolver in
+            LocalUsersDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(ReviewsRemote.self) { resolver in
-            ReviewsRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteCompaniesDataSource.self) { resolver in
+            RemoteCompaniesDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(ApplicationsRemote.self) { reslover in
-            ApplicationsRemoteImpl(keychainLocal: self.keychain(reslover))
-        }
-      
-        container.register(BugsRemote.self) { resolver in
-            BugsRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteReviewsdataSource.self) { resolver in
+            RemoteReviewsdataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(BookmarksRemote.self) { resolver in
-            BookmarksRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteApplicationsDataSource.self) { reslover in
+            RemoteApplicationsDataSourceImpl(keychain: self.keychain(reslover))
         }
 
-        container.register(RecruitmentsRemote.self) { resolver in
-            RecruitmentsRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteBugsDataSource.self) { resolver in
+            RemoteBugsDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(CodesRemote.self) { resolver in
-            CodesRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteBookmarksDataSource.self) { resolver in
+            RemoteBookmarksDataSourceImpl(keychain: self.keychain(resolver))
         }
 
-        container.register(FilesRemote.self) { resolver in
-            FilesRemoteImpl(keychainLocal: self.keychain(resolver))
+        container.register(RemoteRecruitmentsDataSource.self) { resolver in
+            RemoteRecruitmentsDataSourceImpl(keychain: self.keychain(resolver))
+        }
+
+        container.register(RemoteCodesDataSource.self) { resolver in
+            RemoteCodesDataSourceImpl(keychain: self.keychain(resolver))
+        }
+
+        container.register(RemoteFilesDataSource.self) { resolver in
+            RemoteFilesDataSourceImpl(keychain: self.keychain(resolver))
         }
     }
 }

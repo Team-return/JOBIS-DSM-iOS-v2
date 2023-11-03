@@ -2,37 +2,37 @@ import RxSwift
 import Domain
 
 final class StudentsRepositoryImpl: StudentsRepository {
-    private let studentsRemote: any StudentsRemote
+    private let remoteStudentsDataSource: any RemoteStudentsDataSource
 
-    init(studentsRemote: any StudentsRemote) {
-        self.studentsRemote = studentsRemote
+    init(remoteStudentsDataSource: any RemoteStudentsDataSource) {
+        self.remoteStudentsDataSource = remoteStudentsDataSource
     }
 
     func signup(req: SignupRequestQuery) -> Completable {
-        studentsRemote.signup(req: req)
+        remoteStudentsDataSource.signup(req: req)
     }
 
     func renewalPassword(req: RenewalPasswordRequestQuery) -> Completable {
-        studentsRemote.renewalPassword(req: req)
+        remoteStudentsDataSource.renewalPassword(req: req)
     }
 
     func studentExists(gcn: Int, name: String) -> Completable {
-        studentsRemote.studentExists(gcn: gcn, name: name)
+        remoteStudentsDataSource.studentExists(gcn: gcn, name: name)
     }
 
     func fetchStudentInfo() -> Single<StudentInfoEntity> {
-        studentsRemote.fetchStudentInfo()
+        remoteStudentsDataSource.fetchStudentInfo()
     }
 
     func compareCurrentPasssword(password: String) -> Completable {
-        studentsRemote.compareCurrentPasssword(password: password)
+        remoteStudentsDataSource.compareCurrentPasssword(password: password)
     }
 
     func changePassword(req: ChangePasswordRequestQuery) -> Completable {
-        studentsRemote.changePassword(req: req)
+        remoteStudentsDataSource.changePassword(req: req)
     }
 
     func changeProfileImage(url: String) -> Completable {
-        studentsRemote.changeProfileImage(url: url)
+        remoteStudentsDataSource.changeProfileImage(url: url)
     }
 }
