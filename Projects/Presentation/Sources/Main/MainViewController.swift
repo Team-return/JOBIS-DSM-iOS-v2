@@ -4,18 +4,17 @@ import RxCocoa
 import SnapKit
 import Then
 import Core
+import DesignSystem
 
 public class MainViewController: BaseViewController<MainViewModel> {
     let loading = UIActivityIndicatorView().then {
         $0.style = .medium
     }
     let label = UILabel().then {
-        $0.text = "Text"
-        $0.font = .boldSystemFont(ofSize: 20)
+        $0.setJobisText("개인정보를 입력해주세요", font: .pageTitle)
     }
     let signinButton = UIButton().then {
-        $0.setTitle("로그인", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
+        $0.setJobisText("로그인", font: .pageTitle, color: .blue)
     }
 
     let tokenButton = UIButton().then {
