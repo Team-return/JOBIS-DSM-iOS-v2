@@ -8,6 +8,6 @@ public struct SigninUseCase {
     private let usersRepository: UsersRepository
 
     public func execute(req: SigninRequestQuery) -> Single<AuthorityType> {
-        return usersRepository.signin(req: req)
+        usersRepository.signin(req: req)
     }
 }
