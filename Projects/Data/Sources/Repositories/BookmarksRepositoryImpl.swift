@@ -3,19 +3,19 @@ import RxSwift
 import RxCocoa
 
 public struct BookmarksRepositoryImpl: BookmarksRepository {
-    private let bookmarksRemote: any BookmarksRemote
+    private let remoteBookmarksDataSource: any RemoteBookmarksDataSource
 
     public init(
-        bookmarksRemote: any BookmarksRemote
+        remoteBookmarksDataSource: any RemoteBookmarksDataSource
     ) {
-        self.bookmarksRemote = bookmarksRemote
+        self.remoteBookmarksDataSource = remoteBookmarksDataSource
     }
 
     public func fetchBookmarkList() -> Single<[BookmarkEntity]> {
-        bookmarksRemote.fetchBookmarkList()
+        remoteBookmarksDataSource.fetchBookmarkList()
     }
 
     public func bookmark(id: Int) -> Completable {
-        bookmarksRemote.bookmark(id: id)
+        remoteBookmarksDataSource.bookmark(id: id)
     }
 }
