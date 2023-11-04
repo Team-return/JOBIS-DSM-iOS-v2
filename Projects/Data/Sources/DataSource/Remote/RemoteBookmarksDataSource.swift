@@ -11,9 +11,7 @@ final class RemoteBookmarksDataSourceImpl: RemoteBaseDataSource<BookmarksAPI>, R
     public func fetchBookmarkList() -> Single<[BookmarkEntity]> {
         request(.fetchBookmarkList)
             .map(BookmarkListResponseDTO.self)
-            .map {
-                $0.toDomain()
-            }
+            .map { $0.toDomain() }
     }
 
     public func bookmark(id: Int) -> Completable {
