@@ -5,6 +5,7 @@ import Then
 import Presentation
 import Domain
 import Core
+import DesignSystem
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        DesignSystemFontFamily.registerAllCustomFonts()
+
         assembler = Assembler([
             KeychainAssembly(),
             DataSourceAssembly(),
