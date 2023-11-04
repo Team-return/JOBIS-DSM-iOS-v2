@@ -2,19 +2,19 @@ import RxSwift
 import Domain
 
 final class RecruitmentsRepositoryImpl: RecruitmentsRepository {
-    private let recruitmentsRemote: any RecruitmentsRemote
+    private let remoteRecruitmentsDataSource: any RemoteRecruitmentsDataSource
 
-    init(recruitmentsRemote: any RecruitmentsRemote) {
-        self.recruitmentsRemote = recruitmentsRemote
+    init(remoteRecruitmentsDataSource: any RemoteRecruitmentsDataSource) {
+        self.remoteRecruitmentsDataSource = remoteRecruitmentsDataSource
     }
 
     func fetchRecruitmentDetail(id: String) -> Single<RecruitmentDetailEntity> {
-        recruitmentsRemote.fetchRecruitmentDetail(id: id)
+        remoteRecruitmentsDataSource.fetchRecruitmentDetail(id: id)
     }
 
     func fetchRecruitmentList(
         page: Int, jobCode: String?, techCode: [String]?, name: String?
     ) -> Single<[RecruitmentEntity]> {
-        recruitmentsRemote.fetchRecruitmentList(page: page, jobCode: jobCode, techCode: techCode, name: name)
+        remoteRecruitmentsDataSource.fetchRecruitmentList(page: page, jobCode: jobCode, techCode: techCode, name: name)
     }
 }

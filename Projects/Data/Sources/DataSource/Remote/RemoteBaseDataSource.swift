@@ -7,7 +7,7 @@ import RxMoya
 import Core
 import Alamofire
 
-class BaseRemote<API: JobisAPI> {
+class RemoteBaseDataSource<API: JobisAPI> {
     private let keychain: any Keychain
 
     private let provider: MoyaProvider<API>
@@ -46,7 +46,7 @@ class BaseRemote<API: JobisAPI> {
     }
 }
 
-private extension BaseRemote {
+private extension RemoteBaseDataSource {
     func defaultRequest(_ api: API) -> Single<Response> {
         return provider.rx
             .request(api)
@@ -102,7 +102,7 @@ private extension BaseRemote {
     }
 
     func reissueToken() -> Completable {
-        return AuthRemoteImpl(keychain: keychain).reissueToken()
+        return RemoteAuthDataSourceImpl(keychain: keychain).reissueToken()
             .asCompletable()
     }
 }

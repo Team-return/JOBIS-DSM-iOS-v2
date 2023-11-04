@@ -3,10 +3,6 @@ import Domain
 
 struct CompanyListResponseDTO: Decodable {
     let companies: [CompanyResponseDTO]
-
-    init(companies: [CompanyResponseDTO]) {
-        self.companies = companies
-    }
 }
 
 struct CompanyResponseDTO: Decodable {
