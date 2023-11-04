@@ -3,27 +3,25 @@ import RxSwift
 import RxCocoa
 
 public struct ApplicationsRepositoryImpl: ApplicationsRepository {
-    private let applicationsRemote: any ApplicationsRemote
+    private let remoteApplicationsDataSource: any RemoteApplicationsDataSource
 
-    public init(
-        applicationsRemote: any ApplicationsRemote
-    ) {
-        self.applicationsRemote = applicationsRemote
+    init(remoteApplicationsDataSource: any RemoteApplicationsDataSource) {
+        self.remoteApplicationsDataSource = remoteApplicationsDataSource
     }
 
     public func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
-        applicationsRemote.applyCompany(id: id, req: req)
+        remoteApplicationsDataSource.applyCompany(id: id, req: req)
     }
 
     public func cancelApply(id: String) -> Completable {
-        applicationsRemote.cancelApply(id: id)
+        remoteApplicationsDataSource.cancelApply(id: id)
     }
 
     public func fetchApplication() -> Single<[ApplicationEntity]> {
-        applicationsRemote.fetchApplication()
+        remoteApplicationsDataSource.fetchApplication()
     }
 
     public func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
-        applicationsRemote.fetchTotalPassStudent()
+        remoteApplicationsDataSource.fetchTotalPassStudent()
     }
 }

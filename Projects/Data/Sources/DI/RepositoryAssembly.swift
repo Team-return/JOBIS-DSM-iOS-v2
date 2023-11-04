@@ -5,49 +5,72 @@ import Domain
 public final class RepositoryAssembly: Assembly {
     public init() {}
 
+    // swiftlint:disable function_body_length
     public func assemble(container: Container) {
         container.register(AuthRepository.self) { resolver in
-            AuthRepositoryImpl(authRemote: resolver.resolve(AuthRemote.self)!)
+            AuthRepositoryImpl(remoteAuthDataSource: resolver.resolve(RemoteAuthDataSource.self)!)
         }
 
         container.register(UsersRepository.self) { resolver in
-            UsersRepositoryImpl(usersRemote: resolver.resolve(UsersRemote.self)!)
+            UsersRepositoryImpl(
+                remoteUsersDataSource: resolver.resolve(RemoteUsersDataSource.self)!,
+                localUsersDataSource: resolver.resolve(LocalUsersDataSource.self)!
+            )
         }
 
         container.register(StudentsRepository.self) { reslover in
-            StudentsRepositoryImpl(studentsRemote: reslover.resolve(StudentsRemote.self)!)
+            StudentsRepositoryImpl(
+                remoteStudentsDataSource: reslover.resolve(RemoteStudentsDataSource.self)!
+            )
         }
 
         container.register(CompaniesRepository.self) { resolver in
-            CompaniesRepositoryImpl(companiesRemote: resolver.resolve(CompaniesRemote.self)!)
+            CompaniesRepositoryImpl(
+                remoteCompaniesDataSource: resolver.resolve(RemoteCompaniesDataSource.self)!
+            )
         }
 
         container.register(ReviewsRepository.self) { resolver in
-            ReviewsRepositoryImpl(reviewsRemote: resolver.resolve(ReviewsRemote.self)!)
+            ReviewsRepositoryImpl(
+                remoteReviewsdataSource: resolver.resolve(RemoteReviewsdataSource.self)!
+            )
         }
 
         container.register(ApplicationsRepository.self) { resolver in
-            ApplicationsRepositoryImpl(applicationsRemote: resolver.resolve(ApplicationsRemote.self)!)
+            ApplicationsRepositoryImpl(
+                remoteApplicationsDataSource: resolver.resolve(RemoteApplicationsDataSource.self)!
+            )
         }
 
         container.register(BugsRepository.self) { resolver in
-            BugsRepositoryImpl(bugsRemote: resolver.resolve(BugsRemote.self)!)
+            BugsRepositoryImpl(
+                remoteBugsDataSource: resolver.resolve(RemoteBugsDataSource.self)!
+            )
         }
 
         container.register(BookmarksRepository.self) { resolver in
-            BookmarksRepositoryImpl(bookmarksRemote: resolver.resolve(BookmarksRemote.self)!)
+            BookmarksRepositoryImpl(
+                remoteBookmarksDataSource: resolver.resolve(RemoteBookmarksDataSource.self)!
+            )
         }
 
         container.register(RecruitmentsRepository.self) { resolver in
-            RecruitmentsRepositoryImpl(recruitmentsRemote: resolver.resolve(RecruitmentsRemote.self)!)
+            RecruitmentsRepositoryImpl(
+                remoteRecruitmentsDataSource: resolver.resolve(RemoteRecruitmentsDataSource.self)!
+            )
         }
 
         container.register(CodesRepository.self) { resolver in
-            CodesRepositoryImpl(codesRemote: resolver.resolve(CodesRemote.self)!)
+            CodesRepositoryImpl(
+                remoteCodesDataSource: resolver.resolve(RemoteCodesDataSource.self)!
+            )
         }
 
         container.register(FilesRepository.self) { resolver in
-            FilesRepositoryImpl(filesRemote: resolver.resolve(FilesRemote.self)!)
+            FilesRepositoryImpl(
+                remoteFilesDataSource: resolver.resolve(RemoteFilesDataSource.self)!
+            )
         }
     }
+    // swiftlint:enable function_body_length
 }

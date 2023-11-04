@@ -2,21 +2,21 @@ import RxSwift
 import Domain
 
 final class AuthRepositoryImpl: AuthRepository {
-    private let authRemote: any AuthRemote
+    private let remoteAuthDataSource: any RemoteAuthDataSource
 
-    init(authRemote: AuthRemote) {
-        self.authRemote = authRemote
+    init(remoteAuthDataSource: any RemoteAuthDataSource) {
+        self.remoteAuthDataSource = remoteAuthDataSource
     }
 
     func sendAuthCode(req: SendAuthCodeRequestQuery) -> Completable {
-        authRemote.sendAuthCode(req: req)
+        remoteAuthDataSource.sendAuthCode(req: req)
     }
 
     func reissueToken() -> Single<AuthorityType> {
-        authRemote.reissueToken()
+        remoteAuthDataSource.reissueToken()
     }
 
     func verifyAuthCode(email: String, authCode: String) -> Completable {
-        authRemote.verifyAuthCode(email: email, authCode: authCode)
+        remoteAuthDataSource.verifyAuthCode(email: email, authCode: authCode)
     }
 }
