@@ -25,7 +25,7 @@ extension JobisFontStyle {
             return 16
         }
     }
-    
+
     func uiFont() -> UIFont {
         let pretendard = DesignSystemFontFamily.Pretendard.self
 
