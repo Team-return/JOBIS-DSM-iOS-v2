@@ -1,29 +1,13 @@
 import Foundation
 import Domain
 
-public struct AreaResponseDTO: Decodable {
-    public let id: Int
-    public let job: [String]
-    public let tech: [String]
-    public let hiring: Int
-    public let majorTask: String
-    public let preferentialTreatment: String?
-
-    public init(
-        id: Int,
-        job: [String],
-        tech: [String],
-        hiring: Int,
-        majorTask: String,
-        preferentialTreatment: String?
-    ) {
-        self.id = id
-        self.job = job
-        self.tech = tech
-        self.hiring = hiring
-        self.majorTask = majorTask
-        self.preferentialTreatment = preferentialTreatment
-    }
+struct AreaResponseDTO: Decodable {
+    let id: Int
+    let job: [String]
+    let tech: [String]
+    let hiring: Int
+    let majorTask: String
+    let preferentialTreatment: String?
 
     enum CodingKeys: String, CodingKey {
         case id, job, tech, hiring
@@ -32,7 +16,7 @@ public struct AreaResponseDTO: Decodable {
     }
 }
 
-public extension AreaResponseDTO {
+extension AreaResponseDTO {
     func toDomain() -> AreaEntity {
         AreaEntity(
             id: String(id),

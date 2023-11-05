@@ -1,24 +1,24 @@
 import Foundation
 import Domain
 
-public struct RecruitmentDetailResponseDTO: Decodable {
-    public let companyID: Int
-    public let companyProfileUrl: String
-    public let companyName: String
-    public let areas: [AreaResponseDTO]
-    public let requiredGrade: Int?
-    public let startTime, endTime: String
-    public let requiredLicenses: [String]?
-    public let hiringProgress: [InterviewType]
-    public let trainPay: Int
-    public let pay: String?
-    public let benefits: String?
-    public let military: Bool
-    public let submitDocument: String
-    public let startDate, endDate: String
-    public let etc: String?
+struct RecruitmentDetailResponseDTO: Decodable {
+    let companyID: Int
+    let companyProfileUrl: String
+    let companyName: String
+    let areas: [AreaResponseDTO]
+    let requiredGrade: Int?
+    let startTime, endTime: String
+    let requiredLicenses: [String]?
+    let hiringProgress: [InterviewType]
+    let trainPay: Int
+    let pay: String?
+    let benefits: String?
+    let military: Bool
+    let submitDocument: String
+    let startDate, endDate: String
+    let etc: String?
 
-    public init(
+    init(
         companyID: Int,
         companyProfileUrl: String,
         companyName: String,
@@ -75,7 +75,7 @@ public struct RecruitmentDetailResponseDTO: Decodable {
     }
 }
 
-public extension RecruitmentDetailResponseDTO {
+extension RecruitmentDetailResponseDTO {
     func toDomain() -> RecruitmentDetailEntity {
         var unwrappedRequiredGrade: String? {
             guard let requiredGrade else { return nil }
