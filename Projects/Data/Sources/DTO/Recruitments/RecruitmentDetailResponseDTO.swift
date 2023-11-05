@@ -1,35 +1,35 @@
+import Foundation
 import Domain
 
-struct RecruitmentDetailResponseDTO: Decodable {
-    let companyID: Int
-    let companyProfileUrl: String
-    let companyName: String
-    let areas: [AreaResponseDTO]
-    let preferentialTreatment: String?
-    let requiredGrade: Int?
-    let workHours: Int
-    let requiredLicenses: [String]?
-    let hiringProgress: [InterviewType]
-    let trainPay: Int
-    let pay: Int?
-    let benefits: String?
-    let military: Bool
-    let submitDocument: String
-    let startDate, endDate: String
-    let etc: String?
+public struct RecruitmentDetailResponseDTO: Decodable {
+    public let companyID: Int
+    public let companyProfileUrl: String
+    public let companyName: String
+    public let areas: [AreaResponseDTO]
+    public let requiredGrade: Int?
+    public let startTime, endTime: String
+    public let requiredLicenses: [String]?
+    public let hiringProgress: [InterviewType]
+    public let trainPay: Int
+    public let pay: String?
+    public let benefits: String?
+    public let military: Bool
+    public let submitDocument: String
+    public let startDate, endDate: String
+    public let etc: String?
 
     public init(
         companyID: Int,
         companyProfileUrl: String,
         companyName: String,
         areas: [AreaResponseDTO],
-        preferentialTreatment: String?,
         requiredGrade: Int?,
-        workHours: Int,
+        startTime: String,
+        endTime: String,
         requiredLicenses: [String]?,
         hiringProgress: [InterviewType],
         trainPay: Int,
-        pay: Int?,
+        pay: String?,
         benefits: String?,
         military: Bool,
         submitDocument: String,
@@ -41,9 +41,9 @@ struct RecruitmentDetailResponseDTO: Decodable {
         self.companyProfileUrl = companyProfileUrl
         self.companyName = companyName
         self.areas = areas
-        self.preferentialTreatment = preferentialTreatment
         self.requiredGrade = requiredGrade
-        self.workHours = workHours
+        self.startTime = startTime
+        self.endTime = endTime
         self.requiredLicenses = requiredLicenses
         self.hiringProgress = hiringProgress
         self.trainPay = trainPay
@@ -61,9 +61,9 @@ struct RecruitmentDetailResponseDTO: Decodable {
         case companyProfileUrl = "company_profile_url"
         case companyName = "company_name"
         case areas
-        case preferentialTreatment = "preferential_treatment"
         case requiredGrade = "required_grade"
-        case workHours = "work_hours"
+        case startTime = "start_time"
+        case endTime = "end_time"
         case requiredLicenses = "required_licenses"
         case hiringProgress = "hiring_progress"
         case trainPay = "train_pay"
@@ -75,36 +75,30 @@ struct RecruitmentDetailResponseDTO: Decodable {
     }
 }
 
-extension RecruitmentDetailResponseDTO {
+public extension RecruitmentDetailResponseDTO {
     func toDomain() -> RecruitmentDetailEntity {
         var unwrappedRequiredGrade: String? {
-            if let requiredGrade {
-                return String(requiredGrade) + "% 이내"
-            } else {
-                return nil
-            }
+            guard let requiredGrade else { return nil }
+            return String(requiredGrade) + "% 이내"
         }
-        var unwrappedPay: String? {
-            if let pay {
-                return String(pay) + " 만원/년"
-            } else {
-                return nil
-            }
+        var workTime: String {
+            [startTime, endTime].map {
+                $0.components(separatedBy: ":")[0...1].joined(separator: ":")
+            }.joined(separator: " ~ ")
         }
         return RecruitmentDetailEntity(
             companyID: companyID,
             companyProfileUrl: companyProfileUrl,
             companyName: companyName,
             areas: areas.map { $0.toDomain() },
-            preferentialTreatment: preferentialTreatment,
             requiredGrade: unwrappedRequiredGrade,
-            workHours: String(workHours),
+            workTime: workTime,
             requiredLicenses: requiredLicenses?.joined(separator: ", "),
             hiringProgress: hiringProgress.enumerated().map { (index, value) in
                 "\(index + 1). \(value.localizedString())"
             }.joined(separator: "\n"),
             trainPay: String(trainPay),
-            pay: unwrappedPay,
+            pay: pay,
             benefits: benefits,
             military: military,
             submitDocument: submitDocument,

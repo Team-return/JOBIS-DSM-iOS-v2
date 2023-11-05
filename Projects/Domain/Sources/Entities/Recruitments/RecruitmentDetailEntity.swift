@@ -5,9 +5,8 @@ public struct RecruitmentDetailEntity: Equatable {
     public let companyProfileUrl: String
     public let companyName: String
     public let areas: [AreaEntity]
-    public let preferentialTreatment: String?
     public let requiredGrade: String?
-    public let workHours: String
+    public let workTime: String
     public let requiredLicenses: String?
     public let hiringProgress: String
     public let trainPay: String
@@ -23,9 +22,8 @@ public struct RecruitmentDetailEntity: Equatable {
         companyProfileUrl: String,
         companyName: String,
         areas: [AreaEntity],
-        preferentialTreatment: String?,
         requiredGrade: String?,
-        workHours: String,
+        workTime: String,
         requiredLicenses: String?,
         hiringProgress: String,
         trainPay: String,
@@ -41,9 +39,8 @@ public struct RecruitmentDetailEntity: Equatable {
         self.companyProfileUrl = companyProfileUrl
         self.companyName = companyName
         self.areas = areas
-        self.preferentialTreatment = preferentialTreatment
         self.requiredGrade = requiredGrade
-        self.workHours = workHours
+        self.workTime = workTime
         self.requiredLicenses = requiredLicenses
         self.hiringProgress = hiringProgress
         self.trainPay = trainPay
