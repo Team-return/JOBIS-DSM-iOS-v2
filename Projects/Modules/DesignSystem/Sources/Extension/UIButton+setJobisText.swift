@@ -1,14 +1,15 @@
 import UIKit
 
 public extension UIButton {
-    func setJobisText(_ text: String, font: JobisFontStyle, color: UIColor = .black) {
+    func setJobisText(_ text: String, font: JobisFontStyle, color: UIColor? = nil) {
         self.setTextWithLineHeight(text: text, lineHeight: font.lineHeight())
         self.titleLabel?.font = .jobisFont(font)
+        guard let color else { return }
         self.setTitleColor(color, for: .normal)
     }
 }
 
-extension UIButton {
+public extension UIButton {
     func setTextWithLineHeight(text: String?, lineHeight: CGFloat) {
         if let textLabel = self.titleLabel,
            let text = textLabel.text {
