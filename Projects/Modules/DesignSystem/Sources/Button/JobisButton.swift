@@ -77,11 +77,10 @@ public class JobisButton: UIButton {
         config.attributedTitle?.foregroundColor = fgColor
         config.attributedTitle?.font = UIFont.jobisFont(.subHeadLine)
         config.imagePadding = 4
-        config.imagePlacement = .leading
-        config.contentInsets = .init(top: 16, leading: 0, bottom: 16, trailing: 12)
+        config.imagePlacement = .trailing
+        config.contentInsets = .init(top: 16, leading: 12, bottom: 16, trailing: 0)
 
         self.configuration = config
-        self.semanticContentAttribute = .forceRightToLeft
         self.layer.cornerRadius = 12
         self.backgroundColor = backgroundColor()
     }
