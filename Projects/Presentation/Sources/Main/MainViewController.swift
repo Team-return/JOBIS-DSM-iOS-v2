@@ -13,26 +13,27 @@ public class MainViewController: BaseViewController<MainViewModel> {
     let label = UILabel().then {
         $0.setJobisText("개인정보를 입력해주세요", font: .pageTitle)
     }
-    let signinButton = UIButton().then {
-        $0.setJobisText("로그인", font: .pageTitle, color: .blue)
+
+    let signinButton = JobisButton(style: .main).then {
+        $0.setText("로그인")
     }
 
-    let tokenButton = UIButton().then {
-        $0.setTitle("토큰재발급", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
+    let tokenButton = JobisButton(style: .sub).then {
+        $0.setText("토큰 재발급")
+        $0.isEnabled = false
     }
 
     public override func layout() {
         signinButton.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.bottom.equalTo(tokenButton.snp.top).inset(-20)
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
         tokenButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(signinButton.snp.bottom).offset(30)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
         label.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(signinButton.snp.top).offset(-30)
+            $0.center.equalToSuperview()
         }
         loading.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -58,6 +59,7 @@ public class MainViewController: BaseViewController<MainViewModel> {
         output.string
             .bind {
                 self.label.text = $0
+                self.tokenButton.isEnabled = true
             }
             .disposed(by: disposeBag)
         output.isLoading
