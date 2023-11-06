@@ -1,9 +1,10 @@
 import UIKit
 
 public extension UILabel {
-    func setJobisText(_ text: String, font: JobisFontStyle, color: UIColor = .black) {
+    func setJobisText(_ text: String, font: JobisFontStyle, color: UIColor? = nil) {
         self.setTextWithLineHeight(text: text, lineHeight: font.lineHeight())
         self.font = .jobisFont(font)
+        guard let color else { return }
         self.textColor = color
     }
 }
