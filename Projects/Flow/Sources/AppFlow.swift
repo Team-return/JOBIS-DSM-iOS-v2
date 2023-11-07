@@ -19,21 +19,21 @@ public class AppFlow: Flow {
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AppStep else { return .none }
         switch step {
-        case .mainIsRequired:
-            return self.navigationToMain()
+        case .onboardingIsRequired:
+            return self.navigationToOnboarding()
         }
     }
 
-    private func navigationToMain() -> FlowContributors {
-        let mainFlow = MainFlow(container: container)
-        Flows.use(mainFlow, when: .created) { (root) in
+    private func navigationToOnboarding() -> FlowContributors {
+        let onboardingFlow = OnboardingFlow(container: container)
+        Flows.use(onboardingFlow, when: .created) { root in
             self.window.rootViewController = root
         }
         return .one(
             flowContributor: .contribute(
-                withNextPresentable: mainFlow,
+                withNextPresentable: onboardingFlow,
                 withNextStepper: OneStepper(
-                    withSingleStep: MainStep.loginIsRequired
+                    withSingleStep: OnboardingStep.onboardingIsRequired
                 )
             )
         )
