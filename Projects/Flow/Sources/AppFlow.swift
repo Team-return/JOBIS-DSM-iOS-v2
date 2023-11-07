@@ -21,19 +21,26 @@ public class AppFlow: Flow {
         switch step {
         case .onboardingIsRequired:
             return self.navigationToOnboarding()
+
+        case .tabsIsRequired:
+            return self.navigationToTabs()
         }
     }
 
     private func navigationToOnboarding() -> FlowContributors {
-        let onboardingFlow = OnboardingFlow(container: container)
-        Flows.use(onboardingFlow, when: .created) { root in
+        return .none
+    }
+
+    private func navigationToTabs() -> FlowContributors {
+        let tabsFlow = TabsFlow(container: container)
+        Flows.use(tabsFlow, when: .created) { (root) in
             self.window.rootViewController = root
         }
         return .one(
             flowContributor: .contribute(
-                withNextPresentable: onboardingFlow,
+                withNextPresentable: tabsFlow,
                 withNextStepper: OneStepper(
-                    withSingleStep: OnboardingStep.onboardingIsRequired
+                    withSingleStep: TabsStep.tabsIsRequired
                 )
             )
         )
