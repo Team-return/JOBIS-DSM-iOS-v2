@@ -8,5 +8,6 @@ let project = Project.makeModule(
     dependencies: [
         .Projects.domain,
         .Modules.designSystem
-    ]
+    ],
+    resources: ["Resources/**"]
 )
