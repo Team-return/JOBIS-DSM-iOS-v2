@@ -11,7 +11,7 @@ extension Project {
         sources: SourceFilesList = ["Sources/**"],
         resources: ResourceFileElements? = nil,
         infoPlist: InfoPlist = .default,
-        resoucesSynathesizers: [ResourceSynthesizer] = .default
+        resourceSynthesizers: [ResourceSynthesizer] = .default
     ) -> Project {
         return project(
             name: name,
@@ -22,7 +22,7 @@ extension Project {
             sources: sources,
             resources: resources,
             infoPlist: infoPlist,
-            resoucesSynathesizers: resoucesSynathesizers
+            resourceSynthesizers: resourceSynthesizers
         )
     }
 }
@@ -39,7 +39,7 @@ public extension Project {
         sources: SourceFilesList,
         resources: ResourceFileElements? = nil,
         infoPlist: InfoPlist = .default,
-        resoucesSynathesizers: [ResourceSynthesizer] = .default
+        resourceSynthesizers: [ResourceSynthesizer] = .default
     ) -> Project {
         let appTarget = Target(
             name: name,
@@ -59,7 +59,7 @@ public extension Project {
             organizationName: organizationName,
             packages: packages,
             targets: [appTarget],
-            resourceSynthesizers: resoucesSynathesizers
+            resourceSynthesizers: resourceSynthesizers
         )
     }
 }
