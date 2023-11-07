@@ -22,5 +22,12 @@ public final class PresentationAssembly: Assembly {
         container.register(SignupViewController.self) { resolver in
             SignupViewController(resolver.resolve(SignupViewModel.self)!)
         }
+
+        container.register(SigninViewModel.self) { resolver in
+            SigninViewModel()
+        }
+        container.register(SigninViewController.self) { resolver in
+            SigninViewController(resolver.resolve(SigninViewModel.self)!)
+        }
     }
 }
