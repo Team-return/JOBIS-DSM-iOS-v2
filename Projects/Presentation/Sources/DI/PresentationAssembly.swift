@@ -7,14 +7,35 @@ public final class PresentationAssembly: Assembly {
     public init() {}
 
     public func assemble(container: Container) {
-        container.register(MainViewModel.self) { resolver in
-            MainViewModel(
+        container.register(HomeViewController.self) { resolver in
+            HomeViewController(resolver.resolve(HomeViewModel.self)!)
+        }
+        container.register(HomeViewModel.self) { resolver in
+            HomeViewModel(
                 signinUseCase: resolver.resolve(SigninUseCase.self)!,
                 reissueTokenUseCase: resolver.resolve(ReissueTokenUaseCase.self)!
             )
         }
-        container.register(MainViewController.self) { resolver in
-            MainViewController(resolver.resolve(MainViewModel.self)!)
+
+        container.register(RecruitmentViewController.self) { resolver in
+            RecruitmentViewController(resolver.resolve(RecruitmentViewModel.self)!)
+        }
+        container.register(RecruitmentViewModel.self) { resolver in
+            RecruitmentViewModel()
+        }
+
+        container.register(BookmarkViewController.self) { resolver in
+            BookmarkViewController(resolver.resolve(BookmarkViewModel.self)!)
+        }
+        container.register(BookmarkViewModel.self) { resolver in
+            BookmarkViewModel()
+        }
+
+        container.register(MyPageViewController.self) { resolver in
+            MyPageViewController(resolver.resolve(MyPageViewModel.self)!)
+        }
+        container.register(MyPageViewModel.self) { resolver in
+            MyPageViewModel()
         }
 
         container.register(OnboardingViewModel.self) { resolver in
