@@ -7,6 +7,6 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .Projects.core
-    ], 
+    ],
     resources: "Resources/**"
 )
