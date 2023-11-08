@@ -53,4 +53,25 @@ extension JobisFontStyle {
             return pretendard.medium.font(size: 12)
         }
     }
+
+    func size() -> CGFloat {
+
+        switch self {
+
+        case .pageTitle:
+            return 24
+
+        case .headLine:
+            return 18
+
+        case .subHeadLine, .body:
+            return 16
+
+        case .subBody, .description:
+            return 14
+
+        case .cation:
+            return 12
+        }
+    }
 }
