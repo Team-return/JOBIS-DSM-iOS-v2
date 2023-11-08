@@ -2,7 +2,7 @@ import UIKit
 
 public extension UIButton {
     func setJobisText(_ text: String, font: JobisFontStyle, color: UIColor? = nil) {
-        self.setTextWithLineHeight(text: text, lineHeight: font.lineHeight())
+        self.setTextWithLineHeight(text: text, font: font)
         self.titleLabel?.font = .jobisFont(font)
         guard let color else { return }
         self.setTitleColor(color, for: .normal)
@@ -10,16 +10,16 @@ public extension UIButton {
 }
 
 public extension UIButton {
-    func setTextWithLineHeight(text: String?, lineHeight: CGFloat) {
+    func setTextWithLineHeight(text: String?, font: JobisFontStyle) {
         if let textLabel = self.titleLabel,
            let text = textLabel.text {
             let style = NSMutableParagraphStyle()
-            style.maximumLineHeight = lineHeight
-            style.minimumLineHeight = lineHeight
+            style.maximumLineHeight = font.lineHeight()
+            style.minimumLineHeight = font.lineHeight()
 
             let attributes: [NSAttributedString.Key: Any] = [
                 .paragraphStyle: style,
-                .baselineOffset: (lineHeight - textLabel.font.lineHeight) / 4
+                .baselineOffset: (font.lineHeight() - font.size()) / 4
             ]
 
             let attrString = NSAttributedString(
