@@ -13,7 +13,7 @@ public struct JwtPlugin: PluginType {
         _ request: URLRequest,
         target: TargetType
     ) -> URLRequest {
-        guard let jwtTokenType  = (target as? JwtAuthorizable)?.jwtTokenType,
+        guard let jwtTokenType = (target as? JwtAuthorizable)?.jwtTokenType,
               jwtTokenType != .none
         else { return request }
         var req = request
