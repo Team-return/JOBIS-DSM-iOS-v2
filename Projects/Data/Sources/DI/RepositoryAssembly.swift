@@ -32,7 +32,7 @@ public final class RepositoryAssembly: Assembly {
 
         container.register(ReviewsRepository.self) { resolver in
             ReviewsRepositoryImpl(
-                remoteReviewsdataSource: resolver.resolve(RemoteReviewsdataSource.self)!
+                remoteReviewsDataSource: resolver.resolve(RemoteReviewsDataSource.self)!
             )
         }
 
