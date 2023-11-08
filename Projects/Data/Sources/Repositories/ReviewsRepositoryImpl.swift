@@ -2,21 +2,21 @@ import RxSwift
 import Domain
 
 final class ReviewsRepositoryImpl: ReviewsRepository {
-    private let remoteReviewsdataSource: any RemoteReviewsdataSource
+    private let remoteReviewsDataSource: any RemoteReviewsDataSource
 
-    init(remoteReviewsdataSource: any RemoteReviewsdataSource) {
-        self.remoteReviewsdataSource = remoteReviewsdataSource
+    init(remoteReviewsDataSource: any RemoteReviewsDataSource) {
+        self.remoteReviewsDataSource = remoteReviewsDataSource
     }
 
     func fetchReviewDetail(id: String) -> Single<[QnaEntity]> {
-        remoteReviewsdataSource.fetchReviewDetail(id: id)
+        remoteReviewsDataSource.fetchReviewDetail(id: id)
     }
 
     func fetchReviewList(id: String) -> Single<[ReviewEntity]> {
-        remoteReviewsdataSource.fetchReviewList(id: id)
+        remoteReviewsDataSource.fetchReviewList(id: id)
     }
 
     func postReview(req: PostReviewRequestQuery) -> Completable {
-        remoteReviewsdataSource.postReview(req: req)
+        remoteReviewsDataSource.postReview(req: req)
     }
 }

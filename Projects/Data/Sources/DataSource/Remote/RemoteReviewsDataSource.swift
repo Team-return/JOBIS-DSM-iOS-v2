@@ -1,13 +1,13 @@
 import RxSwift
 import Domain
 
-protocol ReviewsRemote {
+protocol RemoteReviewsDataSource {
     func fetchReviewDetail(id: String) -> Single<[QnaEntity]>
     func fetchReviewList(id: String) -> Single<[ReviewEntity]>
     func postReview(req: PostReviewRequestQuery) -> Completable
 }
 
-final class ReviewsRemoteImpl: BaseRemote<ReviewsAPI>, ReviewsRemote {
+final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, RemoteReviewsDataSource {
     func fetchReviewDetail(id: String) -> Single<[QnaEntity]> {
         request(.fetchReviewDetail(id: id))
             .map(ReviewDetailResponseDTO.self)
