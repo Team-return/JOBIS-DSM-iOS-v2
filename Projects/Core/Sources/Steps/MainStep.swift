@@ -1,5 +1,5 @@
 import RxFlow
 
 public enum MainStep: Step {
-    case loginIsRequired
+    case onboardingIsRequired
 }
