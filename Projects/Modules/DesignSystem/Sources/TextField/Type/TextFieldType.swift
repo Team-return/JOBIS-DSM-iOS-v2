@@ -1,6 +1,6 @@
 import Foundation
 
-public enum TextFieldRightType: Equatable {
+public enum TextFieldType: Equatable {
     case email
     case emailWithbutton(buttonTitle: String)
     case secure

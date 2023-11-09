@@ -6,17 +6,17 @@ public class DescriptionView: UIView {
     public var descriptionType: DescriptionType = .error(description: "") {
         didSet {
             switch descriptionType {
-            case .error(let description):
+            case let .error(description):
                 self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .jobisIcon(.erorr)
+                self.imageView.image = .textFieldIcon(.erorr)
                 self.descriptionLabel.textColor = .Sub.red
-            case .info(let description):
+            case let .info(description):
                 self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .jobisIcon(.info)
+                self.imageView.image = .textFieldIcon(.info)
                 self.descriptionLabel.textColor = .Sub.blue
-            case .success(let description):
+            case let .success(description):
                 self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .jobisIcon(.success)
+                self.imageView.image = .textFieldIcon(.success)
                 self.descriptionLabel.textColor = .Sub.green
             }
         }
