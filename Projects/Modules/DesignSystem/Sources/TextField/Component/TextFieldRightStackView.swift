@@ -6,12 +6,12 @@ import RxCocoa
 
 public class TextFieldRightStackView: UIStackView {
     private let disposeBag = DisposeBag()
-    public var textFieldRightType: TextFieldRightType = .none {
+    public var textFieldRightType: TextFieldType = .none {
         didSet {
             switch textFieldRightType {
             case .email:
                 emailInfoLabel.isHidden = false
-            case .emailWithbutton(let buttonTitle):
+            case let .emailWithbutton(buttonTitle):
                 emailInfoLabel.isHidden = false
                 customButton.isHidden = false
                 customButton.configuration?.title = buttonTitle
@@ -26,7 +26,7 @@ public class TextFieldRightStackView: UIStackView {
         }
     }
     public let secureButton = UIButton(type: .system).then {
-        $0.setImage(.jobisIcon(.eyeOff), for: .normal)
+        $0.setImage(.textFieldIcon(.eyeOff), for: .normal)
         $0.tintColor = UIColor.GrayScale.gray60
         $0.isHidden = true
     }
@@ -36,7 +36,7 @@ public class TextFieldRightStackView: UIStackView {
         config.baseForegroundColor = .Main.blue1
         config.contentInsets = .init(top: 4, leading: 8, bottom: 4, trailing: 8)
         $0.configuration = config
-        $0.backgroundColor = .Main.bg
+        $0.backgroundColor = DesignSystemAsset.Main.bg.color
         $0.layer.cornerRadius = 8
     }
     public let emailInfoLabel = UILabel().then {

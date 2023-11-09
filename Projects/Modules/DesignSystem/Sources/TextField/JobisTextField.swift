@@ -36,7 +36,7 @@ public class JobisTextField: UIView {
         title: String,
         placeholder: String,
         descriptionType: DescriptionType = .error(description: ""),
-        textFieldRightType: TextFieldRightType = .none
+        textFieldRightType: TextFieldType = .none
     ) {
         self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
         self.descriptionView.descriptionType = descriptionType
@@ -46,9 +46,9 @@ public class JobisTextField: UIView {
             .subscribe(onNext: {
                 self.textField.isSecureTextEntry.toggle()
                 if self.textField.isSecureTextEntry {
-                    self.textFieldRightView.secureButton.setImage(.jobisIcon(.eyeOff), for: .normal)
+                    self.textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOff), for: .normal)
                 } else {
-                    self.textFieldRightView.secureButton.setImage(.jobisIcon(.eyeOn), for: .normal)
+                    self.textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
                 }
             }).disposed(by: disposeBag)
     }
