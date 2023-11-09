@@ -16,23 +16,23 @@ public class MainFlow: Flow {
 
     private let rootViewController = UINavigationController()
 
-    public func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
+    public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? MainStep else { return .none }
 
         switch step {
-        case .loginIsRequired:
-            return navigateToLoginScreen()
+        case .onboardingIsRequired:
+            return navigateToOnboarding()
         }
     }
 }
 
 private extension MainFlow {
-    func navigateToLoginScreen() -> FlowContributors {
-        let mainViewController = container.resolve(MainViewController.self)!
-        self.rootViewController.setViewControllers([mainViewController], animated: true)
+    func navigateToOnboarding() -> FlowContributors {
+        let onboardingViewController = container.resolve(OnboardingViewController.self)!
+        self.rootViewController.setViewControllers([onboardingViewController], animated: true)
         return .one(flowContributor: .contribute(
-            withNextPresentable: mainViewController,
-            withNextStepper: mainViewController.viewModel
+            withNextPresentable: onboardingViewController,
+            withNextStepper: onboardingViewController.viewModel
         ))
     }
 }
