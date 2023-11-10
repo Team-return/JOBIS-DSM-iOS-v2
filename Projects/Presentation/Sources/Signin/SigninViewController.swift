@@ -16,11 +16,31 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
     private let titleImageView = UIImageView().then {
         $0.image = .jobisIcon(.door)
     }
+    public let emailTextField = JobisTextField().then {
+        $0.setTextField(
+            title: "이메일",
+            placeholder: "example",
+            textFieldType: .email
+        )
+    }
+    public let passwordTextField = JobisTextField().then {
+        $0.setTextField(
+            title: "비밀번호",
+            placeholder: "비밀번호를 입력해주세요",
+            textFieldType: .secure
+        )
+    }
+    public let loginButton = JobisButton(style: .main).then {
+        $0.setText("로그인")
+    }
     public override func addView() {
         [
             titleLabel,
             titleLineView,
-            titleImageView
+            titleImageView,
+            emailTextField,
+            passwordTextField,
+            loginButton
         ].forEach { self.view.addSubview($0) }
     }
     public override func layout() {
@@ -38,6 +58,18 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
             $0.centerY.equalTo(titleLabel.snp.centerY)
             $0.width.height.equalTo(32)
             $0.trailing.equalToSuperview().inset(24)
+        }
+        emailTextField.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview()
+        }
+        passwordTextField.snp.makeConstraints {
+            $0.top.equalTo(emailTextField.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+        loginButton.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(46)
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
     public override func attribute() {
