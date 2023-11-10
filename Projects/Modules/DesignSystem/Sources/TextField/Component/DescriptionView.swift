@@ -6,6 +6,8 @@ public class DescriptionView: UIView {
     public var descriptionType: DescriptionType = .error(description: "") {
         didSet {
             switch descriptionType {
+            case .none:
+                self.isHidden = true
             case let .error(description):
                 self.descriptionLabel.setJobisText(description, font: .description)
                 self.imageView.image = .textFieldIcon(.erorr)

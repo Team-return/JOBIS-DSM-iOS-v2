@@ -35,13 +35,16 @@ public class JobisTextField: UIView {
     public func setTextField(
         title: String,
         placeholder: String,
-        descriptionType: DescriptionType = .error(description: ""),
-        textFieldRightType: TextFieldType = .none
+        descriptionType: DescriptionType = .none,
+        textFieldType: TextFieldType = .none
     ) {
         self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
         self.descriptionView.descriptionType = descriptionType
-        self.textFieldRightView.textFieldRightType = textFieldRightType
+        self.textFieldRightView.textFieldRightType = textFieldType
         self.textField.placeholder = placeholder
+        if textFieldType == .secure {
+            self.textField.isSecureTextEntry = true
+        }
         self.textFieldRightView.secureButton.rx.tap
             .subscribe(onNext: {
                 self.textField.isSecureTextEntry.toggle()
