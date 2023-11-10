@@ -19,6 +19,5 @@ public class SignupViewController: BaseViewController<SignupViewModel> {
         }
     }
     public override func attribute() {
-        self.view.backgroundColor = .GrayScale.gray10
     }
 }
