@@ -1,8 +1,9 @@
 import UIKit
+import DesignSystem
 
 public class BaseNavigationController: UINavigationController {
     private var backButtonImage: UIImage? {
-        return UIImage(systemName: "arrow.left")!
+        return UIImage(systemName: "chevron.left")!
             .withAlignmentRectInsets(UIEdgeInsets(top: 0.0, left: -12.0, bottom: 0.0, right: 0.0))
     }
 
@@ -25,7 +26,7 @@ public class BaseNavigationController: UINavigationController {
     func setNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         let appearance2 = UINavigationBarAppearance()
-        navigationBar.tintColor = .black
+        navigationBar.tintColor = .GrayScale.gray60
         appearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
         appearance2.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
         appearance.backgroundColor = .white

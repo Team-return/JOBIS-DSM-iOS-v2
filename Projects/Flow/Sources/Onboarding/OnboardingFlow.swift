@@ -14,7 +14,7 @@ public class OnboardingFlow: Flow {
         self.container = container
     }
 
-    private let rootViewController = UINavigationController()
+    private let rootViewController = BaseNavigationController()
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? OnboardingStep else { return .none }
