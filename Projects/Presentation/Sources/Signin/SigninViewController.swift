@@ -19,6 +19,5 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
         }
     }
     public override func attribute() {
-        self.view.backgroundColor = .GrayScale.gray10
     }
 }

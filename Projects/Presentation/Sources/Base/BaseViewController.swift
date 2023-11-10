@@ -1,10 +1,12 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import DesignSystem
 
 open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
     public let viewModel: ViewModel
     public var disposeBag = DisposeBag()
+    public let viewAppear = PublishRelay<Void>()
     let bounds = UIScreen.main.bounds
 
     public init(_ viewModel: ViewModel) {
@@ -14,10 +16,15 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .GrayScale.gray10
         addView()
         layout()
         attribute()
         bind()
+    }
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.viewAppear.accept(())
     }
 
     open func addView() { }

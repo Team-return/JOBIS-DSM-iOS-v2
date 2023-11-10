@@ -80,11 +80,10 @@ public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
             navigateToSigninDidTap: navigateToSigninButton.rx.tap.asSignal(),
             navigateToSignupDidTap: navigateToSignupButton.rx.tap.asSignal()
         )
-        let _ = viewModel.transform(input)
+        _ = viewModel.transform(input)
     }
 
     public override func attribute() {
-        self.view.backgroundColor = .GrayScale.gray10
         animationView.play { [self] _ in
             UIView.transition(
                 with: navigateButtonStackView,
