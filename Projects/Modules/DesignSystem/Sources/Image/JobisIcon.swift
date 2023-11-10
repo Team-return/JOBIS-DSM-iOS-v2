@@ -1,14 +1,15 @@
 import UIKit
 import Foundation
 
-extension UIImage {
+public extension UIImage {
     static func jobisIcon(_ icon: JobisIcon) -> UIImage {
         icon.uiImage()
     }
 }
 
-enum JobisIcon {
+public enum JobisIcon {
     case arrowRight
+    case door
 
     func uiImage() -> UIImage {
         let dsIcon = DesignSystemAsset.Icons.self
@@ -16,6 +17,8 @@ enum JobisIcon {
         switch self {
         case .arrowRight:
             return dsIcon.arrowRight.image
+        case .door:
+            return dsIcon.door.image
         }
     }
 }
