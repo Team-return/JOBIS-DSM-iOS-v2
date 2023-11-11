@@ -14,7 +14,7 @@ public class MyPageFlow: Flow {
         self.container = container
     }
 
-    private let rootViewController = UINavigationController()
+    private let rootViewController = BaseNavigationController()
 
     public func navigate(to step: Step) -> RxFlow.FlowContributors {
         guard let step = step as? MyPageStep else { return .none }
