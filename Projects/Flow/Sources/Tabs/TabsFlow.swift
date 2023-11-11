@@ -16,22 +16,7 @@ public class TabsFlow: Flow {
         self.container = container
     }
 
-    private let rootViewController = UITabBarController().then {
-        $0.tabBar.tintColor = .GrayScale.gray90
-        $0.tabBar.unselectedItemTintColor = .GrayScale.gray50
-        $0.tabBar.backgroundColor = .GrayScale.gray10
-
-        let stroke = UIView().then {
-            $0.backgroundColor = .GrayScale.gray30
-        }
-
-        $0.tabBar.addSubview(stroke)
-        stroke.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(-1)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
-        }
-    }
+    private let rootViewController = BaseTabBarController()
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? TabsStep else { return .none }
@@ -58,39 +43,10 @@ private extension TabsFlow {
             myPageFlow,
             when: .created
         ) { [weak self] home, recruitment, bookmark, mypage in
-            let homeTabBarItem = UITabBarItem(
-                title: "홈",
-                image: DesignSystemAsset.Icons.homeTab.image,
-                tag: 0
-            ).then {
-                $0.setTitleTextAttributes([.font: UIFont.jobisFont(.cation)], for: .normal)
-            }
-            let recruitmentTabBarItem = UITabBarItem(
-                title: "모집의뢰서",
-                image: DesignSystemAsset.Icons.recruitmentTab.image,
-                tag: 1
-            ).then {
-                $0.setTitleTextAttributes([.font: UIFont.jobisFont(.cation)], for: .normal)
-            }
-            let bookmarkTabBarItem = UITabBarItem(
-                title: "북마크",
-                image: DesignSystemAsset.Icons.bookmarkTab.image,
-                tag: 2
-            ).then {
-                $0.setTitleTextAttributes([.font: UIFont.jobisFont(.cation)], for: .normal)
-            }
-            let myPageTabBarItem = UITabBarItem(
-                title: "마이페이지",
-                image: DesignSystemAsset.Icons.mypageTab.image,
-                tag: 3
-            ).then {
-                $0.setTitleTextAttributes([.font: UIFont.jobisFont(.cation)], for: .normal)
-            }
-
-            home.tabBarItem = homeTabBarItem
-            recruitment.tabBarItem = recruitmentTabBarItem
-            bookmark.tabBarItem = bookmarkTabBarItem
-            mypage.tabBarItem = myPageTabBarItem
+            home.tabBarItem = JobisTabBarItem(.home)
+            recruitment.tabBarItem = JobisTabBarItem(.recruitment)
+            bookmark.tabBarItem = JobisTabBarItem(.bookmark)
+            mypage.tabBarItem = JobisTabBarItem(.myPage)
             self?.rootViewController.setViewControllers([
                 home, recruitment, bookmark, mypage
             ], animated: false)
