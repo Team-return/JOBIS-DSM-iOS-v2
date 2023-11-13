@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class MainViewController: BaseViewController<MainViewModel> {
+public class HomeViewController: BaseViewController<HomeViewModel> {
     let loading = UIActivityIndicatorView().then {
         $0.style = .medium
     }
@@ -51,7 +51,7 @@ public class MainViewController: BaseViewController<MainViewModel> {
     }
 
     public override func bind() {
-        let input = MainViewModel.Input(
+        let input = HomeViewModel.Input(
             signinButtonDidTap: signinButton.rx.tap.asSignal(),
             reissueButtonDidTap: tokenButton.rx.tap.asSignal()
         )
