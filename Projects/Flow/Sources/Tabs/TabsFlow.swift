@@ -28,7 +28,6 @@ public class TabsFlow: Flow {
     }
 }
 
-// swiftlint: disable function_body_length
 private extension TabsFlow {
     private func navigateToTabs() -> FlowContributors {
         let homeFlow = HomeFlow(container: container)
@@ -72,4 +71,3 @@ private extension TabsFlow {
         ])
     }
 }
-// swiftlint: enable function_body_length
