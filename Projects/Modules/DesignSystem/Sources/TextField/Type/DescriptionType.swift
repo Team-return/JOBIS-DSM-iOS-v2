@@ -1,8 +1,18 @@
-import Foundation
+import UIKit
 
 public enum DescriptionType {
     case error(description: String)
     case info(description: String)
     case success(description: String)
-    case none
+
+    func toIcon() -> UIImage {
+        switch self {
+        case .error:
+            return .textFieldIcon(.error)
+        case .info:
+            return .textFieldIcon(.info)
+        case .success:
+            return .textFieldIcon(.success)
+        }
+    }
 }
