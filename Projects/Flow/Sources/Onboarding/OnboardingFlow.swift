@@ -7,10 +7,12 @@ import Core
 public class OnboardingFlow: Flow {
     public var container: Container
 
+    public var window: UIWindow
     public var root: Presentable {
         return rootViewController
     }
-    public init(container: Container) {
+    public init(window: UIWindow, container: Container) {
+        self.window = window
         self.container = container
     }
 
@@ -34,11 +36,13 @@ public class OnboardingFlow: Flow {
 
 private extension OnboardingFlow {
     func navigateToSignin() -> FlowContributors {
-        let signinViewController = container.resolve(SigninViewController.self)!
-        self.rootViewController.pushViewController(signinViewController, animated: true)
+        let signinFlow = SigninFlow(window: window, container: container)
+        Flows.use(signinFlow, when: .created) { root in
+            self.rootViewController.pushViewController(root, animated: true)
+        }
         return .one(flowContributor: .contribute(
-            withNextPresentable: signinViewController,
-            withNextStepper: signinViewController.viewModel
+            withNextPresentable: signinFlow,
+            withNextStepper: OneStepper(withSingleStep: SigninStep.signinIsRequired)
         ))
     }
 
