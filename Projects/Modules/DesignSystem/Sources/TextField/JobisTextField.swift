@@ -7,13 +7,6 @@ import RxCocoa
 public class JobisTextField: UIView {
     private let disposeBag = DisposeBag()
 
-    public var isDescription: Bool = false {
-        didSet {
-            UIView.animate(withDuration: 0.3) { [self] in
-                descriptionView.isHidden = !isDescription
-            }
-        }
-    }
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
@@ -32,10 +25,19 @@ public class JobisTextField: UIView {
         super.init(frame: .zero)
     }
 
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override public func layoutSubviews() {
+        addView()
+        setLayout()
+    }
+
     public func setTextField(
         title: String,
         placeholder: String,
-        descriptionType: DescriptionType = .none,
+        descriptionType: DescriptionType? = nil,
         textFieldType: TextFieldType = .none
     ) {
         self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
@@ -54,16 +56,10 @@ public class JobisTextField: UIView {
                     self.textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
                 }
             }).disposed(by: disposeBag)
+        self.textField.rx.text
+            .subscribe(onNext: { _ in self.removeDescription() }).disposed(by: disposeBag)
     }
 
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override public func layoutSubviews() {
-        addView()
-        setLayout()
-    }
     private func addView() {
         [
             titleLabel,
@@ -75,6 +71,7 @@ public class JobisTextField: UIView {
         self.stackView.setCustomSpacing(8, after: textField)
         self.textField.addSubview(textFieldRightView)
     }
+
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.height.equalTo(20)
@@ -92,5 +89,28 @@ public class JobisTextField: UIView {
         }
         textFieldRightView.setLayout()
         textField.addRightPadding(size: textFieldRightView.frame.width + 20)
+    }
+}
+
+extension JobisTextField {
+    private func withAnimation(action: @escaping () -> Void) {
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: .transitionCrossDissolve,
+            animations: action
+        )
+    }
+
+    public func setDescription(_ type: DescriptionType) {
+        withAnimation { [self] in
+            descriptionView.descriptionType = type
+        }
+    }
+
+    private func removeDescription() {
+        withAnimation { [self] in
+            descriptionView.descriptionType = nil
+        }
     }
 }
