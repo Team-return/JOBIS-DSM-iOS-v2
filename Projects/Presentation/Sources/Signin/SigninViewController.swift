@@ -31,7 +31,7 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
             textFieldType: .secure
         )
     }
-    public let loginButton = JobisButton(style: .main).then {
+    public let signinButton = JobisButton(style: .main).then {
         $0.setText("로그인")
     }
     public override func addView() {
@@ -41,7 +41,7 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
             titleImageView,
             emailTextField,
             passwordTextField,
-            loginButton
+            signinButton
         ].forEach { self.view.addSubview($0) }
     }
     public override func layout() {
@@ -68,10 +68,30 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
             $0.top.equalTo(emailTextField.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
-        loginButton.snp.makeConstraints {
+        signinButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(46)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+    public override func bind() {
+        let input = SigninViewModel.Input(
+            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
+            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
+            signinButtonDidTap: signinButton.rx.tap.asSignal()
+        )
+        let output = viewModel.transform(input)
+        output.emailErrorDescription
+            .bind { [self] description in
+                print("email \(description)")
+                emailTextField.setDescription(.error(description: description))
+            }
+            .disposed(by: disposeBag)
+        output.passwordErrorDescription
+            .bind { [self] description in
+                print("password \(description)")
+                passwordTextField.setDescription(.error(description: description))
+            }
+            .disposed(by: disposeBag)
     }
     public override func attribute() {
     }
