@@ -7,7 +7,7 @@ enum UsersAPI {
 }
 
 extension UsersAPI: JobisAPI {
-    typealias ErrorType = JobisError
+    typealias ErrorType = UsersError
 
     var domain: JobisDomain {
         .users
@@ -44,7 +44,11 @@ extension UsersAPI: JobisAPI {
     var errorMap: [Int: ErrorType]? {
         switch self {
         case .signin:
-            return [:]
+            return [
+                401: .notFoundPassword,
+                404: .notFoundEmail,
+                500: .internalServerError
+            ]
         }
     }
 }

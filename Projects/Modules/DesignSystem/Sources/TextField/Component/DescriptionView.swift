@@ -3,22 +3,23 @@ import SnapKit
 import Then
 
 public class DescriptionView: UIView {
-    public var descriptionType: DescriptionType = .error(description: "") {
+    public var descriptionType: DescriptionType? {
         didSet {
+            self.isHidden = false
             switch descriptionType {
+            case .none:
+                self.isHidden = true
+
             case let .error(description):
-                self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .textFieldIcon(.erorr)
-                self.descriptionLabel.textColor = .Sub.red
+                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.red)
+
             case let .info(description):
-                self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .textFieldIcon(.info)
-                self.descriptionLabel.textColor = .Sub.blue
+                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.blue)
+
             case let .success(description):
-                self.descriptionLabel.setJobisText(description, font: .description)
-                self.imageView.image = .textFieldIcon(.success)
-                self.descriptionLabel.textColor = .Sub.green
+                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.green)
             }
+            self.imageView.image = descriptionType?.toIcon()
         }
     }
     let imageView = UIImageView()

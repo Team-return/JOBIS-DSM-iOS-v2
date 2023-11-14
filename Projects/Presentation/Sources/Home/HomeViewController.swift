@@ -11,7 +11,7 @@ public class HomeViewController: BaseViewController<HomeViewModel> {
         $0.style = .medium
     }
     let label = UILabel().then {
-        $0.setJobisText("개인정보를 입력해주세요", font: .pageTitle)
+        $0.setJobisText("개인정보를 입력해주세요", font: .pageTitle, color: .black)
     }
 
     let signinButton = JobisButton(style: .main).then {
