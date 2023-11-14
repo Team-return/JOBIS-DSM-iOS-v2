@@ -55,10 +55,6 @@ private extension RemoteBaseDataSource {
                 guard let code = (error as? MoyaError)?.response?.statusCode else {
                     return .error(error)
                 }
-                if code == 401 && API.self != AuthAPI.self {
-                    return self.reissueToken()
-                        .andThen(.error(TokenError.expired))
-                }
                 return .error(
                     api.errorMap?[code] ??
                     JobisError.error(
