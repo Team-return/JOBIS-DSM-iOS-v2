@@ -8,7 +8,7 @@ extension UIImage {
 }
 
 enum TextFieldIcon {
-    case erorr
+    case error
     case info
     case success
     case eyeOn
@@ -18,7 +18,7 @@ enum TextFieldIcon {
         let dsIcon = DesignSystemAsset.Icons.self
 
         switch self {
-        case .erorr:
+        case .error:
             return dsIcon.error.image
         case .info:
             return dsIcon.info.image
