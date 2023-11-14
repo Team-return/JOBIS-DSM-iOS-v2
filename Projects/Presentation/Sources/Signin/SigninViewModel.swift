@@ -34,10 +34,10 @@ public final class SigninViewModel: BaseViewModel, Stepper {
             .withLatestFrom(info)
             .filter { email, password in
                 if email.isEmpty {
-                    emailErrorDescription.accept("이메일은 공백일 수 없습니다.")
+                    emailErrorDescription.accept("빈칸을 채워주세요")
                     return false
                 } else if password.isEmpty {
-                    passwordErrorDescription.accept("비밀번호는 공백일 수 없습니다.")
+                    passwordErrorDescription.accept("빈칸을 채워주세요")
                     return false
                 }
                 return true
@@ -54,9 +54,9 @@ public final class SigninViewModel: BaseViewModel, Stepper {
                     guard let error = error as? UsersError else { return .empty() }
                     switch error {
                     case .notFoundPassword:
-                        passwordErrorDescription.accept("비밀번호가 올바르지 않습니다.")
+                        passwordErrorDescription.accept("비밀번호가 옳지 않아요")
                     case .notFoundEmail:
-                        emailErrorDescription.accept("이메일이 찾을 수 없습니다.")
+                        emailErrorDescription.accept("아이디를 찾지 못했어요")
                     case .internalServerError:
                         emailErrorDescription.accept(error.localizedDescription)
                     }
