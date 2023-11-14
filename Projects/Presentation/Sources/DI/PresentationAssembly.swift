@@ -53,7 +53,7 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(SigninViewModel.self) { resolver in
-            SigninViewModel()
+            SigninViewModel(signinUseCase: resolver.resolve(SigninUseCase.self)!)
         }
         container.register(SigninViewController.self) { resolver in
             SigninViewController(resolver.resolve(SigninViewModel.self)!)

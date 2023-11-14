@@ -22,7 +22,7 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.navigateToSignupDidTap.asObservable()
-            .map { _ in OnboardingStep.signupIsRequired}
+            .map { _ in OnboardingStep.signupIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output()

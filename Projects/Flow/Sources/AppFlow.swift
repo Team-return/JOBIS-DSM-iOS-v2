@@ -26,12 +26,25 @@ public class AppFlow: Flow {
             return self.navigationToTabs()
         }
     }
+}
 
-    private func navigationToOnboarding() -> FlowContributors {
-        return .none
+extension AppFlow {
+    func navigationToOnboarding() -> FlowContributors {
+        let onboardingFlow = OnboardingFlow(window: window, container: container)
+        Flows.use(onboardingFlow, when: .created) { (root) in
+            self.window.rootViewController = root
+        }
+        return .one(
+            flowContributor: .contribute(
+                withNextPresentable: onboardingFlow,
+                withNextStepper: OneStepper(
+                    withSingleStep: OnboardingStep.onboardingIsRequired
+                )
+            )
+        )
     }
 
-    private func navigationToTabs() -> FlowContributors {
+    func navigationToTabs() -> FlowContributors {
         let tabsFlow = TabsFlow(container: container)
         Flows.use(tabsFlow, when: .created) { (root) in
             self.window.rootViewController = root
