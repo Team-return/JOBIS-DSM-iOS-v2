@@ -12,6 +12,6 @@ public class AppStepper: Stepper {
     public init() {}
 
     public var initialStep: Step {
-        return AppStep.tabsIsRequired
+        return AppStep.onboardingIsRequired
     }
 }
