@@ -10,7 +10,7 @@ class JobisToast: UIView {
 
     init(text: String) {
         super.init(frame: .zero)
-        textLabel.setJobisText(text, font: .subHeadLine, color: .GrayScale.gray90.withAlphaComponent(0.4))
+        textLabel.setJobisText(text, font: .subHeadLine, color: .GrayScale.gray90)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
