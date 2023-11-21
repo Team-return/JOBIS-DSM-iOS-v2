@@ -23,6 +23,10 @@ public class HomeViewController: BaseViewController<HomeViewModel> {
         $0.isEnabled = false
     }
 
+    let tokenDeleteButton = JobisButton(style: .sub).then {
+        $0.setText("토큰 삭제")
+    }
+
     public override func layout() {
         signinButton.snp.makeConstraints {
             $0.bottom.equalTo(tokenButton.snp.top).inset(-20)
@@ -31,6 +35,10 @@ public class HomeViewController: BaseViewController<HomeViewModel> {
         tokenButton.snp.makeConstraints {
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
+        }
+        tokenDeleteButton.snp.makeConstraints {
+            $0.bottom.equalTo(signinButton.snp.top).offset(-20)
+            $0.leading.trailing.equalToSuperview()
         }
         label.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -46,11 +54,17 @@ public class HomeViewController: BaseViewController<HomeViewModel> {
             signinButton,
             tokenButton,
             label,
-            loading
+            loading,
+            tokenDeleteButton
         ].forEach { self.view.addSubview($0) }
     }
 
     public override func bind() {
+        tokenDeleteButton.rx.tap
+            .subscribe(onNext: {
+                KeychainImpl().delete(type: .refreshToken)
+                print(KeychainImpl().load(type: .refreshToken))
+            }).disposed(by: disposeBag)
         let input = HomeViewModel.Input(
             signinButtonDidTap: signinButton.rx.tap.asSignal(),
             reissueButtonDidTap: tokenButton.rx.tap.asSignal()
