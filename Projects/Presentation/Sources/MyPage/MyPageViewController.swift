@@ -30,8 +30,6 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
             title: "버그제보",
             items: [
                 ("버그 제보하기", .jobisIcon(.bugReport)),
-                ("버그 제보함", .jobisIcon(.bugBox)),
-                ("버그 제보하기", .jobisIcon(.bugReport)),
                 ("버그 제보함", .jobisIcon(.bugBox))
             ]
         )
