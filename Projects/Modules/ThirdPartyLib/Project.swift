@@ -14,6 +14,8 @@ let project = Project.makeModule(
         .SPM.Swinject,
         .SPM.Moya,
         .SPM.RxMoya,
-        .SPM.Lottie
+        .SPM.Lottie,
+        .SPM.kingfisher,
+        .SPM.KeychainSwift
     ], sources: []
 )
