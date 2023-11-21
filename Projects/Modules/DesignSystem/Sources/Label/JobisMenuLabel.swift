@@ -1,8 +1,8 @@
 import UIKit
 import SnapKit
 
-public class JobisLabel: UIView {
-    let label = UILabel()
+public class JobisMenuLabel: UIView {
+    let title = UILabel()
     public init() {
         super.init(frame: .zero)
     }
@@ -11,10 +11,10 @@ public class JobisLabel: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func setLabel(text: String) {
-        label.setJobisText(text, font: .description, color: .GrayScale.gray60)
-        self.addSubview(label)
-        label.snp.makeConstraints {
+    public func setMenuLabel(text: String) {
+        title.setJobisText(text, font: .description, color: .GrayScale.gray60)
+        self.addSubview(title)
+        title.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(8)
             $0.leading.equalToSuperview().inset(24)
         }

@@ -15,24 +15,20 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let proFileView = ProfileView()
     let reviewNaviagteView = ReviewNavigateView()
     let accountSectionView = SectionView().then {
-        $0.setSection(
-            title: "계정",
-            items: [
-                ("관심분야 선택", .jobisIcon(.code)),
-                ("비밀번호 변경", .jobisIcon(.changePassword)),
-                ("로그아웃", .jobisIcon(.logout)),
-                ("회원 탈퇴", .jobisIcon(.withdrawal))
-            ]
-        )
+        $0.titleLabel.setMenuLabel(text: "계정")
+        $0.items = [
+            ("관심분야 선택", .jobisIcon(.code)),
+            ("비밀번호 변경", .jobisIcon(.changePassword)),
+            ("로그아웃", .jobisIcon(.logout)),
+            ("회원 탈퇴", .jobisIcon(.withdrawal))
+        ]
     }
     let bugSectionView = SectionView().then {
-        $0.setSection(
-            title: "버그제보",
-            items: [
-                ("버그 제보하기", .jobisIcon(.bugReport)),
-                ("버그 제보함", .jobisIcon(.bugBox))
-            ]
-        )
+        $0.titleLabel.setMenuLabel(text: "버그제보")
+        $0.items = [
+            ("버그 제보하기", .jobisIcon(.bugReport)),
+            ("버그 제보함", .jobisIcon(.bugBox))
+        ]
     }
     public override func viewWillAppear(_ animated: Bool) {
         viewAppear.accept(())
