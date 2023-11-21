@@ -30,6 +30,14 @@ let dependencies = Dependencies(
         .remote(
             url: "https://github.com/airbnb/lottie-ios",
             requirement: .upToNextMajor(from: "4.3.3")
+        ),
+        .remote(
+            url: "https://github.com/onevcat/Kingfisher",
+            requirement: .upToNextMajor(from: "7.0.0")
+        ),
+        .remote(
+            url: "https://github.com/evgenyneu/keychain-swift",
+            requirement: .upToNextMajor(from: "20.0.0")
         )
     ]),
     platforms: [.iOS]
