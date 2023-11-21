@@ -30,6 +30,9 @@ public class OnboardingFlow: Flow {
 
         case .signupIsRequired:
             return navigateToSignup()
+
+        case .tabsIsRequired:
+            return .end(forwardToParentFlowWithStep: AppStep.tabsIsRequired)
         }
     }
 }

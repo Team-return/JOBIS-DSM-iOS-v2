@@ -47,7 +47,9 @@ extension AppFlow {
     func navigationToTabs() -> FlowContributors {
         let tabsFlow = TabsFlow(container: container)
         Flows.use(tabsFlow, when: .created) { (root) in
-            self.window.rootViewController = root
+            UIView.transition(with: self.window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+                self.window.rootViewController = root
+            })
         }
         return .one(
             flowContributor: .contribute(

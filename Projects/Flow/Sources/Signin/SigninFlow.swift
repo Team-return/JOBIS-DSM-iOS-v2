@@ -26,8 +26,7 @@ public class SigninFlow: Flow {
         case .signinIsRequired:
             return navigateToSignin()
         case .tabsIsRequired:
-            print("navigate to tabs")
-            return navigationToTabs()
+            return .end(forwardToParentFlowWithStep: OnboardingStep.tabsIsRequired)
         }
     }
 }
@@ -38,20 +37,5 @@ private extension SigninFlow {
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
         ))
-    }
-
-    func navigationToTabs() -> FlowContributors {
-        let tabsFlow = TabsFlow(container: container)
-        Flows.use(tabsFlow, when: .created) { (root) in
-            self.window.rootViewController = root
-        }
-        return .one(
-            flowContributor: .contribute(
-                withNextPresentable: tabsFlow,
-                withNextStepper: OneStepper(
-                    withSingleStep: TabsStep.tabsIsRequired
-                )
-            )
-        )
     }
 }
