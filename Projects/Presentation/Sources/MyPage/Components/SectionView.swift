@@ -3,7 +3,7 @@ import DesignSystem
 
 class SectionView: UIView {
     var items: [(String, UIImage)] = []
-    let titleLabel = JobisLabel()
+    let titleLabel = JobisMenuLabel()
 
     let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
@@ -15,10 +15,8 @@ class SectionView: UIView {
         super.init(frame: .zero)
         self.sectionTableView.dataSource = self
     }
-    func setSection(title: String, items: [(String, UIImage)]) {
-        self.titleLabel.setLabel(text: title)
-        self.items = items
-        self.sectionTableView.reloadData()
+
+    override func layoutSubviews() {
         [
             titleLabel,
             sectionTableView
@@ -34,7 +32,6 @@ class SectionView: UIView {
             $0.height.equalTo(52 * items.count)
             $0.bottom.equalToSuperview().inset(12)
         }
-
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
