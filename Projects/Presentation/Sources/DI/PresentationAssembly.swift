@@ -41,7 +41,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(OnboardingViewModel.self) { resolver in
-            OnboardingViewModel()
+            OnboardingViewModel(
+                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
+            )
         }
         container.register(OnboardingViewController.self) { resolver in
             OnboardingViewController(resolver.resolve(OnboardingViewModel.self)!)
