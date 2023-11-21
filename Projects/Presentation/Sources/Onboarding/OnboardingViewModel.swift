@@ -40,7 +40,6 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
                 reissueTokenUaseCase.execute()
                     .asCompletable()
                     .catch { _ in
-                        print("Sdf")
                         animation.accept(())
                         return .never()
                     }
