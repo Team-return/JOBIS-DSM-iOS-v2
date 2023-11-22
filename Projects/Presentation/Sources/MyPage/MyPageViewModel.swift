@@ -9,9 +9,14 @@ public class MyPageViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
 
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
 
-    init(fetchStudentInfoUseCase: FetchStudentInfoUseCase) {
+    init(
+        fetchStudentInfoUseCase: FetchStudentInfoUseCase,
+        fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
+    ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
+        self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
     }
 
     private let disposeBag = DisposeBag()
@@ -22,14 +27,21 @@ public class MyPageViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
+        let writableReviewList: BehaviorRelay<[WritableReviewCompanyEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
+        let writableReviewList = BehaviorRelay<[WritableReviewCompanyEntity]>(value: [])
         input.viewAppear.asObservable()
             .flatMap { self.fetchStudentInfoUseCase.execute() }
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
-        return Output(studentInfo: studentInfo)
+        input.viewAppear.asObservable()
+            .flatMap { self.fetchWritableReviewListUseCase.execute() }
+            .bind(to: writableReviewList)
+            .disposed(by: disposeBag)
+        return Output(studentInfo: studentInfo,
+                      writableReviewList: writableReviewList)
     }
 }
