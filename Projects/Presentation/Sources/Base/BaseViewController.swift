@@ -17,14 +17,18 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .GrayScale.gray10
-        addView()
-        layout()
+
         attribute()
         bind()
     }
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewAppear.accept(())
+    }
+    
+    override open func viewWillLayoutSubviews() {
+        addView()
+        layout()
     }
 
     open func addView() { }

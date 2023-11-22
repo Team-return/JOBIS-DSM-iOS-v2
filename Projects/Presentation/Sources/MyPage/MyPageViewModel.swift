@@ -8,15 +8,45 @@ import Domain
 public class MyPageViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
 
+    private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
+
+    init(
+        fetchStudentInfoUseCase: FetchStudentInfoUseCase,
+        fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
+    ) {
+        self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
+        self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
+    }
+
     private let disposeBag = DisposeBag()
 
     public struct Input {
+        let viewAppear: PublishRelay<Void>
+        let reviewNavigate: PublishRelay<Int>
     }
 
     public struct Output {
+        let studentInfo: PublishRelay<StudentInfoEntity>
+        let writableReviewList: BehaviorRelay<[WritableReviewCompanyEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
-        return Output()
+        let studentInfo = PublishRelay<StudentInfoEntity>()
+        let writableReviewList = BehaviorRelay<[WritableReviewCompanyEntity]>(value: [])
+        input.viewAppear.asObservable()
+            .flatMap { self.fetchStudentInfoUseCase.execute() }
+            .bind(to: studentInfo)
+            .disposed(by: disposeBag)
+        input.viewAppear.asObservable()
+            .flatMap { self.fetchWritableReviewListUseCase.execute() }
+            .bind(to: writableReviewList)
+            .disposed(by: disposeBag)
+        input.reviewNavigate.asObservable()
+            .subscribe(onNext: {
+                print($0)
+            }).disposed(by: disposeBag)
+        return Output(studentInfo: studentInfo,
+                      writableReviewList: writableReviewList)
     }
 }

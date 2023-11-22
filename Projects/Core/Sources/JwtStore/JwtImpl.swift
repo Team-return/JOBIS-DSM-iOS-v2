@@ -1,48 +1,19 @@
 import Foundation
-
+import KeychainSwift
 public struct KeychainImpl: Keychain {
+    private let keychain = KeychainSwift()
+
     public init() {}
 
-    private let bundleIdentifier: String = Bundle.main.bundleIdentifier ?? ""
-    private let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as? String ?? ""
-    private var accessGroup: String {
-        "\(appIdentifierPrefix)com.team.jobis.JOBIS-DSM-iOS-v2.keychainGroup"
-    }
-
     public func save(type: KeychainType, value: String) {
-        let query: NSDictionary = [
-            kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: type.rawValue,
-            kSecValueData: value.data(using: .utf8, allowLossyConversion: false) ?? .init(),
-            kSecAttrAccessGroup: accessGroup
-        ]
-        SecItemDelete(query)
-        SecItemAdd(query, nil)
+        keychain.set(value, forKey: type.rawValue)
     }
 
     public func load(type: KeychainType) -> String {
-        let query: NSDictionary = [
-            kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: type.rawValue,
-            kSecReturnData: kCFBooleanTrue!,
-            kSecMatchLimit: kSecMatchLimitOne,
-            kSecAttrAccessGroup: accessGroup
-        ]
-        var dataTypeRef: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-        if status == errSecSuccess {
-            guard let data = dataTypeRef as? Data else { return "" }
-            return String(data: data, encoding: .utf8) ?? ""
-        }
-        return ""
+        return keychain.get(type.rawValue) ?? ""
     }
 
     public func delete(type: KeychainType) {
-        let query: NSDictionary = [
-            kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: type.rawValue,
-            kSecAttrAccessGroup: accessGroup
-        ]
-        SecItemDelete(query)
+         keychain.delete(type.rawValue)
     }
 }
