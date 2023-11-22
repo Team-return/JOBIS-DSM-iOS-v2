@@ -13,7 +13,7 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
     }
     private let contentView = UIView()
     private let proFileView = ProfileView()
-    let reviewNaviagteView = ReviewNavigateView()
+    let reviewNavigateStackView = ReviewNavigateStackView()
     let accountSectionView = SectionView().then {
         $0.titleLabel.setMenuLabel(text: "계정")
         $0.items = [
@@ -30,15 +30,15 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
             ("버그 제보함", .jobisIcon(.bugBox))
         ]
     }
-    public override func viewWillAppear(_ animated: Bool) {
-        viewAppear.accept(())
-    }
 
     public override func attribute() {
         self.setLargeTitle(title: "마이페이지")
     }
     public override func bind() {
-        let input = MyPageViewModel.Input(viewAppear: self.viewAppear)
+        let input = MyPageViewModel.Input(
+            viewAppear: self.viewAppear,
+            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap
+        )
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
             .bind(onNext: { [self] in
@@ -47,13 +47,11 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
                 proFileView.profileImageView
                     .kf.setImage(with: URL(string: "https://jobis-store.s3.ap-northeast-2.amazonaws.com/\($0.profileImageUrl)"))
             }).disposed(by: disposeBag)
+
         output.writableReviewList
-            .bind(to: reviewNaviagteView.reviewNavigateTableView.rx.items(
-                cellIdentifier: ReviewNavigateTableViewCell.identifier,
-                cellType: ReviewNavigateTableViewCell.self
-            )) { _, item, cell in
-                cell.titleLabel.setJobisText("\(item.name) 면접 후기를 적어주세요!", font: .description, color: .GrayScale.gray70)
-        }.disposed(by: disposeBag)
+            .bind(onNext: { [self] in
+                reviewNavigateStackView.setList(list: $0)
+            }).disposed(by: disposeBag)
     }
 
     public override func addView() {
@@ -61,7 +59,7 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
         self.scrollView.addSubview(contentView)
         [
             proFileView,
-            reviewNaviagteView,
+            reviewNavigateStackView,
             accountSectionView,
             bugSectionView
         ].forEach { self.contentView.addSubview($0) }
@@ -79,12 +77,12 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
-        reviewNaviagteView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
+        reviewNavigateStackView.snp.updateConstraints {
+            $0.leading.trailing.equalToSuperview().inset(24)
             $0.top.equalTo(proFileView.snp.bottom)
         }
         accountSectionView.snp.makeConstraints {
-            $0.top.equalTo(reviewNaviagteView.snp.bottom)
+            $0.top.equalTo(reviewNavigateStackView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         bugSectionView.snp.makeConstraints {
