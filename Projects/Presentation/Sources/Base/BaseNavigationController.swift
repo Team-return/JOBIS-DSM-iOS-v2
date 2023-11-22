@@ -35,6 +35,10 @@ public class BaseNavigationController: UINavigationController {
         appearance2.configureWithDefaultBackground()
         appearance.backButtonAppearance = backButtonAppearance
         appearance2.backButtonAppearance = backButtonAppearance
+        appearance.largeTitleTextAttributes = [
+            .font: UIFont.jobisFont(.pageTitle),
+            .foregroundColor: UIColor.GrayScale.gray90
+        ]
         navigationBar.standardAppearance = appearance2
         navigationController?.setNeedsStatusBarAppearanceUpdate()
         navigationBar.scrollEdgeAppearance = appearance
