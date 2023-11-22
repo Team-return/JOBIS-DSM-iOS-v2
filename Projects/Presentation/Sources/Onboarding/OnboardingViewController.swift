@@ -78,21 +78,25 @@ public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
     public override func bind() {
         let input = OnboardingViewModel.Input(
             navigateToSigninDidTap: navigateToSigninButton.rx.tap.asSignal(),
-            navigateToSignupDidTap: navigateToSignupButton.rx.tap.asSignal()
+            navigateToSignupDidTap: navigateToSignupButton.rx.tap.asSignal(),
+            viewAppear: viewAppear
         )
-        _ = viewModel.transform(input)
+        let output = viewModel.transform(input)
+        output.animation.asObservable()
+            .bind(onNext: { [self] in
+                animationView.play { [self] _ in
+                    UIView.transition(
+                        with: navigateButtonStackView,
+                        duration: 1,
+                        options: .curveEaseIn,
+                        animations: {
+                            self.setNavigateButton()
+                        }
+                    )
+                }
+            }).disposed(by: disposeBag)
     }
 
     public override func attribute() {
-        animationView.play { [self] _ in
-            UIView.transition(
-                with: navigateButtonStackView,
-                duration: 1,
-                options: .curveEaseIn,
-                animations: {
-                    self.setNavigateButton()
-                }
-            )
-        }
     }
 }
