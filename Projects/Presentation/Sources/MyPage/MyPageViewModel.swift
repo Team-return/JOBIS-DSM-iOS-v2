@@ -23,6 +23,7 @@ public class MyPageViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
+        let reviewNavigate: PublishRelay<Int>
     }
 
     public struct Output {
@@ -41,6 +42,10 @@ public class MyPageViewModel: BaseViewModel, Stepper {
             .flatMap { self.fetchWritableReviewListUseCase.execute() }
             .bind(to: writableReviewList)
             .disposed(by: disposeBag)
+        input.reviewNavigate.asObservable()
+            .subscribe(onNext: {
+                print($0)
+            }).disposed(by: disposeBag)
         return Output(studentInfo: studentInfo,
                       writableReviewList: writableReviewList)
     }
