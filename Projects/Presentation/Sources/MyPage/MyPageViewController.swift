@@ -47,6 +47,13 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
                 proFileView.profileImageView
                     .kf.setImage(with: URL(string: "https://jobis-store.s3.ap-northeast-2.amazonaws.com/\($0.profileImageUrl)"))
             }).disposed(by: disposeBag)
+        output.writableReviewList
+            .bind(to: reviewNaviagteView.reviewNavigateTableView.rx.items(
+                cellIdentifier: ReviewNavigateTableViewCell.identifier,
+                cellType: ReviewNavigateTableViewCell.self
+            )) { _, item, cell in
+                cell.titleLabel.setJobisText("\(item.name) 면접 후기를 적어주세요!", font: .description, color: .GrayScale.gray70)
+        }.disposed(by: disposeBag)
     }
 
     public override func addView() {
@@ -73,11 +80,11 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
         reviewNaviagteView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.top.equalTo(proFileView.snp.bottom).offset(12)
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(proFileView.snp.bottom)
         }
         accountSectionView.snp.makeConstraints {
-            $0.top.equalTo(reviewNaviagteView.snp.bottom).offset(12)
+            $0.top.equalTo(reviewNaviagteView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         bugSectionView.snp.makeConstraints {
