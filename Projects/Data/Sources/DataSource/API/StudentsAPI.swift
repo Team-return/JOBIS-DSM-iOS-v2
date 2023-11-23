@@ -5,7 +5,7 @@ import Domain
 enum StudentsAPI {
     case signup(SignupRequestQuery)
     case renewalPassword(RenewalPasswordRequestQuery)
-    case studentExists(gcn: Int, name: String)
+    case studentExists(gcn: String, name: String)
     case fetchStudentInfo
     case compareCurrentPasssword(password: String)
     case changePassword(ChangePasswordRequestQuery)
