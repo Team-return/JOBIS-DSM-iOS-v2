@@ -50,11 +50,15 @@ public final class PresentationAssembly: Assembly {
             OnboardingViewController(resolver.resolve(OnboardingViewModel.self)!)
         }
 
-        container.register(SignupViewModel.self) { resolver in
-            SignupViewModel()
+        container.register(InfoSettingViewModel.self) { resolver in
+            InfoSettingViewModel(
+                studentExistsUseCase: resolver.resolve(StudentExistsUseCase.self)!
+            )
         }
-        container.register(SignupViewController.self) { resolver in
-            SignupViewController(resolver.resolve(SignupViewModel.self)!)
+        container.register(InfoSettingViewController.self) { resolver in
+            InfoSettingViewController(resolver.resolve(InfoSettingViewModel.self)!)
+        }
+
         }
 
         container.register(SigninViewModel.self) { resolver in
