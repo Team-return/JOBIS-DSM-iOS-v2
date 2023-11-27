@@ -59,6 +59,21 @@ public final class PresentationAssembly: Assembly {
             InfoSettingViewController(resolver.resolve(InfoSettingViewModel.self)!)
         }
 
+        container.register(VerifyEmailViewModel.self) { resolver in
+            VerifyEmailViewModel(
+                sendAuthCodeUseCase: resolver.resolve(SendAuthCodeUseCase.self)!,
+                verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
+            )
+        }
+        container.register(VerifyEmailViewController.self) { resolver in
+            VerifyEmailViewController(resolver.resolve(VerifyEmailViewModel.self)!)
+        }
+
+        container.register(PasswordSettingViewModel.self) { _ in
+            PasswordSettingViewModel()
+        }
+        container.register(PasswordSettingViewController.self) { resolver in
+            PasswordSettingViewController(resolver.resolve(PasswordSettingViewModel.self)!)
         }
 
         container.register(SigninViewModel.self) { resolver in
