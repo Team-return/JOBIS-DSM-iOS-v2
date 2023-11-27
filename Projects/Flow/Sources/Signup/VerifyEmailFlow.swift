@@ -23,10 +23,10 @@ public class VerifyEmailFlow: Flow {
         switch step {
         case .verifyEmailIsRequired:
             return navigateToVerifyEmail()
-        case .passwordIsRequired:
-            return .none
+        case .passwordSettingIsRequired:
+            return navigateToPasswordSetting()
         case .tabsIsRequired:
-            return .end(forwardToParentFlowWithStep: OnboardingStep.tabsIsRequired)
+            return .end(forwardToParentFlowWithStep: InfoSettingStep.tabsIsRequired)
         }
     }
 }
@@ -36,6 +36,17 @@ private extension VerifyEmailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToPasswordSetting() -> FlowContributors {
+        let passwordSettingFlow = PasswordSettingFlow(container: container)
+        Flows.use(passwordSettingFlow, when: .created) { root in
+            self.rootViewController.navigationController?.pushViewController(root, animated: true)
+        }
+        return .one(flowContributor: .contribute(
+            withNextPresentable: passwordSettingFlow,
+            withNextStepper: OneStepper(withSingleStep: PasswordSettingStep.passwordSettingIsRequired)
         ))
     }
 }
