@@ -1,4 +1,5 @@
 import Core
+import DesignSystem
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -20,13 +21,13 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
         let nextButtonDidTap: Signal<Void>
     }
     public struct Output {
-        let nameErrorDescription: PublishRelay<String>
-        let gcnErrorDescription: PublishRelay<String>
+        let nameErrorDescription: PublishRelay<DescriptionType>
+        let gcnErrorDescription: PublishRelay<DescriptionType>
     }
 
     public func transform(_ input: Input) -> Output {
-        let nameErrorDescription = PublishRelay<String>()
-        let gcnErrorDescription = PublishRelay<String>()
+        let nameErrorDescription = PublishRelay<DescriptionType>()
+        let gcnErrorDescription = PublishRelay<DescriptionType>()
 
         let info = Driver.combineLatest(input.name, input.gcn)
         input.nextButtonDidTap
@@ -34,10 +35,10 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
             .withLatestFrom(info)
             .filter { name, gcn in
                 if name.isEmpty {
-                    nameErrorDescription.accept("빈칸을 채워주세요")
+                    nameErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
                     return false
                 } else if gcn.isEmpty {
-                    gcnErrorDescription.accept("빈칸을 채워주세요")
+                    gcnErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
                     return false
                 }
                 return true
@@ -48,8 +49,8 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                     name: name
                 )
                 .catch { _ in
-                    gcnErrorDescription.accept("잘못된 학번이에요.")
-                    nameErrorDescription.accept("잘못된 이름이에요.")
+                    gcnErrorDescription.accept(.error(description: "잘못된 학번이에요."))
+                    nameErrorDescription.accept(.error(description: "잘못된 이름이에요."))
                     return .never()
                 }
                 .andThen(Single.just(InfoSettingStep.verifyEmailIsRequired))

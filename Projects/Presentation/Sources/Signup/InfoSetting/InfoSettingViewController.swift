@@ -48,14 +48,12 @@ public class InfoSettingViewController: BaseViewController<InfoSettingViewModel>
         let output = viewModel.transform(input)
         output.nameErrorDescription
             .bind { [self] description in
-                print("name \(description)")
-                nameTextField.setDescription(.error(description: description))
+                nameTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.gcnErrorDescription
             .bind { [self] description in
-                print("gcn \(description)")
-                gcnTextField.setDescription(.error(description: description))
+                gcnTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
