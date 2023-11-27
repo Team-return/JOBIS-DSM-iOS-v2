@@ -83,13 +83,13 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
         output.emailErrorDescription
             .bind { [self] description in
                 print("email \(description)")
-                emailTextField.setDescription(.error(description: description))
+                emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.passwordErrorDescription
             .bind { [self] description in
                 print("password \(description)")
-                passwordTextField.setDescription(.error(description: description))
+                passwordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
