@@ -37,7 +37,7 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
         let output = viewModel.transform(input)
         output.isSuccessedToSendAuthCode
             .asObservable()
-            .subscribe(onNext: { isSuccessedToSendAuthCode in
+            .bind { isSuccessedToSendAuthCode in
                 if isSuccessedToSendAuthCode {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve, animations: {
                         self.authCodeTextField.startTimer()
@@ -45,21 +45,21 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
                         self.emailTextField.textFieldRightView.customButton.configuration?.title = "재전송"
                     })
                 }
-            })
+            }
             .disposed(by: disposeBag)
 
         output.emailErrorDescription
             .asObservable()
-            .subscribe(onNext: { description in
+            .bind { description in
                 self.authCodeTextField.setDescription(description)
-            })
+            }
             .disposed(by: disposeBag)
 
         output.authCodeErrorDescription
             .asObservable()
-            .subscribe(onNext: { description in
+            .bind { description in
                 self.authCodeTextField.setDescription(description)
-            })
+            }
             .disposed(by: disposeBag)
     }
     public override func addView() {
