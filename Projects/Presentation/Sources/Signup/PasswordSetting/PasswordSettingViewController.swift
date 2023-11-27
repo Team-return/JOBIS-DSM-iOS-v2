@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 
 public class PasswordSettingViewController: BaseViewController<PasswordSettingViewModel> {
-    private let passwordTextField = JobisTextField().then 
+    private let passwordTextField = JobisTextField().then {
         $0.setTextField(
             title: "비밀번호",
             placeholder: "계정의 비밀번호를 설정해주세요.",
