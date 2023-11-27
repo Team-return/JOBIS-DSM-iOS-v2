@@ -33,7 +33,6 @@ public class InfoSettingFlow: Flow {
 
 private extension InfoSettingFlow {
     func navigateToInfoSetting() -> FlowContributors {
-        print("here is info setting")
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
