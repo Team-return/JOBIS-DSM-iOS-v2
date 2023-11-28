@@ -24,7 +24,7 @@ public class PasswordSettingFlow: Flow {
         case .passwordSettingIsRequired:
             return navigateToPasswordSetting()
         case .privacyIsRequired:
-            return .none
+            return navigateToPrivacy()
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: VerifyEmailStep.tabsIsRequired)
         }
@@ -39,14 +39,14 @@ private extension PasswordSettingFlow {
         ))
     }
 
-//    func navigateToPrivacy() -> FlowContributors {
-//        let verifyEmailFlow = VerifyEmailFlow(container: container)
-//        Flows.use(verifyEmailFlow, when: .created) { root in
-//            self.rootViewController.navigationController?.pushViewController(root, animated: true)
-//        }
-//        return .one(flowContributor: .contribute(
-//            withNextPresentable: verifyEmailFlow,
-//            withNextStepper: OneStepper(withSingleStep: VerifyEmailStep.verifyEmailIsRequired)
-//        ))
-//    }
+    func navigateToPrivacy() -> FlowContributors {
+        let privacyFlow = PrivacyFlow(container: container)
+        Flows.use(privacyFlow, when: .created) { root in
+            self.rootViewController.navigationController?.pushViewController(root, animated: true)
+        }
+        return .one(flowContributor: .contribute(
+            withNextPresentable: privacyFlow,
+            withNextStepper: OneStepper(withSingleStep: PrivacyStep.privacyIsRequired)
+        ))
+    }
 }
