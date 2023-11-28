@@ -48,7 +48,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
                 sendAuthCodeUseCase.execute(req: .init(email: email.dsmEmail(), authCodeType: .signup))
                     .catch { _ in
                         emailErrorDescription.accept(.error(description: "이미 가입 된 이메일이에요."))
-                        return .empty()
+                        return .never()
                     }
                     .andThen(Single.just(true))
             }
@@ -63,7 +63,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
                 verifyAuthCodeUseCase.execute(email: email.dsmEmail(), authCode: authCode)
                     .catch { _ in
                         emailErrorDescription.accept(.error(description: "인증코드가 잘못되었어요."))
-                        return .empty()
+                        return .never()
                     }
                     .andThen(Single.just(VerifyEmailStep.passwordSettingIsRequired))
             }
