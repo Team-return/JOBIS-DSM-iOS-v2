@@ -52,7 +52,7 @@ public final class SigninViewModel: BaseViewModel, Stepper {
                 )
                 .filter { $0 == .developer || $0 == .student}
                 .catch { error in
-                    guard let error = error as? UsersError else { return .empty() }
+                    guard let error = error as? UsersError else { return .never() }
                     switch error {
                     case .notFoundPassword:
                         passwordErrorDescription.accept(.error(description: "비밀번호가 옳지 않아요"))
@@ -61,7 +61,7 @@ public final class SigninViewModel: BaseViewModel, Stepper {
                     case .internalServerError:
                         emailErrorDescription.accept(.error(description: error.localizedDescription))
                     }
-                    return .empty()
+                    return .never()
                 }
             }
             .map { _ in SigninStep.tabsIsRequired }
