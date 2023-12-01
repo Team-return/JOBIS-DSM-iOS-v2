@@ -21,11 +21,12 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
         attribute()
         bind()
     }
+
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewAppear.accept(())
     }
-    
+
     override open func viewWillLayoutSubviews() {
         addView()
         layout()

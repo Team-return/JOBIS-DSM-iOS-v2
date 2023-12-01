@@ -83,8 +83,8 @@ public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
         )
         let output = viewModel.transform(input)
         output.animation.asObservable()
-            .bind(onNext: { [self] in
-                animationView.play { [self] _ in
+            .bind(onNext: { [unowned self] in
+                animationView.play { [unowned self] _ in
                     UIView.transition(
                         with: navigateButtonStackView,
                         duration: 1,
