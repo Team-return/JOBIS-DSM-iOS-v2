@@ -41,7 +41,7 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
         )
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
-            .bind(onNext: { [self] in
+            .bind(onNext: { [unowned self] in
                 proFileView.userInfoLabel.text = "\($0.studentGcn) \($0.studentName)"
                 proFileView.departmentLabel.text = $0.department.localizedString()
                 proFileView.profileImageView
@@ -49,7 +49,7 @@ public class MyPageViewController: BaseViewController<MyPageViewModel> {
             }).disposed(by: disposeBag)
 
         output.writableReviewList
-            .bind(onNext: { [self] in
+            .bind(onNext: { [unowned self] in
                 reviewNavigateStackView.setList(list: $0)
             }).disposed(by: disposeBag)
     }
