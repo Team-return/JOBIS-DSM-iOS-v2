@@ -7,6 +7,9 @@ import Core
 import DesignSystem
 
 public class PasswordSettingViewController: BaseViewController<PasswordSettingViewModel> {
+    public var name: String = ""
+    public var gcn: Int = 0
+    public var email: String = ""
     private let passwordTextField = JobisTextField().then {
         $0.setTextField(
             title: "비밀번호",
@@ -27,6 +30,9 @@ public class PasswordSettingViewController: BaseViewController<PasswordSettingVi
     }
     public override func bind() {
         let input = PasswordSettingViewModel.Input(
+            name: name,
+            gcn: gcn,
+            email: email,
             password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
             checkingPassword: checkingPasswordTextField.textField.rx.text.orEmpty.asDriver(),
             nextButtonDidTap: nextButton.rx.tap.asSignal()

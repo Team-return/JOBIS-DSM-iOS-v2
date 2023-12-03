@@ -7,6 +7,8 @@ import Core
 import DesignSystem
 
 public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel> {
+    public var name: String = ""
+    public var gcn: Int = 0
     private let emailTextField = JobisTextField().then {
         $0.textField.keyboardType = .emailAddress
         $0.setTextField(
@@ -28,7 +30,7 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
 
         authCodeTextField.textField.rx.text.orEmpty
             .observe(on: MainScheduler.asyncInstance)
-            .limit(6) { [weak self] in
+            .limitWithOnlyInt (6) { [weak self] in
                 self?.authCodeTextField.textField.resignFirstResponder()
             }
             .bind(to: authCodeTextField.textField.rx.text )
@@ -36,6 +38,8 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
     }
     public override func bind() {
         let input = VerifyEmailViewModel.Input(
+            name: name,
+            gcn: gcn,
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
             authCode: authCodeTextField.textField.rx.text.orEmpty.asDriver(),
             sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),

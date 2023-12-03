@@ -21,10 +21,10 @@ public class VerifyEmailFlow: Flow {
         guard let step = step as? VerifyEmailStep else { return .none }
 
         switch step {
-        case .verifyEmailIsRequired:
-            return navigateToVerifyEmail()
-        case .passwordSettingIsRequired:
-            return navigateToPasswordSetting()
+        case let .verifyEmailIsRequired(name, gcn):
+            return navigateToVerifyEmail(name: name, gcn: gcn)
+        case let .passwordSettingIsRequired(name, gcn, email):
+            return navigateToPasswordSetting(name: name, gcn: gcn, email: email)
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: InfoSettingStep.tabsIsRequired)
         }
@@ -32,21 +32,29 @@ public class VerifyEmailFlow: Flow {
 }
 
 private extension VerifyEmailFlow {
-    func navigateToVerifyEmail() -> FlowContributors {
+    func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
+        rootViewController.name = name
+        rootViewController.gcn = gcn
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
         ))
     }
 
-    func navigateToPasswordSetting() -> FlowContributors {
+    func navigateToPasswordSetting(name: String, gcn: Int, email: String) -> FlowContributors {
         let passwordSettingFlow = PasswordSettingFlow(container: container)
         Flows.use(passwordSettingFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(root, animated: true)
         }
         return .one(flowContributor: .contribute(
             withNextPresentable: passwordSettingFlow,
-            withNextStepper: OneStepper(withSingleStep: PasswordSettingStep.passwordSettingIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: PasswordSettingStep.passwordSettingIsRequired(
+                    name: name,
+                    gcn: gcn,
+                    email: email
+                )
+            )
         ))
     }
 }

@@ -21,10 +21,10 @@ public class PasswordSettingFlow: Flow {
         guard let step = step as? PasswordSettingStep else { return .none }
 
         switch step {
-        case .passwordSettingIsRequired:
-            return navigateToPasswordSetting()
-        case .privacyIsRequired:
-            return navigateToPrivacy()
+        case let .passwordSettingIsRequired(name, gcn, email):
+            return navigateToPasswordSetting(name: name, gcn: gcn, email: email)
+        case let .privacyIsRequired(name, gcn, email, password):
+            return navigateToPrivacy(name: name, gcn: gcn, email: email, password: password)
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: VerifyEmailStep.tabsIsRequired)
         }
@@ -32,21 +32,31 @@ public class PasswordSettingFlow: Flow {
 }
 
 private extension PasswordSettingFlow {
-    func navigateToPasswordSetting() -> FlowContributors {
+    func navigateToPasswordSetting(name: String, gcn: Int, email: String) -> FlowContributors {
+        rootViewController.name = name
+        rootViewController.gcn = gcn
+        rootViewController.email = email
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
         ))
     }
 
-    func navigateToPrivacy() -> FlowContributors {
+    func navigateToPrivacy(name: String, gcn: Int, email: String, password: String) -> FlowContributors {
         let privacyFlow = PrivacyFlow(container: container)
         Flows.use(privacyFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(root, animated: true)
         }
         return .one(flowContributor: .contribute(
             withNextPresentable: privacyFlow,
-            withNextStepper: OneStepper(withSingleStep: PrivacyStep.privacyIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: PrivacyStep.privacyIsRequired(
+                    name: name,
+                    gcn: gcn,
+                    email: email,
+                    password: password
+                )
+            )
         ))
     }
 }

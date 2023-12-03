@@ -11,13 +11,18 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
     private let sendAuthCodeUseCase: SendAuthCodeUseCase
     private let verifyAuthCodeUseCase: VerifyAuthCodeUseCase
 
-    init(sendAuthCodeUseCase: SendAuthCodeUseCase, verifyAuthCodeUseCase: VerifyAuthCodeUseCase) {
+    init(
+        sendAuthCodeUseCase: SendAuthCodeUseCase,
+        verifyAuthCodeUseCase: VerifyAuthCodeUseCase
+    ) {
         self.sendAuthCodeUseCase = sendAuthCodeUseCase
         self.verifyAuthCodeUseCase = verifyAuthCodeUseCase
     }
 
     private let disposeBag = DisposeBag()
     public struct Input {
+        let name: String
+        let gcn: Int
         let email: Driver<String>
         let authCode: Driver<String>
         let sendAuthCodeButtonDidTap: Signal<Void>
@@ -65,11 +70,15 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
                         emailErrorDescription.accept(.error(description: "인증코드가 잘못되었어요."))
                         return .never()
                     }
-                    .do(onCompleted: {
-                        let userInfo = SignupUserInfo.shared
-                        userInfo.email = email
-                    })
-                    .andThen(Single.just(VerifyEmailStep.passwordSettingIsRequired))
+                    .andThen(
+                        Single.just(
+                            VerifyEmailStep.passwordSettingIsRequired(
+                                name: input.name,
+                                gcn: input.gcn,
+                                email: email
+                            )
+                        )
+                    )
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
