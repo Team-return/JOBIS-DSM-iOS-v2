@@ -23,7 +23,7 @@ public class InfoSettingViewController: BaseViewController<InfoSettingViewModel>
 
         gcnTextField.textField.rx.text.orEmpty
             .observe(on: MainScheduler.asyncInstance)
-            .limit(4) { [weak self] in
+            .limitWithOnlyInt(4) { [weak self] in
                 self?.gcnTextField.textField.resignFirstResponder()
             }
             .bind(to: gcnTextField.textField.rx.text )

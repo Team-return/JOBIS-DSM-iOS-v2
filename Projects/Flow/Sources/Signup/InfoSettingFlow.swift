@@ -23,8 +23,8 @@ public class InfoSettingFlow: Flow {
         switch step {
         case .infoSettingIsRequired:
             return navigateToInfoSetting()
-        case .verifyEmailIsRequired:
-            return navigateToVerifyEmail()
+        case let .verifyEmailIsRequired(name, gcn):
+            return navigateToVerifyEmail(name: name, gcn: gcn)
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: OnboardingStep.tabsIsRequired)
         }
@@ -39,14 +39,19 @@ private extension InfoSettingFlow {
         ))
     }
 
-    func navigateToVerifyEmail() -> FlowContributors {
+    func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
         let verifyEmailFlow = VerifyEmailFlow(container: container)
         Flows.use(verifyEmailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(root, animated: true)
         }
         return .one(flowContributor: .contribute(
             withNextPresentable: verifyEmailFlow,
-            withNextStepper: OneStepper(withSingleStep: VerifyEmailStep.verifyEmailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: VerifyEmailStep.verifyEmailIsRequired(
+                    name: name,
+                    gcn: gcn
+                )
+            )
         ))
     }
 }

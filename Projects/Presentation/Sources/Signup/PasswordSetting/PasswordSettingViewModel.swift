@@ -11,6 +11,9 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
 
     public struct Input {
+        let name: String
+        let gcn: Int
+        let email: String
         let password: Driver<String>
         let checkingPassword: Driver<String>
         let nextButtonDidTap: Signal<Void>
@@ -44,9 +47,12 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                 return true
             }
             .map { password, _ in
-                let userInfo = SignupUserInfo.shared
-                userInfo.password = password
-                return PasswordSettingStep.privacyIsRequired
+                return PasswordSettingStep.privacyIsRequired(
+                    name: input.name,
+                    gcn: input.gcn,
+                    email: input.email,
+                    password: password
+                )
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

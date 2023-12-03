@@ -21,8 +21,8 @@ public class PrivacyFlow: Flow {
         guard let step = step as? PrivacyStep else { return .none }
 
         switch step {
-        case .privacyIsRequired:
-            return navigateToPrivacy()
+        case let .privacyIsRequired(name, gcn, email, password):
+            return navigateToPrivacy(name: name, gcn: gcn, email: email, password: password)
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: PasswordSettingStep.tabsIsRequired)
         }
@@ -30,7 +30,11 @@ public class PrivacyFlow: Flow {
 }
 
 private extension PrivacyFlow {
-    func navigateToPrivacy() -> FlowContributors {
+    func navigateToPrivacy(name: String, gcn: Int, email: String, password: String) -> FlowContributors {
+        rootViewController.name = name
+        rootViewController.gcn = gcn
+        rootViewController.email = email
+        rootViewController.password = password
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel

@@ -8,6 +8,10 @@ import Core
 import DesignSystem
 
 public class PrivacyViewController: BaseViewController<PrivacyViewModel> {
+    public var name: String = ""
+    public var gcn: Int = 0
+    public var email: String = ""
+    public var password: String = ""
     private let privacyWebView = WKWebView().then {
         let url = URL(string: "https://jobis-webview.team-return.com/sign-up-policy")
         let request = URLRequest(url: url!)
@@ -22,6 +26,9 @@ public class PrivacyViewController: BaseViewController<PrivacyViewModel> {
         setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")
 
         privacyWebView.scrollView.rx.contentOffset
+            .skip(while: { [self] _ in
+                signupButton.isEnabled
+            })
             .distinctUntilChanged()
             .bind { [weak self] point in
                 guard let scrollView = self else { return }
@@ -29,7 +36,13 @@ public class PrivacyViewController: BaseViewController<PrivacyViewModel> {
             }.disposed(by: disposeBag)
     }
     public override func bind() {
-        let input = PrivacyViewModel.Input(signupButtonDidTap: signupButton.rx.tap.asSignal())
+        let input = PrivacyViewModel.Input(
+            name: name,
+            gcn: gcn,
+            email: email,
+            password: password,
+            signupButtonDidTap: signupButton.rx.tap.asSignal()
+        )
 
         _ = viewModel.transform(input)
     }

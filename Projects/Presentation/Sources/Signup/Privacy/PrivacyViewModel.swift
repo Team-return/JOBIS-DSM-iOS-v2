@@ -17,6 +17,10 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
     }
 
     public struct Input {
+        let name: String
+        let gcn: Int
+        let email: String
+        let password: String
         let signupButtonDidTap: Signal<Void>
     }
     public struct Output { }
@@ -25,14 +29,21 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
         input.signupButtonDidTap
             .asObservable()
             .flatMap { [self] in
-                try signupUseCase.execute(req: SignupUserInfo.toQuery())
-                    .catch { _ in
-                        return .never()
-                    }
-                    .do(onCompleted: {
-                        SignupUserInfo.removeInfo()
-                    })
-                    .andThen(Single.just(PrivacyStep.tabsIsRequired))
+                signupUseCase.execute(
+                    req: .init(
+                        email: input.email.dsmEmail(),
+                        password: input.password,
+                        grade: input.gcn.extract(4),
+                        name: input.name,
+                        gender: .man,
+                        classRoom: input.gcn.extract(3),
+                        number: input.gcn % 100
+                    )
+                )
+                .catch { _ in
+                    return .never()
+                }
+                .andThen(Single.just(PrivacyStep.tabsIsRequired))
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

@@ -53,15 +53,7 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                     nameErrorDescription.accept(.error(description: "잘못된 이름이에요."))
                     return .never()
                 }
-                .do(onCompleted: {
-                    let userInfo = SignupUserInfo.shared
-                    userInfo.name = name
-                    let gcn: Int = Int(gcn)!
-                    userInfo.grade = gcn.extract(4)
-                    userInfo.classRoom = gcn.extract(3)
-                    userInfo.number = gcn%100
-                })
-                .andThen(Single.just(InfoSettingStep.verifyEmailIsRequired))
+                .andThen(Single.just(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: Int(gcn)!)))
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
