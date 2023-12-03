@@ -76,6 +76,13 @@ public final class PresentationAssembly: Assembly {
             PasswordSettingViewController(resolver.resolve(PasswordSettingViewModel.self)!)
         }
 
+        container.register(PrivacyViewModel.self) { resolver in
+            PrivacyViewModel(signupUseCase: resolver.resolve(SignupUseCase.self)!)
+        }
+        container.register(PrivacyViewController.self) { resolver in
+            PrivacyViewController(resolver.resolve(PrivacyViewModel.self)!)
+        }
+
         container.register(SigninViewModel.self) { resolver in
             SigninViewModel(signinUseCase: resolver.resolve(SigninUseCase.self)!)
         }
