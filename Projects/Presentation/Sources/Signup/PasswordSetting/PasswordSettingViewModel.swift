@@ -43,7 +43,11 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                 }
                 return true
             }
-            .map { _ in PasswordSettingStep.privacyIsRequired }
+            .map { password, _ in
+                let userInfo = SignupUserInfo.shared
+                userInfo.password = password
+                return PasswordSettingStep.privacyIsRequired
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
