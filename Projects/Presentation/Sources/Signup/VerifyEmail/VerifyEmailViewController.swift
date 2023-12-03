@@ -25,6 +25,14 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
 
     public override func attribute() {
         setLargeTitle(title: "이메일을 입력해주세요")
+
+        authCodeTextField.textField.rx.text.orEmpty
+            .observe(on: MainScheduler.asyncInstance)
+            .limit(6) { [weak self] in
+                self?.authCodeTextField.textField.resignFirstResponder()
+            }
+            .bind(to: authCodeTextField.textField.rx.text )
+            .disposed(by: disposeBag)
     }
     public override func bind() {
         let input = VerifyEmailViewModel.Input(
