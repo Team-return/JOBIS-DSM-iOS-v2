@@ -50,7 +50,6 @@ private extension OnboardingFlow {
     func navigateToSignup() -> FlowContributors {
         let signupFlow = InfoSettingFlow(container: container)
         Flows.use(signupFlow, when: .created) { root in
-            print("gotoinfosetting")
             self.rootViewController.pushViewController(root, animated: true)
         }
         return .one(flowContributor: .contribute(
