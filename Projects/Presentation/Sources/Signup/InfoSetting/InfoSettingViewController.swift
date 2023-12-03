@@ -18,26 +18,16 @@ public class InfoSettingViewController: BaseViewController<InfoSettingViewModel>
         $0.setText("다음")
     }
 
-    private func checkAndTrimId(_ id: String) -> Bool {
-        if id.count > 4 {
-            let index = id.index(id.startIndex, offsetBy: 4)
-            self.gcnTextField.textField.text = String(id[..<index])
-            return true
-        }
-        return false
-    }
-
     public override func attribute() {
         setLargeTitle(title: "개인정보를 입력해주세요")
 
         gcnTextField.textField.rx.text.orEmpty
-                .map(checkAndTrimId(_:))
-                .subscribe(onNext: {
-                    if $0 {
-                        self.gcnTextField.textField.resignFirstResponder()
-                    }
-                })
-                .disposed(by: disposeBag)
+            .observe(on: MainScheduler.asyncInstance)
+            .limit(4) { [weak self] in
+                self?.gcnTextField.textField.resignFirstResponder()
+            }
+            .bind(to: gcnTextField.textField.rx.text )
+            .disposed(by: disposeBag)
     }
     public override func bind() {
         let input = InfoSettingViewModel.Input(
