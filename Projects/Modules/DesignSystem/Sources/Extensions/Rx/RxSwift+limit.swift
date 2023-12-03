@@ -1,6 +1,4 @@
 import RxSwift
-import UIKit
-import RxCocoa
 
 public extension Observable<String> {
     func limit(_ max: Int, onComplete: @escaping () -> Void) -> Observable<String> {
