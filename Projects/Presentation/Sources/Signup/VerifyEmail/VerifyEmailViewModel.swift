@@ -65,6 +65,10 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
                         emailErrorDescription.accept(.error(description: "인증코드가 잘못되었어요."))
                         return .never()
                     }
+                    .do(onCompleted: {
+                        let userInfo = SignupUserInfo.shared
+                        userInfo.email = email
+                    })
                     .andThen(Single.just(VerifyEmailStep.passwordSettingIsRequired))
             }
             .bind(to: steps)
