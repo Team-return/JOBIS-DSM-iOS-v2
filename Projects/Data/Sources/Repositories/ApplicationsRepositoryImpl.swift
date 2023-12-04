@@ -13,6 +13,10 @@ public struct ApplicationsRepositoryImpl: ApplicationsRepository {
         remoteApplicationsDataSource.applyCompany(id: id, req: req)
     }
 
+    public func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+        remoteApplicationsDataSource.reApplyCompany(id: id, req: req)
+    }
+
     public func cancelApply(id: String) -> Completable {
         remoteApplicationsDataSource.cancelApply(id: id)
     }

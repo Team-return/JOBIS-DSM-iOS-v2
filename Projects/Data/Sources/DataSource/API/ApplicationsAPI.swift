@@ -4,6 +4,7 @@ import AppNetwork
 
 enum ApplicationsAPI {
     case applyCompany(id: String, ApplyCompanyRequestQuery)
+    case reApplyCompany(id: String, ApplyCompanyRequestQuery)
     case cancelApply(id: String)
     case fetchApplication
     case fetchTotalPassStudent
@@ -19,6 +20,9 @@ extension ApplicationsAPI: JobisAPI {
     var urlPath: String {
         switch self {
         case let .applyCompany(id, _):
+            return "/\(id)"
+
+        case let .reApplyCompany(id, _):
             return "/\(id)"
 
         case let .cancelApply(id):
@@ -37,6 +41,9 @@ extension ApplicationsAPI: JobisAPI {
         case .applyCompany:
             return .post
 
+        case .reApplyCompany:
+            return .put
+
         case .cancelApply:
             return .delete
 
@@ -50,14 +57,16 @@ extension ApplicationsAPI: JobisAPI {
         case let .applyCompany(_, req):
             return .requestJSONEncodable(req)
 
-        case .cancelApply, .fetchApplication, .fetchTotalPassStudent:
+        case let .reApplyCompany(_, req):
+            return .requestJSONEncodable(req)
+
             return .requestPlain
         }
     }
 
     var jwtTokenType: JwtTokenType {
         switch self {
-        case .fetchApplication, .applyCompany:
+        case .fetchApplication, .applyCompany, .reApplyCompany, .fetchRejectionReason:
             return .accessToken
         default:
             return .none
@@ -67,6 +76,9 @@ extension ApplicationsAPI: JobisAPI {
     public var errorMap: [Int: ErrorType]? {
         switch self {
         case .applyCompany:
+            return [:]
+
+        case .reApplyCompany:
             return [:]
 
         case .cancelApply:
