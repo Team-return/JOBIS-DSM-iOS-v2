@@ -47,7 +47,7 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                 return true
             }
             .map { password, _ in
-                return PasswordSettingStep.privacyIsRequired(
+                PasswordSettingStep.privacyIsRequired(
                     name: input.name,
                     gcn: input.gcn,
                     email: input.email,

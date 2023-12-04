@@ -40,9 +40,7 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
                         number: input.gcn % 100
                     )
                 )
-                .catch { _ in
-                    return .never()
-                }
+                .catch { _ in .never() }
                 .andThen(Single.just(PrivacyStep.tabsIsRequired))
             }
             .bind(to: steps)
