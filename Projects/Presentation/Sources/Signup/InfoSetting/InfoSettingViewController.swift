@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class InfoSettingViewController: BaseViewController<InfoSettingViewModel> {
+public final class InfoSettingViewController: BaseViewController<InfoSettingViewModel> {
     private let nameTextField = JobisTextField().then {
         $0.setTextField(title: "이름", placeholder: "홍길동")
     }

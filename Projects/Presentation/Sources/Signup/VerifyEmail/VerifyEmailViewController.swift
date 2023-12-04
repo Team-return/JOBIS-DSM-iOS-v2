@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel> {
+public final class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel> {
     public var name: String = ""
     public var gcn: Int = 0
     private let emailTextField = JobisTextField().then {

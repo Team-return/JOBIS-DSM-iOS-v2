@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class PasswordSettingViewController: BaseViewController<PasswordSettingViewModel> {
+public final class PasswordSettingViewController: BaseViewController<PasswordSettingViewModel> {
     public var name: String = ""
     public var gcn: Int = 0
     public var email: String = ""
