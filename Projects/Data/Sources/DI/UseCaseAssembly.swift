@@ -106,6 +106,10 @@ public final class UseCaseAssembly: Assembly {
         container.register(ApplyCompanyUseCase.self) { resolver in
             ApplyCompanyUseCase(
                 applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+        }
+        container.register(ReApplyCompanyUseCase.self) { resolver in
+            ReApplyCompanyUseCase(
+                applicationsRepository: resolver.resolve(ApplicationsRepository.self)!
             )
         }
         container.register(CancelApplyUseCase.self) { resolver in

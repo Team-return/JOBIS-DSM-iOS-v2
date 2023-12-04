@@ -5,6 +5,7 @@ import Domain
 
 public protocol RemoteApplicationsDataSource {
     func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable
+    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable
     func cancelApply(id: String) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
@@ -13,6 +14,11 @@ public protocol RemoteApplicationsDataSource {
 final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsAPI>, RemoteApplicationsDataSource {
     func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
         request(.applyCompany(id: id, req))
+            .asCompletable()
+    }
+
+    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+        request(.reApplyCompany(id: id, req))
             .asCompletable()
     }
 
