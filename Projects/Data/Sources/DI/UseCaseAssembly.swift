@@ -125,6 +125,10 @@ public final class UseCaseAssembly: Assembly {
         container.register(FetchTotalPassStudentUseCase.self) { resolver in
             FetchTotalPassStudentUseCase(
                 applicationRepository: resolver.resolve(ApplicationsRepository.self)!
+        }
+        container.register(FetchRejectionReasonUseCase.self) { resolver in
+            FetchRejectionReasonUseCase(
+                applicationsRepository: resolver.resolve(ApplicationsRepository.self)!
             )
         }
 
