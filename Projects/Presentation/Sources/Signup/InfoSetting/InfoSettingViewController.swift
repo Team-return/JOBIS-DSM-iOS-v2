@@ -17,6 +17,11 @@ public class InfoSettingViewController: BaseViewController<InfoSettingViewModel>
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
     }
+    private let nextPublishRelay = PublishRelay<Void>()
+
+    private func next() {
+        self.nextPublishRelay.accept(())
+    }
 
     public override func attribute() {
         setLargeTitle(title: "개인정보를 입력해주세요")
@@ -25,15 +30,22 @@ public class InfoSettingViewController: BaseViewController<InfoSettingViewModel>
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(4) { [weak self] in
                 self?.gcnTextField.textField.resignFirstResponder()
+                self?.next()
             }
             .bind(to: gcnTextField.textField.rx.text )
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.next()
+            })
             .disposed(by: disposeBag)
     }
     public override func bind() {
         let input = InfoSettingViewModel.Input(
             name: nameTextField.textField.rx.text.orEmpty.asDriver(),
             gcn: gcnTextField.textField.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
+            nextButtonDidTap: nextPublishRelay.asSignal()
         )
         let output = viewModel.transform(input)
         output.nameErrorDescription
