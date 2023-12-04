@@ -2,7 +2,7 @@ import UIKit
 import Then
 import SnapKit
 
-class JobisToast: UIView {
+final class JobisToast: UIView {
     private let imageView = UIImageView().then {
         $0.image = DesignSystemAsset.Icons.toastIcon.image.resize(.init(width: 24, height: 24))
     }
