@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public class PrivacyViewController: BaseViewController<PrivacyViewModel> {
+public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
     public var name: String = ""
     public var gcn: Int = 0
     public var email: String = ""
