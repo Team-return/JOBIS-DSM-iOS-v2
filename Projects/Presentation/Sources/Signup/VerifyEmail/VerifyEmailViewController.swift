@@ -25,15 +25,28 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
         $0.setText("다음")
     }
 
+    private let nextPublishRelay = PublishRelay<Void>()
+
+    private func next() {
+        self.nextPublishRelay.accept(())
+    }
+
     public override func attribute() {
         setLargeTitle(title: "이메일을 입력해주세요")
 
         authCodeTextField.textField.rx.text.orEmpty
             .observe(on: MainScheduler.asyncInstance)
-            .limitWithOnlyInt (6) { [weak self] in
+            .limitWithOnlyInt(6) { [weak self] in
                 self?.authCodeTextField.textField.resignFirstResponder()
+                self?.next()
             }
             .bind(to: authCodeTextField.textField.rx.text )
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.next()
+            })
             .disposed(by: disposeBag)
     }
     public override func bind() {
@@ -43,7 +56,7 @@ public class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel>
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
             authCode: authCodeTextField.textField.rx.text.orEmpty.asDriver(),
             sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
+            nextButtonDidTap: nextPublishRelay.asSignal()
         )
 
         let output = viewModel.transform(input)

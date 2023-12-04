@@ -25,8 +25,20 @@ public class PasswordSettingViewController: BaseViewController<PasswordSettingVi
         $0.setText("다음")
     }
 
+    private let nextPublishRelay = PublishRelay<Void>()
+
+    private func next() {
+        self.nextPublishRelay.accept(())
+    }
+
     public override func attribute() {
         setLargeTitle(title: "비밀번호를 설정해주세요")
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.next()
+            })
+            .disposed(by: disposeBag)
     }
     public override func bind() {
         let input = PasswordSettingViewModel.Input(
@@ -35,7 +47,7 @@ public class PasswordSettingViewController: BaseViewController<PasswordSettingVi
             email: email,
             password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
             checkingPassword: checkingPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
+            nextButtonDidTap: nextPublishRelay.asSignal()
         )
 
         let output = viewModel.transform(input)
@@ -73,5 +85,14 @@ public class PasswordSettingViewController: BaseViewController<PasswordSettingVi
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+}
+
+extension PasswordSettingViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == checkingPasswordTextField.textField {
+            self.next()
+        }
+        return true
     }
 }
