@@ -36,7 +36,7 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
 
     open func bind() { }
 
-    open func attribute() {}
+    open func attribute() { }
 
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
