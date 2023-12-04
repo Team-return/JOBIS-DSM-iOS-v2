@@ -7,6 +7,8 @@ public enum ApplicationStatusType: String, Codable {
     case pass = "PASS"
     case rejected = "REJECTED"
     case fieldTrain = "FIELD_TRAIN"
+    case send = "SEND"
+    case acceptance = "ACCEPTANCE"
 
     public func localizedString() -> String {
         switch self {
@@ -27,6 +29,12 @@ public enum ApplicationStatusType: String, Codable {
 
         case .fieldTrain:
             return "현장 실습"
+
+        case .send:
+            return "전송"
+
+        case .acceptance:
+            return "근로계약"
         }
     }
 }
