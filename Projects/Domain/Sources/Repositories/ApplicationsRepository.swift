@@ -8,4 +8,5 @@ public protocol ApplicationsRepository {
     func cancelApply(id: String) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
+    func fetchRejectionReason(id: String) -> Single<String>
 }

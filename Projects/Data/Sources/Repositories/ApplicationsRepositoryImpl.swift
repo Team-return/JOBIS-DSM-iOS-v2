@@ -28,4 +28,8 @@ public struct ApplicationsRepositoryImpl: ApplicationsRepository {
     public func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
         remoteApplicationsDataSource.fetchTotalPassStudent()
     }
+
+    public func fetchRejectionReason(id: String) -> Single<String> {
+        remoteApplicationsDataSource.fetchRejectionReason(id: id)
+    }
 }

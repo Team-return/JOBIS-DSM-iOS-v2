@@ -9,6 +9,7 @@ public protocol RemoteApplicationsDataSource {
     func cancelApply(id: String) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
+    func fetchRejectionReason(id: String) -> Single<String>
 }
 
 final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsAPI>, RemoteApplicationsDataSource {
@@ -37,5 +38,11 @@ final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsA
         request(.fetchTotalPassStudent)
             .map(TotalPassStudentResponseDTO.self)
             .map { $0.toDomain() }
+    }
+
+    func fetchRejectionReason(id: String) -> Single<String> {
+        request(.fetchRejectionReason(id: id))
+            .map(FetchRejectionReasonResponseDTO.self)
+            .map { $0.rejectionReason }
     }
 }
