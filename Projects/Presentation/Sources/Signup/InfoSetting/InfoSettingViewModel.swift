@@ -44,7 +44,7 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                 return true
             }
             .flatMap { [self] name, gcn in
-                return studentExistsUseCase.execute(
+                studentExistsUseCase.execute(
                     gcn: gcn,
                     name: name
                 )
