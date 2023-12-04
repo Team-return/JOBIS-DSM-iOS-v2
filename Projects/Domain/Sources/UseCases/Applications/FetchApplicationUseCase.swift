@@ -2,13 +2,13 @@ import RxSwift
 import RxCocoa
 
 public struct FetchApplicationUseCase {
-    private let applicationRepository: any ApplicationsRepository
+    private let applicationsRepository: any ApplicationsRepository
 
-    public init(applicationRepository: any ApplicationsRepository) {
-        self.applicationRepository = applicationRepository
+    public init(applicationsRepository: any ApplicationsRepository) {
+        self.applicationsRepository = applicationsRepository
     }
 
     func execute() -> Single<[ApplicationEntity]> {
-        applicationRepository.fetchApplication()
+        applicationsRepository.fetchApplication()
     }
 }
