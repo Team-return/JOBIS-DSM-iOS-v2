@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class PasswordSettingViewController: BaseViewController<PasswordSettingViewModel> {
+public final class PasswordSettingViewController: SignupViewController<PasswordSettingViewModel> {
     public var name: String = ""
     public var gcn: Int = 0
     public var email: String = ""
@@ -23,12 +23,6 @@ public final class PasswordSettingViewController: BaseViewController<PasswordSet
     }
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
-    }
-
-    private let nextPublishRelay = PublishRelay<Void>()
-
-    private func next() {
-        self.nextPublishRelay.accept(())
     }
 
     public override func attribute() {
