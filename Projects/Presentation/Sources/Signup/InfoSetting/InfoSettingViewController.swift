@@ -25,14 +25,14 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(4) { [weak self] in
                 self?.gcnTextField.textField.resignFirstResponder()
-                self?.next()
+                self?.nextSignupStep()
             }
             .bind(to: gcnTextField.textField.rx.text )
             .disposed(by: disposeBag)
 
         nextButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.next()
+                self?.nextSignupStep()
             })
             .disposed(by: disposeBag)
     }
@@ -44,13 +44,13 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
         )
         let output = viewModel.transform(input)
         output.nameErrorDescription
-            .bind { [self] description in
-                nameTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.nameTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.gcnErrorDescription
-            .bind { [self] description in
-                gcnTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.gcnTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }

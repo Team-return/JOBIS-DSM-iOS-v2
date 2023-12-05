@@ -26,8 +26,8 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
         setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")
 
         privacyWebView.scrollView.rx.contentOffset
-            .skip(while: { [self] _ in
-                signupButton.isEnabled
+            .skip(while: { [weak self] _ in
+                self?.signupButton.isEnabled ?? false
             })
             .distinctUntilChanged()
             .bind { [weak self] point in

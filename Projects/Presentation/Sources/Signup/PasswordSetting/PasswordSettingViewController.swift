@@ -30,7 +30,7 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
 
         nextButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.next()
+                self?.nextSignupStep()
             })
             .disposed(by: disposeBag)
     }
@@ -85,7 +85,7 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
 extension PasswordSettingViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == checkingPasswordTextField.textField {
-            self.next()
+            self.nextSignupStep()
         }
         return true
     }
