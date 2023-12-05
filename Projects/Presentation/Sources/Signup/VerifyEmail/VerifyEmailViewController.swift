@@ -32,14 +32,14 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(6) { [weak self] in
                 self?.authCodeTextField.textField.resignFirstResponder()
-                self?.next()
+                self?.nextSignupStep()
             }
             .bind(to: authCodeTextField.textField.rx.text )
             .disposed(by: disposeBag)
 
         nextButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.next()
+                self?.nextSignupStep()
             })
             .disposed(by: disposeBag)
     }
@@ -56,12 +56,12 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
         let output = viewModel.transform(input)
         output.isSuccessedToSendAuthCode
             .asObservable()
-            .bind { isSuccessedToSendAuthCode in
+            .bind { [weak self] isSuccessedToSendAuthCode in
                 if isSuccessedToSendAuthCode {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve, animations: {
-                        self.authCodeTextField.startTimer()
-                        self.emailTextField.setDescription(.success(description: "인증 메일이 발송되었어요."))
-                        self.emailTextField.textFieldRightView.customButton.configuration?.title = "재전송"
+                        self?.authCodeTextField.startTimer()
+                        self?.emailTextField.setDescription(.success(description: "인증 메일이 발송되었어요."))
+                        self?.emailTextField.textFieldRightView.customButton.configuration?.title = "재전송"
                     })
                 }
             }
@@ -69,15 +69,15 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
 
         output.emailErrorDescription
             .asObservable()
-            .bind { description in
-                self.authCodeTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.authCodeTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
         output.authCodeErrorDescription
             .asObservable()
-            .bind { description in
-                self.authCodeTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.authCodeTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
