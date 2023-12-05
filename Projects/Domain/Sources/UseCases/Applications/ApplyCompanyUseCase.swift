@@ -2,13 +2,13 @@ import RxCocoa
 import RxSwift
 
 public struct ApplyCompanyUseCase {
-    private let applicationRepository: any ApplicationsRepository
+    private let applicationsRepository: any ApplicationsRepository
 
-    public init(applicationRepository: any ApplicationsRepository) {
-        self.applicationRepository = applicationRepository
+    public init(applicationsRepository: any ApplicationsRepository) {
+        self.applicationsRepository = applicationsRepository
     }
 
     func execute(id: String, req: ApplyCompanyRequestQuery) -> Completable {
-        applicationRepository.applyCompany(id: id, req: req)
+        applicationsRepository.applyCompany(id: id, req: req)
     }
 }

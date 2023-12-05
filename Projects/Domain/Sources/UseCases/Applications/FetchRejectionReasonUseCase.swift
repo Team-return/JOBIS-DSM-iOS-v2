@@ -1,14 +1,14 @@
 import RxSwift
 import RxCocoa
 
-public struct FetchApplicationUseCase {
+public struct FetchRejectionReasonUseCase {
     private let applicationsRepository: any ApplicationsRepository
 
     public init(applicationsRepository: any ApplicationsRepository) {
         self.applicationsRepository = applicationsRepository
     }
 
-    func execute() -> Single<[ApplicationEntity]> {
-        applicationsRepository.fetchApplication()
+    func execute(id: String) -> Single<String> {
+        applicationsRepository.fetchRejectionReason(id: id)
     }
 }
