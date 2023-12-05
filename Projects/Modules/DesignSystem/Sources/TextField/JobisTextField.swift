@@ -30,7 +30,7 @@ public class JobisTextField: UIView {
     }
 
     public func startTimer() {
-        disposeBag = DisposeBag()
+        let disposeBag = DisposeBag()
         textFieldRightView.timeLabel.isHidden = false
         let startTime = Date()
         let timer = Observable<Int>.interval(
@@ -38,11 +38,11 @@ public class JobisTextField: UIView {
             scheduler: MainScheduler.instance
         )
         timer.withUnretained(self)
-            .filter { _, int in int < 300 }
+            .filter { $1 < 300 }
             .subscribe(onNext: { _ in
                 let elapseSeconds = Date().timeIntervalSince(startTime)
                 self.textFieldRightView.setTimer(Int(elapseSeconds))
-            }, onCompleted: { print("dispose") })
+            })
             .disposed(by: disposeBag)
     }
 
