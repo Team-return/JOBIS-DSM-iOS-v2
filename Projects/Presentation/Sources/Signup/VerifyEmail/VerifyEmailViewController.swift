@@ -61,7 +61,7 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
                     UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve, animations: {
                         self?.authCodeTextField.startTimer()
                         self?.emailTextField.setDescription(.success(description: "인증 메일이 발송되었어요."))
-                        self?.emailTextField.textFieldRightView.customButton.configuration?.title = "재전송"
+                        self?.emailTextField.textFieldRightView.setCustomButtonTitle(title: "재전송")
                     })
                 }
             }
