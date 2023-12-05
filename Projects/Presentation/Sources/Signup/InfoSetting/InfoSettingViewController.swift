@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class InfoSettingViewController: BaseViewController<InfoSettingViewModel> {
+public final class InfoSettingViewController: SignupViewController<InfoSettingViewModel> {
     private let nameTextField = JobisTextField().then {
         $0.setTextField(title: "이름", placeholder: "홍길동")
     }
@@ -16,11 +16,6 @@ public final class InfoSettingViewController: BaseViewController<InfoSettingView
     }
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
-    }
-    private let nextPublishRelay = PublishRelay<Void>()
-
-    private func next() {
-        self.nextPublishRelay.accept(())
     }
 
     public override func attribute() {

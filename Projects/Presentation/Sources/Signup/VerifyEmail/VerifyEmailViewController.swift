@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class VerifyEmailViewController: BaseViewController<VerifyEmailViewModel> {
+public final class VerifyEmailViewController: SignupViewController<VerifyEmailViewModel> {
     public var name: String = ""
     public var gcn: Int = 0
     private let emailTextField = JobisTextField().then {
@@ -23,12 +23,6 @@ public final class VerifyEmailViewController: BaseViewController<VerifyEmailView
     }
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
-    }
-
-    private let nextPublishRelay = PublishRelay<Void>()
-
-    private func next() {
-        self.nextPublishRelay.accept(())
     }
 
     public override func attribute() {
