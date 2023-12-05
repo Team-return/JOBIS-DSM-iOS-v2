@@ -4,9 +4,11 @@ import AppNetwork
 
 enum ApplicationsAPI {
     case applyCompany(id: String, ApplyCompanyRequestQuery)
+    case reApplyCompany(id: String, ApplyCompanyRequestQuery)
     case cancelApply(id: String)
     case fetchApplication
     case fetchTotalPassStudent
+    case fetchRejectionReason(id: String)
 }
 
 extension ApplicationsAPI: JobisAPI {
@@ -21,6 +23,9 @@ extension ApplicationsAPI: JobisAPI {
         case let .applyCompany(id, _):
             return "/\(id)"
 
+        case let .reApplyCompany(id, _):
+            return "/\(id)"
+
         case let .cancelApply(id):
             return "/\(id)"
 
@@ -29,6 +34,9 @@ extension ApplicationsAPI: JobisAPI {
 
         case .fetchTotalPassStudent:
             return "/employment/count"
+
+        case let .fetchRejectionReason(id):
+            return "/rejection/\(id)"
         }
     }
 
@@ -37,10 +45,13 @@ extension ApplicationsAPI: JobisAPI {
         case .applyCompany:
             return .post
 
+        case .reApplyCompany:
+            return .put
+
         case .cancelApply:
             return .delete
 
-        case .fetchApplication, .fetchTotalPassStudent:
+        case .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason:
             return .get
         }
     }
@@ -50,14 +61,17 @@ extension ApplicationsAPI: JobisAPI {
         case let .applyCompany(_, req):
             return .requestJSONEncodable(req)
 
-        case .cancelApply, .fetchApplication, .fetchTotalPassStudent:
+        case let .reApplyCompany(_, req):
+            return .requestJSONEncodable(req)
+
+        case .cancelApply, .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason:
             return .requestPlain
         }
     }
 
     var jwtTokenType: JwtTokenType {
         switch self {
-        case .fetchApplication, .applyCompany:
+        case .fetchApplication, .applyCompany, .reApplyCompany, .fetchRejectionReason:
             return .accessToken
         default:
             return .none
@@ -69,6 +83,9 @@ extension ApplicationsAPI: JobisAPI {
         case .applyCompany:
             return [:]
 
+        case .reApplyCompany:
+            return [:]
+
         case .cancelApply:
             return [:]
 
@@ -76,6 +93,9 @@ extension ApplicationsAPI: JobisAPI {
             return [:]
 
         case .fetchTotalPassStudent:
+            return [:]
+
+        case .fetchRejectionReason:
             return [:]
         }
     }

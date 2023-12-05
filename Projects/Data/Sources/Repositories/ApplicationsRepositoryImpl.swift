@@ -13,6 +13,10 @@ public struct ApplicationsRepositoryImpl: ApplicationsRepository {
         remoteApplicationsDataSource.applyCompany(id: id, req: req)
     }
 
+    public func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+        remoteApplicationsDataSource.reApplyCompany(id: id, req: req)
+    }
+
     public func cancelApply(id: String) -> Completable {
         remoteApplicationsDataSource.cancelApply(id: id)
     }
@@ -23,5 +27,9 @@ public struct ApplicationsRepositoryImpl: ApplicationsRepository {
 
     public func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
         remoteApplicationsDataSource.fetchTotalPassStudent()
+    }
+
+    public func fetchRejectionReason(id: String) -> Single<String> {
+        remoteApplicationsDataSource.fetchRejectionReason(id: id)
     }
 }
