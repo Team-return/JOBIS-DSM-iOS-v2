@@ -35,10 +35,10 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
             .withLatestFrom(info)
             .filter { name, gcn in
                 if name.isEmpty {
-                    nameErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
+                    nameErrorDescription.accept(.error(description: "이름을 입력해주세요"))
                     return false
                 } else if gcn.isEmpty {
-                    gcnErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
+                    gcnErrorDescription.accept(.error(description: "학번을 입력해주세요"))
                     return false
                 }
                 return true
@@ -49,8 +49,7 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                     name: name
                 )
                 .catch { _ in
-                    gcnErrorDescription.accept(.error(description: "잘못된 학번이에요."))
-                    nameErrorDescription.accept(.error(description: "잘못된 이름이에요."))
+                    gcnErrorDescription.accept(.error(description: "이미 가입 된 학번이에요."))
                     return .never()
                 }
                 .andThen(Single.just(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: Int(gcn)!)))
