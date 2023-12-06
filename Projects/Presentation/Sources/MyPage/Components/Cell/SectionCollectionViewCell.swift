@@ -1,7 +1,7 @@
 import UIKit
 import DesignSystem
 
-class SectionTableViewCell: UITableViewCell {
+final class SectionTableViewCell: UITableViewCell {
     static let identifier = "SectionTableViewCell"
     let sectionImageView = UIImageView()
     let titleLabel = UILabel()

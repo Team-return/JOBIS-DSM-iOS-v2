@@ -2,7 +2,7 @@ import RxSwift
 import Domain
 import Foundation
 
-final class FilesRepositoryImpl: FilesRepository {
+struct FilesRepositoryImpl: FilesRepository {
     private let remoteFilesDataSource: any RemoteFilesDataSource
 
     init(remoteFilesDataSource: any RemoteFilesDataSource) {

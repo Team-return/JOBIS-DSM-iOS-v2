@@ -1,7 +1,7 @@
 import UIKit
 
 public extension UIColor {
-    struct Sub { }
+    struct Sub {}
 }
 
 public extension UIColor.Sub {
