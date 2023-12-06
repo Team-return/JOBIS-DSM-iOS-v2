@@ -4,7 +4,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-public class JobisTextField: UIView {
+public final class JobisTextField: UIView {
     private var disposeBag = DisposeBag()
     private var timerDisposeBag = DisposeBag()
 

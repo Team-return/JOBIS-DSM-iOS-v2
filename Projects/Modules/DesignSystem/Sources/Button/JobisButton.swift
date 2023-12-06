@@ -4,7 +4,7 @@ import RxCocoa
 import Then
 import SnapKit
 
-public class JobisButton: UIButton {
+public final class JobisButton: UIButton {
     private var buttonStyle: JobisButtonStyle = .main
     private var labelText: String = ""
 

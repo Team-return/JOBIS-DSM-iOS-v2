@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-public class DescriptionView: UIView {
+public final class DescriptionView: UIView {
     public var descriptionType: DescriptionType? {
         didSet {
             self.isHidden = false
