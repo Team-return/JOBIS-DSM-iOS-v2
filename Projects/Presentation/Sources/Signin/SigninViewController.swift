@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class SigninViewController: BaseViewController<SigninViewModel> {
+public final class SigninViewController: BaseViewController<SigninViewModel> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
         $0.setColorRange(color: .Main.blue1, range: "JOBIS")
