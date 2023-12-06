@@ -3,7 +3,7 @@ import KeychainSwift
 public struct KeychainImpl: Keychain {
     private let keychain = KeychainSwift()
 
-    public init() { }
+    public init() {}
 
     public func save(type: KeychainType, value: String) {
         keychain.set(value, forKey: type.rawValue)
