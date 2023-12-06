@@ -19,6 +19,8 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
     }
 
     public override func attribute() {
+        nameTextField.textField.delegate = self
+        gcnTextField.textField.delegate = self
         setLargeTitle(title: "개인정보를 입력해주세요")
 
         gcnTextField.textField.rx.text.orEmpty
@@ -74,5 +76,14 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+}
+
+extension InfoSettingViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == nameTextField.textField {
+            self.gcnTextField.textField.becomeFirstResponder()
+        }
+        return true
     }
 }

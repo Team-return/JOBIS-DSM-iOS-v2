@@ -26,6 +26,8 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
     }
 
     public override func attribute() {
+        passwordTextField.textField.delegate = self
+        checkingPasswordTextField.textField.delegate = self
         setLargeTitle(title: "비밀번호를 설정해주세요")
 
         nextButton.rx.tap
@@ -84,7 +86,9 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
 
 extension PasswordSettingViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == checkingPasswordTextField.textField {
+        if textField == passwordTextField.textField {
+            self.passwordTextField.textField.becomeFirstResponder()
+        } else if textField == checkingPasswordTextField.textField {
             self.nextSignupStep()
         }
         return true
