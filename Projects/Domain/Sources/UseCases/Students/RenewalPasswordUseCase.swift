@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct RenewalPasswordUseCase {
     private let studentsRepository: any StudentsRepository

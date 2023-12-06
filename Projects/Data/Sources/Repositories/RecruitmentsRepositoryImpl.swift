@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class RecruitmentsRepositoryImpl: RecruitmentsRepository {
+struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
     private let remoteRecruitmentsDataSource: any RemoteRecruitmentsDataSource
 
     init(remoteRecruitmentsDataSource: any RemoteRecruitmentsDataSource) {

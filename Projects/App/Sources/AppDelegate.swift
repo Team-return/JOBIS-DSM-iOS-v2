@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static var container = Container()
     var assembler: Assembler!
@@ -41,5 +41,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
-    ) { }
+    ) {}
 }

@@ -5,7 +5,7 @@ import RxFlow
 import Core
 import Domain
 
-public class BookmarkViewModel: BaseViewModel, Stepper {
+public final class BookmarkViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
 
     private let disposeBag = DisposeBag()

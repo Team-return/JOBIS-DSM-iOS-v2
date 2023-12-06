@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class VerifyEmailFlow: Flow {
+public final class VerifyEmailFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

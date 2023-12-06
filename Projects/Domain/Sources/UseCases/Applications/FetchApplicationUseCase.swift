@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct FetchApplicationUseCase {
     private let applicationsRepository: any ApplicationsRepository

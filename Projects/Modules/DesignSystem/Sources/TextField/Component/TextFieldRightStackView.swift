@@ -4,7 +4,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-public class TextFieldRightStackView: UIStackView {
+public final class TextFieldRightStackView: UIStackView {
     private let disposeBag = DisposeBag()
     public var textFieldRightType: TextFieldType = .none {
         didSet {

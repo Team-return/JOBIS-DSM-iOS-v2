@@ -30,13 +30,13 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
         layout()
     }
 
-    open func addView() { }
+    open func addView() {}
 
-    open func layout() { }
+    open func layout() {}
 
-    open func bind() { }
+    open func bind() {}
 
-    open func attribute() { }
+    open func attribute() {}
 
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

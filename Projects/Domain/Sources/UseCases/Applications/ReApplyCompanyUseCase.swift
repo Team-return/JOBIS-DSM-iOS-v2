@@ -1,4 +1,3 @@
-import RxCocoa
 import RxSwift
 
 public struct ReApplyCompanyUseCase {

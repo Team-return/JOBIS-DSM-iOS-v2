@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class AuthRepositoryImpl: AuthRepository {
+struct AuthRepositoryImpl: AuthRepository {
     private let remoteAuthDataSource: any RemoteAuthDataSource
 
     init(remoteAuthDataSource: any RemoteAuthDataSource) {

@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-public class JobisMenuLabel: UIView {
+public final class JobisMenuLabel: UIView {
     let title = UILabel()
     public init() {
         super.init(frame: .zero)
