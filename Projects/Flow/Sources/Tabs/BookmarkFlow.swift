@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class BookmarkFlow: Flow {
+public final class BookmarkFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

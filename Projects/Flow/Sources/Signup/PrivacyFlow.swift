@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class PrivacyFlow: Flow {
+public final class PrivacyFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

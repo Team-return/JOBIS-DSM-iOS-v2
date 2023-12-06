@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class MyPageFlow: Flow {
+public final class MyPageFlow: Flow {
     public var container: Container
 
     public var root: Presentable {
