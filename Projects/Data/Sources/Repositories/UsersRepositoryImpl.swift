@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class UsersRepositoryImpl: UsersRepository {
+struct UsersRepositoryImpl: UsersRepository {
     private let remoteUsersDataSource: any RemoteUsersDataSource
     private let localUsersDataSource: any LocalUsersDataSource
 
