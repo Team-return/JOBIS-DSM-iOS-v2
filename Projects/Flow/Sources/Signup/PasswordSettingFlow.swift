@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class PasswordSettingFlow: Flow {
+public final class PasswordSettingFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

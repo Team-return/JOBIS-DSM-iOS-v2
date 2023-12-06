@@ -5,7 +5,7 @@ import Presentation
 import DesignSystem
 import Swinject
 
-public class TabsFlow: Flow {
+public final class TabsFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

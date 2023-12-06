@@ -4,7 +4,7 @@ import RxSwift
 import Core
 import Swinject
 
-public class AppFlow: Flow {
+public final class AppFlow: Flow {
     public var window: UIWindow
     public var root: Presentable {
         return self.window
