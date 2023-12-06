@@ -23,7 +23,7 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
         let password: String
         let signupButtonDidTap: Signal<Void>
     }
-    public struct Output { }
+    public struct Output {}
 
     public func transform(_ input: Input) -> Output {
         input.signupButtonDidTap
