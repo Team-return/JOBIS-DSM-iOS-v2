@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 import Lottie
 
-public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
+public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
     private var isOnLoading = false
 
     private let animationView = LottieAnimationView(name: "OnboardingLottie", bundle: .module)

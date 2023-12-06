@@ -6,5 +6,5 @@ import Then
 import Core
 import DesignSystem
 
-public class BookmarkViewController: BaseViewController<BookmarkViewModel> {
+public final class BookmarkViewController: BaseViewController<BookmarkViewModel> {
 }

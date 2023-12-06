@@ -6,5 +6,5 @@ import Then
 import Core
 import DesignSystem
 
-public class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
 }
