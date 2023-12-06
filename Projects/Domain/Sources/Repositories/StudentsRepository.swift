@@ -1,6 +1,4 @@
-import RxCocoa
 import RxSwift
-import Foundation
 
 public protocol StudentsRepository {
     func signup(req: SignupRequestQuery) -> Completable

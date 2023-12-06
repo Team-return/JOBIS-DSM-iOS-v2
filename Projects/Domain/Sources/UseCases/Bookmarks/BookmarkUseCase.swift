@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct BookmarkUseCase {
     private let bookmarksRepository: any BookmarksRepository
