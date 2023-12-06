@@ -7,12 +7,10 @@ import Core
 public class SigninFlow: Flow {
     public var container: Container
 
-    public var window: UIWindow
     public var root: Presentable {
         return rootViewController
     }
-    public init(window: UIWindow, container: Container) {
-        self.window = window
+    public init(container: Container) {
         self.container = container
         self.rootViewController = SigninViewController(container.resolve(SigninViewModel.self)!)
     }

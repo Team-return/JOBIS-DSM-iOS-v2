@@ -14,8 +14,7 @@ public class TextFieldRightStackView: UIStackView {
             case let .emailWithbutton(buttonTitle):
                 emailInfoLabel.isHidden = false
                 customButton.isHidden = false
-                customButton.configuration?.title = buttonTitle
-                customButton.configuration?.attributedTitle?.font = .jobisFont(.subBody)
+                setCustomButtonTitle(title: buttonTitle)
             case .secure:
                 secureButton.isHidden = false
             case .time:
@@ -24,6 +23,11 @@ public class TextFieldRightStackView: UIStackView {
                 return
             }
         }
+    }
+    public func setCustomButtonTitle(title: String) {
+        customButton.isHidden = false
+        customButton.configuration?.title = title
+        customButton.configuration?.attributedTitle?.font = .jobisFont(.subBody)
     }
     public let secureButton = UIButton(type: .system).then {
         $0.setImage(.textFieldIcon(.eyeOff), for: .normal)
@@ -44,9 +48,9 @@ public class TextFieldRightStackView: UIStackView {
         $0.isHidden = true
     }
     public let timeLabel = UILabel().then {
-        $0.setJobisText("05:00", font: .body, color: .GrayScale.gray60)
         $0.isHidden = true
     }
+
     public init() {
         super.init(frame: .zero)
         self.axis = .horizontal
@@ -57,6 +61,10 @@ public class TextFieldRightStackView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public func setTimer(_ time: Int) {
+        let minuites = ((300 - time).secondToMinutes())
+        timeLabel.setJobisText(minuites, font: .body, color: .GrayScale.gray60)
+    }
     public func setLayout() {
         [
             emailInfoLabel,

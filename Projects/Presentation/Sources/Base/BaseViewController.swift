@@ -25,7 +25,6 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
         super.viewWillAppear(animated)
         self.viewAppear.accept(())
     }
-    
     override open func viewWillLayoutSubviews() {
         addView()
         layout()
@@ -37,9 +36,13 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController {
 
     open func bind() { }
 
-    open func attribute() {}
+    open func attribute() { }
 
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
 }
