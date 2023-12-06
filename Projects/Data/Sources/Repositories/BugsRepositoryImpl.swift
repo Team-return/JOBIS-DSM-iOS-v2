@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class BugsRepositoryImpl: BugsRepository {
+struct BugsRepositoryImpl: BugsRepository {
     private let remoteBugsDataSource: any RemoteBugsDataSource
 
     init(remoteBugsDataSource: any RemoteBugsDataSource) {

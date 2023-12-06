@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class CompaniesRepositoryImpl: CompaniesRepository {
+struct CompaniesRepositoryImpl: CompaniesRepository {
     private let remoteCompaniesDataSource: any RemoteCompaniesDataSource
 
     init(remoteCompaniesDataSource: any RemoteCompaniesDataSource) {
