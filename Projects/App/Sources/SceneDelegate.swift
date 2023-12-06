@@ -1,7 +1,8 @@
 import UIKit
 import RxFlow
 import Flow
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     var coordinator = FlowCoordinator()
