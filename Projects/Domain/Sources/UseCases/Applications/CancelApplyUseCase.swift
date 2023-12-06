@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct CancelApplyUseCase {
     private let applicationsRepository: any ApplicationsRepository

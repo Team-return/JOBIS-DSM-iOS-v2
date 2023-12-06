@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct FetchTotalPassStudentUseCase {
     private let applicationsRepository: any ApplicationsRepository
