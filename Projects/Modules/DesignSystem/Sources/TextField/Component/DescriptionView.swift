@@ -14,10 +14,10 @@ public class DescriptionView: UIView {
                 self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.red)
 
             case let .info(description):
-                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.blue)
+                self.descriptionLabel.setJobisText(description, font: .description, color: .GrayScale.gray90)
 
             case let .success(description):
-                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.green)
+                self.descriptionLabel.setJobisText(description, font: .description, color: .GrayScale.gray90)
             }
             self.imageView.image = descriptionType?.toIcon()
         }

@@ -5,7 +5,7 @@ import RxSwift
 protocol RemoteStudentsDataSource {
     func signup(req: SignupRequestQuery) -> Completable
     func renewalPassword(req: RenewalPasswordRequestQuery) -> Completable
-    func studentExists(gcn: Int, name: String) -> Completable
+    func studentExists(gcn: String, name: String) -> Completable
     func fetchStudentInfo() -> Single<StudentInfoEntity>
     func changePassword(req: ChangePasswordRequestQuery) -> Completable
     func compareCurrentPasssword(password: String) -> Completable
@@ -23,7 +23,7 @@ final class RemoteStudentsDataSourceImpl: RemoteBaseDataSource<StudentsAPI>, Rem
             .asCompletable()
     }
 
-    func studentExists(gcn: Int, name: String) -> Completable {
+    func studentExists(gcn: String, name: String) -> Completable {
         request(.studentExists(gcn: gcn, name: name))
             .asCompletable()
     }

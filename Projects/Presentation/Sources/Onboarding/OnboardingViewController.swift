@@ -8,6 +8,7 @@ import DesignSystem
 import Lottie
 
 public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
+    private var isOnLoading = false
 
     private let animationView = LottieAnimationView(name: "OnboardingLottie", bundle: .module)
 
@@ -84,16 +85,18 @@ public class OnboardingViewController: BaseViewController<OnboardingViewModel> {
         let output = viewModel.transform(input)
         output.animation.asObservable()
             .bind(onNext: { [self] in
-                animationView.play { [self] _ in
+                if !isOnLoading {
+                    animationView.play()
                     UIView.transition(
                         with: navigateButtonStackView,
-                        duration: 1,
-                        options: .curveEaseIn,
+                        duration: 0.5,
+                        options: .transitionCrossDissolve,
                         animations: {
                             self.setNavigateButton()
                         }
                     )
                 }
+                isOnLoading = true
             }).disposed(by: disposeBag)
     }
 

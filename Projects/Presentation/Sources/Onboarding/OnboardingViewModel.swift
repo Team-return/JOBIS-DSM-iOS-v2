@@ -45,7 +45,7 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
                     }
                     .andThen(Single.just(OnboardingStep.tabsIsRequired))
             }
-            .delay(RxTimeInterval.seconds(1), scheduler: MainScheduler.instance)
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(animation: animation)

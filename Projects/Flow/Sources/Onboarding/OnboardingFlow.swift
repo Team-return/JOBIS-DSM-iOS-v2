@@ -7,12 +7,10 @@ import Core
 public class OnboardingFlow: Flow {
     public var container: Container
 
-    public var window: UIWindow
     public var root: Presentable {
         return rootViewController
     }
-    public init(window: UIWindow, container: Container) {
-        self.window = window
+    public init(container: Container) {
         self.container = container
     }
 
@@ -39,7 +37,7 @@ public class OnboardingFlow: Flow {
 
 private extension OnboardingFlow {
     func navigateToSignin() -> FlowContributors {
-        let signinFlow = SigninFlow(window: window, container: container)
+        let signinFlow = SigninFlow(container: container)
         Flows.use(signinFlow, when: .created) { root in
             self.rootViewController.pushViewController(root, animated: true)
         }
@@ -50,11 +48,13 @@ private extension OnboardingFlow {
     }
 
     func navigateToSignup() -> FlowContributors {
-        let signupViewController = container.resolve(SignupViewController.self)!
-        self.rootViewController.pushViewController(signupViewController, animated: true)
+        let signupFlow = InfoSettingFlow(container: container)
+        Flows.use(signupFlow, when: .created) { root in
+            self.rootViewController.pushViewController(root, animated: true)
+        }
         return .one(flowContributor: .contribute(
-            withNextPresentable: signupViewController,
-            withNextStepper: signupViewController.viewModel
+            withNextPresentable: signupFlow,
+            withNextStepper: OneStepper(withSingleStep: InfoSettingStep.infoSettingIsRequired)
         ))
     }
 
