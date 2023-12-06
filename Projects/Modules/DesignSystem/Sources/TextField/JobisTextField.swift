@@ -6,6 +6,7 @@ import RxCocoa
 
 public class JobisTextField: UIView {
     private var disposeBag = DisposeBag()
+    private var timerDisposeBag = DisposeBag()
 
     private let stackView = UIStackView().then {
         $0.axis = .vertical
@@ -30,7 +31,7 @@ public class JobisTextField: UIView {
     }
 
     public func startTimer() {
-        let disposeBag = DisposeBag()
+        timerDisposeBag = DisposeBag()
         textFieldRightView.timeLabel.isHidden = false
         let startTime = Date()
         let timer = Observable<Int>.interval(
@@ -43,7 +44,7 @@ public class JobisTextField: UIView {
                 let elapseSeconds = Date().timeIntervalSince(startTime)
                 self.textFieldRightView.setTimer(Int(elapseSeconds))
             })
-            .disposed(by: disposeBag)
+            .disposed(by: timerDisposeBag)
     }
 
     override public func layoutSubviews() {
