@@ -26,6 +26,8 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
     }
 
     public override func attribute() {
+        emailTextField.textField.delegate = self
+        authCodeTextField.textField.delegate = self
         setLargeTitle(title: "이메일을 입력해주세요")
 
         authCodeTextField.textField.rx.text.orEmpty
@@ -101,5 +103,16 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+}
+
+extension VerifyEmailViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == emailTextField.textField {
+            self.authCodeTextField.textField.becomeFirstResponder()
+        } else if textField == authCodeTextField.textField {
+            self.nextSignupStep()
+        }
+        return true
     }
 }

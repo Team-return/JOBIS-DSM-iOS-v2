@@ -26,9 +26,9 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
         setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")
 
         privacyWebView.scrollView.rx.contentOffset
-            .skip(while: { [weak self] _ in
-                self?.signupButton.isEnabled ?? false
-            })
+            .filter { [weak self] _ in
+                !(self?.signupButton.isEnabled ?? false)
+            }
             .distinctUntilChanged()
             .bind { [weak self] point in
                 guard let scrollView = self else { return }
@@ -55,7 +55,7 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
     public override func layout() {
         privacyWebView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            $0.bottom.equalTo(self.signupButton.snp.top).offset(-16)
+            $0.bottom.equalTo(self.signupButton.snp.top).offset(-12)
             $0.leading.trailing.equalToSuperview()
         }
         signupButton.snp.makeConstraints {
