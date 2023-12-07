@@ -24,7 +24,7 @@ extension ReviewsAPI: JobisAPI {
             return "/\(id)"
 
         case .postReview:
-            return "/"
+            return ""
         }
     }
 
