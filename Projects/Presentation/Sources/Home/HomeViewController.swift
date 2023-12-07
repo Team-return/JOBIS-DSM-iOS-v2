@@ -77,8 +77,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
         output.isLoading
-            .subscribe(onNext: { [self] bool in
-                bool ? loading.startAnimating() : loading.stopAnimating()
+            .subscribe(onNext: { [weak self] bool in
+                bool ? self?.loading.startAnimating() : self?.loading.stopAnimating()
             })
             .disposed(by: disposeBag)
     }

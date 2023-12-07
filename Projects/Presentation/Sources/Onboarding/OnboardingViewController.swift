@@ -85,7 +85,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         let output = viewModel.transform(input)
         output.animation.asObservable()
             .bind(onNext: { [unowned self] in
-                if !isOnLoading {
+                if isOnLoading {
                     animationView.play()
                     UIView.transition(
                         with: navigateButtonStackView,
