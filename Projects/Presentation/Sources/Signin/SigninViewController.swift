@@ -81,13 +81,13 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
         )
         let output = viewModel.transform(input)
         output.emailErrorDescription
-            .bind { [self] description in
+            .bind { [unowned self] description in
                 print("email \(description)")
                 emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.passwordErrorDescription
-            .bind { [self] description in
+            .bind { [unowned self] description in
                 print("password \(description)")
                 passwordTextField.setDescription(description)
             }
