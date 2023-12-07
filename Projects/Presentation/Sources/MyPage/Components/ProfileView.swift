@@ -1,7 +1,7 @@
 import UIKit
 import DesignSystem
 
-class ProfileView: UIView {
+final class ProfileView: UIView {
     let profileImageView = UIImageView().then {
         $0.layer.cornerRadius = 28
         $0.clipsToBounds = true

@@ -1,27 +1,34 @@
-import Domain
 import RxSwift
-import RxCocoa
+import Domain
 
-public struct ApplicationsRepositoryImpl: ApplicationsRepository {
+struct ApplicationsRepositoryImpl: ApplicationsRepository {
     private let remoteApplicationsDataSource: any RemoteApplicationsDataSource
 
     init(remoteApplicationsDataSource: any RemoteApplicationsDataSource) {
         self.remoteApplicationsDataSource = remoteApplicationsDataSource
     }
 
-    public func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+    func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
         remoteApplicationsDataSource.applyCompany(id: id, req: req)
     }
 
-    public func cancelApply(id: String) -> Completable {
+    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+        remoteApplicationsDataSource.reApplyCompany(id: id, req: req)
+    }
+
+    func cancelApply(id: String) -> Completable {
         remoteApplicationsDataSource.cancelApply(id: id)
     }
 
-    public func fetchApplication() -> Single<[ApplicationEntity]> {
+    func fetchApplication() -> Single<[ApplicationEntity]> {
         remoteApplicationsDataSource.fetchApplication()
     }
 
-    public func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
+    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
         remoteApplicationsDataSource.fetchTotalPassStudent()
+    }
+
+    func fetchRejectionReason(id: String) -> Single<String> {
+        remoteApplicationsDataSource.fetchRejectionReason(id: id)
     }
 }

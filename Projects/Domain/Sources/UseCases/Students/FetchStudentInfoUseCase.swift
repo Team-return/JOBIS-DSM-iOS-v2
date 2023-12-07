@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct FetchStudentInfoUseCase {
     private let studentsRepository: any StudentsRepository

@@ -1,7 +1,7 @@
 import UIKit
 import DesignSystem
 
-class SectionView: UIView {
+final class SectionView: UIView {
     var items: [(String, UIImage)] = []
     let titleLabel = JobisMenuLabel()
 

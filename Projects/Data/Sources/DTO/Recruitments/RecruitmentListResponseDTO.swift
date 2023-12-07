@@ -4,24 +4,22 @@ struct RecruitmentListResponseDTO: Decodable {
     let recruitments: [RecruitmentResponseDTO]
 }
 
-struct RecruitmentResponseDTO: Decodable {
+struct RecruitmentResponseDTO: Codable {
     let recruitID: Int
     let companyName: String
     let companyProfileURL: String
     let trainPay: Int
-    let military: Bool
-    let totalHiring: Int
-    let jobCodeList: String
+    let militarySupport: Bool
+    let hiringJobs: String
     let bookmarked: Bool
 
     enum CodingKeys: String, CodingKey {
-        case recruitID = "recruit_id"
+        case recruitID = "id"
         case companyName = "company_name"
         case companyProfileURL = "company_profile_url"
         case trainPay = "train_pay"
-        case military
-        case totalHiring = "total_hiring"
-        case jobCodeList = "job_code_list"
+        case militarySupport = "military_support"
+        case hiringJobs = "hiring_jobs"
         case bookmarked
     }
 }
@@ -34,9 +32,8 @@ extension RecruitmentListResponseDTO {
                 companyName: $0.companyName,
                 companyProfileURL: $0.companyProfileURL,
                 trainPay: $0.trainPay,
-                military: $0.military,
-                totalHiring: $0.totalHiring,
-                jobCodeList: $0.jobCodeList,
+                militarySupport: $0.militarySupport,
+                hiringJobs: $0.hiringJobs,
                 bookmarked: $0.bookmarked
             )
         }

@@ -1,14 +1,13 @@
 import RxSwift
-import RxCocoa
 
 public struct CancelApplyUseCase {
-    private let applicationRepository: any ApplicationsRepository
+    private let applicationsRepository: any ApplicationsRepository
 
-    public init(applicationRepository: any ApplicationsRepository) {
-        self.applicationRepository = applicationRepository
+    public init(applicationsRepository: any ApplicationsRepository) {
+        self.applicationsRepository = applicationsRepository
     }
 
     func execute(id: String) -> Completable {
-        applicationRepository.cancelApply(id: id)
+        applicationsRepository.cancelApply(id: id)
     }
 }

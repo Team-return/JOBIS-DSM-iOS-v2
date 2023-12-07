@@ -1,6 +1,4 @@
-import RxCocoa
 import RxSwift
-import Foundation
 
 public protocol RecruitmentsRepository {
     func fetchRecruitmentDetail(id: String) -> Single<RecruitmentDetailEntity>

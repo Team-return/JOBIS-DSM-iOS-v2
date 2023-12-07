@@ -4,7 +4,7 @@ import RxSwift
 import Core
 import Swinject
 
-public class AppFlow: Flow {
+public final class AppFlow: Flow {
     public var window: UIWindow
     public var root: Presentable {
         return self.window
@@ -30,7 +30,7 @@ public class AppFlow: Flow {
 
 extension AppFlow {
     func navigationToOnboarding() -> FlowContributors {
-        let onboardingFlow = OnboardingFlow(window: window, container: container)
+        let onboardingFlow = OnboardingFlow(container: container)
         Flows.use(onboardingFlow, when: .created) { (root) in
             self.window.rootViewController = root
         }

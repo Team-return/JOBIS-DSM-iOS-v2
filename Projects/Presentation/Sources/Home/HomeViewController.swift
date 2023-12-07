@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class HomeViewController: BaseViewController<HomeViewModel> {
+public final class HomeViewController: BaseViewController<HomeViewModel> {
     let loading = UIActivityIndicatorView().then {
         $0.style = .medium
     }

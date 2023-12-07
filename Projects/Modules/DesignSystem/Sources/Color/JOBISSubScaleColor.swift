@@ -1,7 +1,7 @@
 import UIKit
 
 public extension UIColor {
-    struct GrayScale { }
+    struct GrayScale {}
 }
 
 public extension UIColor.GrayScale {

@@ -1,5 +1,5 @@
-import Foundation
 import KeychainSwift
+
 public struct KeychainImpl: Keychain {
     private let keychain = KeychainSwift()
 

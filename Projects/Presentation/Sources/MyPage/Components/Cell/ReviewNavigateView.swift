@@ -1,7 +1,7 @@
 import UIKit
 import DesignSystem
 
-class ReviewNavigateView: UIView {
+final class ReviewNavigateView: UIView {
     var id = 0
     private let reviewImageView = UIImageView().then {
         $0.image = .jobisIcon(.door)

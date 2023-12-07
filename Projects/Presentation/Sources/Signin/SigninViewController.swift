@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public class SigninViewController: BaseViewController<SigninViewModel> {
+public final class SigninViewController: BaseViewController<SigninViewModel> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
         $0.setColorRange(color: .Main.blue1, range: "JOBIS")
@@ -69,7 +69,7 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
         signinButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(46)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
@@ -81,13 +81,15 @@ public class SigninViewController: BaseViewController<SigninViewModel> {
         )
         let output = viewModel.transform(input)
         output.emailErrorDescription
-            .bind { [unowned self] description in 
-                self.emailTextField.setDescription(.error(description: description))
+            .bind { [unowned self] description in
+                print("email \(description)")
+                emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.passwordErrorDescription
             .bind { [unowned self] description in
-                self.passwordTextField.setDescription(.error(description: description))
+                print("password \(description)")
+                passwordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
