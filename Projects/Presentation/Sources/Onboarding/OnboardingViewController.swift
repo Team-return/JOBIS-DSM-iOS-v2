@@ -84,7 +84,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         )
         let output = viewModel.transform(input)
         output.animation.asObservable()
-            .bind(onNext: { [self] in
+            .bind(onNext: { [unowned self] in
                 if !isOnLoading {
                     animationView.play()
                     UIView.transition(

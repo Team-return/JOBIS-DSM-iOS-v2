@@ -41,16 +41,16 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         )
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
-            .bind(onNext: { [self] in
-                proFileView.userInfoLabel.text = "\($0.studentGcn) \($0.studentName)"
-                proFileView.departmentLabel.text = $0.department.localizedString()
-                proFileView.profileImageView
+            .bind(onNext: { [weak self] in
+                self?.proFileView.userInfoLabel.text = "\($0.studentGcn) \($0.studentName)"
+                self?.proFileView.departmentLabel.text = $0.department.localizedString()
+                self?.proFileView.profileImageView
                     .kf.setImage(with: URL(string: "https://jobis-store.s3.ap-northeast-2.amazonaws.com/\($0.profileImageUrl)"))
             }).disposed(by: disposeBag)
 
         output.writableReviewList
-            .bind(onNext: { [self] in
-                reviewNavigateStackView.setList(list: $0)
+            .bind(onNext: { [weak self] in
+                self?.reviewNavigateStackView.setList(list: $0)
             }).disposed(by: disposeBag)
     }
 
