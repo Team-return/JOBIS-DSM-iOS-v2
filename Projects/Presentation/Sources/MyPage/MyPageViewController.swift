@@ -7,7 +7,7 @@ import Core
 import Kingfisher
 import DesignSystem
 
-public class MyPageViewController: BaseViewController<MyPageViewModel> {
+public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }

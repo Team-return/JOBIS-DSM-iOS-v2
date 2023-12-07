@@ -50,11 +50,37 @@ public final class PresentationAssembly: Assembly {
             OnboardingViewController(resolver.resolve(OnboardingViewModel.self)!)
         }
 
-        container.register(SignupViewModel.self) { resolver in
-            SignupViewModel()
+        container.register(InfoSettingViewModel.self) { resolver in
+            InfoSettingViewModel(
+                studentExistsUseCase: resolver.resolve(StudentExistsUseCase.self)!
+            )
         }
-        container.register(SignupViewController.self) { resolver in
-            SignupViewController(resolver.resolve(SignupViewModel.self)!)
+        container.register(InfoSettingViewController.self) { resolver in
+            InfoSettingViewController(resolver.resolve(InfoSettingViewModel.self)!)
+        }
+
+        container.register(VerifyEmailViewModel.self) { resolver in
+            VerifyEmailViewModel(
+                sendAuthCodeUseCase: resolver.resolve(SendAuthCodeUseCase.self)!,
+                verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
+            )
+        }
+        container.register(VerifyEmailViewController.self) { resolver in
+            VerifyEmailViewController(resolver.resolve(VerifyEmailViewModel.self)!)
+        }
+
+        container.register(PasswordSettingViewModel.self) { _ in
+            PasswordSettingViewModel()
+        }
+        container.register(PasswordSettingViewController.self) { resolver in
+            PasswordSettingViewController(resolver.resolve(PasswordSettingViewModel.self)!)
+        }
+
+        container.register(PrivacyViewModel.self) { resolver in
+            PrivacyViewModel(signupUseCase: resolver.resolve(SignupUseCase.self)!)
+        }
+        container.register(PrivacyViewController.self) { resolver in
+            PrivacyViewController(resolver.resolve(PrivacyViewModel.self)!)
         }
 
         container.register(SigninViewModel.self) { resolver in

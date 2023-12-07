@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct StudentExistsUseCase {
     private let studentsRepository: any StudentsRepository
@@ -8,7 +7,7 @@ public struct StudentExistsUseCase {
         self.studentsRepository = studentsRepository
     }
 
-    public func execute(gcn: Int, name: String) -> Completable {
+    public func execute(gcn: String, name: String) -> Completable {
         studentsRepository.studentExists(gcn: gcn, name: name)
     }
 }

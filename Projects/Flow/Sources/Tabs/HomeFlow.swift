@@ -4,7 +4,7 @@ import Swinject
 import RxFlow
 import Core
 
-public class HomeFlow: Flow {
+public final class HomeFlow: Flow {
     public var container: Container
 
     public var root: Presentable {

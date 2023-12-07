@@ -5,7 +5,7 @@ import RxFlow
 import Core
 import Domain
 
-public class MyPageViewModel: BaseViewModel, Stepper {
+public final class MyPageViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
 
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase

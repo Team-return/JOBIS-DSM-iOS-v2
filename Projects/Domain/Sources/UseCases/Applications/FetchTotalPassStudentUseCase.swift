@@ -1,14 +1,13 @@
 import RxSwift
-import RxCocoa
 
 public struct FetchTotalPassStudentUseCase {
-    private let applicationRepository: any ApplicationsRepository
+    private let applicationsRepository: any ApplicationsRepository
 
-    public init(applicationRepository: any ApplicationsRepository) {
-        self.applicationRepository = applicationRepository
+    public init(applicationsRepository: any ApplicationsRepository) {
+        self.applicationsRepository = applicationsRepository
     }
 
     func execute() -> Single<TotalPassStudentEntity> {
-        applicationRepository.fetchTotalPassStudent()
+        applicationsRepository.fetchTotalPassStudent()
     }
 }

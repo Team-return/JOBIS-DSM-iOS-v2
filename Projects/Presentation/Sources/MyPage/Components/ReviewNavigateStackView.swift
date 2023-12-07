@@ -4,7 +4,7 @@ import DesignSystem
 import RxSwift
 import RxCocoa
 
-class ReviewNavigateStackView: UIStackView {
+final class ReviewNavigateStackView: UIStackView {
     let reviewNavigateButtonDidTap = PublishRelay<Int>()
     private let disposeBag = DisposeBag()
     init() {

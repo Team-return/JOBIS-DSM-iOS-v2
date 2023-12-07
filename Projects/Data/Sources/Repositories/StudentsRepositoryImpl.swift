@@ -1,7 +1,7 @@
 import RxSwift
 import Domain
 
-final class StudentsRepositoryImpl: StudentsRepository {
+struct StudentsRepositoryImpl: StudentsRepository {
     private let remoteStudentsDataSource: any RemoteStudentsDataSource
 
     init(remoteStudentsDataSource: any RemoteStudentsDataSource) {
@@ -16,7 +16,7 @@ final class StudentsRepositoryImpl: StudentsRepository {
         remoteStudentsDataSource.renewalPassword(req: req)
     }
 
-    func studentExists(gcn: Int, name: String) -> Completable {
+    func studentExists(gcn: String, name: String) -> Completable {
         remoteStudentsDataSource.studentExists(gcn: gcn, name: name)
     }
 

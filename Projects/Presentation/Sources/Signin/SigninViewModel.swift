@@ -3,6 +3,7 @@ import Domain
 import RxFlow
 import RxSwift
 import RxCocoa
+import DesignSystem
 
 public final class SigninViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
@@ -20,13 +21,13 @@ public final class SigninViewModel: BaseViewModel, Stepper {
         let signinButtonDidTap: Signal<Void>
     }
     public struct Output {
-        let emailErrorDescription: PublishRelay<String>
-        let passwordErrorDescription: PublishRelay<String>
+        let emailErrorDescription: PublishRelay<DescriptionType>
+        let passwordErrorDescription: PublishRelay<DescriptionType>
     }
 
     public func transform(_ input: Input) -> Output {
-        let emailErrorDescription = PublishRelay<String>()
-        let passwordErrorDescription = PublishRelay<String>()
+        let emailErrorDescription = PublishRelay<DescriptionType>()
+        let passwordErrorDescription = PublishRelay<DescriptionType>()
 
         let info = Driver.combineLatest(input.email, input.password)
         input.signinButtonDidTap
@@ -34,10 +35,10 @@ public final class SigninViewModel: BaseViewModel, Stepper {
             .withLatestFrom(info)
             .filter { email, password in
                 if email.isEmpty {
-                    emailErrorDescription.accept("빈칸을 채워주세요")
+                    emailErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
                     return false
                 } else if password.isEmpty {
-                    passwordErrorDescription.accept("빈칸을 채워주세요")
+                    passwordErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
                     return false
                 }
                 return true
@@ -45,22 +46,22 @@ public final class SigninViewModel: BaseViewModel, Stepper {
             .flatMap { [self] email, password in
                 return signinUseCase.execute(
                     req: .init(
-                        accountID: email + "@dsm.hs.kr",
+                        accountID: email.dsmEmail(),
                         password: password
                     )
                 )
                 .filter { $0 == .developer || $0 == .student}
                 .catch { error in
-                    guard let error = error as? UsersError else { return .empty() }
+                    guard let error = error as? UsersError else { return .never() }
                     switch error {
                     case .notFoundPassword:
-                        passwordErrorDescription.accept("비밀번호가 옳지 않아요")
+                        passwordErrorDescription.accept(.error(description: "비밀번호가 옳지 않아요"))
                     case .notFoundEmail:
-                        emailErrorDescription.accept("아이디를 찾지 못했어요")
+                        emailErrorDescription.accept(.error(description: "아이디를 찾지 못했어요"))
                     case .internalServerError:
-                        emailErrorDescription.accept(error.localizedDescription)
+                        emailErrorDescription.accept(.error(description: error.localizedDescription))
                     }
-                    return .empty()
+                    return .never()
                 }
             }
             .map { _ in SigninStep.tabsIsRequired }

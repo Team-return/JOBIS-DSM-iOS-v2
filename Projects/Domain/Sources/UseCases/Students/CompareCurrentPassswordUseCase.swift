@@ -1,5 +1,4 @@
 import RxSwift
-import RxCocoa
 
 public struct CompareCurrentPassswordUseCase {
     private let studentsRepository: any StudentsRepository
