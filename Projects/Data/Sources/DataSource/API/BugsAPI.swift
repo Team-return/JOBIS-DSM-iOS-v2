@@ -18,7 +18,7 @@ extension BugsAPI: JobisAPI {
     var urlPath: String {
         switch self {
         case .reportBug, .fetchBugList:
-            return "/"
+            return ""
 
         case let .fetchBugDetail(id):
             return "/\(id)/"

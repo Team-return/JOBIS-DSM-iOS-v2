@@ -17,7 +17,7 @@ extension BookmarksAPI: JobisAPI {
     public var urlPath: String {
         switch self {
         case .fetchBookmarkList:
-            return "/"
+            return ""
 
         case let .bookmark(id):
             return "/\(id)"
