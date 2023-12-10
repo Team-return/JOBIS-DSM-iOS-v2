@@ -83,7 +83,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
             viewAppear: viewAppear
         )
         let output = viewModel.transform(input)
-        output.animation.asObservable()
+        output.animate.asObservable()
             .bind(onNext: { [weak self] in
                 guard let self else { return }
 
