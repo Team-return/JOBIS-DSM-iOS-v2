@@ -2,7 +2,7 @@ import UIKit
 import DesignSystem
 
 final class SectionView: UIView {
-    var items: [(String, UIImage)] = []
+    var items: [(title: String, icon: UIImage)] = []
     var titleLabel: JobisMenuLabel = .init(text: "")
 
     let sectionTableView = UITableView().then {
@@ -49,8 +49,8 @@ extension SectionView: UITableViewDataSource {
             withIdentifier: SectionTableViewCell.identifier,
             for: indexPath
         ) as? SectionTableViewCell else { return UITableViewCell() }
-        cell.sectionImageView.image = items[indexPath.row].1
-        cell.titleLabel.setJobisText(items[indexPath.row].0, font: .body, color: .GrayScale.gray90)
+        cell.sectionImageView.image = items[indexPath.row].icon.resize(.init(width: 28, height: 28))
+        cell.titleLabel.setJobisText(items[indexPath.row].title, font: .body, color: .GrayScale.gray90)
         return cell
     }
 }
