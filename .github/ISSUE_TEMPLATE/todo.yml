@@ -1,0 +1,15 @@
+name: "Todo"
+description: "할일이 있으신가요? 📝"
+body:
+  - type: textarea
+    attributes:
+      label: Describe
+      description: |
+        [개요] 할일에 관한 설명을 간단하게 작성해주세요.
+      placeholder: |
+        - 똥싸기
+  - type: textarea
+    attributes:
+      label: Additional
+      description: |
+        [추가사항] 추가로 할말이 있으신가요?
