@@ -12,8 +12,7 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(HomeViewModel.self) { resolver in
             HomeViewModel(
-                signinUseCase: resolver.resolve(SigninUseCase.self)!,
-                reissueTokenUseCase: resolver.resolve(ReissueTokenUaseCase.self)!
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
             )
         }
 
