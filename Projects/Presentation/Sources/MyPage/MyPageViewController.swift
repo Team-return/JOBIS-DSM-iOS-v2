@@ -16,6 +16,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     let reviewNavigateStackView = ReviewNavigateStackView()
     let accountSectionView = SectionView().then {
         $0.titleLabel.setMenuLabel(text: "계정")
+    private let accountSectionView = SectionView(menuText: "계정").then {
         $0.items = [
             ("관심분야 선택", .jobisIcon(.code)),
             ("비밀번호 변경", .jobisIcon(.changePassword)),
@@ -23,7 +24,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             ("회원 탈퇴", .jobisIcon(.withdrawal))
         ]
     }
-    let bugSectionView = SectionView().then {
+    private let bugSectionView = SectionView(menuText: "버그제보").then {
         $0.titleLabel.setMenuLabel(text: "버그제보")
         $0.items = [
             ("버그 제보하기", .jobisIcon(.bugReport)),
