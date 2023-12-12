@@ -3,7 +3,7 @@ import DesignSystem
 
 final class SectionView: UIView {
     var items: [(String, UIImage)] = []
-    let titleLabel = JobisMenuLabel()
+    var titleLabel: JobisMenuLabel = .init(text: "")
 
     let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
@@ -11,9 +11,10 @@ final class SectionView: UIView {
         $0.isScrollEnabled = false
     }
 
-    init() {
+    init(menuText: String) {
         super.init(frame: .zero)
         self.sectionTableView.dataSource = self
+        self.titleLabel = JobisMenuLabel(text: menuText)
     }
 
     override func layoutSubviews() {
