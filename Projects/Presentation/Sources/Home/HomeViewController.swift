@@ -37,15 +37,20 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.sectionHeaderTopPadding = 0
         $0.setEmptyHeaderView()
     }
-    private let emptyApplicationCell = EmptyApplicationCell()
-    private var applicationStatusCells: [ApplicationEntity] = []
+    private let careerStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fillEqually
+        $0.spacing = 12
+    }
 
     private func setCardStyle(isWinterSeason: Bool) {
         if isWinterSeason {
             findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
             findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
+            findWinterRecruitmentsCard.isHidden = false
         } else {
             findCompanysCard = CareerNavigationCard(style: .large)
+            findWinterRecruitmentsCard.isHidden = true
         }
     }
 
@@ -130,14 +135,16 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         [
+            findCompanysCard,
+            findWinterRecruitmentsCard
+        ].forEach(careerStackView.addArrangedSubview(_:))
+        [
             studentInfoView,
             employmentView,
             careerMenuLabel,
-            findCompanysCard,
-            findWinterRecruitmentsCard,
+            careerStackView,
             applicationStatusMenuLabel,
-            applicationStatusTableView,
-            emptyApplicationCell
+            applicationStatusTableView
         ].forEach(contentView.addSubview(_:))
     }
 
@@ -163,26 +170,14 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             $0.top.equalTo(employmentView.snp.bottom).offset(24)
         }
 
-        findCompanysCard.snp.makeConstraints {
+        careerStackView.snp.makeConstraints {
             $0.top.equalTo(careerMenuLabel.snp.bottom)
-            $0.leading.equalToSuperview().inset(24)
-            if isWinterSeason.value {
-                $0.trailing.equalTo(view.snp.centerX).offset(-6)
-            } else {
-                $0.trailing.equalToSuperview().inset(24)
-            }
-        }
-
-        if isWinterSeason.value {
-            findWinterRecruitmentsCard.snp.makeConstraints {
-                $0.top.equalTo(careerMenuLabel.snp.bottom)
-                $0.leading.equalTo(view.snp.centerX).offset(6)
-                $0.trailing.equalToSuperview().inset(24)
-            }
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(176)
         }
 
         applicationStatusMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(findCompanysCard.snp.bottom).offset(24)
+            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
         }
 
         if applicationStatusCells.isEmpty {
