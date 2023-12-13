@@ -7,6 +7,8 @@ import DesignSystem
 final class ApplicationStatusCell: UITableViewCell {
     static let identifier = "ApplicationStatusCell"
 
+    public var applicationID: Int?
+
     private let containerView = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
@@ -28,6 +30,7 @@ final class ApplicationStatusCell: UITableViewCell {
             font: .subBody,
             color: entity.applicationStatus.toUIColor()
         )
+        self.applicationID = entity.applicationID
     }
 
     override func layoutSubviews() {
