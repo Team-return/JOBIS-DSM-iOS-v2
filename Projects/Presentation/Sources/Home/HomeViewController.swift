@@ -73,12 +73,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 self?.hideTabbar()
             })
             .disposed(by: disposeBag)
-
-        viewAppear.asObservable()
-            .subscribe(onNext: { [weak self] _ in
-                self?.showTabbar()
-            })
-            .disposed(by: disposeBag)
     }
 
     public override func bind() {
