@@ -55,11 +55,15 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     }
 
     public override func attribute() {
-        applicationStatusTableView.delegate = self
-        applicationStatusTableView.dataSource = self
-
         setCardStyle(isWinterSeason: isWinterSeason.value)
         self.navigationItem.rightBarButtonItem = navigateToAlarmButton
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
+            style: .plain,
+            target: self,
+            action: nil
+        )
+
         findCompanysCard.rx.tap.subscribe(onNext: {
             print("findCompany!")
         })
@@ -117,6 +121,16 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 employmentView.setEmploymentPercentage(employmentPercentage)
             }
             .disposed(by: disposeBag)
+
+        output.applicationList
+            .bind(to: applicationStatusTableView.rx.items(
+                cellIdentifier: ApplicationStatusCell.identifier,
+                cellType: ApplicationStatusCell.self
+            )) { _, element, cell in
+                cell.setCell(element)
+            }
+            .disposed(by: disposeBag)
+
         output.applicationList
             .bind { [weak self] applicationList in
                 if applicationList.isEmpty {
@@ -180,17 +194,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             $0.top.equalTo(careerStackView.snp.bottom).offset(24)
         }
 
-        if applicationStatusCells.isEmpty {
-            emptyApplicationCell.snp.makeConstraints {
-                $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-            }
-        } else {
-            applicationStatusTableView.snp.makeConstraints {
-                $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-                $0.height.greaterThanOrEqualTo(applicationStatusTableView.contentSize.height + 4)
-            }
+        applicationStatusTableView.snp.makeConstraints {
+            $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.greaterThanOrEqualTo((applicationStatusTableView.contentSize.height + 4))
         }
     }
 }
