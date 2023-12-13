@@ -11,11 +11,17 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
 
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+    private let fetchApplicationUseCase: FetchApplicationUseCase
 
     init(
-        fetchStudentInfoUseCase: FetchStudentInfoUseCase
+        fetchStudentInfoUseCase: FetchStudentInfoUseCase,
+        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase,
+        fetchApplicationUseCase: FetchApplicationUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
+        self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
+        self.fetchApplicationUseCase = fetchApplicationUseCase
     }
 
     public struct Input {
@@ -25,10 +31,14 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
+        let employmentPercentage: PublishRelay<Float>
+        let applicationList: PublishRelay<[ApplicationEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
+        let employmentPercentage = PublishRelay<Float>()
+        let applicationList = PublishRelay<[ApplicationEntity]>()
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
@@ -43,5 +53,27 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(studentInfo: studentInfo)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchTotalPassStudentUseCase.execute()
+                    .map { totalPassStudent in
+                        Float(totalPassStudent.passedCount / totalPassStudent.totalStudentCount)
+                    }
+            }
+            .bind(to: employmentPercentage)
+            .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchApplicationUseCase.execute()
+            }
+            .bind(to: applicationList)
+            .disposed(by: disposeBag)
+        return Output(
+            studentInfo: studentInfo,
+            employmentPercentage: employmentPercentage,
+            applicationList: applicationList
+        )
     }
 }

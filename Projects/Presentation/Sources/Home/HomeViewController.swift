@@ -34,14 +34,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.isScrollEnabled = false
     }
     private let emptyApplicationCell = EmptyApplicationCell()
-    private let applicationStatusCells: [ApplicationEntity] = (0..<10).map { _ in
-            .init(
-                applicationID: Int.random(in: 0...100),
-                company: "홍승재타이어(주)",
-                attachments: [],
-                applicationStatus: .requested
-            )
-    }
+    private var applicationStatusCells: [ApplicationEntity] = []
 
     private func setCardStyle(isWinterSeason: Bool) {
         if isWinterSeason {
@@ -97,6 +90,17 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 guard let self else { return }
 
                 employmentView.setEmploymentPercentage(employmentPercentage)
+            }
+            .disposed(by: disposeBag)
+        output.applicationList
+            .bind { [weak self] applicationList in
+                if applicationList.isEmpty {
+                    self?.emptyApplicationCell.isHidden = false
+                    return
+                }
+                self?.applicationStatusCells = applicationList
+                self?.applicationStatusTableView.reloadData()
+                self?.emptyApplicationCell.isHidden = true
             }
             .disposed(by: disposeBag)
     }
