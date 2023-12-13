@@ -62,6 +62,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             print("findCompany!")
         })
         .disposed(by: disposeBag)
+
         findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
             print("findWinterRecruitment!!")
         })
@@ -176,7 +177,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
-
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return applicationStatusCells.count
     }
