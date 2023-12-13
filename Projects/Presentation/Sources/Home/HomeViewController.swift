@@ -32,6 +32,9 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.rowHeight = 72
         $0.separatorStyle = .none
         $0.isScrollEnabled = false
+        $0.estimatedSectionHeaderHeight = 64
+        $0.sectionHeaderTopPadding = 0
+        $0.setEmptyHeaderView()
     }
     private let emptyApplicationCell = EmptyApplicationCell()
     private var applicationStatusCells: [ApplicationEntity] = []
@@ -95,12 +98,13 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         output.applicationList
             .bind { [weak self] applicationList in
                 if applicationList.isEmpty {
-                    self?.emptyApplicationCell.isHidden = false
+                    self?.applicationStatusTableView.setEmptyHeaderView()
+                    self?.applicationStatusTableView.estimatedSectionHeaderHeight = 64
                     return
                 }
-                self?.applicationStatusCells = applicationList
+                self?.applicationStatusTableView.estimatedSectionHeaderHeight = 0
                 self?.applicationStatusTableView.reloadData()
-                self?.emptyApplicationCell.isHidden = true
+                self?.applicationStatusTableView.tableHeaderView = nil
             }
             .disposed(by: disposeBag)
     }
@@ -179,19 +183,9 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     }
 }
 
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return applicationStatusCells.count
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let applicationStatusCell = tableView.dequeueReusableCell(
-            withIdentifier: ApplicationStatusCell.identifier,
-            for: indexPath
-        ) as? ApplicationStatusCell else { return UITableViewCell() }
-
-        applicationStatusCell.setCell(applicationStatusCells[indexPath.row])
-
-        return applicationStatusCell
+extension UITableView {
+    func setEmptyHeaderView() {
+        let headerView = EmptyApplicationCell()
+        self.tableHeaderView = headerView
     }
 }
