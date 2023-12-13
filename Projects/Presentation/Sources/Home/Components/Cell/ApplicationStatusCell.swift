@@ -22,12 +22,11 @@ final class ApplicationStatusCell: UITableViewCell {
 
     func setCell(_ entity: ApplicationEntity) {
         companyProfileImageView.setJobisImage(urlString: "LOGO_IMAGE/companydefault.png")
-        companyProfileImageView.resize(.init(width: 40, height: 40))
         companyNameLabel.setJobisText(entity.company, font: .body, color: .GrayScale.gray90)
         applicationStatusLabel.setJobisText(
             entity.applicationStatus.localizedString(),
             font: .subBody,
-            color: .Main.blue1
+            color: entity.applicationStatus.toUIColor()
         )
     }
 
@@ -58,6 +57,24 @@ final class ApplicationStatusCell: UITableViewCell {
         applicationStatusLabel.snp.makeConstraints {
             $0.centerY.equalTo(companyProfileImageView)
             $0.trailing.equalTo(containerView).inset(16)
+        }
+    }
+}
+
+extension ApplicationStatusType {
+    func toUIColor() -> UIColor {
+        switch self {
+        case .failed, .rejected:
+            return .Sub.red
+
+        case .requested, .approved:
+            return .Sub.yello
+
+        case .send:
+            return .Sub.blue
+
+        case .acceptance, .pass, .fieldTrain:
+            return .Sub.green
         }
     }
 }
