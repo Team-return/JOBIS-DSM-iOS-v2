@@ -84,9 +84,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         let output = viewModel.transform(input)
         output.studentInfo
             .bind { [weak self] studentInfo in
-                guard let self else { return }
-
-                studentInfoView.setStudentInfo(
+                self?.studentInfoView.setStudentInfo(
                     profileImageUrl: studentInfo.profileImageUrl,
                     gcn: studentInfo.studentGcn,
                     name: studentInfo.studentName,
