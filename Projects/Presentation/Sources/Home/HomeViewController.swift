@@ -92,6 +92,13 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 )
             }
             .disposed(by: disposeBag)
+        output.employmentPercentage
+            .bind { [weak self] employmentPercentage in
+                guard let self else { return }
+
+                employmentView.setEmploymentPercentage(employmentPercentage)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func addView() {

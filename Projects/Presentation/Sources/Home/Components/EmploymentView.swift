@@ -8,9 +8,12 @@ final class EmploymentView: UIView {
         $0.setJobisText("현재 대마고의 취업률", font: .subBody, color: .GrayScale.gray90)
     }
     private let employmentPercentageLabel = UILabel().then {
-        $0.setJobisText("32.5 %", font: .headLine, color: .Main.blue1)
+        $0.setJobisText("0.0 %", font: .headLine, color: .Main.blue1)
     }
     private let arrowNavigateImageView = UIImageView().then {
+        // TODO: 네비게이트 생기면 isHidden = false 로 바꿔야함
+        /// 버튼으로 바꾸기도 해야할 듯
+        $0.isHidden = true
         $0.image = .jobisIcon(.arrowNavigate).resize(.init(width: 28, height: 28))
     }
 
@@ -21,6 +24,11 @@ final class EmploymentView: UIView {
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setEmploymentPercentage(_ percentage: Float) {
+        let str = String(format: "%.1f", percentage)
+        employmentPercentageLabel.text = "\(str) %"
     }
 
     override func layoutSubviews() {
