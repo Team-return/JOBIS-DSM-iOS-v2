@@ -16,6 +16,10 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
         $0.estimatedRowHeight = 100
     }
 
+    public override func viewWillDisappear(_ animated: Bool) {
+        showTabbar()
+    }
+
     public override func attribute() {
         alarmTableView.dataSource = self
         alarmTableView.delegate = self
