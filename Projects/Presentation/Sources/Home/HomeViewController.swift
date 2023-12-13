@@ -66,6 +66,18 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             print("findWinterRecruitment!!")
         })
         .disposed(by: disposeBag)
+
+        navigateToAlarmButton.rx.tap.asObservable()
+            .subscribe(onNext: { [weak self] _ in
+                self?.hideTabbar()
+            })
+            .disposed(by: disposeBag)
+
+        viewAppear.asObservable()
+            .subscribe(onNext: { [weak self] _ in
+                self?.showTabbar()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func bind() {
