@@ -20,6 +20,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
+        let navigateToAlarmButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -34,6 +35,12 @@ public final class HomeViewModel: BaseViewModel, Stepper {
                 fetchStudentInfoUseCase.execute()
             }
             .bind(to: studentInfo)
+            .disposed(by: disposeBag)
+        input.navigateToAlarmButtonDidTap.asObservable()
+            .map { _ in
+                HomeStep.alarmIsRequired
+            }
+            .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(studentInfo: studentInfo)
     }

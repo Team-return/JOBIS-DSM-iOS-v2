@@ -11,6 +11,12 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     // TODO: 언젠가 지울 것
     private let isWinterSeason = BehaviorRelay(value: true)
 
+    private let navigateToAlarmButton = UIBarButtonItem(
+        image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
+        style: .plain,
+        target: HomeViewController.self,
+        action: nil
+    )
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -51,12 +57,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         applicationStatusTableView.dataSource = self
 
         setCardStyle(isWinterSeason: isWinterSeason.value)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
-            style: .plain,
-            target: self,
-            action: nil
-        )
+        self.navigationItem.rightBarButtonItem = navigateToAlarmButton
         findCompanysCard.rx.tap.subscribe(onNext: {
             print("findCompany!")
         })
@@ -68,7 +69,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     }
 
     public override func bind() {
-        let input = HomeViewModel.Input(viewAppear: viewAppear)
+        let input = HomeViewModel.Input(
+            viewAppear: viewAppear,
+            navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal()
+        )
 
         let output = viewModel.transform(input)
         output.studentInfo
