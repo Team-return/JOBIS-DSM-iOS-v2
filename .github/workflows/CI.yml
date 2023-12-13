@@ -1,22 +1,96 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
-name: Swift
+name: CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches:
+      - develop
+      - main
   pull_request:
-    branches: [ "develop" ]
+    branches:
+      - develop
+      - main
+
+env:
+  CACHED_DEPENDENCY_PATHS: ${{ github.workspace }}/Tuist/Dependencies
 
 jobs:
-  build:
-
+  prepare-dependency:
+    name: ⚙️ prepare for CI
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+      - uses: actions/checkout@v2
+
+      - name: Install Tuist
+        run: curl -Ls https://install.tuist.io | bash
+
+      - name: Compute dependency cache key
+        id: compute_hash
+        run: echo "hash=${{ hashFiles('Tuist/Dependencies.swift') }}" >> $GITHUB_OUTPUT
+
+      - name: Check dependency cache
+        uses: actions/cache@v3
+        id: cache_dependencies
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ steps.compute_hash.outputs.hash }}
+
+      - name: Install dependencies
+        if: steps.cache_dependencies.outputs.cache-hit == ''
+        run: tuist fetch
+    outputs:
+      dependency_cache_key: ${{ steps.compute_hash.outputs.hash }}
+
+  build:
+    name: 🏢 Build
+    runs-on: macos-latest
+    needs: prepare-dependency
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        xcode-version: latest
+
+    - name: install tuist
+      run: curl -Ls https://install.tuist.io | bash
+      
+    - name: Check dependency cache
+      uses: actions/cache@v3
+      id: cache_dependencies
+      with:
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+        key: ${{ needs.prepare-dependency.outputs.dependency_cache_key }}
+
+    - name: Install dependencies
+      if: steps.cache_dependencies.outputs.cache-hit != 'true'
+      run: tuist fetch
+
+    - name: build tuist
+      run: TUIST_CI=1 tuist build
+
+  test:
+    name: 🧪 Test
+    runs-on: macos-latest
+    needs: prepare-dependency
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        xcode-version: latest
+
+    - name: install tuist
+      run: curl -Ls https://install.tuist.io | bash
+
+    - name: Check dependency cache
+      uses: actions/cache@v3
+      id: cache_dependencies
+      with:
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+        key: ${{ needs.prepare-dependency.outputs.dependency_cache_key }}
+
+    - name: Install dependencies
+      if: steps.cache_dependencies.outputs.cache-hit != 'true'
+      run: tuist fetch
+
+    - name: test tuist
+      run: TUIST_CI=1 tuist test
