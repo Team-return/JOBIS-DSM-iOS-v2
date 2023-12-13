@@ -16,6 +16,15 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(AlarmViewController.self) { resolver in
+            AlarmViewController(resolver.resolve(AlarmViewModel.self)!)
+        }
+        container.register(AlarmViewModel.self) { resolver in
+            AlarmViewModel(
+//                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
+
         container.register(RecruitmentViewController.self) { resolver in
             RecruitmentViewController(resolver.resolve(RecruitmentViewModel.self)!)
         }
