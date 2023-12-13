@@ -10,6 +10,7 @@ import DesignSystem
 public final class HomeViewController: BaseViewController<HomeViewModel> {
     // TODO: 언젠가 지울 것
     private let isWinterSeason = BehaviorRelay(value: true)
+    private let cellClick = PublishRelay<Int>()
 
     private let navigateToAlarmButton = UIBarButtonItem(
         image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
@@ -67,6 +68,22 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         navigateToAlarmButton.rx.tap.asObservable()
             .subscribe(onNext: { [weak self] _ in
                 self?.hideTabbar()
+            })
+            .disposed(by: disposeBag)
+
+        applicationStatusTableView.rx.itemSelected
+            .map { index -> Int? in
+                guard let cell = self.applicationStatusTableView.cellForRow(at: index) as? ApplicationStatusCell
+                else { return nil }
+                return cell.applicationID
+            }
+            .compactMap { $0 }
+            .bind(to: cellClick)
+            .disposed(by: disposeBag)
+
+        cellClick.asObservable()
+            .subscribe(onNext: {
+                print($0)
             })
             .disposed(by: disposeBag)
     }
