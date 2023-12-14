@@ -9,7 +9,7 @@ import DesignSystem
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let tableView = UITableView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.register(RecruitmentTableViewCell.self, forCellReuseIdentifier: "RecruitmentTableViewCell")
+        $0.register(RecruitmentTableViewCell.self, forCellReuseIdentifier: RecruitmentTableViewCell.identifier)
         $0.separatorStyle = .none
     }
     private let UIBarFilterButton = UIBarButtonItem(
