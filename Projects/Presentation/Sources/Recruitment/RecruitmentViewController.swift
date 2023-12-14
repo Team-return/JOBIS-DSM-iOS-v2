@@ -39,11 +39,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     }
 
     public override func addView() {
-        [
-            tableView
-        ].forEach {
-            view.addSubview($0)
-        }
+        view.addSubview(tableView)
     }
 
     public override func layout() {
