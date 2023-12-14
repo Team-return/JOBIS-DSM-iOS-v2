@@ -30,8 +30,8 @@ final class ReviewNavigateStackView: UIStackView {
                 $0.id = item.id
             }
             reviewNavigateTableViewCell.reviewNavigateButton.rx.tap
-                .bind(onNext: {
-                    self.reviewNavigateButtonDidTap.accept(reviewNavigateTableViewCell.id)
+                .bind(onNext: { [weak self] in
+                    self?.reviewNavigateButtonDidTap.accept(reviewNavigateTableViewCell.id)
                 })
                 .disposed(by: disposeBag)
             self.addArrangedSubview(reviewNavigateTableViewCell)
