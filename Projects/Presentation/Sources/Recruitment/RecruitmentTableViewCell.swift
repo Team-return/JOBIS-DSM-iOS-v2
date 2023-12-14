@@ -48,14 +48,14 @@ final class RecruitmentTableViewCell: UITableViewCell {
         backgroundColor = UIColor.GrayScale.gray10
         addView()
         layout()
-        bind()
+        attribute()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func bind() {
+    private func attribute() {
         bookmarkButton.rx.tap.asObservable()
             .subscribe(onNext: { [weak self] in
                 guard let self else { return }
