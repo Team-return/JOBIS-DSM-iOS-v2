@@ -11,6 +11,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.register(RecruitmentTableViewCell.self, forCellReuseIdentifier: RecruitmentTableViewCell.identifier)
         $0.separatorStyle = .none
+        $0.rowHeight = 96
     }
     private let uiBarFilterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
@@ -22,7 +23,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     public override func attribute() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 96
+
         navigationItem.rightBarButtonItems = [UIBarFilterButton, UIBarSearchButton]
         setLargeTitle(title: "모집의뢰서")
         uiBarSearchButton.rx.tap
