@@ -12,12 +12,9 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let isWinterSeason = BehaviorRelay(value: true)
     private let cellClick = PublishRelay<Int>()
 
-    private let navigateToAlarmButton = UIBarButtonItem(
-        image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
-        style: .plain,
-        target: HomeViewController.self,
-        action: nil
-    )
+    private let navigateToAlarmButton = UIButton().then {
+        $0.setImage(.jobisIcon(.bell).resize(.init(width: 28, height: 28)), for: .normal)
+    }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -56,13 +53,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func attribute() {
         setCardStyle(isWinterSeason: isWinterSeason.value)
-        self.navigationItem.rightBarButtonItem = navigateToAlarmButton
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
-            style: .plain,
-            target: self,
-            action: nil
-        )
+        self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
 
         findCompanysCard.rx.tap.subscribe(onNext: {
             print("findCompany!")
@@ -125,24 +116,23 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             .disposed(by: disposeBag)
 
         output.applicationList
-            .bind(to: applicationStatusTableView.rx.items(
-                cellIdentifier: ApplicationStatusCell.identifier,
-                cellType: ApplicationStatusCell.self
-            )) { _, element, cell in
-                cell.setCell(element)
-            }
-            .disposed(by: disposeBag)
-
-        output.applicationList
-            .bind { [weak self] applicationList in
+            .do(onNext: { [weak self] applicationList in
                 if applicationList.isEmpty {
                     self?.applicationStatusTableView.setEmptyHeaderView()
                     self?.applicationStatusTableView.estimatedSectionHeaderHeight = 64
-                    return
+                } else {
+                    self?.applicationStatusTableView.estimatedSectionHeaderHeight = 0
+                    self?.applicationStatusTableView.tableHeaderView = nil
+                    self?.applicationStatusTableView.reloadData()   
                 }
-                self?.applicationStatusTableView.estimatedSectionHeaderHeight = 0
-                self?.applicationStatusTableView.reloadData()
-                self?.applicationStatusTableView.tableHeaderView = nil
+            })
+            .bind(
+                to: applicationStatusTableView.rx.items(
+                    cellIdentifier: ApplicationStatusCell.identifier,
+                    cellType: ApplicationStatusCell.self
+                )
+            ) { _, element, cell in
+                cell.setCell(element)
             }
             .disposed(by: disposeBag)
     }
@@ -166,7 +156,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func layout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(self.view.safeAreaLayoutGuide)
         }
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
