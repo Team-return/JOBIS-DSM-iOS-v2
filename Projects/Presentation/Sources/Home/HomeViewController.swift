@@ -29,7 +29,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.register(ApplicationStatusCell.self, forCellReuseIdentifier: ApplicationStatusCell.identifier)
         $0.rowHeight = 72
         $0.separatorStyle = .none
-        $0.isScrollEnabled = false
         $0.estimatedSectionHeaderHeight = 64
         $0.sectionHeaderTopPadding = 0
         $0.setEmptyHeaderView()
