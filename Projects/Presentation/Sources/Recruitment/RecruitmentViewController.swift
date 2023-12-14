@@ -77,7 +77,7 @@ extension RecruitmentViewController: UITableViewDataSource, UITableViewDelegate 
             // 지연 작업을 통해 일정 시간 후에 원래 색으로 돌아가도록 함
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 UIView.animate(withDuration: 0.1) {
-                    cell.contentView.backgroundColor = UIColor.white
+                    cell.contentView.backgroundColor = UIColor.GrayScale.gray10
                 }
             }
         }
