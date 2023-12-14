@@ -7,6 +7,7 @@ import RxCocoa
 
 final class RecruitmentTableViewCell: UITableViewCell {
     static let identifier = "RecruitmentTableViewCell"
+
     private var disposeBag = DisposeBag()
     private var bookmarkValue: Bool = false
     private let companyLogo = UIImageView().then {
@@ -49,6 +50,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         layout()
         bookmarkStatus()
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -64,6 +66,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
             contentView.addSubview($0)
         }
     }
+
     private func layout() {
         companyLogo.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
