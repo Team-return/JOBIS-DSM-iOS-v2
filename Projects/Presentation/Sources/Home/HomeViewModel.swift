@@ -46,13 +46,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             }
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
+
         input.navigateToAlarmButtonDidTap.asObservable()
             .map { _ in
                 HomeStep.alarmIsRequired
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
-        return Output(studentInfo: studentInfo)
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
