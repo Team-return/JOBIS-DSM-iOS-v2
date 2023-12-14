@@ -12,18 +12,12 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.register(RecruitmentTableViewCell.self, forCellReuseIdentifier: RecruitmentTableViewCell.identifier)
         $0.separatorStyle = .none
     }
-    private let UIBarFilterButton = UIBarButtonItem(
-        image: .jobisIcon(.filterIcon),
-        style: .plain,
-        target: RecruitmentViewController.self,
-        action: nil
-    )
-    private let UIBarSearchButton = UIBarButtonItem(
-        image: .jobisIcon(.searchIcon),
-        style: .plain,
-        target: RecruitmentViewController.self,
-        action: nil
-    )
+    private let uiBarFilterButton = UIButton().then {
+        $0.setImage(.jobisIcon(.filterIcon), for: .normal)
+    }
+    private let uiBarSearchButton = UIButton().then {
+        $0.setImage(.jobisIcon(.searchIcon), for: .normal)
+    }
 
     public override func attribute() {
         tableView.dataSource = self
@@ -31,7 +25,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         tableView.rowHeight = 96
         navigationItem.rightBarButtonItems = [UIBarFilterButton, UIBarSearchButton]
         setLargeTitle(title: "모집의뢰서")
-        UIBarSearchButton.rx.tap
+        uiBarSearchButton.rx.tap
             .subscribe(onNext: { _ in
                 print("hello")
             })
