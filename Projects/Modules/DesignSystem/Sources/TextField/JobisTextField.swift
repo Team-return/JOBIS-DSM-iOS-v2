@@ -40,9 +40,9 @@ public final class JobisTextField: UIView {
         )
         timer.withUnretained(self)
             .filter { $1 < 300 }
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [weak self] _ in
                 let elapseSeconds = Date().timeIntervalSince(startTime)
-                self.textFieldRightView.setTimer(Int(elapseSeconds))
+                self?.textFieldRightView.setTimer(Int(elapseSeconds))
             })
             .disposed(by: timerDisposeBag)
     }
@@ -66,16 +66,19 @@ public final class JobisTextField: UIView {
             self.textField.isSecureTextEntry = true
         }
         self.textFieldRightView.secureButton.rx.tap
-            .subscribe(onNext: {
-                self.textField.isSecureTextEntry.toggle()
-                if self.textField.isSecureTextEntry {
-                    self.textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOff), for: .normal)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+
+                textField.isSecureTextEntry.toggle()
+                if textField.isSecureTextEntry {
+                    textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOff), for: .normal)
                 } else {
-                    self.textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
+                    textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
                 }
             }).disposed(by: disposeBag)
         self.textField.rx.text
-            .subscribe(onNext: { _ in self.removeDescription() }).disposed(by: disposeBag)
+            .subscribe(onNext: { [weak self] _ in self?.removeDescription() })
+            .disposed(by: disposeBag)
     }
 
     private func addView() {
