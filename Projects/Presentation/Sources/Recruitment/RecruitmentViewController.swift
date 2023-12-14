@@ -24,7 +24,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         tableView.dataSource = self
         tableView.delegate = self
 
-        navigationItem.rightBarButtonItems = [UIBarFilterButton, UIBarSearchButton]
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: uiBarFilterButton),
+            UIBarButtonItem(customView: uiBarSearchButton)
+        ]
         setLargeTitle(title: "모집의뢰서")
         uiBarSearchButton.rx.tap
             .subscribe(onNext: { _ in
