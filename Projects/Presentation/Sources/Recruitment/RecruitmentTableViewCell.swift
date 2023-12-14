@@ -20,7 +20,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
             color: UIColor.GrayScale.gray90
         )
     }
-    private let moneyLabel = UILabel().then {
+    private let benefitsLabel = UILabel().then {
         $0.setJobisText(
             "병역특례 O · 실습 수당 100,000원",
             font: .subBody,
@@ -57,7 +57,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         [
             companyLogo,
             fieldTypeLabel,
-            moneyLabel,
+            benefitsLabel,
             companyLabel,
             bookmarkButton
         ].forEach {
@@ -75,12 +75,12 @@ final class RecruitmentTableViewCell: UITableViewCell {
             $0.top.equalToSuperview().inset(12)
             $0.left.equalTo(companyLogo.snp.right).offset(12)
         }
-        moneyLabel.snp.makeConstraints {
+        benefitsLabel.snp.makeConstraints {
             $0.top.equalTo(fieldTypeLabel.snp.bottom).offset(4)
             $0.left.equalTo(companyLogo.snp.right).offset(12)
         }
         companyLabel.snp.makeConstraints {
-            $0.top.equalTo(moneyLabel.snp.bottom).offset(4)
+            $0.top.equalTo(benefitsLabel.snp.bottom).offset(4)
             $0.left.equalTo(companyLogo.snp.right).offset(12)
         }
         bookmarkButton.snp.makeConstraints {
