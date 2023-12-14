@@ -48,11 +48,32 @@ final class RecruitmentTableViewCell: UITableViewCell {
         backgroundColor = UIColor.GrayScale.gray10
         addView()
         layout()
-        bookmarkStatus()
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func bind() {
+        bookmarkButton.rx.tap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                bookmark()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func bookmark() {
+        var bookmarkImage: JobisIcon {
+            bookmarkValue ? .bookmarkOn: .bookmarkOff
+        }
+        bookmarkButton.setImage(
+            .jobisIcon(bookmarkImage)
+            .resize(.init(width: 28, height: 28)),
+            for: .normal
+        )
+        bookmarkValue.toggle()
     }
 
     private func addView() {
@@ -90,22 +111,5 @@ final class RecruitmentTableViewCell: UITableViewCell {
             $0.top.equalToSuperview().inset(12)
             $0.right.equalToSuperview().inset(24)
         }
-    }
-    private func bookmarkStatus() {
-        let buttonTapObservable = bookmarkButton.rx.tap.asObservable()
-        buttonTapObservable
-            .subscribe(onNext: { [weak self] in
-                guard let self else { return }
-                var bookmarkImage: JobisIcon {
-                    bookmarkValue ? .bookmarkOn: .bookmarkOff
-                }
-                bookmarkButton.setImage(
-                    .jobisIcon(bookmarkImage)
-                    .resize(.init(width: 28, height: 28)),
-                    for: .normal
-                )
-                bookmarkValue.toggle()
-            })
-            .disposed(by: disposeBag)
     }
 }
