@@ -70,8 +70,7 @@ final class CareerNavigationCard: UIButton {
         }
         iconView.snp.makeConstraints {
             $0.bottom.trailing.equalToSuperview().inset(20)
-            $0.width.height.trailing.equalTo(64)
+            $0.width.height.equalTo(64)
         }
-        iconView.layoutIfNeeded()
     }
 }
