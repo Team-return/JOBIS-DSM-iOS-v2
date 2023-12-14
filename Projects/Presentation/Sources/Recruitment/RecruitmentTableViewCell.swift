@@ -92,8 +92,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         companyLogo.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.left.equalToSuperview().inset(24)
-            $0.width.equalTo(48)
-            $0.height.equalTo(48)
+            $0.width.height.equalTo(48)
         }
         fieldTypeLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)

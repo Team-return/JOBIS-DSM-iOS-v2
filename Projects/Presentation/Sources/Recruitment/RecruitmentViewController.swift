@@ -48,9 +48,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func layout() {
         tableView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
 }
