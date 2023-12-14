@@ -104,6 +104,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         )
 
         let output = viewModel.transform(input)
+
         output.studentInfo
             .bind { [weak self] studentInfo in
                 self?.studentInfoView.setStudentInfo(
@@ -114,6 +115,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 )
             }
             .disposed(by: disposeBag)
+
         output.employmentPercentage
             .bind { [weak self] employmentPercentage in
                 guard let self else { return }
