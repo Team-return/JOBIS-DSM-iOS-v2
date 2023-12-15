@@ -45,7 +45,7 @@ public extension Project {
             name: name,
             platform: platform,
             product: product,
-            bundleId: "\(env.organizationName).\(name)",
+            bundleId: "com.team.return.JOBIS-DSM-iOS",
             deploymentTarget: deploymentTarget,
             infoPlist: infoPlist,
             sources: sources, 
