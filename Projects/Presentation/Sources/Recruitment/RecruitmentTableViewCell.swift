@@ -9,7 +9,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
     static let identifier = "RecruitmentTableViewCell"
 
     private var disposeBag = DisposeBag()
-    private var bookmarkValue: Bool = false
+    private var isBookmarked: Bool = false
     private let companyLogo = UIImageView().then {
         $0.backgroundColor = .blue
         $0.layer.cornerRadius = 8
@@ -66,14 +66,14 @@ final class RecruitmentTableViewCell: UITableViewCell {
 
     private func bookmark() {
         var bookmarkImage: JobisIcon {
-            bookmarkValue ? .bookmarkOn: .bookmarkOff
+            isBookmarked ? .bookmarkOn: .bookmarkOff
         }
         bookmarkButton.setImage(
             .jobisIcon(bookmarkImage)
             .resize(.init(width: 28, height: 28)),
             for: .normal
         )
-        bookmarkValue.toggle()
+        isBookmarked.toggle()
     }
 
     private func addView() {
