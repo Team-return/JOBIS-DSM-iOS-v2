@@ -10,7 +10,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
 
     private var disposeBag = DisposeBag()
     private var isBookmarked: Bool = false
-    private let companyLogo = UIImageView().then {
+    private let companyProfileImageView = UIImageView().then {
         $0.backgroundColor = .blue
         $0.layer.cornerRadius = 8
     }
@@ -78,7 +78,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
 
     private func addView() {
         [
-            companyLogo,
+            companyProfileImageView,
             fieldTypeLabel,
             benefitsLabel,
             companyLabel,
@@ -89,22 +89,22 @@ final class RecruitmentTableViewCell: UITableViewCell {
     }
 
     private func layout() {
-        companyLogo.snp.makeConstraints {
+        companyProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.left.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
         fieldTypeLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
-            $0.left.equalTo(companyLogo.snp.right).offset(12)
+            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
         }
         benefitsLabel.snp.makeConstraints {
             $0.top.equalTo(fieldTypeLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyLogo.snp.right).offset(12)
+            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
         }
         companyLabel.snp.makeConstraints {
             $0.top.equalTo(benefitsLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyLogo.snp.right).offset(12)
+            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
         }
         bookmarkButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
