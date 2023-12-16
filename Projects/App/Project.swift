@@ -10,5 +10,18 @@ let project = Project.makeModule(
         .Projects.flow
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist")
+    ),
+    .init(
+        name: env.targetTestName,
+        platform: .iOS,
+        product: .unitTests,
+        bundleId: "\(env.organizationName).\(env.targetName)Tests",
+        deploymentTarget: env.deploymentTarget,
+        infoPlist: .default,
+        sources: ["Tests/**"],
+        dependencies: [
+            .target(name: env.targetName)
+        ]
+    )
+]
 )
