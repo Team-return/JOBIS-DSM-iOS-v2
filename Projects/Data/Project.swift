@@ -4,7 +4,7 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "Data",
-    product: .staticFramework,
+    product: .staticLibrary,
     dependencies: [
         .Projects.domain,
         .Modules.appNetwork

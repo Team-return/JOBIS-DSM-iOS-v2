@@ -4,7 +4,7 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "Domain",
-    product: .staticFramework,
+    product: .staticLibrary,
     dependencies: [
         .Projects.core
     ]
