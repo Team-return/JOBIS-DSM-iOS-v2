@@ -18,25 +18,25 @@ public enum JobisIcon {
     case code
 
     func uiImage() -> UIImage {
-        let dsIcon = DesignSystemAsset.Icons.self
+        let dsIcons = DesignSystemAsset.Icons.self
 
         switch self {
         case .arrowRight:
-            return dsIcon.arrowRight.image
+            return dsIcons.arrowRight.image
         case .door:
-            return dsIcon.door.image
+            return dsIcons.door.image
         case .bugBox:
-            return dsIcon.bugBox.image
+            return dsIcons.bugBox.image
         case .bugReport:
-            return dsIcon.bugReport.image
+            return dsIcons.bugReport.image
         case .changePassword:
-            return dsIcon.changePassword.image
+            return dsIcons.changePassword.image
         case .code:
-            return dsIcon.code.image
+            return dsIcons.code.image
         case .withdrawal:
-            return dsIcon.withdrawal.image
+            return dsIcons.withdrawal.image
         case .logout:
-            return dsIcon.logout.image
+            return dsIcons.logout.image
         }
     }
 }
