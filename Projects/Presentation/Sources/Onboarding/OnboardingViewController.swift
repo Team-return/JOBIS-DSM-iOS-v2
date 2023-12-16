@@ -10,14 +10,14 @@ import Lottie
 public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
     private var isOnLoading = false
 
-    private let animationView = LottieAnimationView(name: "OnboardingLottie", bundle: .module)
+    private let animationView = JobisLottieView(.onboarding)
 
     private let teamReturnLogoImage = UIImageView().then {
-        $0.image = PresentationAsset.teamReturnLogo.image.resize(.init(width: 88, height: 48))
+        $0.image = .onboardingImage(.teamReturnLogo).resize(.init(width: 88, height: 48))
     }
 
     private let jobisLogoImage = UIImageView().then {
-        $0.image = PresentationAsset.jobisLogo.image.resize(.init(width: 205, height: 48))
+        $0.image = .onboardingImage(.jobisLogo).resize(.init(width: 205, height: 48))
     }
 
     private let navigateButtonStackView = UIStackView().then {
