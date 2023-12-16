@@ -1,5 +1,8 @@
 import ProjectDescription
-import EnviromentPlugin
+import Foundation
+import EnvironmentPlugin
+
+let isCI = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1" ? true : false
 
 extension Project {
     public static func makeModule(
@@ -41,6 +44,7 @@ public extension Project {
         infoPlist: InfoPlist = .default,
         resourceSynthesizers: [ResourceSynthesizer] = .default
     ) -> Project {
+        let scripts: [TargetScript] = isCI ? [] : [.swiftLint]
         let appTarget = Target(
             name: name,
             platform: platform,
@@ -50,7 +54,7 @@ public extension Project {
             infoPlist: infoPlist,
             sources: sources, 
             resources: resources, 
-            scripts: [.swiftLint],
+            scripts: scripts,
             dependencies: dependencies
         )
         
