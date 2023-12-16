@@ -4,7 +4,7 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "Core",
-    product: .staticFramework,
+    product: .staticLibrary,
     dependencies: [
         .Modules.thirdPartyLib
     ]
