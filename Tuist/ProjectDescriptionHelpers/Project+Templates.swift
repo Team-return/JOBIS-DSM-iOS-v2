@@ -19,7 +19,7 @@ public extension Project {
         targets: Set<MicroFeatureTarget>,
         packages: [Package] = [],
         dependencies: [TargetDependency] = [],
-        sources: SourceFilesList = "Sources/**",
+        sources: SourceFilesList = .sources,
         resources: ResourceFileElements? = nil,
         settings: SettingsDictionary = [:],
         additionalPlistRows: [String: ProjectDescription.InfoPlist.Value] = [:]
@@ -42,7 +42,6 @@ public extension Project {
             base: env.baseSetting
                 .merging(.codeSign)
                 .merging(settings),
-//                .merging(ldFlagsSettings),
             configurations: configurations,
             defaultSettings: .recommended
         )
@@ -70,19 +69,47 @@ public extension Project {
                     bundleId: "\(env.organizationName).\(name)Tests",
                     deploymentTarget: env.deploymentTarget,
                     infoPlist: .default,
-                    sources: "Tests/**",
+                    sources: .unitTests,
                     scripts: scripts,
                     dependencies: []
                 )
             )
         }
 
+        // MARK: - Demo App
+        if targets.contains(.demo) {
+            var demoDependencies: [TargetDependency] = [.target(name: name)]
+            allTargets.append(
+                Target(
+                    name: "\(name)DemoApp",
+                    platform: platform,
+                    product: .app,
+                    bundleId: "\(env.organizationName).\(name)DemoApp",
+                    deploymentTarget: env.deploymentTarget,
+                    infoPlist: .extendingDefault(with: [
+                        "UIMainStoryboardFile": "",
+                        "UILaunchStoryboardName": "LaunchScreen",
+                        "ENABLE_TESTS": .boolean(true),
+                    ]),
+                    sources: .demoSources,
+                    resources: .demoResources,
+                    scripts: scripts,
+                    dependencies: demoDependencies
+                )
+            )
+        }
+
+        let schemes: [Scheme] = targets.contains(.demo) ?
+        [.makeScheme(target: .dev, name: name), .makeDemoScheme(target: .dev, name: name)] :
+        [.makeScheme(target: .dev, name: name)]
+
         return Project(
             name: name,
             organizationName: env.organizationName,
             packages: packages,
             settings: settings,
-            targets: allTargets
+            targets: allTargets,
+            schemes: schemes
         )
     }
 }
@@ -97,6 +124,23 @@ extension Scheme {
                 ["\(name)Tests"],
                 configuration: target,
                 options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+            ),
+            runAction: .runAction(configuration: target),
+            archiveAction: .archiveAction(configuration: target),
+            profileAction: .profileAction(configuration: target),
+            analyzeAction: .analyzeAction(configuration: target)
+        )
+    }
+
+    static func makeDemoScheme(target: ConfigurationName, name: String) -> Scheme {
+        return Scheme(
+            name: name,
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)DemoApp"]),
+            testAction: .targets(
+                ["\(name)Tests"],
+                configuration: target,
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)DemoApp"])
             ),
             runAction: .runAction(configuration: target),
             archiveAction: .archiveAction(configuration: target),

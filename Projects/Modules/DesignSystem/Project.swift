@@ -5,8 +5,9 @@ import DependencyPlugin
 let project = Project.makeModule(
     name: "DesignSystem",
     product: .framework,
+    targets: [.demo],
     dependencies: [
         .Projects.core
     ],
-    resources: "Resources/**"
+    resources: .resources
 )
