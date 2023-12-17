@@ -11,7 +11,7 @@ public protocol JobisAPI: TargetType, JwtAuthorizable {
 public extension JobisAPI {
     var baseURL: URL {
         URL(
-            string: Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String ?? ""
+            string: Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String ?? ""
         ) ?? URL(string: "https://www.google.com")!
     }
 
