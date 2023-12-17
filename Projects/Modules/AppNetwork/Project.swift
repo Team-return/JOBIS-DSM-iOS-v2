@@ -4,7 +4,8 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "AppNetwork",
-    product: .staticFramework,
+    product: .framework,
+    targets: [.unitTest],
     dependencies: [
         .Projects.core
     ]
