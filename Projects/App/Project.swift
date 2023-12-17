@@ -29,8 +29,8 @@ let targets: [Target] = [
         bundleId: "$(APP_BUNDLE_ID)",
         deploymentTarget: env.deploymentTarget,
         infoPlist: .file(path: "Support/Info.plist"),
-        sources: ["Sources/**"],
-        resources: ["Resources/**"],
+        sources: .sources,
+        resources: .resources,
         entitlements: "Support/\(env.appName).entitlements",
         scripts: scripts,
         dependencies: [
@@ -45,7 +45,7 @@ let targets: [Target] = [
         bundleId: "\(env.organizationName).\(env.targetName)Tests",
         deploymentTarget: env.deploymentTarget,
         infoPlist: .default,
-        sources: ["Tests/**"],
+        sources: .unitTests,
         dependencies: [
             .target(name: env.targetName)
         ]
