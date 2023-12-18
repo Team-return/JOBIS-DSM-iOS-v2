@@ -12,10 +12,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.separatorStyle = .none
         $0.rowHeight = 96
     }
-    private let uiBarFilterButton = UIButton().then {
+    private let navigateToFilterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
     }
-    private let uiBarSearchButton = UIButton().then {
+    private let navigateToSearchButton = UIButton().then {
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
 
@@ -24,11 +24,11 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         tableView.delegate = self
 
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: uiBarFilterButton),
-            UIBarButtonItem(customView: uiBarSearchButton)
+            UIBarButtonItem(customView: navigateToFilterButton),
+            UIBarButtonItem(customView: navigateToSearchButton)
         ]
         setLargeTitle(title: "모집의뢰서")
-        uiBarSearchButton.rx.tap
+        navigateToSearchButton.rx.tap
             .subscribe(onNext: { _ in
                 print("hello")
             })
