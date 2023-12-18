@@ -9,9 +9,8 @@ import DesignSystem
 
 public final class AlarmViewController: BaseViewController<AlarmViewModel> {
     private let alarmTableView = UITableView().then {
-        $0.register(AlarmCell.self, forCellReuseIdentifier: AlarmCell.identifier)
+        $0.register(AlarmTableViewCell.self, forCellReuseIdentifier: AlarmTableViewCell.identifier)
         $0.separatorStyle = .none
-        $0.isScrollEnabled = true
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 100
     }
@@ -46,9 +45,9 @@ extension AlarmViewController: UITableViewDelegate, UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: AlarmCell.identifier,
+            withIdentifier: AlarmTableViewCell.identifier,
             for: indexPath
-        ) as? AlarmCell else { return UITableViewCell() }
+        ) as? AlarmTableViewCell else { return UITableViewCell() }
 
         cell.setCell()
         cell.layoutIfNeeded()

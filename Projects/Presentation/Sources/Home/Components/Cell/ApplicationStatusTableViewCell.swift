@@ -4,8 +4,8 @@ import Then
 import Domain
 import DesignSystem
 
-final class ApplicationStatusCell: UITableViewCell {
-    static let identifier = "ApplicationStatusCell"
+final class ApplicationStatusTableViewCell: UITableViewCell {
+    static let identifier = "ApplicationStatusTableViewCell"
 
     public var applicationID: Int?
 

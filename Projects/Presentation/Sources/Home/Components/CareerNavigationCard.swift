@@ -23,7 +23,7 @@ final class CareerNavigationCard: UIButton {
         $0.isUserInteractionEnabled = false
         $0.clipsToBounds = true
     }
-    private let icon = UIImageView()
+    private let iconImageView = UIImageView()
 
     public init(
         style: CardSize
@@ -54,18 +54,18 @@ final class CareerNavigationCard: UIButton {
         }
 
         headerLabel.setJobisText(info.text, font: .headLine, color: .GrayScale.gray90)
-        icon.image = .jobisIcon(info.icon)
+        iconImageView.image = .jobisIcon(info.icon)
             .resize(.init(width: 40, height: 40))
     }
 
     override func layoutSubviews() {
         [iconView, headerLabel].forEach(addSubview(_:))
-        iconView.addSubview(icon)
+        iconView.addSubview(iconImageView)
 
         headerLabel.snp.makeConstraints {
             $0.leading.top.equalToSuperview().inset(20)
         }
-        icon.snp.makeConstraints {
+        iconImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
         iconView.snp.makeConstraints {
