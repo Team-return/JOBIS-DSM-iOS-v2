@@ -26,7 +26,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private var findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
     private let applicationStatusMenuLabel = JobisMenuLabel(text: "지원 현황")
     private let applicationStatusTableView = UITableView().then {
-        $0.register(ApplicationStatusCell.self, forCellReuseIdentifier: ApplicationStatusCell.identifier)
+        $0.register(ApplicationStatusTableViewCell.self, forCellReuseIdentifier: ApplicationStatusTableViewCell.identifier)
         $0.rowHeight = 72
         $0.separatorStyle = .none
         $0.estimatedSectionHeaderHeight = 64
@@ -72,7 +72,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
         applicationStatusTableView.rx.itemSelected
             .map { index -> Int? in
-                guard let cell = self.applicationStatusTableView.cellForRow(at: index) as? ApplicationStatusCell
+                guard let cell = self.applicationStatusTableView.cellForRow(at: index) as? ApplicationStatusTableViewCell
                 else { return nil }
                 return cell.applicationID
             }
@@ -127,8 +127,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             })
             .bind(
                 to: applicationStatusTableView.rx.items(
-                    cellIdentifier: ApplicationStatusCell.identifier,
-                    cellType: ApplicationStatusCell.self
+                    cellIdentifier: ApplicationStatusTableViewCell.identifier,
+                    cellType: ApplicationStatusTableViewCell.self
                 )
             ) { _, element, cell in
                 cell.setCell(element)
@@ -195,7 +195,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
 extension UITableView {
     func setEmptyHeaderView() {
-        let headerView = EmptyApplicationCell()
+        let headerView = EmptyApplicationView()
         self.tableHeaderView = headerView
     }
 }

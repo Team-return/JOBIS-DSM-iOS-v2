@@ -4,7 +4,7 @@ import Then
 import Domain
 import DesignSystem
 
-final class EmptyApplicationCell: UIView {
+final class EmptyApplicationView: UIView {
     private let containerView = UIView().then {
         $0.layer.cornerRadius = 12
         $0.layer.borderWidth = 1
