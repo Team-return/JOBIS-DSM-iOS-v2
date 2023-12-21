@@ -9,6 +9,7 @@ public extension UIImage {
 
 public enum JobisIcon {
     case arrowRight
+    case arrowNavigate
     case door
     case bugBox
     case bugReport
@@ -16,6 +17,14 @@ public enum JobisIcon {
     case withdrawal
     case logout
     case code
+    case bookmarkOn
+    case bookmarkOff
+    case searchIcon
+    case filterIcon
+    case profile
+    case bell
+    case officeBuilding
+    case snowman
 
     func uiImage() -> UIImage {
         let dsIcons = DesignSystemAsset.Icons.self
@@ -23,6 +32,8 @@ public enum JobisIcon {
         switch self {
         case .arrowRight:
             return dsIcons.arrowRight.image
+        case .arrowNavigate:
+            return dsIcons.arrowNavigate.image
         case .door:
             return dsIcons.door.image
         case .bugBox:
@@ -37,6 +48,22 @@ public enum JobisIcon {
             return dsIcons.withdrawal.image
         case .logout:
             return dsIcons.logout.image
+        case .bookmarkOn:
+            return dsIcons.bookmarkOn.image
+        case .bookmarkOff:
+            return dsIcons.bookmarkOff.image
+        case .searchIcon:
+            return dsIcons.searchIcon.image
+        case .filterIcon:
+            return dsIcons.filterIcon.image
+        case .profile:
+            return dsIcons.profile.image
+        case .bell:
+            return dsIcons.bell.image
+        case .officeBuilding:
+            return dsIcons.officeBuilding.image
+        case .snowman:
+            return dsIcons.snowman.image
         }
     }
 }

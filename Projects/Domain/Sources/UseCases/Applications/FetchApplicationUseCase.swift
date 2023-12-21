@@ -7,7 +7,7 @@ public struct FetchApplicationUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    func execute() -> Single<[ApplicationEntity]> {
+    public func execute() -> Single<[ApplicationEntity]> {
         applicationsRepository.fetchApplication()
     }
 }
