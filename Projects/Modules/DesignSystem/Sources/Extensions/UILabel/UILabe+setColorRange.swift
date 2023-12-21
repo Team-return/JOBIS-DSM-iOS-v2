@@ -10,8 +10,7 @@ public extension UILabel {
         attrString.addAttribute(
             .foregroundColor,
             value: color,
-            range: (text as NSString).range(of: range
-                                                               )
+            range: (text as NSString).range(of: range)
         )
         self.attributedText = attrString
     }

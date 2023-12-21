@@ -10,71 +10,70 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     private let disposeBag = DisposeBag()
 
-    private let signinUseCase: SigninUseCase
-    private let reissueTokenUseCase: ReissueTokenUaseCase
+    private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+    private let fetchApplicationUseCase: FetchApplicationUseCase
 
-    init(signinUseCase: SigninUseCase, reissueTokenUseCase: ReissueTokenUaseCase) {
-        self.signinUseCase = signinUseCase
-        self.reissueTokenUseCase = reissueTokenUseCase
+    init(
+        fetchStudentInfoUseCase: FetchStudentInfoUseCase,
+        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase,
+        fetchApplicationUseCase: FetchApplicationUseCase
+    ) {
+        self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
+        self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
+        self.fetchApplicationUseCase = fetchApplicationUseCase
     }
 
     public struct Input {
-        let signinButtonDidTap: Signal<Void>
-        let reissueButtonDidTap: Signal<Void>
+        let viewAppear: PublishRelay<Void>
+        let navigateToAlarmButtonDidTap: Signal<Void>
     }
 
     public struct Output {
-        let string: PublishRelay<String>
-        let result: PublishRelay<Bool>
-        let isLoading: BehaviorRelay<Bool>
+        let studentInfo: PublishRelay<StudentInfoEntity>
+        let employmentPercentage: PublishRelay<Float>
+        let applicationList: PublishRelay<[ApplicationEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
-        let string = PublishRelay<String>()
-        let result = PublishRelay<Bool>()
-        let isLoading: BehaviorRelay<Bool> = .init(value: false)
-        input.signinButtonDidTap.asObservable()
+        let studentInfo = PublishRelay<StudentInfoEntity>()
+        let employmentPercentage = PublishRelay<Float>()
+        let applicationList = PublishRelay<[ApplicationEntity]>()
+
+        input.viewAppear.asObservable()
             .flatMap { [self] in
-                isLoading.accept(true)
-                return signinUseCase.execute(
-                    req: .init(
-                        accountID: "test@dsm.hs.kr",
-                        password: "student"
-                    )
-                )
-                .do(
-                    onSuccess: {
-                    string.accept($0.rawValue)
-                    print($0)
-                    isLoading.accept(false)
-                    }, onError: { _ in
-                        isLoading.accept(false)
-                    }
-                )
-                .asCompletable()
-//                .andThen(Single.just(MainStep.loginIsRequired))
+                fetchStudentInfoUseCase.execute()
             }
-            .subscribe(onCompleted: .none)
+            .bind(to: studentInfo)
             .disposed(by: disposeBag)
 
-        input.reissueButtonDidTap.asObservable()
-            .flatMap { [self] in
-                isLoading.accept(true)
-                return reissueTokenUseCase.execute()
-                    .do(
-                        onSuccess: {
-                            string.accept($0.rawValue)
-                            print($0)
-                            isLoading.accept(false)
-                        }, onError: { _ in
-                            isLoading.accept(false)
-                        }
-                    )
-                    .asCompletable()
-//                .andThen(Single.just(MainStep.loginIsRequired))
+        input.navigateToAlarmButtonDidTap.asObservable()
+            .map { _ in
+                HomeStep.alarmIsRequired
             }
-            .subscribe(onCompleted: .none)
+            .bind(to: steps)
             .disposed(by: disposeBag)
-        return Output(string: string, result: result, isLoading: isLoading)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchTotalPassStudentUseCase.execute()
+                    .map { totalPassStudent in
+                        Float(totalPassStudent.passedCount / totalPassStudent.totalStudentCount)
+                    }
+            }
+            .bind(to: employmentPercentage)
+            .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchApplicationUseCase.execute()
+            }
+            .bind(to: applicationList)
+            .disposed(by: disposeBag)
+        return Output(
+            studentInfo: studentInfo,
+            employmentPercentage: employmentPercentage,
+            applicationList: applicationList
+        )
     }
 }
