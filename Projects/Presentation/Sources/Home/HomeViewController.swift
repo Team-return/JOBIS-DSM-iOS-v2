@@ -10,13 +10,11 @@ import DesignSystem
 public final class HomeViewController: BaseViewController<HomeViewModel> {
     // TODO: 언젠가 지울 것
     private let isWinterSeason = BehaviorRelay(value: true)
+    private let cellClick = PublishRelay<Int>()
 
-    private let navigateToAlarmButton = UIBarButtonItem(
-        image: .jobisIcon(.bell).resize(.init(width: 28, height: 28)),
-        style: .plain,
-        target: HomeViewController.self,
-        action: nil
-    )
+    private let navigateToAlarmButton = UIButton().then {
+        $0.setImage(.jobisIcon(.bell).resize(.init(width: 28, height: 28)), for: .normal)
+    }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -28,36 +26,34 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private var findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
     private let applicationStatusMenuLabel = JobisMenuLabel(text: "지원 현황")
     private let applicationStatusTableView = UITableView().then {
-        $0.register(ApplicationStatusCell.self, forCellReuseIdentifier: ApplicationStatusCell.identifier)
+        $0.register(ApplicationStatusTableViewCell.self, forCellReuseIdentifier: ApplicationStatusTableViewCell.identifier)
         $0.rowHeight = 72
         $0.separatorStyle = .none
-        $0.isScrollEnabled = false
+        $0.estimatedSectionHeaderHeight = 64
+        $0.sectionHeaderTopPadding = 0
+        $0.setEmptyHeaderView()
     }
-    private let emptyApplicationCell = EmptyApplicationCell()
-    private let applicationStatusCells: [ApplicationEntity] = (0..<10).map { _ in
-            .init(
-                applicationID: Int.random(in: 0...100),
-                company: "홍승재타이어(주)",
-                attachments: [],
-                applicationStatus: .requested
-            )
+    private let careerStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fillEqually
+        $0.spacing = 12
     }
 
     private func setCardStyle(isWinterSeason: Bool) {
         if isWinterSeason {
             findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
             findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
+            findWinterRecruitmentsCard.isHidden = false
         } else {
             findCompanysCard = CareerNavigationCard(style: .large)
+            findWinterRecruitmentsCard.isHidden = true
         }
     }
 
     public override func attribute() {
-        applicationStatusTableView.delegate = self
-        applicationStatusTableView.dataSource = self
-
         setCardStyle(isWinterSeason: isWinterSeason.value)
-        self.navigationItem.rightBarButtonItem = navigateToAlarmButton
+        self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
+
         findCompanysCard.rx.tap.subscribe(onNext: {
             print("findCompany!")
         })
@@ -73,6 +69,22 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 self?.hideTabbar()
             })
             .disposed(by: disposeBag)
+
+        applicationStatusTableView.rx.itemSelected
+            .map { index -> Int? in
+                guard let cell = self.applicationStatusTableView.cellForRow(at: index) as? ApplicationStatusTableViewCell
+                else { return nil }
+                return cell.applicationID
+            }
+            .compactMap { $0 }
+            .bind(to: cellClick)
+            .disposed(by: disposeBag)
+
+        cellClick.asObservable()
+            .subscribe(onNext: {
+                print($0)
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func bind() {
@@ -82,6 +94,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         )
 
         let output = viewModel.transform(input)
+
         output.studentInfo
             .bind { [weak self] studentInfo in
                 self?.studentInfoView.setStudentInfo(
@@ -92,26 +105,57 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 )
             }
             .disposed(by: disposeBag)
+
+        output.employmentPercentage
+            .bind { [weak self] employmentPercentage in
+                guard let self else { return }
+
+                employmentView.setEmploymentPercentage(employmentPercentage)
+            }
+            .disposed(by: disposeBag)
+
+        output.applicationList
+            .do(onNext: { [weak self] applicationList in
+                if applicationList.isEmpty {
+                    self?.applicationStatusTableView.setEmptyHeaderView()
+                    self?.applicationStatusTableView.estimatedSectionHeaderHeight = 64
+                } else {
+                    self?.applicationStatusTableView.estimatedSectionHeaderHeight = 0
+                    self?.applicationStatusTableView.tableHeaderView = nil
+                    self?.applicationStatusTableView.reloadData()   
+                }
+            })
+            .bind(
+                to: applicationStatusTableView.rx.items(
+                    cellIdentifier: ApplicationStatusTableViewCell.identifier,
+                    cellType: ApplicationStatusTableViewCell.self
+                )
+            ) { _, element, cell in
+                cell.setCell(element)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         [
+            findCompanysCard,
+            findWinterRecruitmentsCard
+        ].forEach(careerStackView.addArrangedSubview(_:))
+        [
             studentInfoView,
             employmentView,
             careerMenuLabel,
-            findCompanysCard,
-            findWinterRecruitmentsCard,
+            careerStackView,
             applicationStatusMenuLabel,
-            applicationStatusTableView,
-            emptyApplicationCell
+            applicationStatusTableView
         ].forEach(contentView.addSubview(_:))
     }
 
     public override func layout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(self.view.safeAreaLayoutGuide)
         }
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
@@ -131,56 +175,27 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             $0.top.equalTo(employmentView.snp.bottom).offset(24)
         }
 
-        findCompanysCard.snp.makeConstraints {
+        careerStackView.snp.makeConstraints {
             $0.top.equalTo(careerMenuLabel.snp.bottom)
-            $0.leading.equalToSuperview().inset(24)
-            if isWinterSeason.value {
-                $0.trailing.equalTo(view.snp.centerX).offset(-6)
-            } else {
-                $0.trailing.equalToSuperview().inset(24)
-            }
-        }
-
-        if isWinterSeason.value {
-            findWinterRecruitmentsCard.snp.makeConstraints {
-                $0.top.equalTo(careerMenuLabel.snp.bottom)
-                $0.leading.equalTo(view.snp.centerX).offset(6)
-                $0.trailing.equalToSuperview().inset(24)
-            }
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(176)
         }
 
         applicationStatusMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(findCompanysCard.snp.bottom).offset(24)
+            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
         }
 
-        if applicationStatusCells.isEmpty {
-            emptyApplicationCell.snp.makeConstraints {
-                $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-            }
-        } else {
-            applicationStatusTableView.snp.makeConstraints {
-                $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-                $0.height.greaterThanOrEqualTo(applicationStatusTableView.contentSize.height + 4)
-            }
+        applicationStatusTableView.snp.makeConstraints {
+            $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.greaterThanOrEqualTo((applicationStatusTableView.contentSize.height + 4))
         }
     }
 }
 
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return applicationStatusCells.count
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let applicationStatusCell = tableView.dequeueReusableCell(
-            withIdentifier: ApplicationStatusCell.identifier,
-            for: indexPath
-        ) as? ApplicationStatusCell else { return UITableViewCell() }
-
-        applicationStatusCell.setCell(applicationStatusCells[indexPath.row])
-
-        return applicationStatusCell
+extension UITableView {
+    func setEmptyHeaderView() {
+        let headerView = EmptyApplicationView()
+        self.tableHeaderView = headerView
     }
 }
