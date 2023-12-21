@@ -34,6 +34,40 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
     public let signinButton = JobisButton(style: .main).then {
         $0.setText("로그인")
     }
+    let signinPublishRelay = PublishRelay<Void>()
+
+    func signin() {
+        self.signinPublishRelay.accept(())
+    }
+    public override func attribute() {
+        passwordTextField.textField.delegate = self
+        signinButton.rx.tap
+            .asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.signin()
+            })
+            .disposed(by: disposeBag)
+    }
+    public override func bind() {
+        let input = SigninViewModel.Input(
+            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
+            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
+            signinButtonDidTap: signinPublishRelay.asSignal()
+        )
+        let output = viewModel.transform(input)
+        output.emailErrorDescription
+            .bind { [unowned self] description in
+                print("email \(description)")
+                emailTextField.setDescription(description)
+            }
+            .disposed(by: disposeBag)
+        output.passwordErrorDescription
+            .bind { [unowned self] description in
+                print("password \(description)")
+                passwordTextField.setDescription(description)
+            }
+            .disposed(by: disposeBag)
+    }
     public override func addView() {
         [
             titleLabel,
@@ -73,6 +107,7 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
+
     public override func bind() {
         let input = SigninViewModel.Input(
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
@@ -81,18 +116,24 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
         )
         let output = viewModel.transform(input)
         output.emailErrorDescription
-            .bind { [unowned self] description in
-                print("email \(description)")
-                emailTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.passwordErrorDescription
-            .bind { [unowned self] description in
-                print("password \(description)")
-                passwordTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.passwordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
-    public override func attribute() {
+    public override func attribute() {}
+}
+
+extension SigninViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == passwordTextField.textField {
+            signin()
+        }
+        return true
     }
 }

@@ -1,15 +1,36 @@
 name: "Bug"
-description: "버그가 생겼어요 👾"
+description: "버그가 생겼어요 🐛"
 labels: 버그
 body:
-
   - type: textarea
     attributes:
       label: Describe
       description: |
         버그에 관한 설명을 간단하게 작성해주세요.
       placeholder: |
-        큰일났어요 병합오류 난거 develop에 머지한듯!!
+        매우 심각한 버그에요!
+
+  - type: textarea
+    attributes:
+      label: How
+      description: |
+        어떤상황에서 생기는 버그인지 간단하게 설명해주세요.
+      placeholder: |
+        1. '...'로 들어간다
+        2. '....'를 클릭한다
+        3. '....'를 스크롤한다
+        4. 에러발생!
+
+  - type: textarea
+    attributes:
+      label: Environment
+      render: shell
+      description: |
+        버그가 발생한 환경에 대해 설명해주세요!
+      placeholder: |
+        System:
+          OS: macOS 11.4
+
   - type: textarea
     attributes:
       label: Additional

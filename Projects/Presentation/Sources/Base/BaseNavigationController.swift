@@ -24,24 +24,24 @@ public class BaseNavigationController: UINavigationController {
         setNavigationBarAppearance()
     }
     func setNavigationBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        let appearance2 = UINavigationBarAppearance()
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        let standardAppearance = UINavigationBarAppearance()
         navigationBar.tintColor = .GrayScale.gray60
-        appearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
-        appearance2.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
-        appearance.backgroundColor = .white
+        scrollEdgeAppearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
+        standardAppearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
+        scrollEdgeAppearance.backgroundColor = .white
 
-        appearance.configureWithTransparentBackground()
-        appearance2.configureWithDefaultBackground()
-        appearance.backButtonAppearance = backButtonAppearance
-        appearance2.backButtonAppearance = backButtonAppearance
-        appearance.largeTitleTextAttributes = [
+        scrollEdgeAppearance.configureWithTransparentBackground()
+        standardAppearance.configureWithDefaultBackground()
+        scrollEdgeAppearance.backButtonAppearance = backButtonAppearance
+        standardAppearance.backButtonAppearance = backButtonAppearance
+        scrollEdgeAppearance.largeTitleTextAttributes = [
             .font: UIFont.jobisFont(.pageTitle),
             .foregroundColor: UIColor.GrayScale.gray90
         ]
-        navigationBar.standardAppearance = appearance2
+        navigationBar.standardAppearance = standardAppearance
         navigationController?.setNeedsStatusBarAppearanceUpdate()
-        navigationBar.scrollEdgeAppearance = appearance
+        navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         self.navigationController?.navigationBar.backItem?.title = nil
     }
 }
