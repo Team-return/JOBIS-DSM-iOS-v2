@@ -52,19 +52,17 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
         let input = SigninViewModel.Input(
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
             password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinPublishRelay.asSignal()
+            signinButtonDidTap: signinButton.rx.tap.asSignal()
         )
         let output = viewModel.transform(input)
         output.emailErrorDescription
-            .bind { [unowned self] description in
-                print("email \(description)")
-                emailTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
         output.passwordErrorDescription
-            .bind { [unowned self] description in
-                print("password \(description)")
-                passwordTextField.setDescription(description)
+            .bind { [weak self] description in
+                self?.passwordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
@@ -107,26 +105,6 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
-
-    public override func bind() {
-        let input = SigninViewModel.Input(
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinButton.rx.tap.asSignal()
-        )
-        let output = viewModel.transform(input)
-        output.emailErrorDescription
-            .bind { [weak self] description in
-                self?.emailTextField.setDescription(description)
-            }
-            .disposed(by: disposeBag)
-        output.passwordErrorDescription
-            .bind { [weak self] description in
-                self?.passwordTextField.setDescription(description)
-            }
-            .disposed(by: disposeBag)
-    }
-    public override func attribute() {}
 }
 
 extension SigninViewController: UITextFieldDelegate {
