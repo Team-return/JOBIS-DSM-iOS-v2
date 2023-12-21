@@ -27,43 +27,43 @@ public enum JobisIcon {
     case snowman
 
     func uiImage() -> UIImage {
-        let dsIcon = DesignSystemAsset.Icons.self
+        let dsIcons = DesignSystemAsset.Icons.self
 
         switch self {
         case .arrowRight:
-            return dsIcon.arrowRight.image
+            return dsIcons.arrowRight.image
         case .arrowNavigate:
-            return dsIcon.arrowNavigate.image
+            return dsIcons.arrowNavigate.image
         case .door:
-            return dsIcon.door.image
+            return dsIcons.door.image
         case .bugBox:
-            return dsIcon.bugBox.image
+            return dsIcons.bugBox.image
         case .bugReport:
-            return dsIcon.bugReport.image
+            return dsIcons.bugReport.image
         case .changePassword:
-            return dsIcon.changePassword.image
+            return dsIcons.changePassword.image
         case .code:
-            return dsIcon.code.image
+            return dsIcons.code.image
         case .withdrawal:
-            return dsIcon.withdrawal.image
+            return dsIcons.withdrawal.image
         case .logout:
-            return dsIcon.logout.image
+            return dsIcons.logout.image
         case .bookmarkOn:
-            return dsIcon.bookmarkOn.image
+            return dsIcons.bookmarkOn.image
         case .bookmarkOff:
-            return dsIcon.bookmarkOff.image
+            return dsIcons.bookmarkOff.image
         case .searchIcon:
-            return dsIcon.searchIcon.image
+            return dsIcons.searchIcon.image
         case .filterIcon:
-            return dsIcon.filterIcon.image
+            return dsIcons.filterIcon.image
         case .profile:
-            return dsIcon.profile.image
+            return dsIcons.profile.image
         case .bell:
-            return dsIcon.bell.image
+            return dsIcons.bell.image
         case .officeBuilding:
-            return dsIcon.officeBuilding.image
+            return dsIcons.officeBuilding.image
         case .snowman:
-            return dsIcon.snowman.image
+            return dsIcons.snowman.image
         }
     }
 }

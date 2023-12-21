@@ -4,10 +4,10 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "Presentation",
-    product: .staticFramework,
+    product: .staticLibrary,
+    targets: [.unitTest],
     dependencies: [
         .Projects.domain,
         .Modules.designSystem
-    ],
-    resources: ["Resources/**"]
+    ]
 )
