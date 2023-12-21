@@ -4,8 +4,8 @@ import Then
 import Domain
 import DesignSystem
 
-final class AlarmCell: UITableViewCell {
-    static let identifier = "AlarmCell"
+final class AlarmTableViewCell: UITableViewCell {
+    static let identifier = "AlarmTableViewCell"
 
     private let companyNameLabel = UILabel()
     private let messageLabel = UILabel()

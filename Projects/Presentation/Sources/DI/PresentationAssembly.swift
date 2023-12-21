@@ -12,7 +12,9 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(HomeViewModel.self) { resolver in
             HomeViewModel(
-                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!,
+                fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!
             )
         }
 
