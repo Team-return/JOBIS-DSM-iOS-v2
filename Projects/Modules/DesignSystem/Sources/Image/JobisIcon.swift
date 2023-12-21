@@ -17,6 +17,10 @@ public enum JobisIcon {
     case withdrawal
     case logout
     case code
+    case bookmarkOn
+    case bookmarkOff
+    case searchIcon
+    case filterIcon
     case profile
     case bell
     case officeBuilding
@@ -44,6 +48,14 @@ public enum JobisIcon {
             return dsIcon.withdrawal.image
         case .logout:
             return dsIcon.logout.image
+        case .bookmarkOn:
+            return dsIcon.bookmarkOn.image
+        case .bookmarkOff:
+            return dsIcon.bookmarkOff.image
+        case .searchIcon:
+            return dsIcon.searchIcon.image
+        case .filterIcon:
+            return dsIcon.filterIcon.image
         case .profile:
             return dsIcon.profile.image
         case .bell:
