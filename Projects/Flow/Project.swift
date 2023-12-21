@@ -4,7 +4,8 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "Flow",
-    product: .staticFramework,
+    product: .staticLibrary,
+    targets: [.unitTest],
     dependencies: [
         .Projects.data,
         .Projects.presentation

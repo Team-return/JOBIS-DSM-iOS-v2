@@ -1,65 +1,151 @@
+import ConfigurationPlugin
+import DependencyPlugin
+import EnvironmentPlugin
+import Foundation
 import ProjectDescription
-import EnviromentPlugin
 
-extension Project {
-    public static func makeModule(
+let isCI = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1" ? true : false
+
+public enum MicroFeatureTarget {
+    case unitTest
+    case demo
+}
+
+public extension Project {
+    static func makeModule(
         name: String,
-        platform: Platform = .iOS,
+        platform: Platform = env.platform,
         product: Product,
+        targets: Set<MicroFeatureTarget>,
         packages: [Package] = [],
         dependencies: [TargetDependency] = [],
-        sources: SourceFilesList = ["Sources/**"],
+        sources: SourceFilesList = .sources,
         resources: ResourceFileElements? = nil,
-        infoPlist: InfoPlist = .default,
-        resourceSynthesizers: [ResourceSynthesizer] = .default
+        settings: SettingsDictionary = [:],
+        additionalPlistRows: [String: ProjectDescription.InfoPlist.Value] = [:]
     ) -> Project {
-        return project(
+        let scripts: [TargetScript] = isCI ? [] : [.swiftLint]
+
+        let configurations: [Configuration] = isCI ?
+        [
+          .debug(name: .dev),
+          .debug(name: .stage),
+          .release(name: .prod)
+        ] :
+        [
+          .debug(name: .dev, xcconfig: .relativeToXCConfig(type: .dev, name: name)),
+          .debug(name: .stage, xcconfig: .relativeToXCConfig(type: .stage, name: name)),
+          .release(name: .prod, xcconfig: .relativeToXCConfig(type: .prod, name: name))
+        ]
+
+        let settings: Settings = .settings(
+            base: env.baseSetting
+                .merging(.codeSign)
+                .merging(settings),
+            configurations: configurations,
+            defaultSettings: .recommended
+        )
+        var allTargets: [Target] = [
+            Target(
+                name: name,
+                platform: platform,
+                product: product,
+                bundleId: "\(env.organizationName).\(name)",
+                deploymentTarget: env.deploymentTarget,
+                infoPlist: .extendingDefault(with: additionalPlistRows),
+                sources: sources,
+                resources: resources,
+                scripts: scripts,
+                dependencies: dependencies
+            )
+        ]
+
+        if targets.contains(.unitTest) {
+            allTargets.append(
+                Target(
+                    name: "\(name)Tests",
+                    platform: platform,
+                    product: .unitTests,
+                    bundleId: "\(env.organizationName).\(name)Tests",
+                    deploymentTarget: env.deploymentTarget,
+                    infoPlist: .default,
+                    sources: .unitTests,
+                    scripts: scripts,
+                    dependencies: []
+                )
+            )
+        }
+
+        // MARK: - Demo App
+        if targets.contains(.demo) {
+            var demoDependencies: [TargetDependency] = [.target(name: name)]
+            allTargets.append(
+                Target(
+                    name: "\(name)DemoApp",
+                    platform: platform,
+                    product: .app,
+                    bundleId: "\(env.organizationName).\(name)DemoApp",
+                    deploymentTarget: env.deploymentTarget,
+                    infoPlist: .extendingDefault(with: [
+                        "UIMainStoryboardFile": "",
+                        "UILaunchStoryboardName": "LaunchScreen",
+                        "ENABLE_TESTS": .boolean(true),
+                    ]),
+                    sources: .demoSources,
+                    resources: .demoResources,
+                    scripts: scripts,
+                    dependencies: demoDependencies
+                )
+            )
+        }
+
+        let schemes: [Scheme] = targets.contains(.demo) ?
+        [.makeScheme(target: .dev, name: name), .makeDemoScheme(target: .dev, name: name)] :
+        [.makeScheme(target: .dev, name: name)]
+
+        return Project(
             name: name,
-            platform: platform,
-            product: product,
+            organizationName: env.organizationName,
             packages: packages,
-            dependencies: dependencies,
-            sources: sources,
-            resources: resources,
-            infoPlist: infoPlist,
-            resourceSynthesizers: resourceSynthesizers
+            settings: settings,
+            targets: allTargets,
+            schemes: schemes
         )
     }
 }
 
-public extension Project {
-    static func project(
-        name: String,
-        platform: Platform,
-        product: Product,
-        organizationName: String = env.organizationName,
-        packages: [Package],
-        deploymentTarget: DeploymentTarget? = env.deploymentTarget,
-        dependencies: [TargetDependency] = [],
-        sources: SourceFilesList,
-        resources: ResourceFileElements? = nil,
-        infoPlist: InfoPlist = .default,
-        resourceSynthesizers: [ResourceSynthesizer] = .default
-    ) -> Project {
-        let appTarget = Target(
+extension Scheme {
+    static func makeScheme(target: ConfigurationName, name: String) -> Scheme {
+        return Scheme(
             name: name,
-            platform: platform,
-            product: product,
-            bundleId: "com.team.return.JOBIS-DSM-iOS",
-            deploymentTarget: deploymentTarget,
-            infoPlist: infoPlist,
-            sources: sources, 
-            resources: resources, 
-            scripts: [.swiftLint],
-            dependencies: dependencies
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)"]),
+            testAction: .targets(
+                ["\(name)Tests"],
+                configuration: target,
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+            ),
+            runAction: .runAction(configuration: target),
+            archiveAction: .archiveAction(configuration: target),
+            profileAction: .profileAction(configuration: target),
+            analyzeAction: .analyzeAction(configuration: target)
         )
-        
-        return Project(
+    }
+
+    static func makeDemoScheme(target: ConfigurationName, name: String) -> Scheme {
+        return Scheme(
             name: name,
-            organizationName: organizationName,
-            packages: packages,
-            targets: [appTarget],
-            resourceSynthesizers: resourceSynthesizers
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)DemoApp"]),
+            testAction: .targets(
+                ["\(name)Tests"],
+                configuration: target,
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)DemoApp"])
+            ),
+            runAction: .runAction(configuration: target),
+            archiveAction: .archiveAction(configuration: target),
+            profileAction: .profileAction(configuration: target),
+            analyzeAction: .analyzeAction(configuration: target)
         )
     }
 }

@@ -5,6 +5,7 @@ import DependencyPlugin
 let project = Project.makeModule(
     name: "ThirdPartyLib",
     product: .framework,
+    targets: [],
     dependencies: [
         .SPM.RxCocoa,
         .SPM.RxFlow,

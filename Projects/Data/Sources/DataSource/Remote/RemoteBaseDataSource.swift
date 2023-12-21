@@ -17,7 +17,7 @@ class RemoteBaseDataSource<API: JobisAPI> {
 #if DEBUG
         self.provider = MoyaProvider<API>(plugins: [JwtPlugin(keychain: keychain), MoyaLogginPlugin()])
 #else
-        self.provider = MoyaProvider<API>(plugins: [JwtPlugin()])
+        self.provider = MoyaProvider<API>(plugins: [JwtPlugin(keychain: keychain)])
 #endif
     }
 
