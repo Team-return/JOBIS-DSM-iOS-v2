@@ -6,4 +6,9 @@ public extension UIViewController {
         self.navigationItem.title = title
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
     }
+
+    func setSmallTitle(title: String) {
+        self.navigationItem.title = title
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .never
+    }
 }
