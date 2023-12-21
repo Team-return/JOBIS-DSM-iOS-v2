@@ -12,10 +12,12 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         $0.showsVerticalScrollIndicator = false
     }
     private let contentView = UIView()
-    private let proFileView = ProfileView()
-    let reviewNavigateStackView = ReviewNavigateStackView()
-    let accountSectionView = SectionView().then {
-        $0.titleLabel.setMenuLabel(text: "계정")
+    private let studentInfoView = StudentInfoView()
+    private let editButton = UIButton(type: .system).then {
+        $0.setJobisText("수정", font: .subHeadLine, color: .Main.blue1)
+    }
+    private let reviewNavigateStackView = ReviewNavigateStackView()
+    private let accountSectionView = SectionView(menuText: "계정").then {
         $0.items = [
             ("관심분야 선택", .jobisIcon(.code)),
             ("비밀번호 변경", .jobisIcon(.changePassword)),
@@ -23,8 +25,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             ("회원 탈퇴", .jobisIcon(.withdrawal))
         ]
     }
-    let bugSectionView = SectionView().then {
-        $0.titleLabel.setMenuLabel(text: "버그제보")
+    private let bugSectionView = SectionView(menuText: "버그제보").then {
         $0.items = [
             ("버그 제보하기", .jobisIcon(.bugReport)),
             ("버그 제보함", .jobisIcon(.bugBox))
@@ -42,10 +43,12 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
             .bind(onNext: { [weak self] in
-                self?.proFileView.userInfoLabel.text = "\($0.studentGcn) \($0.studentName)"
-                self?.proFileView.departmentLabel.text = $0.department.localizedString()
-                self?.proFileView.profileImageView
-                    .kf.setImage(with: URL(string: "https://jobis-store.s3.ap-northeast-2.amazonaws.com/\($0.profileImageUrl)"))
+                self?.studentInfoView.setStudentInfo(
+                    profileImageUrl: $0.profileImageUrl,
+                    gcn: $0.studentGcn,
+                    name: $0.studentName,
+                    department: $0.department.localizedString()
+                )
             }).disposed(by: disposeBag)
 
         output.writableReviewList
@@ -58,7 +61,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         [
-            proFileView,
+            studentInfoView,
+            editButton,
             reviewNavigateStackView,
             accountSectionView,
             bugSectionView
@@ -73,13 +77,17 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.width.equalToSuperview()
             $0.bottom.equalTo(bugSectionView)
         }
-        proFileView.snp.makeConstraints {
+        studentInfoView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
+        editButton.snp.makeConstraints {
+            $0.centerY.equalTo(studentInfoView)
+            $0.trailing.equalToSuperview().offset(-28)
+        }
         reviewNavigateStackView.snp.updateConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.top.equalTo(proFileView.snp.bottom)
+            $0.top.equalTo(studentInfoView.snp.bottom)
         }
         accountSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)

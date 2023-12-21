@@ -13,6 +13,7 @@ public class BaseTabBarController: UITabBarController {
         }
 
         self.tabBar.addSubview(stroke)
+
         stroke.snp.makeConstraints {
             $0.top.equalToSuperview().offset(-1)
             $0.leading.trailing.equalToSuperview()
