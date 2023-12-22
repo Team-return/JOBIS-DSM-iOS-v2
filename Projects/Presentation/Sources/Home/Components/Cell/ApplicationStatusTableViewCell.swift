@@ -64,20 +64,20 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
     }
 }
 
-extension ApplicationStatusType {
+private extension ApplicationStatusType {
     func toUIColor() -> UIColor {
         switch self {
         case .failed, .rejected:
-            return .Sub.red
+            return .Sub.red20
 
         case .requested, .approved:
-            return .Sub.yello
+            return .Sub.yellow20
 
         case .send:
-            return .Sub.blue
+            return .Sub.blue20
 
         case .acceptance, .pass, .fieldTrain:
-            return .Sub.green
+            return .Sub.green20
         }
     }
 }

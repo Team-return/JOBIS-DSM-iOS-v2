@@ -9,7 +9,7 @@ import DesignSystem
 public final class SigninViewController: BaseViewController<SigninViewModel> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
-        $0.setColorRange(color: .Main.blue1, range: "JOBIS")
+        $0.setColorRange(color: .Primary.blue20, range: "JOBIS")
     }
     private let titleLineView = UIView().then {
         $0.backgroundColor = .GrayScale.gray90
