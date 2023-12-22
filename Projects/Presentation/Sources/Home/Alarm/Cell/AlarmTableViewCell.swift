@@ -12,7 +12,7 @@ final class AlarmTableViewCell: UITableViewCell {
     private let dateLabel = UILabel()
 
     func setCell() {
-        companyNameLabel.setJobisText("㈜비바리퍼블리카", font: .description, color: .Main.blue1)
+        companyNameLabel.setJobisText("㈜비바리퍼블리카", font: .description, color: .Primary.blue20)
         messageLabel.setJobisText("지원서가 승인으로 변경되었습니다", font: .subHeadLine, color: .GrayScale.gray80)
         dateLabel.setJobisText("2023.07.27", font: .description, color: .GrayScale.gray60)
     }

@@ -8,7 +8,7 @@ final class EmploymentView: UIView {
         $0.setJobisText("현재 대마고의 취업률", font: .subBody, color: .GrayScale.gray90)
     }
     private let employmentPercentageLabel = UILabel().then {
-        $0.setJobisText("0.0 %", font: .headLine, color: .Main.blue1)
+        $0.setJobisText("0.0 %", font: .headLine, color: .Primary.blue20)
     }
     private let arrowNavigateImageView = UIImageView().then {
         // TODO: 네비게이트 생기면 isHidden = false 로 바꿔야함

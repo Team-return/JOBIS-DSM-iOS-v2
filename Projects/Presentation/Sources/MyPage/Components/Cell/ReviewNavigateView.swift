@@ -11,11 +11,11 @@ final class ReviewNavigateView: UIView {
         $0.textColor = .GrayScale.gray70
     }
     let reviewNavigateButton = UIButton(type: .system).then {
-        $0.setJobisText("작성하러 가기 →", font: .subHeadLine, color: .Main.blue1)
+        $0.setJobisText("작성하러 가기 →", font: .subHeadLine, color: .Primary.blue20)
     }
     override func layoutSubviews() {
         self.layer.cornerRadius = 12
-        self.backgroundColor = DesignSystemAsset.Main.bg.color
+        self.backgroundColor = .Primary.blue10
         [
             reviewImageView,
             titleLabel,
