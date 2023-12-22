@@ -37,10 +37,10 @@ public final class TextFieldRightStackView: UIStackView {
     public let customButton = UIButton(type: .system).then {
         $0.isHidden = true
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .Main.blue1
+        config.baseForegroundColor = .Primary.blue20
         config.contentInsets = .init(top: 4, leading: 8, bottom: 4, trailing: 8)
         $0.configuration = config
-        $0.backgroundColor = DesignSystemAsset.Main.bg.color
+        $0.backgroundColor = .Primary.blue10
         $0.layer.cornerRadius = 8
     }
     public let emailInfoLabel = UILabel().then {
