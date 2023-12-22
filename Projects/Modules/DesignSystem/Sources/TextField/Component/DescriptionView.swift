@@ -11,7 +11,7 @@ public final class DescriptionView: UIView {
                 self.isHidden = true
 
             case let .error(description):
-                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.red)
+                self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.red20)
 
             case let .info(description):
                 self.descriptionLabel.setJobisText(description, font: .description, color: .GrayScale.gray90)
