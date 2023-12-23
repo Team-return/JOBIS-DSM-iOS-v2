@@ -9,7 +9,6 @@ public extension UIImage {
 
 public enum OnboardingImage {
     case teamReturnLogo
-    case jobisLogo
 
     func uiImage() -> UIImage {
         let dsImages = DesignSystemAsset.Images.self
@@ -17,9 +16,6 @@ public enum OnboardingImage {
         switch self {
         case .teamReturnLogo:
             return dsImages.teamReturnLogo.image
-
-        case .jobisLogo:
-            return dsImages.jobisLogo.image
         }
     }
 }
