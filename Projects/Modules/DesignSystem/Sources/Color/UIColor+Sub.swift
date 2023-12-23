@@ -11,6 +11,6 @@ public extension UIColor.Sub {
     static let red20: UIColor = DesignSystemAsset.Sub.red20.color
     static let green10: UIColor = DesignSystemAsset.Sub.green10.color
     static let green20: UIColor = DesignSystemAsset.Sub.green20.color
-    static let blue10: UIColor = DesignSystemAsset.Sub.blue10.color
-    static let blue20: UIColor = DesignSystemAsset.Sub.blue20.color
+    static let skyBlue10: UIColor = DesignSystemAsset.Sub.skyBlue10.color
+    static let skyBlue20: UIColor = DesignSystemAsset.Sub.skyBlue20.color
 }
