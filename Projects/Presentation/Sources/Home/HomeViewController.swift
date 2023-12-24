@@ -122,7 +122,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 } else {
                     self?.applicationStatusTableView.estimatedSectionHeaderHeight = 0
                     self?.applicationStatusTableView.tableHeaderView = nil
-                    self?.applicationStatusTableView.reloadData()   
+                    self?.applicationStatusTableView.reloadData()
                 }
             })
             .bind(

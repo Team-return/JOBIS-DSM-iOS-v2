@@ -36,6 +36,7 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
         input.viewAppear.asObservable()
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .flatMap { [self] in
                 reissueTokenUaseCase.execute()
                     .asCompletable()
@@ -45,7 +46,6 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
                     }
                     .andThen(Single.just(OnboardingStep.tabsIsRequired))
             }
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(animate: animate)

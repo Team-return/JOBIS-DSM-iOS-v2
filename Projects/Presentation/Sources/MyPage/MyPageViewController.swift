@@ -14,7 +14,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let contentView = UIView()
     private let studentInfoView = StudentInfoView()
     private let editButton = UIButton(type: .system).then {
-        $0.setJobisText("수정", font: .subHeadLine, color: .Main.blue1)
+        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
     }
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = SectionView(menuText: "계정").then {
