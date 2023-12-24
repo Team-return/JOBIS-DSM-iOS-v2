@@ -16,10 +16,6 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         $0.image = .onboardingImage(.teamReturnLogo).resize(.init(width: 88, height: 48))
     }
 
-    private let jobisLogoImage = UIImageView().then {
-        $0.image = .onboardingImage(.jobisLogo).resize(.init(width: 205, height: 48))
-    }
-
     private let navigateButtonStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
@@ -39,7 +35,6 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         [
             animationView,
             teamReturnLogoImage,
-            jobisLogoImage,
             navigateButtonStackView
         ].forEach { self.view.addSubview($0)}
 
@@ -52,11 +47,6 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
     public override func layout() {
         animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
-        }
-
-        jobisLogoImage.snp.makeConstraints {
-            $0.centerY.equalTo(animationView)
-            $0.centerX.equalToSuperview()
         }
 
         teamReturnLogoImage.snp.makeConstraints {
