@@ -74,7 +74,7 @@ private extension ApplicationStatusType {
             return .Sub.yellow20
 
         case .send:
-            return .Sub.blue20
+            return .Sub.skyBlue20
 
         case .acceptance, .pass, .fieldTrain:
             return .Sub.green20
