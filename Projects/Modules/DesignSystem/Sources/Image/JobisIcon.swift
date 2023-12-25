@@ -8,7 +8,7 @@ public extension UIImage {
 }
 
 public enum JobisIcon {
-    case arrowRight(Color)
+    case arrowRight
     case arrowNavigate
     case door
     case bugBox
@@ -31,13 +31,8 @@ public enum JobisIcon {
         let dsIcons = DesignSystemAsset.Icons.self
 
         switch self {
-        case let .arrowRight(color):
-            switch color {
-            case .black:
-                return dsIcons.arrowRightBlack.image
-            case .white:
-                return dsIcons.arrowRightWhite.image
-            }
+        case .arrowRight:
+            return dsIcons.arrowRight.image
         case .arrowNavigate:
             return dsIcons.arrowNavigate.image
         case .door:
@@ -73,9 +68,4 @@ public enum JobisIcon {
         }
     }
     // swiftlint: enable cyclomatic_complexity
-}
-
-public enum Color {
-    case black
-    case white
 }
