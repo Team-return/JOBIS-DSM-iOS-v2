@@ -4,7 +4,6 @@ import RxCocoa
 import Then
 import SnapKit
 
-// TODO: configureUI 라는 함수가 너무 커서 isEnabled와 isHighlighted 등 didset에 들어가있으면 값변화가 너무 클 듯 함수를 좀 더 세분화 하는 방향으로..
 public final class JobisButton: UIButton {
     private var buttonStyle: JobisButtonStyle = .main
     private var labelText: String = ""
@@ -18,13 +17,7 @@ public final class JobisButton: UIButton {
     }
 
     private var fgColor: UIColor {
-        guard traitCollection.userInterfaceStyle == .light else { return .black }
-        return (buttonStyle == .main || !isEnabled) ? .white: .black
-    }
-
-    private var buttonImage: JobisIcon {
-        guard traitCollection.userInterfaceStyle == .light else { return .arrowRight(.black) }
-        return (buttonStyle == .main || !isEnabled) ? .arrowRight(.white): .arrowRight(.black)
+        (buttonStyle == .main || !isEnabled) ? .white: .black
     }
 
     private var bgColor: UIColor {
@@ -46,8 +39,6 @@ public final class JobisButton: UIButton {
     ) {
         super.init(frame: .zero)
         self.buttonStyle = style
-
-        configureUI()
     }
 
     required public init?(coder: NSCoder) {
@@ -56,11 +47,11 @@ public final class JobisButton: UIButton {
 
     public func setText(_ text: String) {
         self.labelText = text
-        configureUI()
+        self.configureUI()
     }
 
     private func configureUI() {
-        let image: UIImage? = buttonImage.uiImage()
+        let image: UIImage? = .jobisIcon(.arrowRight).withTintColor(fgColor, renderingMode: .alwaysTemplate)
             .resize(.init(width: 24, height: 24))
 
         var config = UIButton.Configuration.plain()
@@ -76,17 +67,10 @@ public final class JobisButton: UIButton {
         self.layer.cornerRadius = 12
         self.backgroundColor = bgColor
     }
-
-    private func resetUI() {
-        self.imageView?.image = buttonImage.uiImage()
-            .resize(.init(width: 24, height: 24))
-        self.titleLabel?.textColor = fgColor
-        self.backgroundColor = bgColor
-    }
 }
 
 extension JobisButton {
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        resetUI()
+        self.backgroundColor = bgColor
     }
 }
