@@ -7,7 +7,7 @@ public struct FetchBugListUseCase {
 
     private let bugsRepository: BugsRepository
 
-    public func execute(developmentArea: DevelopmentType) -> Single<[BugEntity]> {
+    public func execute(developmentArea: DevelopmentType) -> Single<[BugReportEntity]> {
         bugsRepository.fetchBugList(developmentArea: developmentArea)
     }
 }
