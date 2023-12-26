@@ -53,7 +53,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 
         output.writableReviewList
             .bind(onNext: { [weak self] in
-                self?.reviewNavigateStackView.setList(list: $0)
+                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
             }).disposed(by: disposeBag)
     }
 
