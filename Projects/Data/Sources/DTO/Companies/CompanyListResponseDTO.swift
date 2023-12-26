@@ -6,14 +6,14 @@ struct CompanyListResponseDTO: Decodable {
 }
 
 struct CompanyResponseDTO: Decodable {
-    let id: Int
+    let companyID: Int
     let name: String
     let logoURL: String
     let take: Double
     let hasRecruitment: Bool
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case companyID = "id"
         case name
         case logoURL = "logo_url"
         case take
@@ -25,7 +25,7 @@ extension CompanyListResponseDTO {
     func toDomain() -> [CompanyEntity] {
         companies.map {
             CompanyEntity(
-                id: $0.id,
+                companyID: $0.companyID,
                 name: $0.name,
                 logoURL: $0.logoURL,
                 take: $0.take,

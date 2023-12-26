@@ -4,7 +4,7 @@ import AppNetwork
 
 enum CompaniesAPI {
     case fetchCompanyList(page: Int, name: String?)
-    case fetchCompanyInfoDetail(id: String)
+    case fetchCompanyInfoDetail(id: Int)
     case fetchWritableReviewList
 }
 

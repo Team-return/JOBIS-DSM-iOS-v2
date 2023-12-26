@@ -27,7 +27,7 @@ final class ReviewNavigateStackView: UIStackView {
         list.forEach { item in
             let reviewNavigateTableViewCell = ReviewNavigateView().then {
                 $0.titleLabel.text = "\(item.name) 면접 후기를 적어주세요!"
-                $0.id = item.id
+                $0.id = item.reviewID
             }
             reviewNavigateTableViewCell.reviewNavigateButton.rx.tap
                 .bind(onNext: { [weak self] in

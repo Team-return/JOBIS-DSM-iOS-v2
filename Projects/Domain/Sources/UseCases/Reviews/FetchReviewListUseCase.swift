@@ -7,7 +7,7 @@ public struct FetchReviewListUseCase {
 
     private let reviewsRepository: ReviewsRepository
 
-    public func execute(id: String) -> Single<[ReviewEntity]> {
+    public func execute(id: Int) -> Single<[ReviewEntity]> {
         return reviewsRepository.fetchReviewList(id: id)
     }
 }
