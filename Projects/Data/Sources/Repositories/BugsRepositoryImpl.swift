@@ -12,7 +12,7 @@ struct BugsRepositoryImpl: BugsRepository {
         remoteBugsDataSource.reportBug(req: req)
     }
 
-    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugEntity]> {
+    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugReportEntity]> {
         remoteBugsDataSource.fetchBugList(developmentArea: developmentArea)
     }
 
