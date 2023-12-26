@@ -6,14 +6,19 @@ struct WritableReviewListResponseDTO: Decodable {
 }
 
 struct WritableReviewCompanyResponseDTO: Decodable {
-    let id: Int
+    let reviewID: Int
     let name: String
+
+    enum CodingKeys: String, CodingKey {
+        case reviewID = "id"
+        case name
+    }
 }
 
 extension WritableReviewListResponseDTO {
     func toDomain() -> [WritableReviewCompanyEntity] {
         companies.map {
-            WritableReviewCompanyEntity(id: $0.id, name: $0.name)
+            WritableReviewCompanyEntity(reviewID: $0.reviewID, name: $0.name)
         }
     }
 }

@@ -3,12 +3,12 @@ import Domain
 import AppNetwork
 
 enum ApplicationsAPI {
-    case applyCompany(id: String, ApplyCompanyRequestQuery)
-    case reApplyCompany(id: String, ApplyCompanyRequestQuery)
-    case cancelApply(id: String)
+    case applyCompany(id: Int, ApplyCompanyRequestQuery)
+    case reApplyCompany(id: Int, ApplyCompanyRequestQuery)
+    case cancelApply(id: Int)
     case fetchApplication
     case fetchTotalPassStudent
-    case fetchRejectionReason(id: String)
+    case fetchRejectionReason(id: Int)
 }
 
 extension ApplicationsAPI: JobisAPI {

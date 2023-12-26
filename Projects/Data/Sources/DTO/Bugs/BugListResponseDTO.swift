@@ -10,23 +10,24 @@ struct BugListResponseDTO: Decodable {
 }
 
 struct BugReportResponseDTO: Decodable {
-    let id: Int
+    let bugID: Int
     let title: String
     let developmentArea: DevelopmentType
     let createdAt: String
 
     public enum CodingKeys: String, CodingKey {
-        case id, title
+        case bugID = "id"
+        case title
         case developmentArea = "development_area"
         case createdAt = "created_at"
     }
 }
 
 extension BugListResponseDTO {
-    func toDomain() -> [BugEntity] {
+    func toDomain() -> [BugReportEntity] {
         bugReports.map {
-            BugEntity(
-                id: $0.id,
+            BugReportEntity(
+                bugID: $0.bugID,
                 title: $0.title,
                 developmentArea: $0.developmentArea,
                 createdAt: $0.createdAt

@@ -7,7 +7,7 @@ public struct FetchCompanyInfoDetailUseCase {
 
     private let companiesRepository: CompaniesRepository
 
-    public func execute(id: String) -> Single<CompanyInfoDetailEntity> {
+    public func execute(id: Int) -> Single<CompanyInfoDetailEntity> {
         return companiesRepository.fetchCompanyInfoDetail(id: id)
     }
 }

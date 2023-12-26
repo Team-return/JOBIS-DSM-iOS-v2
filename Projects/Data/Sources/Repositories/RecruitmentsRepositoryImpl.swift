@@ -8,7 +8,7 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
         self.remoteRecruitmentsDataSource = remoteRecruitmentsDataSource
     }
 
-    func fetchRecruitmentDetail(id: String) -> Single<RecruitmentDetailEntity> {
+    func fetchRecruitmentDetail(id: Int) -> Single<RecruitmentDetailEntity> {
         remoteRecruitmentsDataSource.fetchRecruitmentDetail(id: id)
     }
 

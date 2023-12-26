@@ -3,7 +3,7 @@ import Domain
 
 protocol RemoteCompaniesDataSource {
     func fetchCompanyList(page: Int, name: String?) -> Single<[CompanyEntity]>
-    func fetchCompanyInfoDetail(id: String) -> Single<CompanyInfoDetailEntity>
+    func fetchCompanyInfoDetail(id: Int) -> Single<CompanyInfoDetailEntity>
     func fetchWritableReviewList() -> Single<[WritableReviewCompanyEntity]>
 }
 
@@ -14,7 +14,7 @@ final class RemoteCompaniesDataSourceImpl: RemoteBaseDataSource<CompaniesAPI>, R
             .map { $0.toDomain() }
     }
 
-    func fetchCompanyInfoDetail(id: String) -> Single<CompanyInfoDetailEntity> {
+    func fetchCompanyInfoDetail(id: Int) -> Single<CompanyInfoDetailEntity> {
         request(.fetchCompanyInfoDetail(id: id))
             .map(CompanyInfoDetailResponseDTO.self)
             .map { $0.toDomain() }
