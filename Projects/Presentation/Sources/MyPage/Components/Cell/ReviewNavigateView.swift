@@ -2,7 +2,7 @@ import UIKit
 import DesignSystem
 
 final class ReviewNavigateView: UIView {
-    var id = 0
+    var reviewID = 0
     private let reviewImageView = UIImageView().then {
         $0.image = .jobisIcon(.door).resize(.init(width: 24, height: 24))
     }
