@@ -3,8 +3,8 @@ import Domain
 import AppNetwork
 
 enum ReviewsAPI {
-    case fetchReviewDetail(id: String)
-    case fetchReviewList(id: String)
+    case fetchReviewDetail(id: Int)
+    case fetchReviewList(id: Int)
     case postReview(PostReviewRequestQuery)
 }
 

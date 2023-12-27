@@ -12,7 +12,7 @@ struct CompaniesRepositoryImpl: CompaniesRepository {
         remoteCompaniesDataSource.fetchWritableReviewList()
     }
 
-    func fetchCompanyInfoDetail(id: String) -> Single<CompanyInfoDetailEntity> {
+    func fetchCompanyInfoDetail(id: Int) -> Single<CompanyInfoDetailEntity> {
         remoteCompaniesDataSource.fetchCompanyInfoDetail(id: id)
     }
 

@@ -8,15 +8,15 @@ struct ApplicationsRepositoryImpl: ApplicationsRepository {
         self.remoteApplicationsDataSource = remoteApplicationsDataSource
     }
 
-    func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+    func applyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
         remoteApplicationsDataSource.applyCompany(id: id, req: req)
     }
 
-    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+    func reApplyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
         remoteApplicationsDataSource.reApplyCompany(id: id, req: req)
     }
 
-    func cancelApply(id: String) -> Completable {
+    func cancelApply(id: Int) -> Completable {
         remoteApplicationsDataSource.cancelApply(id: id)
     }
 
@@ -28,7 +28,7 @@ struct ApplicationsRepositoryImpl: ApplicationsRepository {
         remoteApplicationsDataSource.fetchTotalPassStudent()
     }
 
-    func fetchRejectionReason(id: String) -> Single<String> {
+    func fetchRejectionReason(id: Int) -> Single<String> {
         remoteApplicationsDataSource.fetchRejectionReason(id: id)
     }
 }

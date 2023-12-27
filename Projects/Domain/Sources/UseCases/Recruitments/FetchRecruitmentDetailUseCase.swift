@@ -7,7 +7,7 @@ public struct FetchRecruitmentDetailUseCase {
 
     private let recruitmentsRepository: RecruitmentsRepository
 
-    public func execute(id: String) -> Single<RecruitmentDetailEntity> {
+    public func execute(id: Int) -> Single<RecruitmentDetailEntity> {
         recruitmentsRepository.fetchRecruitmentDetail(id: id)
     }
 }
