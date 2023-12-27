@@ -8,11 +8,11 @@ struct ReviewsRepositoryImpl: ReviewsRepository {
         self.remoteReviewsDataSource = remoteReviewsDataSource
     }
 
-    func fetchReviewDetail(id: String) -> Single<[QnaEntity]> {
+    func fetchReviewDetail(id: Int) -> Single<[QnaEntity]> {
         remoteReviewsDataSource.fetchReviewDetail(id: id)
     }
 
-    func fetchReviewList(id: String) -> Single<[ReviewEntity]> {
+    func fetchReviewList(id: Int) -> Single<[ReviewEntity]> {
         remoteReviewsDataSource.fetchReviewList(id: id)
     }
 

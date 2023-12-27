@@ -3,7 +3,7 @@ import Domain
 import AppNetwork
 
 enum RecruitmentsAPI {
-    case fetchRecruitmentDetail(id: String)
+    case fetchRecruitmentDetail(id: Int)
     case fetchRecruitmentList(page: Int, jobCode: String?, techCode: [String]?, name: String?)
 }
 

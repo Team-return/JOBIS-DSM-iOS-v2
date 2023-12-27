@@ -3,7 +3,7 @@ import Domain
 
 public protocol RemoteBugsDataSource {
     func reportBug(req: ReportBugRequestQuery) -> Completable
-    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugEntity]>
+    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugReportEntity]>
     func fetchBugDetail(id: Int) -> Single<BugDetailEntity>
 }
 
@@ -13,7 +13,7 @@ final class RemoteBugsDataSourceImpl: RemoteBaseDataSource<BugsAPI>, RemoteBugsD
             .asCompletable()
     }
 
-    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugEntity]> {
+    func fetchBugList(developmentArea: DevelopmentType) -> Single<[BugReportEntity]> {
         request(.fetchBugList(developmentArea))
             .map(BugListResponseDTO.self)
             .map { $0.toDomain() }

@@ -4,26 +4,26 @@ import Foundation
 import Domain
 
 public protocol RemoteApplicationsDataSource {
-    func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable
-    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable
-    func cancelApply(id: String) -> Completable
+    func applyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable
+    func reApplyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable
+    func cancelApply(id: Int) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
-    func fetchRejectionReason(id: String) -> Single<String>
+    func fetchRejectionReason(id: Int) -> Single<String>
 }
 
 final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsAPI>, RemoteApplicationsDataSource {
-    func applyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+    func applyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
         request(.applyCompany(id: id, req))
             .asCompletable()
     }
 
-    func reApplyCompany(id: String, req: ApplyCompanyRequestQuery) -> Completable {
+    func reApplyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
         request(.reApplyCompany(id: id, req))
             .asCompletable()
     }
 
-    func cancelApply(id: String) -> Completable {
+    func cancelApply(id: Int) -> Completable {
         request(.cancelApply(id: id))
             .asCompletable()
     }
@@ -40,7 +40,7 @@ final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsA
             .map { $0.toDomain() }
     }
 
-    func fetchRejectionReason(id: String) -> Single<String> {
+    func fetchRejectionReason(id: Int) -> Single<String> {
         request(.fetchRejectionReason(id: id))
             .map(FetchRejectionReasonResponseDTO.self)
             .map { $0.rejectionReason }
