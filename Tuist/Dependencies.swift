@@ -29,16 +29,20 @@ let dependencies = Dependencies(
                 requirement: .upToNextMajor(from: "15.0.0")
             ),
             .remote(
-                url: "https://github.com/airbnb/lottie-ios",
+                url: "https://github.com/airbnb/lottie-ios.git",
                 requirement: .upToNextMajor(from: "4.3.3")
             ),
             .remote(
-                url: "https://github.com/onevcat/Kingfisher",
+                url: "https://github.com/onevcat/Kingfisher.git",
                 requirement: .upToNextMajor(from: "7.0.0")
             ),
             .remote(
                 url: "https://github.com/evgenyneu/keychain-swift",
                 requirement: .upToNextMajor(from: "20.0.0")
+            ),
+            .remote(
+                url: "https://github.com/Juanpe/SkeletonView.git",
+                requirement: .upToNextMajor(from: "1.7.0")
             )
         ],
         baseSettings: .settings(

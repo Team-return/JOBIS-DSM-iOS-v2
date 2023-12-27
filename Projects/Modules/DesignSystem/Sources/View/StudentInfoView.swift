@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
+import SkeletonView
 
 public final class StudentInfoView: UIView {
     private let profileImageView = UIImageView().then {
@@ -33,6 +34,7 @@ public final class StudentInfoView: UIView {
         name: String,
         department: String
     ) {
+        self.showSkeleton()
         profileImageView.setJobisImage(
             urlString: profileImageUrl,
             placeholder: UIImage.jobisIcon(.profile)
