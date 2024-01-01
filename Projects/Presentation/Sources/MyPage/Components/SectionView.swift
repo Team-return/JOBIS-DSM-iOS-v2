@@ -2,7 +2,7 @@ import UIKit
 import DesignSystem
 
 final class SectionView: UIView {
-    var items: [(title: String, icon: UIImage)] = []
+    private var items: [(title: String, icon: UIImage)] = []
     private var titleLabel: JobisMenuLabel = .init(text: "")
 
     private let sectionTableView = UITableView().then {
@@ -15,6 +15,9 @@ final class SectionView: UIView {
         super.init(frame: .zero)
         self.sectionTableView.dataSource = self
         self.titleLabel = JobisMenuLabel(text: menuText)
+    }
+    func setItems(items: [(title: String, icon: UIImage)]) {
+        self.items = items
     }
 
     override func layoutSubviews() {
