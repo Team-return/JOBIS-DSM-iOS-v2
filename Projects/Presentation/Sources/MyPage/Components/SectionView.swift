@@ -3,9 +3,9 @@ import DesignSystem
 
 final class SectionView: UIView {
     var items: [(title: String, icon: UIImage)] = []
-    var titleLabel: JobisMenuLabel = .init(text: "")
+    private var titleLabel: JobisMenuLabel = .init(text: "")
 
-    let sectionTableView = UITableView().then {
+    private let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
         $0.rowHeight = 52
         $0.isScrollEnabled = false
