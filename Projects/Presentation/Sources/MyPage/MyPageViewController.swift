@@ -18,18 +18,18 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     }
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = SectionView(menuText: "계정").then {
-        $0.items = [
+        $0.setItems(items: [
             ("관심분야 선택", .jobisIcon(.code)),
             ("비밀번호 변경", .jobisIcon(.changePassword)),
             ("로그아웃", .jobisIcon(.logout)),
             ("회원 탈퇴", .jobisIcon(.withdrawal))
-        ]
+        ])
     }
     private let bugSectionView = SectionView(menuText: "버그제보").then {
-        $0.items = [
+        $0.setItems(items: [
             ("버그 제보하기", .jobisIcon(.bugReport)),
             ("버그 제보함", .jobisIcon(.bugBox))
-        ]
+        ])
     }
 
     public override func attribute() {
