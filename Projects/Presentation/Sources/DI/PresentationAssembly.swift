@@ -93,11 +93,11 @@ public final class PresentationAssembly: Assembly {
             PrivacyViewController(resolver.resolve(PrivacyViewModel.self)!)
         }
 
-        container.register(SigninViewModel.self) { resolver in
-            SigninViewModel(signinUseCase: resolver.resolve(SigninUseCase.self)!)
+        container.register(SigninReactor.self) { resolver in
+            SigninReactor(signinUseCase: resolver.resolve(SigninUseCase.self)!)
         }
         container.register(SigninViewController.self) { resolver in
-            SigninViewController(resolver.resolve(SigninViewModel.self)!)
+            SigninViewController(resolver.resolve(SigninReactor.self)!)
         }
     }
 }
