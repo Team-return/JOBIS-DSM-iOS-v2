@@ -24,7 +24,7 @@ public struct SignupRequestQuery: Encodable {
         self.gender = gender
         self.classRoom = classRoom
         self.number = number
-        self.platformType = "iOS"
+        self.platformType = "IOS"
     }
 
     enum CodingKeys: String, CodingKey {
