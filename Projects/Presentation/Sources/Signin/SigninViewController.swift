@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class SigninViewController: BaseViewController<SigninViewModel> {
+public final class SigninViewController: BaseReactorViewController<SigninReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
         $0.setColorRange(color: .Primary.blue20, range: "JOBIS")
@@ -48,22 +48,37 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             })
             .disposed(by: disposeBag)
     }
-    public override func bind() {
-        let input = SigninViewModel.Input(
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinButton.rx.tap.asSignal()
-        )
-        let output = viewModel.transform(input)
-        output.emailErrorDescription
-            .bind { [weak self] description in
-                self?.emailTextField.setDescription(description)
-            }
+
+    public override func bind(reactor: SigninReactor) {
+        emailTextField.textField.rx.text.orEmpty
+            .map { SigninReactor.Action.updateEmail($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        output.passwordErrorDescription
-            .bind { [weak self] description in
-                self?.passwordTextField.setDescription(description)
-            }
+
+        passwordTextField.textField.rx.text.orEmpty
+            .map { SigninReactor.Action.updatePassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        signinButton.rx.tap
+            .map { SigninReactor.Action.signinButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.emailError }
+            .filter { $0 != ""}
+            .subscribe(onNext: {
+                self.emailTextField.setDescription(.error(description: $0))
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.passwordError }
+            .filter { $0 != ""}
+            .subscribe(onNext: {
+                self.passwordTextField.setDescription(.error(description: $0))
+            })
             .disposed(by: disposeBag)
     }
     public override func addView() {
@@ -76,7 +91,7 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             signinButton
         ].forEach { self.view.addSubview($0) }
     }
-    public override func layout() {
+    public override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.topMargin.equalToSuperview().inset(20)
             $0.leading.equalToSuperview().inset(24)
