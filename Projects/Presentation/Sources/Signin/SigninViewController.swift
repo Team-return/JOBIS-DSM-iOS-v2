@@ -52,7 +52,7 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
         let input = SigninViewModel.Input(
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
             password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinButton.rx.tap.asSignal()
+            signinButtonDidTap: signinPublishRelay.asSignal()
         )
         let output = viewModel.transform(input)
         output.emailErrorDescription
