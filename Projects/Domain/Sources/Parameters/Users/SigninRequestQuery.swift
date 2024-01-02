@@ -8,7 +8,7 @@ public struct SigninRequestQuery: Encodable {
     public init(accountID: String, password: String) {
         self.accountID = accountID
         self.password = password
-        self.platformType = "iOS"
+        self.platformType = "IOS"
     }
 
     enum CodingKeys: String, CodingKey {
