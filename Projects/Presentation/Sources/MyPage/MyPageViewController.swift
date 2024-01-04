@@ -38,7 +38,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewAppear,
-            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap
+            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            accountSectionViewDidTap: accountSectionView.sectionTableView.rx.itemSelected
         )
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
