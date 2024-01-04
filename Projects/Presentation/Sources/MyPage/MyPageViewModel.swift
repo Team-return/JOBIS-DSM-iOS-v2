@@ -57,7 +57,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
             })
-            .map { _ in MyPageStep.tabsIsrequired }
+            .map { _ in MyPageStep.tabsIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(studentInfo: studentInfo,
