@@ -30,6 +30,11 @@ public final class UseCaseAssembly: Assembly {
                 usersRepository: resolver.resolve(UsersRepository.self)!
             )
         }
+        container.register(LogoutUseCase.self) { resolver in
+            LogoutUseCase(
+                usersRepository: resolver.resolve(UsersRepository.self)!
+            )
+        }
 
         // Students
         container.register(ChangePasswordUseCase.self) { reslover in
