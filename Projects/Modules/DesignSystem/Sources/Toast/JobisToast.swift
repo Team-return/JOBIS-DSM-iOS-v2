@@ -4,7 +4,7 @@ import SnapKit
 
 final class JobisToast: UIView {
     private let imageView = UIImageView().then {
-        $0.image = DesignSystemAsset.Icons.toastIcon.image.resize(.init(width: 24, height: 24))
+        $0.image = DesignSystemAsset.Icons.toastIcon.image.resize(size: 24)
     }
     private let textLabel = UILabel()
 

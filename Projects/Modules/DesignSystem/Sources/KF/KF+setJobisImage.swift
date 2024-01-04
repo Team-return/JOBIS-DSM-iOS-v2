@@ -21,8 +21,4 @@ public extension UIImageView {
             placeholder: placeholder
         )
     }
-
-    func resize(_ targetSize: CGSize) {
-        self.image = image?.resize(targetSize)
-    }
 }
