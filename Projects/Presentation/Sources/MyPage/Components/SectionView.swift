@@ -2,10 +2,10 @@ import UIKit
 import DesignSystem
 
 final class SectionView: UIView {
-    var items: [(title: String, icon: UIImage)] = []
-    var titleLabel: JobisMenuLabel = .init(text: "")
+    private var items: [(title: String, icon: UIImage)] = []
+    private var titleLabel: JobisMenuLabel = .init(text: "")
 
-    let sectionTableView = UITableView().then {
+    private let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
         $0.rowHeight = 52
         $0.isScrollEnabled = false
@@ -15,6 +15,9 @@ final class SectionView: UIView {
         super.init(frame: .zero)
         self.sectionTableView.dataSource = self
         self.titleLabel = JobisMenuLabel(text: menuText)
+    }
+    func setSection(items: [(title: String, icon: UIImage)]) {
+        self.items = items
     }
 
     override func layoutSubviews() {
@@ -49,7 +52,7 @@ extension SectionView: UITableViewDataSource {
             withIdentifier: SectionTableViewCell.identifier,
             for: indexPath
         ) as? SectionTableViewCell else { return UITableViewCell() }
-        cell.sectionImageView.image = items[indexPath.row].icon.resize(.init(width: 28, height: 28))
+        cell.sectionImageView.image = items[indexPath.row].icon
         cell.titleLabel.setJobisText(items[indexPath.row].title, font: .body, color: .GrayScale.gray90)
         return cell
     }

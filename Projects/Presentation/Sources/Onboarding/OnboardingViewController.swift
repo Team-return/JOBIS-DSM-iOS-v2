@@ -13,7 +13,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
     private let animationView = JobisLottieView(.onboarding)
 
     private let teamReturnLogoImage = UIImageView().then {
-        $0.image = .onboardingImage(.teamReturnLogo).resize(.init(width: 88, height: 48))
+        $0.image = .onboardingImage(.teamReturnLogo)
     }
 
     private let navigateButtonStackView = UIStackView().then {
@@ -52,6 +52,8 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         teamReturnLogoImage.snp.makeConstraints {
             $0.bottomMargin.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-12)
             $0.centerX.equalToSuperview()
+            $0.width.equalTo(88)
+            $0.height.equalTo(48)
         }
 
         navigateButtonStackView.snp.makeConstraints {

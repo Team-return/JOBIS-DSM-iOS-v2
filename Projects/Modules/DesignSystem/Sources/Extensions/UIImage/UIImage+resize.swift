@@ -1,6 +1,10 @@
 import UIKit
 
 public extension UIImage {
+    func resize(size: CGFloat) -> UIImage {
+        resize(.init(width: size, height: size))
+    }
+
     func resize(_ targetSize: CGSize) -> UIImage {
         let widthRatio = targetSize.width / size.width
         let heightRatio = targetSize.height / size.height

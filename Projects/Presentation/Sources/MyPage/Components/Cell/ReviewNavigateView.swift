@@ -4,7 +4,7 @@ import DesignSystem
 final class ReviewNavigateView: UIView {
     var reviewID = 0
     private let reviewImageView = UIImageView().then {
-        $0.image = .jobisIcon(.door).resize(.init(width: 24, height: 24))
+        $0.image = .jobisIcon(.door)
     }
     let titleLabel = UILabel().then {
         $0.font = .jobisFont(.description)

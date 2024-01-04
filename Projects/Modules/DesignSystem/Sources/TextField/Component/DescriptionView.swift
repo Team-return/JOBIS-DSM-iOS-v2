@@ -22,8 +22,8 @@ public final class DescriptionView: UIView {
             self.imageView.image = descriptionType?.toIcon()
         }
     }
-    let imageView = UIImageView()
-    let descriptionLabel = UILabel()
+    private let imageView = UIImageView()
+    private let descriptionLabel = UILabel()
     public init() {
         super.init(frame: .zero)
     }

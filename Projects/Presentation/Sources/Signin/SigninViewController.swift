@@ -17,26 +17,26 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
     private let titleImageView = UIImageView().then {
         $0.image = .jobisIcon(.door)
     }
-    public let emailTextField = JobisTextField().then {
+    private let emailTextField = JobisTextField().then {
         $0.setTextField(
             title: "이메일",
             placeholder: "example",
             textFieldType: .email
         )
     }
-    public let passwordTextField = JobisTextField().then {
+    private let passwordTextField = JobisTextField().then {
         $0.setTextField(
             title: "비밀번호",
             placeholder: "비밀번호를 입력해주세요",
             textFieldType: .secure
         )
     }
-    public let signinButton = JobisButton(style: .main).then {
+    private let signinButton = JobisButton(style: .main).then {
         $0.setText("로그인")
     }
-    let signinPublishRelay = PublishRelay<Void>()
+    private let signinPublishRelay = PublishRelay<Void>()
 
-    func signin() {
+    private func signin() {
         self.signinPublishRelay.accept(())
     }
     public override func attribute() {

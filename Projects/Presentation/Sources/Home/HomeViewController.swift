@@ -13,7 +13,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let cellClick = PublishRelay<Int>()
 
     private let navigateToAlarmButton = UIButton().then {
-        $0.setImage(.jobisIcon(.bell).resize(.init(width: 28, height: 28)), for: .normal)
+        $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -26,7 +26,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private var findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
     private let applicationStatusMenuLabel = JobisMenuLabel(text: "지원 현황")
     private let applicationStatusTableView = UITableView().then {
-        $0.register(ApplicationStatusTableViewCell.self, forCellReuseIdentifier: ApplicationStatusTableViewCell.identifier)
+        $0.register(
+            ApplicationStatusTableViewCell.self,
+            forCellReuseIdentifier: ApplicationStatusTableViewCell.identifier
+        )
         $0.rowHeight = 72
         $0.separatorStyle = .none
         $0.estimatedSectionHeaderHeight = 64
@@ -72,7 +75,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
         applicationStatusTableView.rx.itemSelected
             .map { index -> Int? in
-                guard let cell = self.applicationStatusTableView.cellForRow(at: index) as? ApplicationStatusTableViewCell
+                guard let cell = self.applicationStatusTableView.cellForRow(at: index)
+                        as? ApplicationStatusTableViewCell
                 else { return nil }
                 return cell.applicationID
             }
