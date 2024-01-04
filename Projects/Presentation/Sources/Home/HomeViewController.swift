@@ -13,7 +13,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let cellClick = PublishRelay<Int>()
 
     private let navigateToAlarmButton = UIButton().then {
-        $0.setImage(.jobisIcon(.bell).resize(.init(width: 28, height: 28)), for: .normal)
+        $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false

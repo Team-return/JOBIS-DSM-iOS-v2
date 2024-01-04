@@ -52,7 +52,7 @@ public final class JobisButton: UIButton {
 
     private func configureUI() {
         let image: UIImage? = .jobisIcon(.arrowRight).withTintColor(fgColor, renderingMode: .alwaysTemplate)
-            .resize(.init(width: 24, height: 24))
+            .resize(size: 24)
 
         var config = UIButton.Configuration.plain()
         config.image = image

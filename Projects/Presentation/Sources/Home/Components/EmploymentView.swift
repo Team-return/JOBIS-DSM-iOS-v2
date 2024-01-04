@@ -14,7 +14,7 @@ final class EmploymentView: UIView {
         // TODO: 네비게이트 생기면 isHidden = false 로 바꿔야함
         /// 버튼으로 바꾸기도 해야할 듯
         $0.isHidden = true
-        $0.image = .jobisIcon(.arrowNavigate).resize(.init(width: 28, height: 28))
+        $0.image = .jobisIcon(.arrowNavigate).resize(size: 28)
     }
 
     public init() {
