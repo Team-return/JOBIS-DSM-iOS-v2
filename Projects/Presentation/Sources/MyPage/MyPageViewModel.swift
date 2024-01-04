@@ -10,13 +10,16 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
+    private let logoutUseCase: LogoutUseCase
 
     init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
-        fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
+        fetchWritableReviewListUseCase: FetchWritableReviewListUseCase,
+        logoutUseCase: LogoutUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
+        self.logoutUseCase = logoutUseCase
     }
 
     private let disposeBag = DisposeBag()
@@ -24,6 +27,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let reviewNavigate: PublishRelay<Int>
+        let accountSectionViewDidTap: ControlEvent<IndexPath>
     }
 
     public struct Output {
@@ -47,6 +51,15 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
                 // TODO: 리뷰 리스트로 네비게이션 이동 해주는 코드 았어야함
                 print($0)
             }).disposed(by: disposeBag)
+        input.accountSectionViewDidTap
+            .asObservable()
+            .filter { $0.row == 2 || $0.row == 3 }
+            .do(onNext: { _ in
+                self.logoutUseCase.execute()
+            })
+            .map { _ in MyPageStep.tabsIsrequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
         return Output(studentInfo: studentInfo,
                       writableReviewList: writableReviewList)
     }
