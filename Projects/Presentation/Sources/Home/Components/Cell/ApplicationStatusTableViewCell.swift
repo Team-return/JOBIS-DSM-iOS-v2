@@ -15,7 +15,7 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
         $0.clipsToBounds = true
     }
     private let companyProfileImageView = UIImageView().then {
-        $0.image = .jobisIcon(.profile).resize(size: 40)
+        $0.image = .jobisIcon(.profile)
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
     }

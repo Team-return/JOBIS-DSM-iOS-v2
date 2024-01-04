@@ -51,7 +51,8 @@ public final class JobisButton: UIButton {
     }
 
     private func configureUI() {
-        let image: UIImage? = .jobisIcon(.arrowRight).withTintColor(fgColor, renderingMode: .alwaysTemplate)
+        let image: UIImage? = .jobisIcon(.arrowRight)
+            .withTintColor(fgColor, renderingMode: .alwaysTemplate)
             .resize(size: 24)
 
         var config = UIButton.Configuration.plain()
