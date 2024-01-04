@@ -47,7 +47,8 @@ public final class PresentationAssembly: Assembly {
         container.register(MyPageViewModel.self) { resolver in
             MyPageViewModel(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
-                fetchWritableReviewListUseCase: resolver.resolve(FetchWritableReviewListUseCase.self)!
+                fetchWritableReviewListUseCase: resolver.resolve(FetchWritableReviewListUseCase.self)!,
+                logoutUseCase: resolver.resolve(LogoutUseCase.self)!
             )
         }
 
