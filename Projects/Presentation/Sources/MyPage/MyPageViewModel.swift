@@ -27,7 +27,8 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let reviewNavigate: PublishRelay<Int>
-        let accountSectionViewDidTap: ControlEvent<IndexPath>
+        let logoutSectionDidTap: Observable<IndexPath>
+        let withdrawalSectionDidTap: Observable<IndexPath>
     }
 
     public struct Output {
@@ -51,10 +52,15 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
                 // TODO: 리뷰 리스트로 네비게이션 이동 해주는 코드 았어야함
                 print($0)
             }).disposed(by: disposeBag)
-        input.accountSectionViewDidTap
-            .asObservable()
-            .filter { $0.row == 2 || $0.row == 3 }
+        input.logoutSectionDidTap
             .do(onNext: { _ in
+                self.logoutUseCase.execute()
+            })
+            .map { _ in MyPageStep.tabsIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+        input.withdrawalSectionDidTap
+            .do(onNext: { _ in 
                 self.logoutUseCase.execute()
             })
             .map { _ in MyPageStep.tabsIsRequired }

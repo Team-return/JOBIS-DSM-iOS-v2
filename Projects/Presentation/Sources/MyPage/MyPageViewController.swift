@@ -39,7 +39,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewAppear,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-            accountSectionViewDidTap: accountSectionView.sectionTableView.rx.itemSelected
+            logoutSectionDidTap: accountSectionView.sectionTableView.rx.itemSelected.filter { $0.row == 2 },
+            withdrawalSectionDidTap: accountSectionView.sectionTableView.rx.itemSelected.filter { $0.row == 3 }
         )
         let output = viewModel.transform(input)
         output.studentInfo.asObservable()
