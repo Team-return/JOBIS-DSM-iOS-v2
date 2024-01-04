@@ -49,7 +49,7 @@ extension SectionView: UITableViewDataSource {
             withIdentifier: SectionTableViewCell.identifier,
             for: indexPath
         ) as? SectionTableViewCell else { return UITableViewCell() }
-        cell.sectionImageView.image = items[indexPath.row].icon.resize(.init(width: 28, height: 28))
+        cell.sectionImageView.image = items[indexPath.row].icon.resize(size: 28)
         cell.titleLabel.setJobisText(items[indexPath.row].title, font: .body, color: .GrayScale.gray90)
         return cell
     }
