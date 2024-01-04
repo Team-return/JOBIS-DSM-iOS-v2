@@ -58,7 +58,12 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .flatMap { [self] in
                 fetchTotalPassStudentUseCase.execute()
                     .map { totalPassStudent in
-                        Float(totalPassStudent.passedCount / totalPassStudent.totalStudentCount)
+                        // TODO: 서버오류로 일단 오류 처리 추후에 제거
+                        if totalPassStudent.totalStudentCount == 0 {
+                            0
+                        } else {
+                            Float(totalPassStudent.passedCount / totalPassStudent.totalStudentCount)
+                        }
                     }
             }
             .bind(to: employmentPercentage)
