@@ -52,7 +52,9 @@ extension AuthAPI: JobisAPI {
             )
 
         case .reissueToken:
-            return .requestPlain
+            return .requestParameters(parameters: [
+                "platform-type": "IOS"
+            ], encoding: URLEncoding.queryString)
         }
     }
 
