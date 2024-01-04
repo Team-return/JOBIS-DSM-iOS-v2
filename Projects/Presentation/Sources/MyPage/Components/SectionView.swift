@@ -16,7 +16,7 @@ final class SectionView: UIView {
         self.sectionTableView.dataSource = self
         self.titleLabel = JobisMenuLabel(text: menuText)
     }
-    func setItems(items: [(title: String, icon: UIImage)]) {
+    func setSection(items: [(title: String, icon: UIImage)]) {
         self.items = items
     }
 
