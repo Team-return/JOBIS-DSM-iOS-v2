@@ -38,7 +38,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
     private let bookmarkButton = UIButton().then {
         $0.setImage(
             .jobisIcon(.bookmarkOff)
-            .resize(.init(width: 28, height: 28)),
+            .resize(size: 28),
             for: .normal
         )
     }
@@ -70,7 +70,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         }
         bookmarkButton.setImage(
             .jobisIcon(bookmarkImage)
-            .resize(.init(width: 28, height: 28)),
+            .resize(size: 28),
             for: .normal
         )
         isBookmarked.toggle()
