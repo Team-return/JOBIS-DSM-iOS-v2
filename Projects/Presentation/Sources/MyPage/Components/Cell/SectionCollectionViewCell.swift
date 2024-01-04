@@ -6,6 +6,11 @@ final class SectionTableViewCell: UITableViewCell {
     let sectionImageView = UIImageView()
     let titleLabel = UILabel()
 
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        self.titleLabel.textColor = self.isHighlighted ? .GrayScale.gray90.withAlphaComponent(0.1) : .GrayScale.gray90
+    }
+
     override func layoutSubviews() {
         [
             sectionImageView,
