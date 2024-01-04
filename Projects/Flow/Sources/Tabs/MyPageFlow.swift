@@ -22,6 +22,8 @@ public final class MyPageFlow: Flow {
         switch step {
         case .myPageIsRequired:
             return navigateToMyPage()
+        case .tabsIsrequired:
+            return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
         }
     }
 }
