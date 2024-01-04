@@ -24,6 +24,8 @@ public final class TabsFlow: Flow {
         switch step {
         case .tabsIsRequired:
             return navigateToTabs()
+        case .appIsRequired:
+            return dismissToOnbording()
         }
     }
 }
@@ -69,5 +71,17 @@ private extension TabsFlow {
                 withNextStepper: OneStepper(withSingleStep: MyPageStep.myPageIsRequired)
             )
         ])
+    }
+
+    private func dismissToOnbording() -> FlowContributors {
+        UIView.transition(
+            with: self.rootViewController.view.window!,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                self.rootViewController.dismiss(animated: false)
+            }
+        )
+        return .end(forwardToParentFlowWithStep: AppStep.onboardingIsRequired)
     }
 }

@@ -4,7 +4,7 @@ import SnapKit
 
 final class JobisToast: UIView {
     private let imageView = UIImageView().then {
-        $0.image = DesignSystemAsset.Icons.toastIcon.image.resize(.init(width: 24, height: 24))
+        $0.image = DesignSystemAsset.Icons.toastIcon.image
     }
     private let textLabel = UILabel()
 
@@ -29,6 +29,7 @@ final class JobisToast: UIView {
 
         imageView.snp.makeConstraints {
             $0.leading.top.bottom.equalToSuperview().inset(12)
+            $0.width.height.equalTo(24)
         }
         textLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)

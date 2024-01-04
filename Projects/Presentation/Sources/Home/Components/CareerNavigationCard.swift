@@ -54,8 +54,7 @@ final class CareerNavigationCard: UIButton {
         }
 
         headerLabel.setJobisText(info.text, font: .headLine, color: .GrayScale.gray90)
-        iconImageView.image = .jobisIcon(info.icon)
-            .resize(.init(width: 40, height: 40))
+        iconImageView.image = .jobisIcon(info.icon).resize(size: 40)
     }
 
     override func layoutSubviews() {
