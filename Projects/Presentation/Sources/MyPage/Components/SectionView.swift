@@ -1,12 +1,13 @@
 import UIKit
 import DesignSystem
+import RxSwift
 
 final class SectionView: UIView {
     private var items: [(title: String, icon: UIImage)] = []
     private var titleLabel: JobisMenuLabel = .init(text: "")
-
     private let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
+        $0.separatorStyle = .none
         $0.rowHeight = 52
         $0.isScrollEnabled = false
     }
@@ -16,11 +17,13 @@ final class SectionView: UIView {
         self.sectionTableView.dataSource = self
         self.titleLabel = JobisMenuLabel(text: menuText)
     }
+
     func setSection(items: [(title: String, icon: UIImage)]) {
         self.items = items
     }
 
     override func layoutSubviews() {
+        super.layoutSubviews()
         [
             titleLabel,
             sectionTableView
@@ -30,6 +33,7 @@ final class SectionView: UIView {
             $0.top.equalToSuperview().inset(12)
             $0.leading.equalToSuperview()
         }
+
         sectionTableView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -37,8 +41,13 @@ final class SectionView: UIView {
             $0.bottom.equalToSuperview().inset(12)
         }
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func getSelectedItem(index: Int) -> Observable<IndexPath> {
+        sectionTableView.rx.itemSelected.filter { $0.row == index }
     }
 }
 
@@ -54,6 +63,7 @@ extension SectionView: UITableViewDataSource {
         ) as? SectionTableViewCell else { return UITableViewCell() }
         cell.sectionImageView.image = items[indexPath.row].icon
         cell.titleLabel.setJobisText(items[indexPath.row].title, font: .body, color: .GrayScale.gray90)
+        cell.selectionStyle = .none
         return cell
     }
 }
