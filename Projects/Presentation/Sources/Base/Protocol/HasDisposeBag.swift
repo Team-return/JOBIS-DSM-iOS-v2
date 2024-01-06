@@ -1,5 +1,5 @@
 import RxSwift
 
-protocol HasDisposeBag {
+public protocol HasDisposeBag {
     var disposeBag: DisposeBag { get }
 }

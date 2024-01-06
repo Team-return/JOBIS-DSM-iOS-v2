@@ -22,19 +22,24 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
         $0.isEnabled = false
     }
 
-    public override func attribute() {
-        setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")
-
-        privacyWebView.scrollView.rx.contentOffset
-            .filter { [weak self] _ in
-                !(self?.signupButton.isEnabled ?? false)
-            }
-            .distinctUntilChanged()
-            .bind { [weak self] point in
-                guard let scrollView = self else { return }
-                self?.signupButton.isEnabled = scrollView.checkScrollIsBottom(yOffset: point.y)
-            }.disposed(by: disposeBag)
+    public override func addView() {
+        [
+            privacyWebView,
+            signupButton
+        ].forEach { self.view.addSubview($0) }
     }
+    public override func setLayout() {
+        privacyWebView.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.bottom.equalTo(self.signupButton.snp.top).offset(-12)
+            $0.leading.trailing.equalToSuperview()
+        }
+        signupButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+    }
+
     public override func bind() {
         let input = PrivacyViewModel.Input(
             name: name,
@@ -46,22 +51,21 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
 
         _ = viewModel.transform(input)
     }
-    public override func addView() {
-        [
-            privacyWebView,
-            signupButton
-        ].forEach { self.view.addSubview($0) }
+
+    public override func configureViewController() {
+        privacyWebView.scrollView.rx.contentOffset
+            .filter { [weak self] _ in
+                !(self?.signupButton.isEnabled ?? false)
+            }
+            .distinctUntilChanged()
+            .bind { [weak self] point in
+                guard let scrollView = self else { return }
+                self?.signupButton.isEnabled = scrollView.checkScrollIsBottom(yOffset: point.y)
+            }.disposed(by: disposeBag)
     }
-    public override func layout() {
-        privacyWebView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            $0.bottom.equalTo(self.signupButton.snp.top).offset(-12)
-            $0.leading.trailing.equalToSuperview()
-        }
-        signupButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
-        }
+
+    public override func configureNavigation() {
+        setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")
     }
 }
 

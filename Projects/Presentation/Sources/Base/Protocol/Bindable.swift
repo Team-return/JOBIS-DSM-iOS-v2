@@ -1,4 +1,4 @@
-protocol Bindable {
+public protocol Bindable {
     func bind()
 }
 

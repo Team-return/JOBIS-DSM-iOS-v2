@@ -1,6 +1,6 @@
 import UIKit
 
-open class BaseView: UIView,
+public class BaseView: UIView,
                      AddViewable,
                      SetLayoutable,
                      ViewConfigurable {
@@ -15,9 +15,9 @@ open class BaseView: UIView,
         fatalError("init(coder:) has not been implemented")
     }
 
-    open func addView() {}
+    public func addView() {}
 
-    open func setLayout() {}
+    public func setLayout() {}
 
-    open func configureView() {}
+    public func configureView() {}
 }

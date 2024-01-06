@@ -1,3 +1,3 @@
 import UIKit
 
-protocol ViewControllable: UIViewController, HasBounds {}
+public protocol ViewControllable: UIViewController, HasBounds {}

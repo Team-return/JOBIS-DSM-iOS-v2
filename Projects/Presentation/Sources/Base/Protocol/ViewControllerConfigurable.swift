@@ -1,4 +1,4 @@
-protocol ViewControllerConfigurable {
+public protocol ViewControllerConfigurable {
     func configureViewController()
 }
 

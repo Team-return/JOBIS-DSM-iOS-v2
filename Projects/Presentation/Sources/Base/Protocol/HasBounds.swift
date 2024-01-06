@@ -1,11 +1,11 @@
 import Foundation
 import UIKit
 
-protocol HasBounds {
+public protocol HasBounds {
     var bounds: CGRect { get }
 }
 
-extension HasBounds where Self: UIViewController {
+public extension HasBounds where Self: UIViewController {
     var bounds: CGRect {
         var parent = self.parent
         var lastParent = parent

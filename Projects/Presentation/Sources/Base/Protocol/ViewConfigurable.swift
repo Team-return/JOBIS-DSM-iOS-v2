@@ -1,4 +1,4 @@
-protocol ViewConfigurable {
+public protocol ViewConfigurable {
     func configureView()
 }
 

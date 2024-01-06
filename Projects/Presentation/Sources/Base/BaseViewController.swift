@@ -3,7 +3,7 @@ import RxCocoa
 import RxSwift
 import DesignSystem
 
-open class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
+public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
                                                          ViewControllable,
                                                          LifeCyclePublishable,
                                                          HasDisposeBag,
@@ -29,7 +29,7 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    override open func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .GrayScale.gray10
 
@@ -42,37 +42,37 @@ open class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         viewDidLoadPublisher.accept(())
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewWillAppearPublisher.accept(())
     }
 
-    open override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.viewDidAppearPublisher.accept(())
     }
 
-    open override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.viewWillDisappearPublisher.accept(())
     }
 
-    open override func viewDidDisappear(_ animated: Bool) {
+    public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.viewDidDisappearPublisher.accept(())
     }
 
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
 
-    open func addView() {}
+    public func addView() {}
 
-    open func setLayout() {}
+    public func setLayout() {}
 
-    open func bind() {}
+    public func bind() {}
 
-    open func configureViewController() {}
+    public func configureViewController() {}
 
-    open func configureNavigation() {}
+    public func configureNavigation() {}
 }
