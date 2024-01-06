@@ -1,0 +1,3 @@
+protocol AddViewable {
+    func addView()
+}
