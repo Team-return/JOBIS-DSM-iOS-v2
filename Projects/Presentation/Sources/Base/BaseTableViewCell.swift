@@ -1,6 +1,6 @@
 import UIKit
 
-open class BaseTableViewCell<Model>: UITableViewCell,
+public class BaseTableViewCell<Model>: UITableViewCell,
                                      AddViewable,
                                      SetLayoutable,
                                      ViewConfigurable {
@@ -20,13 +20,13 @@ open class BaseTableViewCell<Model>: UITableViewCell,
         fatalError("init(coder:) has not been implemented")
     }
 
-    open func addView() {}
+    public func addView() {}
 
-    open func setLayout() {}
+    public func setLayout() {}
 
-    open func configureView() {}
+    public func configureView() {}
 
-    open func adapt(model: Model) {
+    public func adapt(model: Model) {
         self.model = model
     }
 }

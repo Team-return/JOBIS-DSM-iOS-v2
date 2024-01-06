@@ -53,47 +53,65 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         }
     }
 
-    public override func attribute() {
-        setCardStyle(isWinterSeason: isWinterSeason.value)
-        self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
+    public override func addView() {
+        self.view.addSubview(scrollView)
+        self.scrollView.addSubview(contentView)
+        [
+            findCompanysCard,
+            findWinterRecruitmentsCard
+        ].forEach(careerStackView.addArrangedSubview(_:))
+        [
+            studentInfoView,
+            employmentView,
+            careerMenuLabel,
+            careerStackView,
+            applicationStatusMenuLabel,
+            applicationStatusTableView
+        ].forEach(contentView.addSubview(_:))
+    }
 
-        findCompanysCard.rx.tap.subscribe(onNext: {
-            print("findCompany!")
-        })
-        .disposed(by: disposeBag)
+    public override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.top.width.equalToSuperview()
+            $0.bottom.equalTo(applicationStatusTableView.snp.bottom)
+        }
+        studentInfoView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
+        }
 
-        findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
-            print("findWinterRecruitment!!")
-        })
-        .disposed(by: disposeBag)
+        employmentView.snp.makeConstraints {
+            $0.top.equalTo(studentInfoView.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
 
-        navigateToAlarmButton.rx.tap.asObservable()
-            .subscribe(onNext: { [weak self] _ in
-                self?.hideTabbar()
-            })
-            .disposed(by: disposeBag)
+        careerMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(employmentView.snp.bottom).offset(24)
+        }
 
-        applicationStatusTableView.rx.itemSelected
-            .map { index -> Int? in
-                guard let cell = self.applicationStatusTableView.cellForRow(at: index)
-                        as? ApplicationStatusTableViewCell
-                else { return nil }
-                return cell.applicationID
-            }
-            .compactMap { $0 }
-            .bind(to: cellClick)
-            .disposed(by: disposeBag)
+        careerStackView.snp.makeConstraints {
+            $0.top.equalTo(careerMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(176)
+        }
 
-        cellClick.asObservable()
-            .subscribe(onNext: {
-                print($0)
-            })
-            .disposed(by: disposeBag)
+        applicationStatusMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
+        }
+
+        applicationStatusTableView.snp.makeConstraints {
+            $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.greaterThanOrEqualTo((applicationStatusTableView.contentSize.height + 4))
+        }
     }
 
     public override func bind() {
         let input = HomeViewModel.Input(
-            viewAppear: viewAppear,
+            viewAppear: viewDidLoadPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal()
         )
 
@@ -140,60 +158,45 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             .disposed(by: disposeBag)
     }
 
-    public override func addView() {
-        self.view.addSubview(scrollView)
-        self.scrollView.addSubview(contentView)
-        [
-            findCompanysCard,
-            findWinterRecruitmentsCard
-        ].forEach(careerStackView.addArrangedSubview(_:))
-        [
-            studentInfoView,
-            employmentView,
-            careerMenuLabel,
-            careerStackView,
-            applicationStatusMenuLabel,
-            applicationStatusTableView
-        ].forEach(contentView.addSubview(_:))
+    public override func configureViewController() {
+        setCardStyle(isWinterSeason: isWinterSeason.value)
+
+        findCompanysCard.rx.tap.subscribe(onNext: {
+            print("findCompany!")
+        })
+        .disposed(by: disposeBag)
+
+        findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
+            print("findWinterRecruitment!!")
+        })
+        .disposed(by: disposeBag)
+
+        navigateToAlarmButton.rx.tap.asObservable()
+            .subscribe(onNext: { [weak self] _ in
+                self?.hideTabbar()
+            })
+            .disposed(by: disposeBag)
+
+        applicationStatusTableView.rx.itemSelected
+            .map { index -> Int? in
+                guard let cell = self.applicationStatusTableView.cellForRow(at: index)
+                        as? ApplicationStatusTableViewCell
+                else { return nil }
+                return cell.applicationID
+            }
+            .compactMap { $0 }
+            .bind(to: cellClick)
+            .disposed(by: disposeBag)
+
+        cellClick.asObservable()
+            .subscribe(onNext: {
+                print($0)
+            })
+            .disposed(by: disposeBag)
     }
 
-    public override func layout() {
-        scrollView.snp.makeConstraints {
-            $0.edges.equalTo(self.view.safeAreaLayoutGuide)
-        }
-        contentView.snp.makeConstraints {
-            $0.edges.equalTo(scrollView.contentLayoutGuide)
-            $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(applicationStatusTableView.snp.bottom)
-        }
-        studentInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-        }
-
-        employmentView.snp.makeConstraints {
-            $0.top.equalTo(studentInfoView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(24)
-        }
-
-        careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(employmentView.snp.bottom).offset(24)
-        }
-
-        careerStackView.snp.makeConstraints {
-            $0.top.equalTo(careerMenuLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(176)
-        }
-
-        applicationStatusMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
-        }
-
-        applicationStatusTableView.snp.makeConstraints {
-            $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.greaterThanOrEqualTo((applicationStatusTableView.contentSize.height + 4))
-        }
+    public override func configureNavigation() {
+        self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
     }
 }
 

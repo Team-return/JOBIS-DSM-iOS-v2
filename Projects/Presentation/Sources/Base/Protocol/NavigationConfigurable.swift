@@ -1,4 +1,4 @@
-protocol NavigationConfigurable {
+public protocol NavigationConfigurable {
     func configureNavigation()
 }
 

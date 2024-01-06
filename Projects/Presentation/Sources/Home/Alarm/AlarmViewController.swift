@@ -19,22 +19,24 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
         showTabbar()
     }
 
-    public override func attribute() {
-        alarmTableView.dataSource = self
-        alarmTableView.delegate = self
-
-        setSmallTitle(title: "알림")
-    }
-
     public override func addView() {
         self.view.addSubview(alarmTableView)
     }
 
-    public override func layout() {
+    public override func setLayout() {
         alarmTableView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+
+    public override func configureViewController() {
+        alarmTableView.dataSource = self
+        alarmTableView.delegate = self
+    }
+
+    public override func configureNavigation() {
+        setSmallTitle(title: "알림")
     }
 }
 

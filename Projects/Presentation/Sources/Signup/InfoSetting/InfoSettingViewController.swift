@@ -18,26 +18,29 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
         $0.setText("다음")
     }
 
-    public override func attribute() {
-        nameTextField.textField.delegate = self
-        gcnTextField.textField.delegate = self
-        setLargeTitle(title: "개인정보를 입력해주세요")
-
-        gcnTextField.textField.rx.text.orEmpty
-            .observe(on: MainScheduler.asyncInstance)
-            .limitWithOnlyInt(4) { [weak self] in
-                self?.gcnTextField.textField.resignFirstResponder()
-                self?.nextSignupStep()
-            }
-            .bind(to: gcnTextField.textField.rx.text )
-            .disposed(by: disposeBag)
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
-            .disposed(by: disposeBag)
+    public override func addView() {
+        [
+            nameTextField,
+            gcnTextField,
+            nextButton
+        ].forEach { self.view.addSubview($0) }
     }
+
+    public override func setLayout() {
+        nameTextField.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+        }
+        gcnTextField.snp.makeConstraints {
+            $0.top.equalTo(nameTextField.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+        nextButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+    }
+
     public override func bind() {
         let input = InfoSettingViewModel.Input(
             name: nameTextField.textField.rx.text.orEmpty.asDriver(),
@@ -56,26 +59,29 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
             }
             .disposed(by: disposeBag)
     }
-    public override func addView() {
-        [
-            nameTextField,
-            gcnTextField,
-            nextButton
-        ].forEach { self.view.addSubview($0) }
+
+    public override func configureViewController() {
+        nameTextField.textField.delegate = self
+        gcnTextField.textField.delegate = self
+
+        gcnTextField.textField.rx.text.orEmpty
+            .observe(on: MainScheduler.asyncInstance)
+            .limitWithOnlyInt(4) { [weak self] in
+                self?.gcnTextField.textField.resignFirstResponder()
+                self?.nextSignupStep()
+            }
+            .bind(to: gcnTextField.textField.rx.text )
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.nextSignupStep()
+            })
+            .disposed(by: disposeBag)
     }
-    public override func layout() {
-        nameTextField.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-        }
-        gcnTextField.snp.makeConstraints {
-            $0.top.equalTo(nameTextField.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
-        }
+
+    public override func configureNavigation() {
+        setLargeTitle(title: "개인정보를 입력해주세요")
     }
 }
 

@@ -1,3 +1,3 @@
-protocol AddViewable {
+public protocol AddViewable {
     func addView()
 }

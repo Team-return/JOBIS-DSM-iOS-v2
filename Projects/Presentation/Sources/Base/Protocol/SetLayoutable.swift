@@ -1,4 +1,4 @@
-protocol SetLayoutable {
+public protocol SetLayoutable {
     func setLayout()
 }
 
