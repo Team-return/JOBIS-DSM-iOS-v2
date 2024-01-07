@@ -4,14 +4,14 @@ import RxSwift
 import DesignSystem
 
 public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
-                                                         ViewControllable,
-                                                         LifeCyclePublishable,
-                                                         HasDisposeBag,
-                                                         AddViewable,
-                                                         SetLayoutable,
-                                                         Bindable,
-                                                         ViewControllerConfigurable,
-                                                         NavigationConfigurable {
+                                                           ViewControllable,
+                                                           LifeCyclePublishable,
+                                                           HasDisposeBag,
+                                                           AddViewable,
+                                                           SetLayoutable,
+                                                           Bindable,
+                                                           ViewControllerConfigurable,
+                                                           NavigationConfigurable {
     public let viewModel: ViewModel
     public var disposeBag = DisposeBag()
     public var viewDidLoadPublisher = PublishRelay<Void>()
@@ -29,12 +29,16 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        addView()
+        setLayout()
+    }
+
+    public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .GrayScale.gray10
 
-        addView()
-        setLayout()
         bind()
         configureViewController()
         configureNavigation()
