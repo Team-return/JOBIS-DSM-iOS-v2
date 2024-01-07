@@ -51,32 +51,37 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
 
     public override func bind(reactor: SigninReactor) {
         emailTextField.textField.rx.text.orEmpty
+            .distinctUntilChanged()
             .map { SigninReactor.Action.updateEmail($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         passwordTextField.textField.rx.text.orEmpty
+            .distinctUntilChanged()
             .map { SigninReactor.Action.updatePassword($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         signinButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
             .map { SigninReactor.Action.signinButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         reactor.state
             .map { $0.emailError }
-            .filter { $0 != ""}
-            .subscribe(onNext: {
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
                 self.emailTextField.setDescription(.error(description: $0))
             })
             .disposed(by: disposeBag)
 
         reactor.state
             .map { $0.passwordError }
-            .filter { $0 != ""}
-            .subscribe(onNext: {
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
                 self.passwordTextField.setDescription(.error(description: $0))
             })
             .disposed(by: disposeBag)
