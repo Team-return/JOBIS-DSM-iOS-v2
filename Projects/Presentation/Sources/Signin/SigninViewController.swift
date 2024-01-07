@@ -36,36 +36,6 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
     }
     private let signinPublishRelay = PublishRelay<Void>()
 
-    private func signin() {
-        self.signinPublishRelay.accept(())
-    }
-    public override func attribute() {
-        passwordTextField.textField.delegate = self
-        signinButton.rx.tap
-            .asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.signin()
-            })
-            .disposed(by: disposeBag)
-    }
-    public override func bind() {
-        let input = SigninViewModel.Input(
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
-        output.emailErrorDescription
-            .bind { [weak self] description in
-                self?.emailTextField.setDescription(description)
-            }
-            .disposed(by: disposeBag)
-        output.passwordErrorDescription
-            .bind { [weak self] description in
-                self?.passwordTextField.setDescription(description)
-            }
-            .disposed(by: disposeBag)
-    }
     public override func addView() {
         [
             titleLabel,
@@ -76,7 +46,8 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             signinButton
         ].forEach { self.view.addSubview($0) }
     }
-    public override func layout() {
+
+    public override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.topMargin.equalToSuperview().inset(20)
             $0.leading.equalToSuperview().inset(24)
@@ -104,6 +75,39 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+
+    public override func bind() {
+        let input = SigninViewModel.Input(
+            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
+            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
+            signinButtonDidTap: signinPublishRelay.asSignal()
+        )
+        let output = viewModel.transform(input)
+        output.emailErrorDescription
+            .bind { [weak self] description in
+                self?.emailTextField.setDescription(description)
+            }
+            .disposed(by: disposeBag)
+        output.passwordErrorDescription
+            .bind { [weak self] description in
+                self?.passwordTextField.setDescription(description)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
+        passwordTextField.textField.delegate = self
+        signinButton.rx.tap
+            .asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.signin()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func signin() {
+        self.signinPublishRelay.accept(())
     }
 }
 

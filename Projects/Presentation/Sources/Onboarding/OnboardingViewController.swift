@@ -44,7 +44,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         ].forEach { self.navigateButtonStackView.addArrangedSubview($0) }
     }
 
-    public override func layout() {
+    public override func setLayout() {
         animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
@@ -63,16 +63,11 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         }
     }
 
-    private func setNavigateButton() {
-        teamReturnLogoImage.isHidden = true
-        navigateButtonStackView.isHidden = false
-    }
-
     public override func bind() {
         let input = OnboardingViewModel.Input(
             navigateToSigninDidTap: navigateToSigninButton.rx.tap.asSignal(),
             navigateToSignupDidTap: navigateToSignupButton.rx.tap.asSignal(),
-            viewAppear: viewAppear
+            viewAppear: viewDidAppearPublisher
         )
         let output = viewModel.transform(input)
         output.animate.asObservable()
@@ -94,6 +89,8 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
             }).disposed(by: disposeBag)
     }
 
-    public override func attribute() {
+    private func setNavigateButton() {
+        teamReturnLogoImage.isHidden = true
+        navigateButtonStackView.isHidden = false
     }
 }

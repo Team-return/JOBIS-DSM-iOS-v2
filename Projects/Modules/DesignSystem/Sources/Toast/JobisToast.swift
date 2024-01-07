@@ -11,12 +11,13 @@ final class JobisToast: UIView {
     init(text: String) {
         super.init(frame: .zero)
         textLabel.setJobisText(text, font: .subHeadLine, color: .GrayScale.gray90)
+        configureView()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
+    private func configureView() {
         self.layer.cornerRadius = 24
         self.layer.borderColor = UIColor.GrayScale.gray40.cgColor
         self.layer.borderWidth = 1
