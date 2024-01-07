@@ -43,11 +43,14 @@ extension SigninReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .signinButtonDidTap:
-            return signinButtonDidTap(email: self.currentState.email, password: self.currentState.password)
+            return .concat([
+                signinButtonDidTap(email: self.currentState.email, password: self.currentState.password),
+                .just(.errorReset)
+            ])
         case let .updateEmail(email):
             return .just(.updateEmail(email))
         case let .updatePassword(password):
-            return .just(.updatePassword(password))
+            return  .just(.updatePassword(password))
         }
     }
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -61,46 +64,41 @@ extension SigninReactor {
             newState.emailError = error
         case let .passwordError(error):
             newState.passwordError = error
+        case .signinSuccess:
+            steps.accept(SigninStep.tabsIsRequired)
         case .errorReset:
             newState.emailError = ""
             newState.passwordError = ""
-        case .signinSuccess:
-            steps.accept(SigninStep.tabsIsRequired)
         }
         return newState
     }
-    func signinButtonDidTap(email: String, password: String) -> Observable<Mutation> {
+
+    private func signinButtonDidTap(email: String, password: String) -> Observable<Mutation> {
         if email.isEmpty {
-            return Observable.concat([
-                .just(.emailError("빈칸을 채워주세요")),
-                .just(.errorReset)
-            ])
+            return .just(.emailError("빈칸을 채워주세요"))
         } else if password.isEmpty {
-            return Observable.concat([
-                .just(.passwordError("빈칸을 채워주세요")),
-                .just(.errorReset)
-            ])
+            return .just(.passwordError("빈칸을 채워주세요"))
         } else {
             return self.signinUseCase.execute(req: .init(accountID: "\(email)@dsm.hs.kr", password: password))
                 .asObservable()
                 .map { _ in Mutation.signinSuccess }
-//                .catch { error in
-//                    guard let error = error as? UsersError else { return .never() }
-//                    switch error {
-//                    case .notFoundPassword:
-//                        return .concat([
-//                            .just(.passwordError("비밀번호가 옳지 않아요")),
-//                            .just(.errorReset)
-//                        ])
-//                    case .notFoundEmail:
-//                        return .concat([
-//                            .just(.emailError("아이디를 찾지 못했어요")),
-//                            .just(.errorReset)
-//                        ])
-//                    case .internalServerError:
-//                        return .just(.emailError(error.localizedDescription))
-//                    }
-//                }
+                .catch { error in
+                    guard let error = error as? UsersError,
+                          let description = error.errorDescription
+                    else { return .never() }
+
+                    switch error {
+                    case .notFoundPassword, .badRequest:
+                        return .just(.passwordError(description))
+
+                    case .notFoundEmail:
+                        return .just(.emailError(description))
+
+                    case .internalServerError:
+                        return .just(.emailError(error.localizedDescription))
+                    }
+                }
         }
     }
+
 }
