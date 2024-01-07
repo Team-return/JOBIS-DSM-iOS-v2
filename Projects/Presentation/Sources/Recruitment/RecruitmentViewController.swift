@@ -19,15 +19,20 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
 
-    public override func attribute() {
+    public override func addView() {
+        self.view.addSubview(tableView)
+    }
+
+    public override func setLayout() {
+        tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+
+    public override func configureViewController() {
         tableView.dataSource = self
         tableView.delegate = self
 
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: navigateToFilterButton),
-            UIBarButtonItem(customView: navigateToSearchButton)
-        ]
-        setLargeTitle(title: "모집의뢰서")
         navigateToSearchButton.rx.tap
             .subscribe(onNext: { _ in
                 print("hello")
@@ -35,14 +40,12 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             .disposed(by: disposeBag)
     }
 
-    public override func addView() {
-        view.addSubview(tableView)
-    }
-
-    public override func layout() {
-        tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
+    public override func configureNavigation() {
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: navigateToFilterButton),
+            UIBarButtonItem(customView: navigateToSearchButton)
+        ]
+        setLargeTitle(title: "모집의뢰서")
     }
 }
 extension RecruitmentViewController: UITableViewDataSource, UITableViewDelegate {
