@@ -71,7 +71,10 @@ public extension Project {
                     infoPlist: .default,
                     sources: .unitTests,
                     scripts: scripts,
-                    dependencies: []
+                    dependencies: [
+                        .SPM.Nimble,
+                        .SPM.Quick
+                    ]
                 )
             )
         }
