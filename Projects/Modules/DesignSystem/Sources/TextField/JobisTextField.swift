@@ -20,7 +20,18 @@ public final class JobisTextField: UIView {
         $0.font = .jobisFont(.body)
     }
     public let textFieldRightView = TextFieldRightStackView()
-    private let descriptionView = DescriptionView()
+    private let descriptionView = DescriptionView().then {
+        $0.isHidden = true
+    }
+
+    public var isDescription = false {
+        willSet(newValue) {
+            withAnimation {
+                self.descriptionView.alpha = newValue ? 1:0
+                self.descriptionView.isHidden = !newValue
+            }
+        }
+    }
 
     public init() {
         super.init(frame: .zero)
@@ -59,7 +70,6 @@ public final class JobisTextField: UIView {
         textFieldType: TextFieldType = .none
     ) {
         self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
-        self.descriptionView.descriptionType = descriptionType
         self.textFieldRightView.textFieldRightType = textFieldType
         self.textField.placeholder = placeholder
         if textFieldType == .secure {
@@ -76,9 +86,13 @@ public final class JobisTextField: UIView {
                     textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
                 }
             }).disposed(by: disposeBag)
-        self.textField.rx.text
-            .subscribe(onNext: { [weak self] _ in self?.removeDescription() })
-            .disposed(by: disposeBag)
+        self.textField.rx.text.orEmpty
+            .asObservable()
+            .distinctUntilChanged()
+            .filter { _ in self.isDescription }
+            .bind(onNext: { _ in
+                self.isDescription.toggle()
+            }).disposed(by: disposeBag)
     }
 
     private func addView() {
@@ -118,20 +132,13 @@ extension JobisTextField {
         UIView.animate(
             withDuration: 0.3,
             delay: 0,
-            options: .transitionCrossDissolve,
+            options: .curveEaseInOut,
             animations: action
         )
     }
 
     public func setDescription(_ type: DescriptionType) {
-        withAnimation { [self] in
-            descriptionView.descriptionType = type
-        }
-    }
-
-    private func removeDescription() {
-        withAnimation { [self] in
-            descriptionView.descriptionType = nil
-        }
+        self.isDescription = true
+        descriptionView.setDescription(descriptionType: type)
     }
 }
