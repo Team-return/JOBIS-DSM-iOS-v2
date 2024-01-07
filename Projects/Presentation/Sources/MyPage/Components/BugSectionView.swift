@@ -5,7 +5,7 @@ import RxSwift
 import RxCocoa
 import DesignSystem
 
-final class BugSectionView: UIView {
+final class BugSectionView: BaseView {
     enum BugSectionType: Int {
         case reportBug
         case bugList
@@ -17,9 +17,11 @@ final class BugSectionView: UIView {
         ])
     }
 
-    override func layoutSubviews() {
+    override func addView() {
         self.addSubview(bugSectionView)
+    }
 
+    override func setLayout() {
         bugSectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
