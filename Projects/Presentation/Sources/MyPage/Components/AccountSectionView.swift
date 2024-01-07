@@ -5,7 +5,7 @@ import RxSwift
 import RxCocoa
 import DesignSystem
 
-final class AccountSectionView: UIView {
+final class AccountSectionView: BaseView {
     enum AccountSectionType: Int {
         case interestField = 0
         case changePassword = 1
@@ -21,9 +21,11 @@ final class AccountSectionView: UIView {
         ])
     }
 
-    override func layoutSubviews() {
+    override func addView() {
         self.addSubview(accountSectionView)
+    }
 
+    override func setLayout() {
         accountSectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

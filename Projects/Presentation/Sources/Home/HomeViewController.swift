@@ -105,7 +105,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         applicationStatusTableView.snp.makeConstraints {
             $0.top.equalTo(applicationStatusMenuLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.greaterThanOrEqualTo((applicationStatusTableView.contentSize.height + 4))
+            $0.height.greaterThanOrEqualTo(applicationStatusTableView.contentSize.height + 4)
         }
     }
 
