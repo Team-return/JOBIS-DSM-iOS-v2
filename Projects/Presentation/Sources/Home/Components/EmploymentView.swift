@@ -3,7 +3,7 @@ import SnapKit
 import Then
 import DesignSystem
 
-final class EmploymentView: UIView {
+final class EmploymentView: BaseView {
     private let employmentLabel = UILabel().then {
         $0.setJobisText("현재 대마고의 취업률", font: .subBody, color: .GrayScale.gray90)
     }
@@ -17,27 +17,15 @@ final class EmploymentView: UIView {
         $0.image = .jobisIcon(.arrowNavigate)
     }
 
-    public init() {
-        super.init(frame: .zero)
-        self.backgroundColor = .GrayScale.gray30
-        self.layer.cornerRadius = 12
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func setEmploymentPercentage(_ percentage: Float) {
-        let str = String(format: "%.1f", percentage)
-        employmentPercentageLabel.text = "\(str) %"
-    }
-
-    override func layoutSubviews() {
+    override func addView() {
         [
             employmentLabel,
             employmentPercentageLabel,
             arrowNavigateImageView
         ].forEach(self.addSubview(_:))
+    }
 
+    override func setLayout() {
         employmentLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.leading.equalToSuperview().offset(20)
@@ -54,5 +42,15 @@ final class EmploymentView: UIView {
             $0.trailing.equalToSuperview().inset(20)
             $0.width.height.equalTo(28)
         }
+    }
+
+    override func configureView() {
+        self.backgroundColor = .GrayScale.gray30
+        self.layer.cornerRadius = 12
+    }
+
+    func setEmploymentPercentage(_ percentage: Float) {
+        let str = String(format: "%.1f", percentage)
+        employmentPercentageLabel.text = "\(str) %"
     }
 }

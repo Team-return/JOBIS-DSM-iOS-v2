@@ -58,14 +58,19 @@ extension SigninReactor {
         switch mutation {
         case let .updateEmail(email):
             newState.email = email
+
         case let .updatePassword(password):
             newState.password = password
+
         case let .emailError(error):
             newState.emailError = error
+
         case let .passwordError(error):
             newState.passwordError = error
+
         case .signinSuccess:
             steps.accept(SigninStep.tabsIsRequired)
+
         case .errorReset:
             newState.emailError = ""
             newState.passwordError = ""

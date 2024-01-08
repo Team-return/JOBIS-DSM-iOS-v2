@@ -4,7 +4,7 @@ import Then
 import Domain
 import DesignSystem
 
-final class EmptyApplicationView: UIView {
+final class EmptyApplicationView: BaseView {
     private let containerView = UIView().then {
         $0.layer.cornerRadius = 12
         $0.layer.borderWidth = 1
@@ -15,10 +15,12 @@ final class EmptyApplicationView: UIView {
         $0.setJobisText("현재 지원한 기업이 없어요", font: .body, color: .GrayScale.gray60)
     }
 
-    override func layoutSubviews() {
-        addSubview(containerView)
-        containerView.addSubview(emptyMessageLabel)
+    override func addView() {
+        self.addSubview(containerView)
+        self.containerView.addSubview(emptyMessageLabel)
+    }
 
+    override func setLayout() {
         containerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
         }

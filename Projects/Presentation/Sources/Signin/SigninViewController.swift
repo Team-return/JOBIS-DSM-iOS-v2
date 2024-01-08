@@ -36,56 +36,6 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
     }
     private let signinPublishRelay = PublishRelay<Void>()
 
-    private func signin() {
-        self.signinPublishRelay.accept(())
-    }
-    public override func attribute() {
-        passwordTextField.textField.delegate = self
-        signinButton.rx.tap
-            .asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.signin()
-            })
-            .disposed(by: disposeBag)
-    }
-
-    public override func bind(reactor: SigninReactor) {
-        emailTextField.textField.rx.text.orEmpty
-            .distinctUntilChanged()
-            .map { SigninReactor.Action.updateEmail($0) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        passwordTextField.textField.rx.text.orEmpty
-            .distinctUntilChanged()
-            .map { SigninReactor.Action.updatePassword($0) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        signinButton.rx.tap
-            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
-            .map { SigninReactor.Action.signinButtonDidTap }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        reactor.state
-            .map { $0.emailError }
-            .distinctUntilChanged()
-            .filter { $0 != "" }
-            .bind(onNext: {
-                self.emailTextField.setDescription(.error(description: $0))
-            })
-            .disposed(by: disposeBag)
-
-        reactor.state
-            .map { $0.passwordError }
-            .distinctUntilChanged()
-            .filter { $0 != "" }
-            .bind(onNext: {
-                self.passwordTextField.setDescription(.error(description: $0))
-            })
-            .disposed(by: disposeBag)
-    }
     public override func addView() {
         [
             titleLabel,
@@ -96,6 +46,7 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             signinButton
         ].forEach { self.view.addSubview($0) }
     }
+
     public override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.topMargin.equalToSuperview().inset(20)
@@ -124,6 +75,60 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+    }
+
+    public override func bindAction(_ reactor: SigninReactor) {
+        emailTextField.textField.rx.text.orEmpty
+            .distinctUntilChanged()
+            .map { SigninReactor.Action.updateEmail($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        passwordTextField.textField.rx.text.orEmpty
+            .distinctUntilChanged()
+            .map { SigninReactor.Action.updatePassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        signinButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .map { SigninReactor.Action.signinButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState(_ reactor: SigninReactor) {
+        reactor.state
+            .map { $0.emailError }
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
+                self.emailTextField.setDescription(.error(description: $0))
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.passwordError }
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
+                self.passwordTextField.setDescription(.error(description: $0))
+            })
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
+        passwordTextField.textField.delegate = self
+        signinButton.rx.tap
+            .asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.signin()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func signin() {
+        self.signinPublishRelay.accept(())
     }
 }
 
