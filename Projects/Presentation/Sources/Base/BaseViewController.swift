@@ -29,8 +29,8 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    public override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         addView()
         setLayout()
     }
