@@ -77,17 +77,17 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
         }
     }
 
-    public override func bindAction(_ reactor: SigninReactor) {
-        emailTextField.textField.rx.text.orEmpty
+    public override func bindAction() {
+        emailTextField.textField.rx.text.orEmpty.asDriver()
             .distinctUntilChanged()
             .map { SigninReactor.Action.updateEmail($0) }
-            .bind(to: reactor.action)
+            .drive(reactor.action)
             .disposed(by: disposeBag)
 
-        passwordTextField.textField.rx.text.orEmpty
+        passwordTextField.textField.rx.text.orEmpty.asDriver()
             .distinctUntilChanged()
             .map { SigninReactor.Action.updatePassword($0) }
-            .bind(to: reactor.action)
+            .drive(reactor.action)
             .disposed(by: disposeBag)
 
         signinButton.rx.tap
@@ -97,7 +97,7 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             .disposed(by: disposeBag)
     }
 
-    public override func bindState(_ reactor: SigninReactor) {
+    public override func bindState() {
         reactor.state
             .map { $0.emailError }
             .distinctUntilChanged()
