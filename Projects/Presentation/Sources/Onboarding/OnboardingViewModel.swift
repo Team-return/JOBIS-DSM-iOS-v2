@@ -27,14 +27,17 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let animate = PublishRelay<Void>()
         input.navigateToSigninDidTap.asObservable()
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { _ in OnboardingStep.signinIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
         input.navigateToSignupDidTap.asObservable()
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { _ in OnboardingStep.signupIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
         input.viewAppear.asObservable()
             .delay(.seconds(1), scheduler: MainScheduler.instance)
             .flatMap { [self] in
