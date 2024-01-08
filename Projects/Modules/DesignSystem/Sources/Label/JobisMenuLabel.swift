@@ -8,6 +8,7 @@ public final class JobisMenuLabel: UIView {
         super.init(frame: .zero)
 
         title.setJobisText(text, font: .description, color: .GrayScale.gray60)
+        configureView()
     }
 
     required init?(coder: NSCoder) {
