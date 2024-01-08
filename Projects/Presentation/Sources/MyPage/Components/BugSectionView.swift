@@ -10,12 +10,13 @@ final class BugSectionView: BaseView {
         case reportBug
         case bugList
     }
-    private let bugSectionView = SectionView(menuText: "버그제보").then {
-        $0.setSection(items: [
+    private let bugSectionView = SectionView(
+        menuText: "버그제보",
+        items: [
             ("버그 제보하기", .jobisIcon(.bugReport)),
             ("버그 제보함", .jobisIcon(.bugBox))
-        ])
-    }
+        ]
+    )
 
     override func addView() {
         self.addSubview(bugSectionView)
