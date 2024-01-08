@@ -4,13 +4,14 @@ import RxSwift
 import DesignSystem
 
 public class BaseReactorViewController<Reactor: BaseReactor>: UIViewController,
-                                                           ViewControllable,
-                                                           LifeCyclePublishable,
-                                                           HasDisposeBag,
-                                                           AddViewable,
-                                                           SetLayoutable,
-                                                           ViewControllerConfigurable,
-                                                           NavigationConfigurable {
+                                                              ViewControllable,
+                                                              LifeCyclePublishable,
+                                                              HasDisposeBag,
+                                                              AddViewable,
+                                                              ReactorBindable,
+                                                              SetLayoutable,
+                                                              ViewControllerConfigurable,
+                                                              NavigationConfigurable {
     public let reactor: Reactor
     public var disposeBag = DisposeBag()
     public var viewDidLoadPublisher = PublishRelay<Void>()
@@ -28,8 +29,8 @@ public class BaseReactorViewController<Reactor: BaseReactor>: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    public override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         addView()
         setLayout()
     }
@@ -38,8 +39,8 @@ public class BaseReactorViewController<Reactor: BaseReactor>: UIViewController,
         super.viewDidLoad()
         self.view.backgroundColor = .GrayScale.gray10
 
-        bindAction(self.reactor)
-        bindState(self.reactor)
+        bindAction()
+        bindState()
         configureViewController()
         configureNavigation()
 
@@ -74,9 +75,9 @@ public class BaseReactorViewController<Reactor: BaseReactor>: UIViewController,
 
     public func setLayout() {}
 
-    public func bindAction(_ reactor: Reactor) {}
+    public func bindAction() {}
 
-    public func bindState(_ reactor: Reactor) {}
+    public func bindState() {}
 
     public func configureViewController() {}
 
