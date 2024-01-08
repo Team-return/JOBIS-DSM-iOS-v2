@@ -44,7 +44,10 @@ extension SigninReactor {
         switch action {
         case .signinButtonDidTap:
             return .concat([
-                signinButtonDidTap(email: self.currentState.email, password: self.currentState.password),
+                signinButtonDidTap(
+                    email: self.currentState.email,
+                    password: self.currentState.password
+                ),
                 .just(.errorReset)
             ])
         case let .updateEmail(email):
