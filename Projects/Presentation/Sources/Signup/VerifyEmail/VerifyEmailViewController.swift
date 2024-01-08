@@ -25,26 +25,29 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
         $0.setText("다음")
     }
 
-    public override func attribute() {
-        emailTextField.textField.delegate = self
-        authCodeTextField.textField.delegate = self
-        setLargeTitle(title: "이메일을 입력해주세요")
-
-        authCodeTextField.textField.rx.text.orEmpty
-            .observe(on: MainScheduler.asyncInstance)
-            .limitWithOnlyInt(6) { [weak self] in
-                self?.authCodeTextField.textField.resignFirstResponder()
-                self?.nextSignupStep()
-            }
-            .bind(to: authCodeTextField.textField.rx.text )
-            .disposed(by: disposeBag)
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
-            .disposed(by: disposeBag)
+    public override func addView() {
+        [
+            emailTextField,
+            authCodeTextField,
+            nextButton
+        ].forEach { self.view.addSubview($0) }
     }
+
+    public override func setLayout() {
+        emailTextField.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+        }
+        authCodeTextField.snp.makeConstraints {
+            $0.top.equalTo(emailTextField.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+        nextButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+    }
+
     public override func bind() {
         let input = VerifyEmailViewModel.Input(
             name: name,
@@ -83,26 +86,29 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             }
             .disposed(by: disposeBag)
     }
-    public override func addView() {
-        [
-            emailTextField,
-            authCodeTextField,
-            nextButton
-        ].forEach { self.view.addSubview($0) }
+
+    public override func configureViewController() {
+        emailTextField.textField.delegate = self
+        authCodeTextField.textField.delegate = self
+
+        authCodeTextField.textField.rx.text.orEmpty
+            .observe(on: MainScheduler.asyncInstance)
+            .limitWithOnlyInt(6) { [weak self] in
+                self?.authCodeTextField.textField.resignFirstResponder()
+                self?.nextSignupStep()
+            }
+            .bind(to: authCodeTextField.textField.rx.text )
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.nextSignupStep()
+            })
+            .disposed(by: disposeBag)
     }
-    public override func layout() {
-        emailTextField.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-        }
-        authCodeTextField.snp.makeConstraints {
-            $0.top.equalTo(emailTextField.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
-        }
+
+    public override func configureNavigation() {
+        setLargeTitle(title: "이메일을 입력해주세요")
     }
 }
 

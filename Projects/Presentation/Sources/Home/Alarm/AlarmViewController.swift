@@ -15,26 +15,30 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
         $0.estimatedRowHeight = 100
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
-        showTabbar()
-    }
-
-    public override func attribute() {
-        alarmTableView.dataSource = self
-        alarmTableView.delegate = self
-
-        setSmallTitle(title: "알림")
-    }
-
     public override func addView() {
         self.view.addSubview(alarmTableView)
     }
 
-    public override func layout() {
+    public override func setLayout() {
         alarmTableView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+
+    public override func configureViewController() {
+        alarmTableView.dataSource = self
+        alarmTableView.delegate = self
+
+        self.viewWillDisappearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.showTabbar()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureNavigation() {
+        setSmallTitle(title: "알림")
     }
 }
 

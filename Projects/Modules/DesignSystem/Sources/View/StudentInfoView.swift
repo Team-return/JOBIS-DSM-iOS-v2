@@ -22,6 +22,7 @@ public final class StudentInfoView: UIView {
 
     public init() {
         super.init(frame: .zero)
+        configureView()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -42,7 +43,7 @@ public final class StudentInfoView: UIView {
         departmentLabel.setJobisText(department, font: .description, color: .GrayScale.gray70)
     }
 
-    public override func layoutSubviews() {
+    private func configureView() {
         [
             profileImageView,
             labelStackView

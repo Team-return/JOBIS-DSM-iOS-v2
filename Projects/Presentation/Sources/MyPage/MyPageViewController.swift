@@ -17,47 +17,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
     }
     private let reviewNavigateStackView = ReviewNavigateStackView()
-    private let accountSectionView = SectionView(menuText: "계정").then {
-        $0.setSection(items: [
-            ("관심분야 선택", .jobisIcon(.code)),
-            ("비밀번호 변경", .jobisIcon(.changePassword)),
-            ("로그아웃", .jobisIcon(.logout)),
-            ("회원 탈퇴", .jobisIcon(.withdrawal))
-        ])
-    }
-    private let bugSectionView = SectionView(menuText: "버그제보").then {
-        $0.setSection(items: [
-            ("버그 제보하기", .jobisIcon(.bugReport)),
-            ("버그 제보함", .jobisIcon(.bugBox))
-        ])
-    }
-
-    public override func attribute() {
-        self.setLargeTitle(title: "마이페이지")
-    }
-    public override func bind() {
-        let input = MyPageViewModel.Input(
-            viewAppear: self.viewAppear,
-            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-            logoutSectionDidTap: accountSectionView.sectionTableView.rx.itemSelected.filter { $0.row == 2 },
-            withdrawalSectionDidTap: accountSectionView.sectionTableView.rx.itemSelected.filter { $0.row == 3 }
-        )
-        let output = viewModel.transform(input)
-        output.studentInfo.asObservable()
-            .bind(onNext: { [weak self] in
-                self?.studentInfoView.setStudentInfo(
-                    profileImageUrl: $0.profileImageUrl,
-                    gcn: $0.studentGcn,
-                    name: $0.studentName,
-                    department: $0.department.localizedString()
-                )
-            }).disposed(by: disposeBag)
-
-        output.writableReviewList
-            .bind(onNext: { [weak self] in
-                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
-            }).disposed(by: disposeBag)
-    }
+    private let accountSectionView = AccountSectionView()
+    private let bugSectionView = BugSectionView()
 
     public override func addView() {
         self.view.addSubview(scrollView)
@@ -70,7 +31,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             bugSectionView
         ].forEach { self.contentView.addSubview($0) }
     }
-    public override func layout() {
+
+    public override func setLayout() {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -99,5 +61,34 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(accountSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
+    }
+
+    public override func bind() {
+        let input = MyPageViewModel.Input(
+            viewAppear: self.viewDidLoadPublisher,
+            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
+            withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw)
+        )
+        let output = viewModel.transform(input)
+
+        output.studentInfo.asObservable()
+            .bind(onNext: { [weak self] in
+                self?.studentInfoView.setStudentInfo(
+                    profileImageUrl: $0.profileImageUrl,
+                    gcn: $0.studentGcn,
+                    name: $0.studentName,
+                    department: $0.department.localizedString()
+                )
+            }).disposed(by: disposeBag)
+
+        output.writableReviewList
+            .bind(onNext: { [weak self] in
+                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
+            }).disposed(by: disposeBag)
+    }
+
+    public override func configureNavigation() {
+        self.setLargeTitle(title: "마이페이지")
     }
 }

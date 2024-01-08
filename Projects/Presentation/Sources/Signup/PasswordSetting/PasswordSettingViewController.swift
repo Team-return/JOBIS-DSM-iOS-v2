@@ -25,17 +25,29 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
         $0.setText("다음")
     }
 
-    public override func attribute() {
-        passwordTextField.textField.delegate = self
-        checkingPasswordTextField.textField.delegate = self
-        setLargeTitle(title: "비밀번호를 설정해주세요")
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
-            .disposed(by: disposeBag)
+    public override func addView() {
+        [
+            passwordTextField,
+            checkingPasswordTextField,
+            nextButton
+        ].forEach { self.view.addSubview($0) }
     }
+
+    public override func setLayout() {
+        passwordTextField.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+        }
+        checkingPasswordTextField.snp.makeConstraints {
+            $0.top.equalTo(passwordTextField.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+        nextButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+    }
+
     public override func bind() {
         let input = PasswordSettingViewModel.Input(
             name: name,
@@ -61,26 +73,20 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
             }
             .disposed(by: disposeBag)
     }
-    public override func addView() {
-        [
-            passwordTextField,
-            checkingPasswordTextField,
-            nextButton
-        ].forEach { self.view.addSubview($0) }
+
+    public override func configureViewController() {
+        passwordTextField.textField.delegate = self
+        checkingPasswordTextField.textField.delegate = self
+
+        nextButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.nextSignupStep()
+            })
+            .disposed(by: disposeBag)
     }
-    public override func layout() {
-        passwordTextField.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-        }
-        checkingPasswordTextField.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-        nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
-        }
+
+    public override func configureNavigation() {
+        setLargeTitle(title: "비밀번호를 설정해주세요")
     }
 }
 
