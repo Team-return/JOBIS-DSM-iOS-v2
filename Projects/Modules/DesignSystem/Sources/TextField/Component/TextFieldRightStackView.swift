@@ -78,4 +78,8 @@ public final class TextFieldRightStackView: UIStackView {
         }
         self.setCustomSpacing(8, after: emailInfoLabel)
     }
+
+    public func setSecureButtonImage(_ isSecureTextEntry: Bool) {
+        secureButton.setImage(isSecureTextEntry ? .textFieldIcon(.eyeOff) : .textFieldIcon(.eyeOn), for: .normal)
+    }
 }
