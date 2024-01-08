@@ -12,14 +12,15 @@ final class AccountSectionView: BaseView {
         case logout = 2
         case withDraw = 3
     }
-    private let accountSectionView = SectionView(menuText: "계정").then {
-        $0.setSection(items: [
+    private let accountSectionView = SectionView(
+        menuText: "계정",
+        items: [
             ("관심분야 선택", .jobisIcon(.code)),
             ("비밀번호 변경", .jobisIcon(.changePassword)),
             ("로그아웃", .jobisIcon(.logout)),
             ("회원 탈퇴", .jobisIcon(.withdrawal))
-        ])
-    }
+        ]
+    )
 
     override func addView() {
         self.addSubview(accountSectionView)

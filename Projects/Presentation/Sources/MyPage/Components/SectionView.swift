@@ -5,18 +5,19 @@ import RxSwift
 typealias SectionModel = (title: String, icon: UIImage)
 
 final class SectionView: BaseView {
-    private var items: [SectionModel] = []
-    private var titleLabel: JobisMenuLabel = .init(text: "")
     private let sectionTableView = UITableView().then {
         $0.register(SectionTableViewCell.self, forCellReuseIdentifier: SectionTableViewCell.identifier)
         $0.separatorStyle = .none
         $0.rowHeight = 52
         $0.isScrollEnabled = false
     }
+    private var items: [SectionModel] = []
+    private var titleLabel: JobisMenuLabel = .init(text: "Test")
 
-    init(menuText: String) {
+    init(menuText: String, items: [SectionModel]) {
         super.init()
-        self.titleLabel = JobisMenuLabel(text: menuText)
+        self.titleLabel = .init(text: menuText)
+        self.items = items
     }
 
     required init?(coder: NSCoder) {
@@ -27,7 +28,7 @@ final class SectionView: BaseView {
         [
             titleLabel,
             sectionTableView
-        ].forEach { self.addSubview($0) }
+        ].forEach(self.addSubview(_:))
     }
 
     override func setLayout() {
@@ -46,10 +47,6 @@ final class SectionView: BaseView {
 
     override func configureView() {
         self.sectionTableView.dataSource = self
-    }
-
-    func setSection(items: [SectionModel]) {
-        self.items = items
     }
 
     func getSelectedItem(index: Int) -> Observable<IndexPath> {
