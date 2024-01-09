@@ -3,16 +3,16 @@ import RxCocoa
 import RxSwift
 import DesignSystem
 
-public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
-                                                           ViewControllable,
-                                                           LifeCyclePublishable,
-                                                           HasDisposeBag,
-                                                           AddViewable,
-                                                           SetLayoutable,
-                                                           Bindable,
-                                                           ViewControllerConfigurable,
-                                                           NavigationConfigurable {
-    public let viewModel: ViewModel
+public class BaseReactorViewController<Reactor: BaseReactor>: UIViewController,
+                                                              ViewControllable,
+                                                              LifeCyclePublishable,
+                                                              HasDisposeBag,
+                                                              AddViewable,
+                                                              ReactorBindable,
+                                                              SetLayoutable,
+                                                              ViewControllerConfigurable,
+                                                              NavigationConfigurable {
+    public let reactor: Reactor
     public var disposeBag = DisposeBag()
     public var viewDidLoadPublisher = PublishRelay<Void>()
     public var viewWillAppearPublisher = PublishRelay<Void>()
@@ -20,8 +20,8 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
     public var viewWillDisappearPublisher = PublishRelay<Void>()
     public var viewDidDisappearPublisher = PublishRelay<Void>()
 
-    public init(_ viewModel: ViewModel) {
-        self.viewModel = viewModel
+    public init(_ reactor: Reactor) {
+        self.reactor = reactor
         super .init(nibName: nil, bundle: nil)
     }
 
@@ -39,7 +39,8 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         super.viewDidLoad()
         self.view.backgroundColor = .GrayScale.gray10
 
-        bind()
+        bindAction()
+        bindState()
         configureViewController()
         configureNavigation()
 
@@ -74,7 +75,9 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
 
     public func setLayout() {}
 
-    public func bind() {}
+    public func bindAction() {}
+
+    public func bindState() {}
 
     public func configureViewController() {}
 

@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class SigninViewController: BaseViewController<SigninViewModel> {
+public final class SigninViewController: BaseReactorViewController<SigninReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
         $0.setColorRange(color: .Primary.blue20, range: "JOBIS")
@@ -77,22 +77,43 @@ public final class SigninViewController: BaseViewController<SigninViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = SigninViewModel.Input(
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            signinButtonDidTap: signinPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
-        output.emailErrorDescription
-            .bind { [weak self] description in
-                self?.emailTextField.setDescription(description)
-            }
+    public override func bindAction() {
+        emailTextField.textField.rx.text.orEmpty.asDriver()
+            .distinctUntilChanged()
+            .map { SigninReactor.Action.updateEmail($0) }
+            .drive(reactor.action)
             .disposed(by: disposeBag)
-        output.passwordErrorDescription
-            .bind { [weak self] description in
-                self?.passwordTextField.setDescription(description)
-            }
+
+        passwordTextField.textField.rx.text.orEmpty.asDriver()
+            .distinctUntilChanged()
+            .map { SigninReactor.Action.updatePassword($0) }
+            .drive(reactor.action)
+            .disposed(by: disposeBag)
+
+        signinButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .map { SigninReactor.Action.signinButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.emailError }
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
+                self.emailTextField.setDescription(.error(description: $0))
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.passwordError }
+            .distinctUntilChanged()
+            .filter { $0 != "" }
+            .bind(onNext: {
+                self.passwordTextField.setDescription(.error(description: $0))
+            })
             .disposed(by: disposeBag)
     }
 

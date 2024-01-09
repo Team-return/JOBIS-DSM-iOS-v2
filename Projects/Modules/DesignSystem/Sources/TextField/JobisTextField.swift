@@ -20,7 +20,18 @@ public final class JobisTextField: UIView {
         $0.font = .jobisFont(.body)
     }
     public let textFieldRightView = TextFieldRightStackView()
-    private let descriptionView = DescriptionView()
+    private let descriptionView = DescriptionView().then {
+        $0.isHidden = true
+    }
+
+    private var isDescription = false {
+        willSet(newValue) {
+            withAnimation {
+                self.descriptionView.alpha = newValue ? 1:0
+                self.descriptionView.isHidden = !newValue
+            }
+        }
+    }
 
     public init() {
         super.init(frame: .zero)
@@ -59,26 +70,27 @@ public final class JobisTextField: UIView {
         textFieldType: TextFieldType = .none
     ) {
         self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
-        self.descriptionView.descriptionType = descriptionType
-        self.textFieldRightView.textFieldRightType = textFieldType
         self.textField.placeholder = placeholder
-        if textFieldType == .secure {
-            self.textField.isSecureTextEntry = true
-        }
-        self.textFieldRightView.secureButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                guard let self else { return }
+        if let descriptionType { self.setDescription(descriptionType) }
+        self.textFieldRightView.textFieldRightType = textFieldType
+        self.setSecureTextField(textFieldType)
+    }
 
-                textField.isSecureTextEntry.toggle()
-                if textField.isSecureTextEntry {
-                    textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOff), for: .normal)
-                } else {
-                    textFieldRightView.secureButton.setImage(.textFieldIcon(.eyeOn), for: .normal)
-                }
-            }).disposed(by: disposeBag)
-        self.textField.rx.text
-            .subscribe(onNext: { [weak self] _ in self?.removeDescription() })
-            .disposed(by: disposeBag)
+    public func setDescription(_ type: DescriptionType) {
+        self.isDescription = true
+        self.descriptionView.setDescription(descriptionType: type)
+        if case .error = type {
+            self.textField.rx.text.asDriver()
+                .distinctUntilChanged()
+                .skip(1)
+                .filter { _ in self.isDescription }
+                .drive(
+                    with: self,
+                    onNext: { owner, _ in
+                        owner.isDescription = false
+                    })
+                .disposed(by: disposeBag)
+        }
     }
 
     private func addView() {
@@ -118,20 +130,18 @@ extension JobisTextField {
         UIView.animate(
             withDuration: 0.3,
             delay: 0,
-            options: .transitionCrossDissolve,
+            options: .curveEaseInOut,
             animations: action
         )
     }
 
-    public func setDescription(_ type: DescriptionType) {
-        withAnimation { [self] in
-            descriptionView.descriptionType = type
-        }
-    }
-
-    private func removeDescription() {
-        withAnimation { [self] in
-            descriptionView.descriptionType = nil
-        }
+    private func setSecureTextField(_ textFieldType: TextFieldType) {
+        self.textField.isSecureTextEntry = textFieldType == .secure ? true : false
+        self.textFieldRightView.secureButton.rx.tap.asDriver()
+            .drive(onNext: { [weak self] in
+                self?.textField.isSecureTextEntry.toggle()
+                self?.textFieldRightView
+                    .setSecureButtonImage(self?.textField.isSecureTextEntry ?? false)
+            }).disposed(by: disposeBag)
     }
 }

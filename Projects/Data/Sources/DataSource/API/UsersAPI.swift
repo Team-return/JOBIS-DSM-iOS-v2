@@ -45,6 +45,7 @@ extension UsersAPI: JobisAPI {
         switch self {
         case .signin:
             return [
+                400: .badRequest,
                 401: .notFoundPassword,
                 404: .notFoundEmail,
                 500: .internalServerError
