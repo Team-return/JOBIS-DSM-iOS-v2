@@ -17,6 +17,7 @@ let project = Project.makeModule(
         .SPM.RxMoya,
         .SPM.Lottie,
         .SPM.kingfisher,
-        .SPM.KeychainSwift
+        .SPM.KeychainSwift,
+        .SPM.ReactorKit
     ], sources: []
 )

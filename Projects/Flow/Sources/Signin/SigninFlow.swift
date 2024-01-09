@@ -12,7 +12,7 @@ public final class SigninFlow: Flow {
     }
     public init(container: Container) {
         self.container = container
-        self.rootViewController = SigninViewController(container.resolve(SigninViewModel.self)!)
+        self.rootViewController = SigninViewController(container.resolve(SigninReactor.self)!)
     }
 
     private let rootViewController: SigninViewController
@@ -33,7 +33,7 @@ private extension SigninFlow {
     func navigateToSignin() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }
