@@ -5,19 +5,18 @@ import RxFlow
 import Core
 
 public final class AlarmFlow: Flow {
-    public var container: Container
-
+    public let container: Container
+    private let rootViewController: AlarmViewController
     public var root: Presentable {
         return rootViewController
     }
+
     public init(container: Container) {
         self.container = container
         self.rootViewController = container.resolve(AlarmViewController.self)!
     }
 
-    private let rootViewController: AlarmViewController
-
-    public func navigate(to step: Step) -> RxFlow.FlowContributors {
+    public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AlarmStep else { return .none }
 
         switch step {

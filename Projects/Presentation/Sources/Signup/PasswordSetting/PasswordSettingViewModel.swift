@@ -6,8 +6,7 @@ import RxCocoa
 import Domain
 
 public final class PasswordSettingViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
 
     public struct Input {
@@ -18,6 +17,7 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
         let checkingPassword: Driver<String>
         let nextButtonDidTap: Signal<Void>
     }
+
     public struct Output {
         let passwordErrorDescription: PublishRelay<DescriptionType>
         let checkingPasswordErrorDescription: PublishRelay<DescriptionType>
@@ -26,12 +26,13 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let passwordErrorDescription = PublishRelay<DescriptionType>()
         let checkingPasswordErrorDescription = PublishRelay<DescriptionType>()
-
         let info = Driver.combineLatest(input.password, input.checkingPassword)
+
         input.nextButtonDidTap.asObservable()
             .withLatestFrom(info)
             .filter { password, checkingPassword in
-                let passwordExpression = #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$"#
+                let passwordExpression =
+                #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$"#
                 if password.isEmpty {
                     passwordErrorDescription.accept(.error(description: "빈칸을 채워주세요"))
                     return false
@@ -42,7 +43,9 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                     passwordErrorDescription.accept(.error(description: "비밀번호 형식에 맞지 않아요."))
                     return false
                 } else if password != checkingPassword {
-                    checkingPasswordErrorDescription.accept(.error(description: "비밀번호가 동일하지 않아요."))
+                    checkingPasswordErrorDescription.accept(
+                        .error(description: "비밀번호가 동일하지 않아요.")
+                    )
                 }
                 return true
             }

@@ -20,12 +20,16 @@ enum TextFieldIcon {
         switch self {
         case .error:
             return dsIcon.error.image
+
         case .info:
             return dsIcon.info.image
+
         case .success:
             return dsIcon.success.image
+
         case .eyeOn:
             return dsIcon.eyeOn.image
+
         case .eyeOff:
             return dsIcon.eyeOff.image
         }

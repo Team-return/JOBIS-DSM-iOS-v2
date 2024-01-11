@@ -6,15 +6,16 @@ import RxFlow
 import Core
 
 public final class SigninReactor: BaseReactor, Stepper {
-    public var steps = PublishRelay<Step>()
-    private let signinUseCase: SigninUseCase
+    public let steps = PublishRelay<Step>()
     public let initialState: State
     private let disposeBag = DisposeBag()
+    private let signinUseCase: SigninUseCase
 
     init(signinUseCase: SigninUseCase) {
         self.initialState = .init()
         self.signinUseCase = signinUseCase
     }
+
     public enum Action {
         case updateEmail(String)
         case updatePassword(String)
@@ -50,12 +51,15 @@ extension SigninReactor {
                 ),
                 .just(.errorReset)
             ])
+
         case let .updateEmail(email):
             return .just(.updateEmail(email))
+
         case let .updatePassword(password):
             return  .just(.updatePassword(password))
         }
     }
+
     public func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {

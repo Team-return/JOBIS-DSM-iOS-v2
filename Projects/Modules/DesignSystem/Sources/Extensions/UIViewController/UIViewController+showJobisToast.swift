@@ -8,7 +8,11 @@ public extension UIViewController {
         self.view.addSubview(jobisToast)
         resetToast(toast: jobisToast)
 
-        UIView.animate(withDuration: 0.3, delay: 0, options: animationOption) { [self] in
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: animationOption
+        ) { [self] in
             jobisToast.alpha = 1
             jobisToast.snp.remakeConstraints {
                 $0.centerX.equalToSuperview()
@@ -17,12 +21,17 @@ public extension UIViewController {
             self.view.layoutIfNeeded()
         }
 
-        UIView.animate(withDuration: 0.3, delay: 3, options: animationOption, animations: { [self] in
-            jobisToast.alpha = 0
-            resetToast(toast: jobisToast)
-        }, completion: { _ in
-            jobisToast.removeFromSuperview()
-        })
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 3,
+            options: animationOption,
+            animations: { [self] in
+                jobisToast.alpha = 0
+                resetToast(toast: jobisToast)
+            }, completion: { _ in
+                jobisToast.removeFromSuperview()
+            }
+        )
     }
 
     private func resetToast(toast: JobisToast) {

@@ -5,7 +5,6 @@ import RxSwift
 import Core
 
 public final class AppStepper: Stepper {
-
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
 

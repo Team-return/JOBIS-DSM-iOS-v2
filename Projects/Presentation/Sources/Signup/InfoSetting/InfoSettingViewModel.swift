@@ -6,15 +6,14 @@ import RxCocoa
 import Domain
 
 public final class InfoSettingViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
+    private let disposeBag = DisposeBag()
     private let studentExistsUseCase: StudentExistsUseCase
 
-    init(studentExistsUseCase: StudentExistsUseCase) {
+    public init(studentExistsUseCase: StudentExistsUseCase) {
         self.studentExistsUseCase = studentExistsUseCase
     }
 
-    private let disposeBag = DisposeBag()
     public struct Input {
         let name: Driver<String>
         let gcn: Driver<String>
@@ -28,8 +27,8 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let nameErrorDescription = PublishRelay<DescriptionType>()
         let gcnErrorDescription = PublishRelay<DescriptionType>()
-
         let info = Driver.combineLatest(input.name, input.gcn)
+
         input.nextButtonDidTap
             .asObservable()
             .withLatestFrom(info)
@@ -52,7 +51,9 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                     gcnErrorDescription.accept(.error(description: "이미 가입 된 학번이에요."))
                     return .never()
                 }
-                .andThen(Single.just(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: Int(gcn)!)))
+                .andThen(
+                    Single.just(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: Int(gcn)!))
+                )
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

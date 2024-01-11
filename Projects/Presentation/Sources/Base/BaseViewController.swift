@@ -43,7 +43,7 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         configureViewController()
         configureNavigation()
 
-        viewDidLoadPublisher.accept(())
+        self.viewDidLoadPublisher.accept(())
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -67,7 +67,8 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
     }
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
+        super.touchesBegan(touches, with: event)
+        self.view.endEditing(true)
     }
 
     public func addView() {}

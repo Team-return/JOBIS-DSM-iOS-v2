@@ -4,6 +4,7 @@ import Then
 import Domain
 import DesignSystem
 
+// TODO: 추후 BaseTableViewCell로 변경
 final class AlarmTableViewCell: UITableViewCell {
     static let identifier = "AlarmTableViewCell"
 
@@ -12,9 +13,17 @@ final class AlarmTableViewCell: UITableViewCell {
     private let dateLabel = UILabel()
 
     func setCell() {
-        companyNameLabel.setJobisText("㈜비바리퍼블리카", font: .description, color: .Primary.blue20)
-        messageLabel.setJobisText("지원서가 승인으로 변경되었습니다", font: .subHeadLine, color: .GrayScale.gray80)
-        dateLabel.setJobisText("2023.07.27", font: .description, color: .GrayScale.gray60)
+        self.companyNameLabel.setJobisText(
+            "㈜비바리퍼블리카",
+            font: .description,
+            color: .Primary.blue20
+        )
+        self.messageLabel.setJobisText(
+            "지원서가 승인으로 변경되었습니다",
+            font: .subHeadLine,
+            color: .GrayScale.gray80
+        )
+        self.dateLabel.setJobisText("2023.07.27", font: .description, color: .GrayScale.gray60)
     }
 
     override func layoutSubviews() {

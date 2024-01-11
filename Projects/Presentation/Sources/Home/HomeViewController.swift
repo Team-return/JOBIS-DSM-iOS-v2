@@ -11,7 +11,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     // TODO: 언젠가 지울 것
     private let isWinterSeason = BehaviorRelay(value: true)
     private let cellClick = PublishRelay<Int>()
-
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
@@ -22,8 +21,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let studentInfoView = StudentInfoView()
     private let employmentView = EmploymentView()
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
-    private var findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
-    private var findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
     private let applicationStatusMenuLabel = JobisMenuLabel(text: "지원 현황")
     private let applicationStatusTableView = UITableView().then {
         $0.register(
@@ -41,17 +38,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.distribution = .fillEqually
         $0.spacing = 12
     }
-
-    private func setCardStyle(isWinterSeason: Bool) {
-        if isWinterSeason {
-            findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
-            findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
-            findWinterRecruitmentsCard.isHidden = false
-        } else {
-            findCompanysCard = CareerNavigationCard(style: .large)
-            findWinterRecruitmentsCard.isHidden = true
-        }
-    }
+    private var findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
+    private var findWinterRecruitmentsCard = CareerNavigationCard(
+        style: .small(type: .findWinterRecruitments)
+    )
 
     public override func addView() {
         self.view.addSubview(scrollView)
@@ -197,6 +187,17 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func configureNavigation() {
         self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
+    }
+
+    private func setCardStyle(isWinterSeason: Bool) {
+        if isWinterSeason {
+            findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
+            findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
+            findWinterRecruitmentsCard.isHidden = false
+        } else {
+            findCompanysCard = CareerNavigationCard(style: .large)
+            findWinterRecruitmentsCard.isHidden = true
+        }
     }
 }
 
