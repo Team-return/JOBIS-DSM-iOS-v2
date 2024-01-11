@@ -22,10 +22,12 @@ public final class JobisButton: UIButton {
 
     private var bgColor: UIColor {
         let isDark = traitCollection.userInterfaceStyle == .dark
+
         if isEnabled {
             switch buttonStyle {
             case .main:
                 return isDark ? .Primary.blue20: isHighlighted ? .Primary.blue40: .Primary.blue20
+
             case .sub:
                 return isHighlighted ? .GrayScale.gray40: .GrayScale.gray30
             }

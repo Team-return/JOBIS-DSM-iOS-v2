@@ -9,8 +9,10 @@ public enum DescriptionType: Equatable {
         switch self {
         case .error:
             return .textFieldIcon(.error)
+
         case .info:
             return .textFieldIcon(.info)
+
         case .success:
             return .textFieldIcon(.success)
         }
