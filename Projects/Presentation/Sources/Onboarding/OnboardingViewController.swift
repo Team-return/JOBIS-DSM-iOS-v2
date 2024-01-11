@@ -8,28 +8,23 @@ import DesignSystem
 import Lottie
 
 public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
-    private var isOnLoading = false
-
     private let animationView = JobisLottieView(.onboarding)
-
     private let teamReturnLogoImage = UIImageView().then {
         $0.image = .onboardingImage(.teamReturnLogo)
     }
-
     private let navigateButtonStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
         $0.isHidden = true
     }
-
     private let navigateToSignupButton = JobisButton(style: .main).then {
         $0.setText("새 계정으로 시작하기")
     }
-
     private let navigateToSigninButton = UIButton(type: .system).then {
         $0.setJobisText("기존 계정으로 로그인하기", font: .subBody, color: .GrayScale.gray60)
         $0.setUnderline()
     }
+    private var isOnLoading = false
 
     public override func addView() {
         [
@@ -70,6 +65,7 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
             viewAppear: viewDidAppearPublisher
         )
         let output = viewModel.transform(input)
+
         output.animate.asObservable()
             .bind(onNext: { [weak self] in
                 guard let self else { return }

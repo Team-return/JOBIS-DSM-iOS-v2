@@ -48,11 +48,13 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
             nextButtonDidTap: nextPublishRelay.asSignal()
         )
         let output = viewModel.transform(input)
+
         output.nameErrorDescription
             .bind { [weak self] description in
                 self?.nameTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
+
         output.gcnErrorDescription
             .bind { [weak self] description in
                 self?.gcnTextField.setDescription(description)

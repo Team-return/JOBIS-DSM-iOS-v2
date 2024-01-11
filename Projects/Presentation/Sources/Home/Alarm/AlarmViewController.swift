@@ -47,7 +47,10 @@ extension AlarmViewController: UITableViewDelegate, UITableViewDataSource {
         return 30
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: AlarmTableViewCell.identifier,
             for: indexPath
