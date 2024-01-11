@@ -13,7 +13,6 @@ final class ReviewNavigateView: BaseView {
     let reviewNavigateButton = UIButton(type: .system).then {
         $0.setJobisText("작성하러 가기 →", font: .subHeadLine, color: .Primary.blue20)
     }
-    
     override func addView() {
         [
             reviewImageView,
@@ -21,7 +20,7 @@ final class ReviewNavigateView: BaseView {
             reviewNavigateButton
         ].forEach { self.addSubview($0) }
     }
-    
+
     override func setLayout() {
         reviewImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -41,7 +40,7 @@ final class ReviewNavigateView: BaseView {
             $0.leading.equalTo(reviewImageView.snp.trailing).offset(8)
         }
     }
-    
+
     override func configureView() {
         self.layer.cornerRadius = 12
         self.backgroundColor = .Primary.blue10

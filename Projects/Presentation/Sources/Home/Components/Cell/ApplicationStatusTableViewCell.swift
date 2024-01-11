@@ -6,9 +6,7 @@ import DesignSystem
 
 final class ApplicationStatusTableViewCell: UITableViewCell {
     static let identifier = "ApplicationStatusTableViewCell"
-
     public var applicationID: Int?
-
     private let containerView = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
@@ -21,17 +19,6 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
     }
     private let companyNameLabel = UILabel()
     private let applicationStatusLabel = UILabel()
-
-    func setCell(_ entity: ApplicationEntity) {
-        companyProfileImageView.setJobisImage(urlString: "LOGO_IMAGE/companydefault.png")
-        companyNameLabel.setJobisText(entity.company, font: .body, color: .GrayScale.gray90)
-        applicationStatusLabel.setJobisText(
-            entity.applicationStatus.localizedString(),
-            font: .subBody,
-            color: entity.applicationStatus.toUIColor()
-        )
-        self.applicationID = entity.applicationID
-    }
 
     override func layoutSubviews() {
         self.addSubview(containerView)
@@ -61,6 +48,17 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
             $0.centerY.equalTo(companyProfileImageView)
             $0.trailing.equalTo(containerView).inset(16)
         }
+    }
+
+    func setCell(_ entity: ApplicationEntity) {
+        companyProfileImageView.setJobisImage(urlString: "LOGO_IMAGE/companydefault.png")
+        companyNameLabel.setJobisText(entity.company, font: .body, color: .GrayScale.gray90)
+        applicationStatusLabel.setJobisText(
+            entity.applicationStatus.localizedString(),
+            font: .subBody,
+            color: entity.applicationStatus.toUIColor()
+        )
+        self.applicationID = entity.applicationID
     }
 }
 
