@@ -11,23 +11,22 @@ public final class TextFieldRightStackView: UIStackView {
             switch textFieldRightType {
             case .email:
                 emailInfoLabel.isHidden = false
+
             case let .emailWithbutton(buttonTitle):
                 emailInfoLabel.isHidden = false
                 customButton.isHidden = false
                 setCustomButtonTitle(title: buttonTitle)
+
             case .secure:
                 secureButton.isHidden = false
+
             case .time:
                 timeLabel.isHidden = false
+
             case .none:
                 return
             }
         }
-    }
-    public func setCustomButtonTitle(title: String) {
-        customButton.isHidden = false
-        customButton.configuration?.title = title
-        customButton.configuration?.attributedTitle?.font = .jobisFont(.subBody)
     }
     public let secureButton = UIButton(type: .system).then {
         $0.setImage(.textFieldIcon(.eyeOff), for: .normal)
@@ -79,7 +78,16 @@ public final class TextFieldRightStackView: UIStackView {
         self.setCustomSpacing(8, after: emailInfoLabel)
     }
 
+    public func setCustomButtonTitle(title: String) {
+        customButton.isHidden = false
+        customButton.configuration?.title = title
+        customButton.configuration?.attributedTitle?.font = .jobisFont(.subBody)
+    }
+
     public func setSecureButtonImage(_ isSecureTextEntry: Bool) {
-        secureButton.setImage(isSecureTextEntry ? .textFieldIcon(.eyeOff) : .textFieldIcon(.eyeOn), for: .normal)
+        secureButton.setImage(
+            isSecureTextEntry ? .textFieldIcon(.eyeOff) : .textFieldIcon(.eyeOn),
+            for: .normal
+        )
     }
 }
