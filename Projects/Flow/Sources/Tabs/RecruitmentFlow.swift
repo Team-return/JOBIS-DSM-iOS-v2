@@ -5,18 +5,17 @@ import RxFlow
 import Core
 
 public final class RecruitmentFlow: Flow {
-    public var container: Container
-
+    public let container: Container
+    private let rootViewController = BaseNavigationController()
     public var root: Presentable {
         return rootViewController
     }
+
     public init(container: Container) {
         self.container = container
     }
 
-    private let rootViewController = BaseNavigationController()
-
-    public func navigate(to step: Step) -> RxFlow.FlowContributors {
+    public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? RecruitmentStep else { return .none }
 
         switch step {
@@ -29,7 +28,12 @@ public final class RecruitmentFlow: Flow {
 private extension RecruitmentFlow {
     func navigateToRecruitment() -> FlowContributors {
         let recruitmentViewController = container.resolve(RecruitmentViewController.self)!
-        self.rootViewController.setViewControllers([recruitmentViewController], animated: true)
+
+        self.rootViewController.setViewControllers(
+            [recruitmentViewController],
+            animated: true
+        )
+
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentViewController,
             withNextStepper: recruitmentViewController.viewModel

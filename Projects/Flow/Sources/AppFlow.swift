@@ -5,11 +5,11 @@ import Core
 import Swinject
 
 public final class AppFlow: Flow {
-    public var window: UIWindow
+    public let window: UIWindow
+    public let container: Container
     public var root: Presentable {
         return self.window
     }
-    public var container: Container
 
     public init(window: UIWindow, container: Container) {
         self.window = window
@@ -18,6 +18,7 @@ public final class AppFlow: Flow {
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AppStep else { return .none }
+
         switch step {
         case .onboardingIsRequired:
             return self.navigationToOnboarding()
@@ -28,12 +29,14 @@ public final class AppFlow: Flow {
     }
 }
 
-extension AppFlow {
+private extension AppFlow {
     func navigationToOnboarding() -> FlowContributors {
         let onboardingFlow = OnboardingFlow(container: container)
+
         Flows.use(onboardingFlow, when: .created) { (root) in
             self.window.rootViewController = root
         }
+
         return .one(
             flowContributor: .contribute(
                 withNextPresentable: onboardingFlow,
@@ -43,20 +46,24 @@ extension AppFlow {
             )
         )
     }
-
+    
     func navigationToTabs() -> FlowContributors {
         let tabsFlow = TabsFlow(container: container)
+        
         Flows.use(tabsFlow, when: .created) { (root) in
-            UIView.transition(with: self.window, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            UIView.transition(
+                with: self.window,
+                duration: 0.5,
+                options: .transitionCrossDissolve
+            ) {
                 self.window.rootViewController = root
-            })
+            }
         }
+
         return .one(
             flowContributor: .contribute(
                 withNextPresentable: tabsFlow,
-                withNextStepper: OneStepper(
-                    withSingleStep: TabsStep.tabsIsRequired
-                )
+                withNextStepper: OneStepper(withSingleStep: TabsStep.tabsIsRequired)
             )
         )
     }
