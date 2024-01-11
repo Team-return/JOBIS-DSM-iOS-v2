@@ -6,8 +6,7 @@ import Core
 import Domain
 
 public final class MyPageViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
     private let logoutUseCase: LogoutUseCase
@@ -72,7 +71,9 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output(studentInfo: studentInfo,
-                      writableReviewList: writableReviewList)
+        return Output(
+            studentInfo: studentInfo,
+            writableReviewList: writableReviewList
+        )
     }
 }
