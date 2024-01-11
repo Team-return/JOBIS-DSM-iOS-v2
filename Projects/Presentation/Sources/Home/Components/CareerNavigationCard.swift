@@ -38,6 +38,22 @@ final class CareerNavigationCard: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func layoutSubviews() {
+        [iconView, headerLabel].forEach(addSubview(_:))
+        iconView.addSubview(iconImageView)
+
+        headerLabel.snp.makeConstraints {
+            $0.leading.top.equalToSuperview().inset(20)
+        }
+        iconImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        iconView.snp.makeConstraints {
+            $0.bottom.trailing.equalToSuperview().inset(20)
+            $0.width.height.equalTo(64)
+        }
+    }
+
     private func setCard(style: CardSize) {
         var info: (text: String, icon: JobisIcon) {
             switch style {
@@ -53,23 +69,7 @@ final class CareerNavigationCard: UIButton {
             }
         }
 
-        headerLabel.setJobisText(info.text, font: .headLine, color: .GrayScale.gray90)
-        iconImageView.image = .jobisIcon(info.icon).resize(size: 40)
-    }
-
-    override func layoutSubviews() {
-        [iconView, headerLabel].forEach(addSubview(_:))
-        iconView.addSubview(iconImageView)
-
-        headerLabel.snp.makeConstraints {
-            $0.leading.top.equalToSuperview().inset(20)
-        }
-        iconImageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        iconView.snp.makeConstraints {
-            $0.bottom.trailing.equalToSuperview().inset(20)
-            $0.width.height.equalTo(64)
-        }
+        self.headerLabel.setJobisText(info.text, font: .headLine, color: .GrayScale.gray90)
+        self.iconImageView.image = .jobisIcon(info.icon).resize(size: 40)
     }
 }

@@ -3,8 +3,8 @@ import DesignSystem
 
 final class SectionTableViewCell: UITableViewCell {
     static let identifier = "SectionTableViewCell"
-    let sectionImageView = UIImageView()
-    let titleLabel = UILabel()
+    private let sectionImageView = UIImageView()
+    private let titleLabel = UILabel()
 
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
@@ -26,5 +26,11 @@ final class SectionTableViewCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(sectionImageView.snp.trailing).offset(8)
         }
+    }
+
+    func setCell(image: UIImage, title: String) {
+        self.sectionImageView.image = image
+        self.titleLabel.setJobisText(title, font: .body, color: .GrayScale.gray90)
+        self.selectionStyle = .none
     }
 }

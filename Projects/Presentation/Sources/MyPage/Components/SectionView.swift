@@ -12,7 +12,7 @@ final class SectionView: BaseView {
         $0.isScrollEnabled = false
     }
     private var items: [SectionModel] = []
-    private var titleLabel: JobisMenuLabel = .init(text: "Test")
+    private var titleLabel: JobisMenuLabel = .init(text: "")
 
     init(menuText: String, items: [SectionModel]) {
         super.init()
@@ -64,9 +64,7 @@ extension SectionView: UITableViewDataSource {
             withIdentifier: SectionTableViewCell.identifier,
             for: indexPath
         ) as? SectionTableViewCell else { return UITableViewCell() }
-        cell.sectionImageView.image = items[indexPath.row].icon
-        cell.titleLabel.setJobisText(items[indexPath.row].title, font: .body, color: .GrayScale.gray90)
-        cell.selectionStyle = .none
+        cell.setCell(image: items[indexPath.row].icon, title: items[indexPath.row].title)
         return cell
     }
 }
