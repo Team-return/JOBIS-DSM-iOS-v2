@@ -33,36 +33,52 @@ public enum JobisIcon {
         switch self {
         case .arrowRight:
             return dsIcons.arrowRight.image
+
         case .arrowNavigate:
             return dsIcons.arrowNavigate.image
+
         case .door:
             return dsIcons.door.image
+
         case .bugBox:
             return dsIcons.bugBox.image
+
         case .bugReport:
             return dsIcons.bugReport.image
+
         case .changePassword:
             return dsIcons.changePassword.image
+
         case .code:
             return dsIcons.code.image
+
         case .withdrawal:
             return dsIcons.withdrawal.image
+
         case .logout:
             return dsIcons.logout.image
+
         case .bookmarkOn:
             return dsIcons.bookmarkOn.image
+
         case .bookmarkOff:
             return dsIcons.bookmarkOff.image
+
         case .searchIcon:
             return dsIcons.searchIcon.image
+
         case .filterIcon:
             return dsIcons.filterIcon.image
+
         case .profile:
             return dsIcons.profile.image
+
         case .bell:
             return dsIcons.bell.image
+
         case .officeBuilding:
             return dsIcons.officeBuilding.image
+
         case .snowman:
             return dsIcons.snowman.image
         }

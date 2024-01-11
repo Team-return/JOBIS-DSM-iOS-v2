@@ -6,10 +6,8 @@ import Core
 import Domain
 
 public final class HomeViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
@@ -70,6 +68,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             }
             .bind(to: applicationList)
             .disposed(by: disposeBag)
+
         return Output(
             studentInfo: studentInfo,
             employmentPercentage: employmentPercentage,

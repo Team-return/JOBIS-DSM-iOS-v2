@@ -13,10 +13,13 @@ private extension JobisTabBarType {
         switch self {
         case .home:
             return ("홈", DesignSystemAsset.Icons.homeTab.image, 0)
+
         case .recruitment:
             return ("모집의뢰서", DesignSystemAsset.Icons.recruitmentTab.image, 1)
+
         case .bookmark:
             return ("북마크", DesignSystemAsset.Icons.bookmarkTab.image, 2)
+
         case .myPage:
             return ("마이페이지", DesignSystemAsset.Icons.mypageTab.image, 3)
         }

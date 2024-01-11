@@ -57,17 +57,19 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),
             nextButtonDidTap: nextPublishRelay.asSignal()
         )
-
         let output = viewModel.transform(input)
+
         output.isSuccessedToSendAuthCode
             .asObservable()
             .bind { [weak self] isSuccessedToSendAuthCode in
                 if isSuccessedToSendAuthCode {
-                    UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve, animations: {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve) {
                         self?.authCodeTextField.startTimer()
-                        self?.emailTextField.setDescription(.success(description: "인증 메일이 발송되었어요."))
+                        self?.emailTextField.setDescription(
+                            .success(description: "인증 메일이 발송되었어요.")
+                        )
                         self?.emailTextField.textFieldRightView.setCustomButtonTitle(title: "재전송")
-                    })
+                    }
                 }
             }
             .disposed(by: disposeBag)

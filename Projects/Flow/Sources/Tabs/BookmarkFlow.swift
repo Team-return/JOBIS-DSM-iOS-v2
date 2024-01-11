@@ -5,18 +5,17 @@ import RxFlow
 import Core
 
 public final class BookmarkFlow: Flow {
-    public var container: Container
-
+    public let container: Container
+    private let rootViewController = BaseNavigationController()
     public var root: Presentable {
         return rootViewController
     }
+
     public init(container: Container) {
         self.container = container
     }
 
-    private let rootViewController = BaseNavigationController()
-
-    public func navigate(to step: Step) -> RxFlow.FlowContributors {
+    public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? BookmarkStep else { return .none }
 
         switch step {
@@ -29,7 +28,12 @@ public final class BookmarkFlow: Flow {
 private extension BookmarkFlow {
     func navigateToBookmark() -> FlowContributors {
         let bookmarkViewController = container.resolve(BookmarkViewController.self)!
-        self.rootViewController.setViewControllers([bookmarkViewController], animated: true)
+
+        self.rootViewController.setViewControllers(
+            [bookmarkViewController],
+            animated: true
+        )
+
         return .one(flowContributor: .contribute(
             withNextPresentable: bookmarkViewController,
             withNextStepper: bookmarkViewController.viewModel

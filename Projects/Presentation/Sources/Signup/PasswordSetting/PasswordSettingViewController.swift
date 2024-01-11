@@ -19,7 +19,11 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
         )
     }
     private let checkingPasswordTextField = JobisTextField().then {
-        $0.setTextField(title: "비밀번호 확인", placeholder: "위 비밀번호를 한 번 더 입력해주세요.", textFieldType: .secure)
+        $0.setTextField(
+            title: "비밀번호 확인",
+            placeholder: "위 비밀번호를 한 번 더 입력해주세요.",
+            textFieldType: .secure
+        )
     }
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
@@ -57,8 +61,8 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
             checkingPassword: checkingPasswordTextField.textField.rx.text.orEmpty.asDriver(),
             nextButtonDidTap: nextPublishRelay.asSignal()
         )
-
         let output = viewModel.transform(input)
+
         output.passwordErrorDescription
             .asObservable()
             .bind { description in

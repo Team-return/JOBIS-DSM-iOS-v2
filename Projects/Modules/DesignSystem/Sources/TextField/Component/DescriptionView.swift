@@ -9,13 +9,25 @@ public final class DescriptionView: UIView {
     public func setDescription(descriptionType: DescriptionType) {
         switch descriptionType {
         case let .error(description):
-            self.descriptionLabel.setJobisText(description, font: .description, color: .Sub.red20)
+            self.descriptionLabel.setJobisText(
+                description,
+                font: .description,
+                color: .Sub.red20
+            )
 
         case let .info(description):
-            self.descriptionLabel.setJobisText(description, font: .description, color: .GrayScale.gray90)
+            self.descriptionLabel.setJobisText(
+                description,
+                font: .description,
+                color: .GrayScale.gray90
+            )
 
         case let .success(description):
-            self.descriptionLabel.setJobisText(description, font: .description, color: .GrayScale.gray90)
+            self.descriptionLabel.setJobisText(
+                description,
+                font: .description,
+                color: .GrayScale.gray90
+            )
         }
         self.imageView.image = descriptionType.toIcon()
     }

@@ -6,13 +6,11 @@ import RxCocoa
 import Domain
 
 public final class PrivacyViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-
     private let signupUseCase: SignupUseCase
 
-    init(signupUseCase: SignupUseCase) {
+    public init(signupUseCase: SignupUseCase) {
         self.signupUseCase = signupUseCase
     }
 
@@ -45,6 +43,7 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
         return Output()
     }
 }

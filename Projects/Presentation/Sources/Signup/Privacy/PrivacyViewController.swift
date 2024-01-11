@@ -28,6 +28,7 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
             signupButton
         ].forEach { self.view.addSubview($0) }
     }
+
     public override func setLayout() {
         privacyWebView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
@@ -48,7 +49,6 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
             password: password,
             signupButtonDidTap: signupButton.rx.tap.asSignal()
         )
-
         _ = viewModel.transform(input)
     }
 

@@ -6,8 +6,8 @@ import RxCocoa
 import Domain
 
 public final class VerifyEmailViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
+    private let disposeBag = DisposeBag()
     private let sendAuthCodeUseCase: SendAuthCodeUseCase
     private let verifyAuthCodeUseCase: VerifyAuthCodeUseCase
 
@@ -19,7 +19,6 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
         self.verifyAuthCodeUseCase = verifyAuthCodeUseCase
     }
 
-    private let disposeBag = DisposeBag()
     public struct Input {
         let name: String
         let gcn: Int
@@ -28,6 +27,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
         let sendAuthCodeButtonDidTap: Signal<Void>
         let nextButtonDidTap: Signal<Void>
     }
+
     public struct Output {
         let emailErrorDescription: PublishRelay<DescriptionType>
         let authCodeErrorDescription: PublishRelay<DescriptionType>
@@ -38,6 +38,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
         let emailErrorDescription = PublishRelay<DescriptionType>()
         let authCodeErrorDescription = PublishRelay<DescriptionType>()
         let isSuccessedToSendAuthCode = BehaviorRelay(value: false)
+        let info = Driver.combineLatest(input.email, input.authCode)
 
         input.sendAuthCodeButtonDidTap
             .asObservable()
@@ -60,7 +61,6 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
             .bind(to: isSuccessedToSendAuthCode)
             .disposed(by: disposeBag)
 
-        let info = Driver.combineLatest(input.email, input.authCode)
         input.nextButtonDidTap
             .asObservable()
             .withLatestFrom(info)

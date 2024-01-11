@@ -7,7 +7,6 @@ import RxCocoa
 public final class JobisTextField: UIView {
     private var disposeBag = DisposeBag()
     private var timerDisposeBag = DisposeBag()
-
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
@@ -23,7 +22,6 @@ public final class JobisTextField: UIView {
     private let descriptionView = DescriptionView().then {
         $0.isHidden = true
     }
-
     private var isDescription = false {
         willSet(newValue) {
             withAnimation {
