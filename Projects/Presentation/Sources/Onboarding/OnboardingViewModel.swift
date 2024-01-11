@@ -5,11 +5,10 @@ import RxSwift
 import RxCocoa
 
 public final class OnboardingViewModel: BaseViewModel, Stepper {
-    public var steps = PublishRelay<Step>()
-
+    public let steps = PublishRelay<Step>()
+    private let disposeBag = DisposeBag()
     private let reissueTokenUaseCase: ReissueTokenUaseCase
 
-    private let disposeBag = DisposeBag()
     init(reissueTokenUaseCase: ReissueTokenUaseCase) {
         self.reissueTokenUaseCase = reissueTokenUaseCase
     }
@@ -26,6 +25,7 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
 
     public func transform(_ input: Input) -> Output {
         let animate = PublishRelay<Void>()
+
         input.navigateToSigninDidTap.asObservable()
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .map { _ in OnboardingStep.signinIsRequired }
@@ -51,6 +51,7 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
         return Output(animate: animate)
     }
 }
