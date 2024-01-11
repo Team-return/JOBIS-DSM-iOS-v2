@@ -5,16 +5,15 @@ import RxFlow
 import Core
 
 public final class OnboardingFlow: Flow {
-    public var container: Container
-
+    public let container: Container
+    private let rootViewController = BaseNavigationController()
     public var root: Presentable {
         return rootViewController
     }
+
     public init(container: Container) {
         self.container = container
     }
-
-    private let rootViewController = BaseNavigationController()
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? OnboardingStep else { return .none }
@@ -38,9 +37,11 @@ public final class OnboardingFlow: Flow {
 private extension OnboardingFlow {
     func navigateToSignin() -> FlowContributors {
         let signinFlow = SigninFlow(container: container)
+
         Flows.use(signinFlow, when: .created) { root in
             self.rootViewController.pushViewController(root, animated: true)
         }
+
         return .one(flowContributor: .contribute(
             withNextPresentable: signinFlow,
             withNextStepper: OneStepper(withSingleStep: SigninStep.signinIsRequired)
@@ -49,9 +50,14 @@ private extension OnboardingFlow {
 
     func navigateToSignup() -> FlowContributors {
         let signupFlow = InfoSettingFlow(container: container)
+
         Flows.use(signupFlow, when: .created) { root in
-            self.rootViewController.pushViewController(root, animated: true)
+            self.rootViewController.pushViewController(
+                root,
+                animated: true
+            )
         }
+
         return .one(flowContributor: .contribute(
             withNextPresentable: signupFlow,
             withNextStepper: OneStepper(withSingleStep: InfoSettingStep.infoSettingIsRequired)
@@ -60,7 +66,12 @@ private extension OnboardingFlow {
 
     func navigateToOnboarding() -> FlowContributors {
         let onboardingViewController = container.resolve(OnboardingViewController.self)!
-        self.rootViewController.setViewControllers([onboardingViewController], animated: true)
+
+        self.rootViewController.setViewControllers(
+            [onboardingViewController],
+            animated: true
+        )
+
         return .one(flowContributor: .contribute(
             withNextPresentable: onboardingViewController,
             withNextStepper: onboardingViewController.viewModel

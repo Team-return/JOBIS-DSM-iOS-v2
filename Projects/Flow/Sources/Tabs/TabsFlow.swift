@@ -6,8 +6,8 @@ import DesignSystem
 import Swinject
 
 public final class TabsFlow: Flow {
-    public var container: Container
-
+    public let container: Container
+    private let rootViewController = BaseTabBarController()
     public var root: Presentable {
         return rootViewController
     }
@@ -16,14 +16,13 @@ public final class TabsFlow: Flow {
         self.container = container
     }
 
-    private let rootViewController = BaseTabBarController()
-
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? TabsStep else { return .none }
 
         switch step {
         case .tabsIsRequired:
             return navigateToTabs()
+
         case .appIsRequired:
             return dismissToOnbording()
         }
@@ -48,9 +47,16 @@ private extension TabsFlow {
             recruitment.tabBarItem = JobisTabBarItem(.recruitment)
             bookmark.tabBarItem = JobisTabBarItem(.bookmark)
             mypage.tabBarItem = JobisTabBarItem(.myPage)
-            self?.rootViewController.setViewControllers([
-                home, recruitment, bookmark, mypage
-            ], animated: false)
+
+            self?.rootViewController.setViewControllers(
+                [
+                    home,
+                    recruitment,
+                    bookmark,
+                    mypage
+                ],
+                animated: false
+            )
         }
 
         return .multiple(flowContributors: [
@@ -77,11 +83,10 @@ private extension TabsFlow {
         UIView.transition(
             with: self.rootViewController.view.window!,
             duration: 0.5,
-            options: .transitionCrossDissolve,
-            animations: {
+            options: .transitionCrossDissolve) {
                 self.rootViewController.dismiss(animated: false)
             }
-        )
+
         return .end(forwardToParentFlowWithStep: AppStep.onboardingIsRequired)
     }
 }
