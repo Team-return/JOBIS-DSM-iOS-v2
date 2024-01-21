@@ -18,6 +18,7 @@ let project = Project.makeModule(
         .SPM.Lottie,
         .SPM.kingfisher,
         .SPM.KeychainSwift,
-        .SPM.ReactorKit
+        .SPM.ReactorKit,
+        .SPM.RxGesture
     ], sources: []
 )
