@@ -3,10 +3,13 @@ import SnapKit
 import Then
 import Domain
 import DesignSystem
+import RxSwift
 
-final class ApplicationStatusTableViewCell: UITableViewCell {
+final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity> {
     static let identifier = "ApplicationStatusTableViewCell"
+    public var rejectReasonButtonDidTap: (() -> Void)?
     public var applicationID: Int?
+    private let disposeBag = DisposeBag()
     private let containerView = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
@@ -18,16 +21,33 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
         $0.clipsToBounds = true
     }
     private let companyNameLabel = UILabel()
+    private let stateStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.distribution = .fill
+    }
     private let applicationStatusLabel = UILabel()
+    private let rejectReasonButton = UIButton(type: .system).then {
+        $0.setJobisText("사유 보기 →", font: .subBody, color: .Sub.red20)
+        $0.setUnderline()
+        $0.isHidden = true
+    }
 
-    override func layoutSubviews() {
+    override func addView() {
         self.addSubview(containerView)
         [
             companyProfileImageView,
             companyNameLabel,
-            applicationStatusLabel
+            stateStackView
         ].forEach(containerView.addSubview(_:))
 
+        [
+            applicationStatusLabel,
+            rejectReasonButton
+        ].forEach(stateStackView.addArrangedSubview(_:))
+    }
+
+    override func setLayout() {
         containerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(64)
@@ -39,26 +59,39 @@ final class ApplicationStatusTableViewCell: UITableViewCell {
             $0.width.height.equalTo(40)
         }
 
+        companyNameLabel.snp.contentCompressionResistanceHorizontalPriority = 0
         companyNameLabel.snp.makeConstraints {
             $0.centerY.equalTo(companyProfileImageView)
             $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(8)
+            $0.trailing.equalTo(stateStackView.snp.leading).offset(-5)
         }
 
-        applicationStatusLabel.snp.makeConstraints {
+        stateStackView.snp.makeConstraints {
             $0.centerY.equalTo(companyProfileImageView)
             $0.trailing.equalTo(containerView).inset(16)
         }
     }
 
-    func setCell(_ entity: ApplicationEntity) {
+    override func configureView() {
+        rejectReasonButton.rx.tap.subscribe(onNext: { [weak self] in
+            self?.rejectReasonButtonDidTap?()
+        }).disposed(by: disposeBag)
+        self.selectionStyle = .none
+    }
+
+    override func adapt(model: ApplicationEntity) {
         companyProfileImageView.setJobisImage(urlString: "LOGO_IMAGE/companydefault.png")
-        companyNameLabel.setJobisText(entity.company, font: .body, color: .GrayScale.gray90)
+        companyNameLabel.setJobisText(model.company, font: .body, color: .GrayScale.gray90)
+        companyNameLabel.lineBreakMode = .byTruncatingTail
         applicationStatusLabel.setJobisText(
-            entity.applicationStatus.localizedString(),
+            model.applicationStatus.localizedString(),
             font: .subBody,
-            color: entity.applicationStatus.toUIColor()
+            color: model.applicationStatus.toUIColor()
         )
-        self.applicationID = entity.applicationID
+        if model.applicationStatus == .rejected {
+            rejectReasonButton.isHidden = false
+        }
+        self.applicationID = model.applicationID
     }
 }
 
