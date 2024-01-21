@@ -29,13 +29,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
-        let employmentPercentage: PublishRelay<Float>
+        let employmentPercentage: PublishRelay<TotalPassStudentEntity>
         let applicationList: PublishRelay<[ApplicationEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
-        let employmentPercentage = PublishRelay<Float>()
+        let employmentPercentage = PublishRelay<TotalPassStudentEntity>()
         let applicationList = PublishRelay<[ApplicationEntity]>()
 
         input.viewAppear.asObservable()
@@ -55,9 +55,6 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         input.viewAppear.asObservable()
             .flatMap { [self] in
                 fetchTotalPassStudentUseCase.execute()
-                    .map { totalPassStudent in
-                        Float(totalPassStudent.passedCount / totalPassStudent.totalStudentCount)
-                    }
             }
             .bind(to: employmentPercentage)
             .disposed(by: disposeBag)
