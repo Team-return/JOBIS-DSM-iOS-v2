@@ -9,7 +9,7 @@ import DesignSystem
 public final class SigninViewController: BaseReactorViewController<SigninReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("JOBIS에 로그인하기", font: .pageTitle, color: .GrayScale.gray90)
-        $0.setColorRange(color: .Primary.blue20, range: "JOBIS")
+        $0.setRangeOfText(font: .jobisFont(.pageTitle), color: .Primary.blue20, range: "JOBIS")
     }
     private let titleLineView = UIView().then {
         $0.backgroundColor = .GrayScale.gray90
