@@ -25,6 +25,9 @@ public enum JobisIcon {
     case bell
     case officeBuilding
     case snowman
+    case jobisLogo
+    case currentPageControl
+    case defaultPageControl
 
     // swiftlint: disable cyclomatic_complexity
     func uiImage() -> UIImage {
@@ -81,6 +84,15 @@ public enum JobisIcon {
 
         case .snowman:
             return dsIcons.snowman.image
+
+        case .jobisLogo:
+            return dsIcons.jobisLogo.image
+
+        case .currentPageControl:
+            return dsIcons.currentPageControl.image
+
+        case .defaultPageControl:
+            return dsIcons.defaultPageControl.image
         }
     }
     // swiftlint: enable cyclomatic_complexity
