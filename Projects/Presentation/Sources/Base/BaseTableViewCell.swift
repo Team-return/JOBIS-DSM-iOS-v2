@@ -11,9 +11,13 @@ public class BaseTableViewCell<Model>: UITableViewCell,
         reuseIdentifier: String?
     ) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureView()
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
         addView()
         setLayout()
-        configureView()
     }
 
     required public init?(coder: NSCoder) {
