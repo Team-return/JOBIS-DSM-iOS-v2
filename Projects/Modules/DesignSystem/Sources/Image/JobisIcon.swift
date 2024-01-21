@@ -28,6 +28,7 @@ public enum JobisIcon {
     case jobisLogo
     case currentPageControl
     case defaultPageControl
+    case pieChart
 
     // swiftlint: disable cyclomatic_complexity
     func uiImage() -> UIImage {
@@ -93,6 +94,9 @@ public enum JobisIcon {
 
         case .defaultPageControl:
             return dsIcons.defaultPageControl.image
+
+        case .pieChart:
+            return dsIcons.pieChart.image
         }
     }
     // swiftlint: enable cyclomatic_complexity

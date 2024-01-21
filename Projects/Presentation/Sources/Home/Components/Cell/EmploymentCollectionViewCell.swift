@@ -16,6 +16,10 @@ final class EmploymentCollectionViewCell: UICollectionViewCell {
     private let employmentPersonLabel = UILabel().then {
         $0.setJobisText("현재 0/0 명이 취업했어요", font: .description, color: .GrayScale.gray60)
     }
+    private let employmentImageView = UIImageView().then {
+        $0.image = .jobisIcon(.pieChart)
+        $0.contentMode = .scaleToFill
+    }
 
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -36,7 +40,8 @@ final class EmploymentCollectionViewCell: UICollectionViewCell {
         [
             employmentLabel,
             employmentPercentageLabel,
-            employmentPersonLabel
+            employmentPersonLabel,
+            employmentImageView
         ].forEach(self.addSubview(_:))
     }
 
@@ -52,6 +57,11 @@ final class EmploymentCollectionViewCell: UICollectionViewCell {
 
         employmentPersonLabel.snp.makeConstraints {
             $0.leading.bottom.equalToSuperview().inset(24)
+        }
+
+        employmentImageView.snp.makeConstraints {
+            $0.centerY.trailing.equalToSuperview()
+            $0.width.height.equalTo(180)
         }
     }
 
