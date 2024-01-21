@@ -34,7 +34,7 @@ final class SectionView: BaseView {
     override func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
-            $0.leading.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
         }
 
         sectionTableView.snp.makeConstraints {
