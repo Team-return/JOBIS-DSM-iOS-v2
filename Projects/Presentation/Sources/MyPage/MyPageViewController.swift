@@ -19,6 +19,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = AccountSectionView()
     private let bugSectionView = BugSectionView()
+    private let helpSectionView = HelpSectionView()
 
     public override func addView() {
         self.view.addSubview(scrollView)
@@ -28,7 +29,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             editButton,
             reviewNavigateStackView,
             accountSectionView,
-            bugSectionView
+            bugSectionView,
+            helpSectionView
         ].forEach { self.contentView.addSubview($0) }
     }
 
@@ -36,29 +38,40 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(bugSectionView)
+            $0.bottom.equalTo(helpSectionView).offset(60)
         }
+
         studentInfoView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
+
         editButton.snp.makeConstraints {
             $0.centerY.equalTo(studentInfoView)
             $0.trailing.equalToSuperview().offset(-28)
         }
+
         reviewNavigateStackView.snp.updateConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.top.equalTo(studentInfoView.snp.bottom)
         }
+
         accountSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
+
         bugSectionView.snp.makeConstraints {
             $0.top.equalTo(accountSectionView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        helpSectionView.snp.makeConstraints {
+            $0.top.equalTo(bugSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
     }
