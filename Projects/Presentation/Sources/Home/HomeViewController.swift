@@ -14,14 +14,18 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
+    private let titleImageView = UIImageView(image: .jobisIcon(.jobisLogo))
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
     private let contentView = UIView()
+    private let bannerView = BannerView()
     private let studentInfoView = StudentInfoView()
-    private let employmentView = EmploymentView()
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
-    private let applicationStatusMenuLabel = JobisMenuLabel(text: "지원 현황")
+    private let applicationStatusMenuLabel = JobisMenuLabel(
+        text: "지원 현황",
+        subText: "승인요청 및 반려 상태엔 재지원 가능"
+    )
     private let applicationStatusTableView = UITableView().then {
         $0.register(
             ApplicationStatusTableViewCell.self,
@@ -51,8 +55,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             findWinterRecruitmentsCard
         ].forEach(careerStackView.addArrangedSubview(_:))
         [
+            bannerView,
             studentInfoView,
-            employmentView,
             careerMenuLabel,
             careerStackView,
             applicationStatusMenuLabel,
@@ -64,22 +68,24 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(self.view.safeAreaLayoutGuide)
         }
+
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
             $0.bottom.equalTo(applicationStatusTableView.snp.bottom)
         }
-        studentInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
+
+        bannerView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview()
         }
 
-        employmentView.snp.makeConstraints {
-            $0.top.equalTo(studentInfoView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(24)
+        studentInfoView.snp.makeConstraints {
+            $0.top.equalTo(bannerView.snp.bottom)
         }
 
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(employmentView.snp.bottom).offset(24)
+            $0.top.equalTo(studentInfoView.snp.bottom).offset(12)
         }
 
         careerStackView.snp.makeConstraints {
@@ -90,6 +96,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
         applicationStatusMenuLabel.snp.makeConstraints {
             $0.top.equalTo(careerStackView.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
         }
 
         applicationStatusTableView.snp.makeConstraints {
@@ -119,11 +126,9 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             .disposed(by: disposeBag)
 
         output.employmentPercentage
-            .bind { [weak self] employmentPercentage in
-                guard let self else { return }
-
-                employmentView.setEmploymentPercentage(employmentPercentage)
-            }
+            .bind(onNext: { [weak self] in
+                self?.bannerView.setTotalPassStudent($0)
+            })
             .disposed(by: disposeBag)
 
         output.applicationList
@@ -143,7 +148,11 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                     cellType: ApplicationStatusTableViewCell.self
                 )
             ) { _, element, cell in
-                cell.setCell(element)
+                cell.adapt(model: element)
+                cell.selectionStyle = .none
+                cell.rejectReasonButtonDidTap = {
+                    print(cell.applicationID!)
+                }
             }
             .disposed(by: disposeBag)
     }
@@ -183,10 +192,12 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 print($0)
             })
             .disposed(by: disposeBag)
+        self.bannerView.setBanner([.actions, .add, .checkmark, .remove])
     }
 
     public override func configureNavigation() {
         self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
+        self.navigationItem.leftBarButtonItem = .init(customView: titleImageView)
     }
 
     private func setCardStyle(isWinterSeason: Bool) {
