@@ -43,6 +43,10 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/ReactorKit/ReactorKit",
                 requirement: .upToNextMajor(from: "3.2.0")
+            ),
+            .remote(
+                url: "https://github.com/RxSwiftCommunity/RxGesture",
+                requirement: .upToNextMajor(from: "4.0.0")
             )
         ],
         baseSettings: .settings(
