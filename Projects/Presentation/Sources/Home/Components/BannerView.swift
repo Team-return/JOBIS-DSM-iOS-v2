@@ -161,7 +161,7 @@ extension BannerView: UICollectionViewDataSource, UICollectionViewDelegateFlowLa
                 for: indexPath
             ) as? BannerCollectionViewCell else { return UICollectionViewCell() }
 
-            cell.adapt(image: bannerList[indexPath.row - 1])
+            cell.adapt(model: bannerList[indexPath.row - 1])
 
             return cell
         }
