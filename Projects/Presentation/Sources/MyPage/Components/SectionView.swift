@@ -64,7 +64,8 @@ extension SectionView: UITableViewDataSource {
             withIdentifier: SectionTableViewCell.identifier,
             for: indexPath
         ) as? SectionTableViewCell else { return UITableViewCell() }
-        cell.setCell(image: items[indexPath.row].icon, title: items[indexPath.row].title)
+        cell.adapt(model: items[indexPath.row])
+
         return cell
     }
 }
