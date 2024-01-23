@@ -31,8 +31,12 @@ public final class PresentationAssembly: Assembly {
         container.register(RecruitmentViewController.self) { resolver in
             RecruitmentViewController(resolver.resolve(RecruitmentViewModel.self)!)
         }
-        container.register(RecruitmentViewModel.self) { _ in
-            RecruitmentViewModel()
+
+        container.register(RecruitmentViewModel.self) { resolver in
+            RecruitmentViewModel(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
         }
 
         container.register(BookmarkViewController.self) { resolver in

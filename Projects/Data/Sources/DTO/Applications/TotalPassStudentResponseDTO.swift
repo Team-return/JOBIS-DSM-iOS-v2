@@ -19,7 +19,8 @@ public struct TotalPassStudentResponseDTO: Codable {
 
 public extension TotalPassStudentResponseDTO {
     func toDomain() -> TotalPassStudentEntity {
-        TotalPassStudentEntity(
+        let totalStudentCount = totalStudentCount > 0 ? totalStudentCount: 1
+        return TotalPassStudentEntity(
             totalStudentCount: totalStudentCount,
             passedCount: passedCount,
             approvedCount: approvedCount

@@ -7,8 +7,13 @@ import Core
 import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
-    private let tableView = UITableView().then {
-        $0.register(RecruitmentTableViewCell.self, forCellReuseIdentifier: RecruitmentTableViewCell.identifier)
+    private let cellClick = PublishRelay<Int>()
+
+    private let recruitmentTableView = UITableView().then {
+        $0.register(
+            RecruitmentTableViewCell.self,
+            forCellReuseIdentifier: RecruitmentTableViewCell.identifier
+        )
         $0.separatorStyle = .none
         $0.rowHeight = 96
     }
@@ -32,10 +37,9 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     public override func configureViewController() {
         tableView.dataSource = self
         tableView.delegate = self
-
         navigateToSearchButton.rx.tap
             .subscribe(onNext: { _ in
-                print("hello")
+                print("Search!")
             })
             .disposed(by: disposeBag)
     }
@@ -47,35 +51,32 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         ]
         setLargeTitle(title: "모집의뢰서")
     }
-}
-extension RecruitmentViewController: UITableViewDataSource, UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
-    }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: RecruitmentTableViewCell.identifier,
-            for: indexPath
-        ) as? RecruitmentTableViewCell else { return UITableViewCell() }
+    public override func bind() {
+        let input = RecruitmentViewModel.Input(
+            viewAppear: self.viewAppear,
+            bookMarkButtonDidTap: cellClick
+        )
+        let output = viewModel.transform(input)
 
-        return cell
-    }
-
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) {
-            cell.contentView.backgroundColor = UIColor.GrayScale.gray20
-            // 다른 동작 수행 가능
-            // 예: 특정 셀을 선택했을 때의 동작 처리
-
-            // 지연 작업을 통해 일정 시간 후에 원래 색으로 돌아가도록 함
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                UIView.animate(withDuration: 0.1) {
-                    cell.contentView.backgroundColor = UIColor.GrayScale.gray10
-                }
+        output.recruitmentList
+            .bind(
+                to: recruitmentTableView.rx.items(
+                    cellIdentifier: RecruitmentTableViewCell.identifier,
+                    cellType: RecruitmentTableViewCell.self
+                )
+            ) { _, element, cell in
+                print(element.companyName, element.bookmarked)
+                cell.setCell(element)
+                cell.bookmarkButton.rx.tap.asObservable()
+                    .subscribe(onNext: {
+                        print("Clicked!:", $0)
+                        //                        print("CellID:", cell.recruitmentID)
+                        self.cellClick.accept(cell.recruitmentID ?? 0)
+                    })
+                    .disposed(by: self.disposeBag)
+                //                self.cellClick.accept(cell.recruitmentID ?? 0)
             }
-        }
-
-        tableView.deselectRow(at: indexPath, animated: false)
+            .disposed(by: disposeBag)
     }
 }
