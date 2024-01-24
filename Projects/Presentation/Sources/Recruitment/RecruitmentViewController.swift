@@ -15,6 +15,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         )
         $0.separatorStyle = .none
         $0.rowHeight = 96
+        $0.showsVerticalScrollIndicator = false
     }
     private let navigateToFilterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
