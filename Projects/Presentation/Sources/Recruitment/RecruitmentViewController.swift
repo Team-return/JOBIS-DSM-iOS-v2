@@ -8,7 +8,6 @@ import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let cellClick = PublishRelay<Int>()
-
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -25,36 +24,18 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     }
 
     public override func addView() {
-        self.view.addSubview(tableView)
+        self.view.addSubview(recruitmentTableView)
     }
 
     public override func setLayout() {
-        tableView.snp.makeConstraints {
+        recruitmentTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
 
-    public override func configureViewController() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        navigateToSearchButton.rx.tap
-            .subscribe(onNext: { _ in
-                print("Search!")
-            })
-            .disposed(by: disposeBag)
-    }
-
-    public override func configureNavigation() {
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: navigateToFilterButton),
-            UIBarButtonItem(customView: navigateToSearchButton)
-        ]
-        setLargeTitle(title: "모집의뢰서")
-    }
-
     public override func bind() {
         let input = RecruitmentViewModel.Input(
-            viewAppear: self.viewAppear,
+            viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: cellClick
         )
         let output = viewModel.transform(input)
@@ -64,19 +45,27 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 to: recruitmentTableView.rx.items(
                     cellIdentifier: RecruitmentTableViewCell.identifier,
                     cellType: RecruitmentTableViewCell.self
-                )
-            ) { _, element, cell in
-                print(element.companyName, element.bookmarked)
-                cell.setCell(element)
-                cell.bookmarkButton.rx.tap.asObservable()
-                    .subscribe(onNext: {
-                        print("Clicked!:", $0)
-                        //                        print("CellID:", cell.recruitmentID)
-                        self.cellClick.accept(cell.recruitmentID ?? 0)
-                    })
-                    .disposed(by: self.disposeBag)
-                //                self.cellClick.accept(cell.recruitmentID ?? 0)
-            }
+                )) { _, element, cell in
+                    print(element.companyName, element.bookmarked)
+                    cell.adapt(model: element)
+                    cell.bookmarkButtonDidTap = {
+                        self.cellClick.accept(cell.recruitmentID)
+                    }
+                }
+                .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
+        navigateToSearchButton.rx.tap
+            .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
+    }
+
+    public override func configureNavigation() {
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: navigateToFilterButton),
+            UIBarButtonItem(customView: navigateToSearchButton)
+        ]
+        setLargeTitle(title: "모집의뢰서")
     }
 }
