@@ -6,13 +6,12 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class RecruitmentTableViewCell: UITableViewCell {
+final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
-
-    var recruitmentID: Int?
+    public var bookmarkButtonDidTap: (()->(Void))?
+    public var recruitmentID = 0
     private var disposeBag = DisposeBag()
     private var isBookmarked = false
-
     private let companyProfileImageView = UIImageView().then {
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
@@ -44,67 +43,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         $0.setImage(.jobisIcon(.bookmarkOff).resize(size: 28), for: .normal)
     }
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = UIColor.GrayScale.gray10
-        addView()
-        layout()
-        attribute()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func attribute() {
-        companyProfileImageView.layer.cornerRadius = 8
-        bookmarkButton.rx.tap.asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.bookmark()
-            })
-            .disposed(by: disposeBag)
-    }
-
-    func setCell(_ entity: RecruitmentEntity) {
-        companyProfileImageView.setJobisImage(
-            urlString: entity.companyProfileURL
-        )
-        fieldTypeLabel.setJobisText(
-            entity.hiringJobs,
-            font: .subHeadLine,
-            color: .GrayScale.gray90
-        )
-        let militarySupport = entity.militarySupport ? "O": "X"
-        benefitsLabel.setJobisText(
-            "병역특례 \(militarySupport) · 실습 수당 \(entity.trainPay)만원",
-            font: .subBody,
-            color: .GrayScale.gray70
-        )
-        companyLabel.setJobisText(
-            entity.companyName,
-            font: .description,
-            color: .GrayScale.gray70
-        )
-        recruitmentID = entity.recruitID
-        setBookmark(entity.bookmarked)
-    }
-
-    private func setBookmark(_ bool: Bool) {
-        self.isBookmarked = bool
-        var bookmarkImage: JobisIcon {
-            bool ? .bookmarkOn: .bookmarkOff
-        }
-        bookmarkButton.setImage(
-            .jobisIcon(bookmarkImage)
-            .resize(size: 28), for: .normal
-        )
-    }
-
-    func bookmark() {
-        setBookmark(!isBookmarked)
-    }
-
-    private func addView() {
+    override func addView() {
         [
             companyProfileImageView,
             fieldTypeLabel,
@@ -116,7 +55,7 @@ final class RecruitmentTableViewCell: UITableViewCell {
         }
     }
 
-    private func layout() {
+    override func setLayout() {
         companyProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.left.equalToSuperview().inset(24)
@@ -139,5 +78,54 @@ final class RecruitmentTableViewCell: UITableViewCell {
             $0.top.equalTo(benefitsLabel.snp.bottom).offset(4)
             $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
         }
+    }
+
+    override func configureView() {
+        companyProfileImageView.layer.cornerRadius = 8
+        bookmarkButton.rx.tap
+            .bind(onNext: { [weak self] in
+                self?.bookmarkButtonDidTap?()
+                self?.bookmark()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    override func adapt(model: RecruitmentEntity) {
+        companyProfileImageView.setJobisImage(
+            urlString: model.companyProfileURL
+        )
+        fieldTypeLabel.setJobisText(
+            model.hiringJobs,
+            font: .subHeadLine,
+            color: .GrayScale.gray90
+        )
+        let militarySupport = model.militarySupport ? "O": "X"
+        benefitsLabel.setJobisText(
+            "병역특례 \(militarySupport) · 실습 수당 \(model.trainPay)만원",
+            font: .subBody,
+            color: .GrayScale.gray70
+        )
+        companyLabel.setJobisText(
+            model.companyName,
+            font: .description,
+            color: .GrayScale.gray70
+        )
+        recruitmentID = model.recruitID
+        setBookmark(model.bookmarked)
+    }
+
+    private func setBookmark(_ bool: Bool) {
+        self.isBookmarked = bool
+        var bookmarkImage: JobisIcon {
+            bool ? .bookmarkOn: .bookmarkOff
+        }
+        bookmarkButton.setImage(
+            .jobisIcon(bookmarkImage)
+            .resize(size: 28), for: .normal
+        )
+    }
+
+    func bookmark() {
+        setBookmark(!isBookmarked)
     }
 }
