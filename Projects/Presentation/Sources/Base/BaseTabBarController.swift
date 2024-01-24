@@ -70,7 +70,8 @@ final class TabbarSlideAnimator: NSObject, UIViewControllerAnimatedTransitioning
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let fromView = transitionContext.view(forKey: .from),
-            let toView = transitionContext.view(forKey: .to) else { return }
+            let toView = transitionContext.view(forKey: .to)
+        else { return }
 
         self.setSlideDirection(using: transitionContext)
 
@@ -105,7 +106,8 @@ final class TabbarSlideAnimator: NSObject, UIViewControllerAnimatedTransitioning
                     toView.center.x -= distanceX * (1/4)
                     toView.alpha = 1.0
                 }
-            }, completion: {
+            },
+            completion: {
                 transitionContext.completeTransition($0)
                 fromView.alpha = 1.0
             }
@@ -116,15 +118,15 @@ final class TabbarSlideAnimator: NSObject, UIViewControllerAnimatedTransitioning
         guard let fromVC = transitionContext.viewController(forKey: .from),
               let toVC = transitionContext.viewController(forKey: .to) else { return }
 
-        self.slideDirection = getIndex(fromVC) > getIndex(toVC) ? .leftToRight : .rightToLeft
+        self.slideDirection = getIndex(fromVC) ?? 0 > getIndex(toVC) ?? 0 ? .leftToRight : .rightToLeft
     }
 
-    private func getIndex(_ forViewController: UIViewController) -> Int {
-        guard let viewControllers = self.viewControllers else { return 0 }
+    private func getIndex(_ forViewController: UIViewController) -> Int? {
+        guard let viewControllers = self.viewControllers else { return nil }
 
         for (index, viewController) in viewControllers.enumerated()
         where viewController == forViewController { return index }
 
-        return 0
+        return nil
     }
 }
