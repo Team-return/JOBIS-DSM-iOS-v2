@@ -4,45 +4,30 @@ import SnapKit
 import Then
 import DesignSystem
 
-final class BannerCollectionViewCell: UICollectionViewCell {
+final class BannerCollectionViewCell: BaseCollectionViewCell<UIImage> {
     static let identifier = "BannerCollectionViewCell"
     private let imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: .zero)
-        configureView()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        addView()
-        setLayout()
-    }
-
-    private func addView() {
+    override func addView() {
         [
             imageView
         ].forEach(self.addSubview(_:))
     }
 
-    private func setLayout() {
+    override func setLayout() {
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
 
-    private func configureView() {
+    override func configureView() {
         self.layer.cornerRadius = 12
         self.backgroundColor = .GrayScale.gray30
     }
 
-    func adapt(image: UIImage) {
-        self.imageView.image = image
+    override func adapt(model: UIImage) {
+        self.imageView.image = model
     }
 }
