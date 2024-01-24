@@ -38,8 +38,11 @@ public final class PresentationAssembly: Assembly {
         container.register(BookmarkViewController.self) { resolver in
             BookmarkViewController(resolver.resolve(BookmarkViewModel.self)!)
         }
-        container.register(BookmarkViewModel.self) { _ in
-            BookmarkViewModel()
+        container.register(BookmarkViewModel.self) { resolver in
+            BookmarkViewModel(
+                fetchBookmarkListUseCase: resolver.resolve(FetchBookmarkListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
         }
 
         container.register(MyPageViewController.self) { resolver in
