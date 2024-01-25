@@ -47,7 +47,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                     cellIdentifier: RecruitmentTableViewCell.identifier,
                     cellType: RecruitmentTableViewCell.self
                 )) { _, element, cell in
-                    print(element.companyName, element.bookmarked)
                     cell.adapt(model: element)
                     cell.bookmarkButtonDidTap = {
                         self.cellClick.accept(cell.recruitmentID)
