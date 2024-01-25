@@ -68,7 +68,7 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
         fieldTypeLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
-            $0.right.lessThanOrEqualTo(bookmarkButton.snp.left).offset(-4)
+            $0.right.equalToSuperview().inset(52)
         }
         benefitsLabel.snp.makeConstraints {
             $0.top.equalTo(fieldTypeLabel.snp.bottom).offset(4)
@@ -91,11 +91,12 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
 
     override func adapt(model: RecruitmentEntity) {
+        let truncatedFieldTypeLabel = model.hiringJobs.truncate()
         companyProfileImageView.setJobisImage(
             urlString: model.companyProfileURL
         )
         fieldTypeLabel.setJobisText(
-            model.hiringJobs,
+            truncatedFieldTypeLabel,
             font: .subHeadLine,
             color: .GrayScale.gray90
         )
@@ -127,5 +128,29 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
 
     func bookmark() {
         setBookmark(!isBookmarked)
+    }
+}
+
+extension String {
+    func truncate() -> String {
+        let screenWidth = UIScreen.main.bounds.width
+        var maxLength: Int
+
+        switch screenWidth {
+        case 0..<370:
+            maxLength = 15
+        case 370..<430:
+            maxLength = 20
+        case 430..<500:
+            maxLength = 25
+        default:
+            maxLength = 50
+        }
+
+        if self.count > maxLength {
+            return String(self.prefix(maxLength)) + "..."
+        } else {
+            return self
+        }
     }
 }
