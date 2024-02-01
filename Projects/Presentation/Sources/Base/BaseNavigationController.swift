@@ -39,7 +39,7 @@ public class BaseNavigationController: UINavigationController {
             backButtonImage,
             transitionMaskImage: backButtonImage
         )
-        scrollEdgeAppearance.backgroundColor = .white
+        scrollEdgeAppearance.backgroundColor = .GrayScale.gray10
 
         scrollEdgeAppearance.configureWithTransparentBackground()
         standardAppearance.configureWithDefaultBackground()
