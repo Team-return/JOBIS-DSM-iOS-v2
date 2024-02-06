@@ -22,19 +22,27 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
+        var pageChange: PublishRelay<Int>
     }
 
     public struct Output {
         let recruitmentList: PublishRelay<[RecruitmentEntity]>
-        let bookmarkOk: PublishRelay<Void>
     }
 
     public func transform(_ input: Input) -> Output {
         let recruitmentList = PublishRelay<[RecruitmentEntity]>()
-        let bookmarkOk = PublishRelay<Void>()
 
         input.viewAppear.asObservable()
-            .flatMap { self.fetchRecruitmentListUseCase.execute(page: 1, jobCode: nil, techCode: nil, name: nil) }
+            .flatMap {
+                return self.fetchRecruitmentListUseCase.execute(page: 1, jobCode: nil, techCode: nil, name: nil)
+            }
+            .bind(to: recruitmentList)
+            .disposed(by: disposeBag)
+
+        input.pageChange.asObservable()
+            .flatMap { page in
+                return self.fetchRecruitmentListUseCase.execute(page: page, jobCode: nil, techCode: nil, name: nil)
+            }
             .bind(to: recruitmentList)
             .disposed(by: disposeBag)
 
@@ -45,6 +53,6 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 print("bookmark!")
             }).disposed(by: disposeBag)
 
-        return Output(recruitmentList: recruitmentList, bookmarkOk: bookmarkOk)
+        return Output(recruitmentList: recruitmentList)
     }
 }

@@ -1,4 +1,5 @@
 import UIKit
+import Domain
 import RxSwift
 import RxCocoa
 import SnapKit
@@ -7,7 +8,11 @@ import Core
 import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+    private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private let cellClick = PublishRelay<Int>()
+    private let pageCount = PublishRelay<Int>()
+    var page: Int = 1
+    var isFetching: Bool = false
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -37,11 +42,25 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     public override func bind() {
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
-            bookMarkButtonDidTap: cellClick
+            bookMarkButtonDidTap: cellClick,
+            pageChange: pageCount
         )
+
         let output = viewModel.transform(input)
 
         output.recruitmentList
+            .subscribe(onNext: { [weak self] elements in
+                if elements.isEmpty {
+                    self?.isFetching = true
+                } else {
+                    var currentElements = self?.recruitmentData.value ?? []
+                    currentElements.append(contentsOf: elements)
+                    self?.recruitmentData.accept(currentElements)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        recruitmentData
             .bind(
                 to: recruitmentTableView.rx.items(
                     cellIdentifier: RecruitmentTableViewCell.identifier,
@@ -55,7 +74,15 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 .disposed(by: disposeBag)
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        page = 2
+        isFetching = false
+        recruitmentData.accept([])
+    }
+
     public override func configureViewController() {
+        recruitmentTableView.delegate = self
         navigateToSearchButton.rx.tap
             .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
@@ -67,5 +94,25 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             UIBarButtonItem(customView: navigateToSearchButton)
         ]
         setLargeTitle(title: "모집의뢰서")
+    }
+}
+
+extension RecruitmentViewController: UITableViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffset = recruitmentTableView.contentOffset.y
+        let contentHeight = recruitmentTableView.contentSize.height
+        let tableViewBoundsHeight = recruitmentTableView.bounds.size.height
+
+        if contentOffset > (contentHeight - tableViewBoundsHeight) {
+            Task {
+                if !isFetching {
+                    isFetching = true
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
+                    pageCount.accept(page)
+                    page += 1
+                    isFetching = false
+                }
+            }
+        }
     }
 }
