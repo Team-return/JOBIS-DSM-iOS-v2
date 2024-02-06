@@ -99,11 +99,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
 extension RecruitmentViewController: UITableViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffset = recruitmentTableView.contentOffset.y
+        let offsetY = recruitmentTableView.contentOffset.y
         let contentHeight = recruitmentTableView.contentSize.height
-        let tableViewBoundsHeight = recruitmentTableView.bounds.size.height
 
-        if contentOffset > (contentHeight - tableViewBoundsHeight) {
+        if offsetY > (contentHeight - recruitmentTableView.frame.height) {
             Task {
                 if !isFetching {
                     isFetching = true
