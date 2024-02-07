@@ -11,7 +11,17 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     public var bookmarkButtonDidTap: (()->(Void))?
     public var recruitmentID = 0
     private var disposeBag = DisposeBag()
-    private var isBookmarked = false
+    private var isBookmarked = false {
+        didSet {
+            var bookmarkImage: JobisIcon {
+                isBookmarked ? .bookmarkOn: .bookmarkOff
+            }
+            bookmarkButton.setImage(
+                .jobisIcon(bookmarkImage)
+                .resize(size: 28), for: .normal
+            )
+        }
+    }
     private let companyProfileImageView = UIImageView().then {
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
@@ -85,18 +95,17 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
         bookmarkButton.rx.tap
             .bind(onNext: { [weak self] in
                 self?.bookmarkButtonDidTap?()
-                self?.bookmark()
+                self?.isBookmarked.toggle()
             })
             .disposed(by: disposeBag)
     }
 
     override func adapt(model: RecruitmentEntity) {
-        let truncatedFieldTypeLabel = model.hiringJobs.truncate()
         companyProfileImageView.setJobisImage(
             urlString: model.companyProfileURL
         )
         fieldTypeLabel.setJobisText(
-            truncatedFieldTypeLabel,
+            model.hiringJobs,
             font: .subHeadLine,
             color: .GrayScale.gray90
         )
@@ -112,45 +121,6 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
             color: .GrayScale.gray70
         )
         recruitmentID = model.recruitID
-        setBookmark(model.bookmarked)
-    }
-
-    private func setBookmark(_ bool: Bool) {
-        self.isBookmarked = bool
-        var bookmarkImage: JobisIcon {
-            bool ? .bookmarkOn: .bookmarkOff
-        }
-        bookmarkButton.setImage(
-            .jobisIcon(bookmarkImage)
-            .resize(size: 28), for: .normal
-        )
-    }
-
-    func bookmark() {
-        setBookmark(!isBookmarked)
-    }
-}
-
-extension String {
-    func truncate() -> String {
-        let screenWidth = UIScreen.main.bounds.width
-        var maxLength: Int
-
-        switch screenWidth {
-        case 0..<370:
-            maxLength = 15
-        case 370..<430:
-            maxLength = 20
-        case 430..<500:
-            maxLength = 25
-        default:
-            maxLength = 50
-        }
-
-        if self.count > maxLength {
-            return String(self.prefix(maxLength)) + "..."
-        } else {
-            return self
-        }
+        isBookmarked = model.bookmarked
     }
 }
