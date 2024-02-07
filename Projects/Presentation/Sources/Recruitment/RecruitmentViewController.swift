@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
-    private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
+    private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let cellClick = PublishRelay<Int>()
     private let pageCount = PublishRelay<Int>()
     var page: Int = 1
@@ -22,10 +22,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.rowHeight = 96
         $0.showsVerticalScrollIndicator = false
     }
-    private let navigateToFilterButton = UIButton().then {
+    private let filterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
     }
-    private let navigateToSearchButton = UIButton().then {
+    private let searchButton = UIButton().then {
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
 
@@ -42,7 +42,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     public override func bind() {
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
-            bookMarkButtonDidTap: cellClick,
+            bookMarkButtonDidTap: bookmarkButtonDidClicked,
             pageChange: pageCount
         )
 
@@ -68,7 +68,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 )) { _, element, cell in
                     cell.adapt(model: element)
                     cell.bookmarkButtonDidTap = {
-                        self.cellClick.accept(cell.recruitmentID)
+                        self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
                     }
                 }
                 .disposed(by: disposeBag)
@@ -83,15 +83,15 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func configureViewController() {
         recruitmentTableView.delegate = self
-        navigateToSearchButton.rx.tap
+        searchButton.rx.tap
             .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: navigateToFilterButton),
-            UIBarButtonItem(customView: navigateToSearchButton)
+            UIBarButtonItem(customView: filterButton),
+            UIBarButtonItem(customView: searchButton)
         ]
         setLargeTitle(title: "모집의뢰서")
     }
