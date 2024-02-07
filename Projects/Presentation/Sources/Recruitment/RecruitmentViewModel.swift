@@ -10,6 +10,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
+    private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
+    private var pageCount: Int = 1
 
     init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
@@ -22,30 +24,33 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
-        var pageChange: PublishRelay<Int>
+        var pageChange: PublishRelay<Void>
     }
 
     public struct Output {
-        let recruitmentList: PublishRelay<[RecruitmentEntity]>
+        var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     }
 
     public func transform(_ input: Input) -> Output {
-        let recruitmentList = PublishRelay<[RecruitmentEntity]>()
-
         input.viewAppear.asObservable()
             .flatMap {
-                return self.fetchRecruitmentListUseCase.execute(page: 1, jobCode: nil, techCode: nil, name: nil)
+                self.pageCount = 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
-            .bind(to: recruitmentList)
+            .bind(to: self.recruitmentData)
             .disposed(by: disposeBag)
 
         input.pageChange.asObservable()
-            .flatMap { page in
-                return self.fetchRecruitmentListUseCase.execute(page: page, jobCode: nil, techCode: nil, name: nil)
+            .debounce(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
+            .flatMap { _ in
+                self.pageCount += 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
-            .bind(to: recruitmentList)
+            .bind(onNext: {
+                var currentElements = self.recruitmentData.value
+                currentElements.append(contentsOf: $0)
+                self.recruitmentData.accept(currentElements)
+            })
             .disposed(by: disposeBag)
 
         input.bookMarkButtonDidTap.asObservable()
@@ -55,6 +60,6 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 print("bookmark!")
             }).disposed(by: disposeBag)
 
-        return Output(recruitmentList: recruitmentList)
+        return Output(recruitmentData: recruitmentData)
     }
 }
