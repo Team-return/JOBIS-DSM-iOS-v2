@@ -35,6 +35,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.viewAppear.asObservable()
             .flatMap {
                 return self.fetchRecruitmentListUseCase.execute(page: 1, jobCode: nil, techCode: nil, name: nil)
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
             .bind(to: recruitmentList)
             .disposed(by: disposeBag)
@@ -42,6 +43,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.pageChange.asObservable()
             .flatMap { page in
                 return self.fetchRecruitmentListUseCase.execute(page: page, jobCode: nil, techCode: nil, name: nil)
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
             .bind(to: recruitmentList)
             .disposed(by: disposeBag)

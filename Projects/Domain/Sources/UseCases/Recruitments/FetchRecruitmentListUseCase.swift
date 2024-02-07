@@ -8,7 +8,7 @@ public struct FetchRecruitmentListUseCase {
     private let recruitmentsRepository: RecruitmentsRepository
 
     public func execute(
-        page: Int, jobCode: String?, techCode: [String]?, name: String?
+        page: Int, jobCode: String? = nil, techCode: [String]? = nil, name: String? = nil
     ) -> Single<[RecruitmentEntity]> {
         recruitmentsRepository.fetchRecruitmentList(page: page, jobCode: jobCode, techCode: techCode, name: name)
     }
