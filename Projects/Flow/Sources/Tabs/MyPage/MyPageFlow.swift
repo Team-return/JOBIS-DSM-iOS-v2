@@ -28,11 +28,10 @@ public final class MyPageFlow: Flow {
 <<<<<<<< HEAD:Projects/Flow/Sources/MyPage/MyPageFlow.swift
         case .noticeIsRequired:
             return navigateToNotice()
+========
         case .bugReportIsRequired:
             return navigateToBugReport()
-
-        case .confirmIsRequired:
-            return navigateToConfirmPassword()
+>>>>>>>> d2cce6d (🧩 :: BugReport 추가):Projects/Flow/Sources/Tabs/MyPage/MyPageFlow.swift
         }
     }
 }
@@ -78,21 +77,6 @@ private extension MyPageFlow {
             withNextPresentable: bugReportFlow,
             withNextStepper: OneStepper(withSingleStep: BugReportStep.bugReportIsRequired)
 >>>>>>>> d2cce6d (🧩 :: BugReport 추가):Projects/Flow/Sources/Tabs/MyPage/MyPageFlow.swift
-        ))
-    }
-
-    func navigateToConfirmPassword() -> FlowContributors {
-        let confirmPasswordFlow = ConfirmPasswordFlow(container: container)
-
-        Flows.use(confirmPasswordFlow, when: .created) { root in
-            self.rootViewController.pushViewController(
-                root, animated: true
-            )
-        }
-
-        return .one(flowContributor: .contribute(
-            withNextPresentable: confirmPasswordFlow,
-            withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
         ))
     }
 }
