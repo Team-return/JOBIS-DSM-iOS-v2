@@ -2,7 +2,6 @@ import UIKit
 import DesignSystem
 import RxSwift
 
-
 typealias SectionModel = (title: String, icon: UIImage)
 
 final class SectionView: BaseView {
