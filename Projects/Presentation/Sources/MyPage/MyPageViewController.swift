@@ -82,7 +82,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
-            withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw)
+            withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw),
+            bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug)
         )
         let output = viewModel.transform(input)
 

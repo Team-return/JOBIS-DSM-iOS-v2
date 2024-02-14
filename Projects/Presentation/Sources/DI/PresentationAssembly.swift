@@ -60,6 +60,13 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(BugReportViewController.self) { resolver in
+            BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
+        }
+        container.register(BugReportViewModel.self) { _ in
+            BugReportViewModel()
+        }
+
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
                 reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
