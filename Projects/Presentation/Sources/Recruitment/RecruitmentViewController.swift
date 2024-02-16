@@ -10,6 +10,7 @@ import DesignSystem
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let pageCount = PublishRelay<Void>()
+    private var status: Bool = false
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -76,12 +77,18 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 }
 
 extension RecruitmentViewController: UITableViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = recruitmentTableView.contentOffset.y
-        let contentHeight = recruitmentTableView.contentSize.height
-
-        if offsetY > (contentHeight - recruitmentTableView.frame.height) {
+    public func tableView(
+        _ tableView: UITableView,
+        willDisplay cell: UITableViewCell,
+        forRowAt indexPath: IndexPath
+    ) {
+        let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
+        if indexPath.row == lastRowIndex && !status {
+            status = true
             pageCount.accept(())
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.7) {
+                self.status = false
+            }
         }
     }
 }

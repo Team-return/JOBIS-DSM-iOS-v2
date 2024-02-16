@@ -41,7 +41,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.pageChange.asObservable()
-            .debounce(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
+            .debounce(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
             .flatMap { _ in
                 self.pageCount += 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
