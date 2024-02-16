@@ -10,7 +10,6 @@ import DesignSystem
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let pageCount = PublishRelay<Void>()
-    private var status: Bool = false
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -83,12 +82,8 @@ extension RecruitmentViewController: UITableViewDelegate {
         forRowAt indexPath: IndexPath
     ) {
         let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
-        if indexPath.row == lastRowIndex && !status {
-            status = true
+        if indexPath.row == lastRowIndex {
             pageCount.accept(())
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.7) {
-                self.status = false
-            }
         }
     }
 }
