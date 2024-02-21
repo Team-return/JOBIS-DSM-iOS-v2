@@ -24,7 +24,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
-        var pageChange: PublishRelay<Void>
+        var pageChange: PublishRelay<Int>
     }
 
     public struct Output {
@@ -37,14 +37,22 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 self.pageCount = 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
-            .bind(to: self.recruitmentData)
+            .bind(onNext: {
+                self.recruitmentData.accept([])
+                var currentElements = self.recruitmentData.value
+                currentElements.append(contentsOf: $0)
+                self.recruitmentData.accept(currentElements)
+            })
             .disposed(by: disposeBag)
 
         input.pageChange.asObservable()
-            .debounce(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
-            .flatMap { _ in
-                self.pageCount += 1
-                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+            .flatMap { value in
+                if value == self.recruitmentData.value.count-1 {
+                    self.pageCount += 1
+                    return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                } else {
+                    return Single.just([])
+                }
             }
             .bind(onNext: {
                 var currentElements = self.recruitmentData.value
