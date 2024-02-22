@@ -12,14 +12,14 @@ public enum BottomSheetViewState {
 }
 
 public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewController,
-                                           ViewControllable,
-                                           LifeCyclePublishable,
-                                           HasDisposeBag,
-                                           AddViewable,
-                                           SetLayoutable,
-                                           Bindable,
-                                           ViewControllerConfigurable,
-                                           NavigationConfigurable {
+                                                                      ViewControllable,
+                                                                      LifeCyclePublishable,
+                                                                      HasDisposeBag,
+                                                                      AddViewable,
+                                                                      SetLayoutable,
+                                                                      Bindable,
+                                                                      ViewControllerConfigurable,
+                                                                      NavigationConfigurable {
     public let viewModel: ViewModel
     public var disposeBag = DisposeBag()
     public var viewDidLoadPublisher = PublishRelay<Void>()
@@ -49,8 +49,9 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
     private let bottomSheetPanMinTopInset: CGFloat = 50
     private let dragHeight = 28.0
     private var defaultHeight: CGFloat = 500
-    private lazy var maxTopInset =
-    (view.safeAreaInsets.bottom + view.safeAreaLayoutGuide.layoutFrame.height)
+    private lazy var maxTopInset = (
+        view.safeAreaInsets.bottom + view.safeAreaLayoutGuide.layoutFrame.height
+    )
     private lazy var bottomSheetViewTopInset: CGFloat = maxTopInset
     private lazy var bottomSheetPanStartingTopInset: CGFloat = bottomSheetPanMinTopInset
 
@@ -108,11 +109,11 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
         [
             dimmedView,
             bottomSheetView
-        ].forEach { view.addSubview($0) }
+        ].forEach(view.addSubview(_:))
         [
             dragIndicatorView,
             contentView
-        ].forEach { bottomSheetView.addSubview($0) }
+        ].forEach(bottomSheetView.addSubview(_:))
     }
 
     public func setLayout() {
@@ -140,9 +141,10 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
     public func configureViewController() {
         dimmedView.rx.tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { [weak self] _ in
+            .bind { [weak self] _ in
                 self?.dismissBottomSheet()
-            }).disposed(by: disposeBag)
+            }
+            .disposed(by: disposeBag)
 
         bottomSheetView.rx.panGesture()
             .skip(1)
@@ -179,7 +181,8 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
                 default:
                     return
                 }
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     public func configureNavigation() {}
@@ -209,22 +212,15 @@ extension BaseBottomSheetViewController {
         UIView.animate(
             withDuration: 0.2,
             delay: 0,
-            options: .curveEaseInOut,
-            animations: {
-                self.dimmedView.alpha = 1
-            }
-        )
+            options: .curveEaseInOut
+        ) { self.dimmedView.alpha = 1 }
 
         UIView.animate(
             withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 0.76,
-            initialSpringVelocity: 0.0,
-            options: [],
-            animations: {
-                self.view.layoutIfNeeded()
-            }
-        )
+            initialSpringVelocity: 0.0
+        ) { self.view.layoutIfNeeded() }
     }
 
     public func dismissBottomSheet() {
