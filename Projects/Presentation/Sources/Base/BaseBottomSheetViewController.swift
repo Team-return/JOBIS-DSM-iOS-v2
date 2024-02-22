@@ -233,14 +233,13 @@ extension BaseBottomSheetViewController {
         UIView.animate(
             withDuration: 0.2,
             delay: 0,
-            options: .curveEaseInOut,
-            animations: {
-                self.dimmedView.alpha = 0
-                self.view.layoutIfNeeded()
-            }, completion: { _ in
-                self.dismiss(animated: false)
-            }
-        )
+            options: .curveEaseInOut
+        ) {
+            self.dimmedView.alpha = 0
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.dismiss(animated: false)
+        }
     }
 
     // 가까이 있는 숫자 반환해주는 함수
