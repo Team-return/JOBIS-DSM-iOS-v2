@@ -30,6 +30,8 @@ public enum JobisIcon {
     case defaultPageControl
     case pieChart
     case sound
+    case trash
+    case emptyBookmark
 
     // swiftlint: disable cyclomatic_complexity
     func uiImage() -> UIImage {
@@ -101,6 +103,13 @@ public enum JobisIcon {
 
         case .sound:
             return dsIcons.sound.image
+
+        case .trash:
+            return dsIcons.trash.image
+
+        case .emptyBookmark:
+            return dsIcons.emptyBookmark.image
+
         }
     }
     // swiftlint: enable cyclomatic_complexity
