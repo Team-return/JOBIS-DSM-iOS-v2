@@ -17,7 +17,7 @@ public final class JobisButton: UIButton {
     }
 
     private var fgColor: UIColor {
-        (buttonStyle == .main || !isEnabled) ? .white: .black
+        (buttonStyle == .main || !isEnabled) ? .GrayScale.gray10: .GrayScale.gray90
     }
 
     private var bgColor: UIColor {
