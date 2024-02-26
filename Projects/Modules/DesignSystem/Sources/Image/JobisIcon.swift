@@ -29,6 +29,7 @@ public enum JobisIcon {
     case currentPageControl
     case defaultPageControl
     case pieChart
+    case sound
     case trash
     case emptyBookmark
 
@@ -99,6 +100,9 @@ public enum JobisIcon {
 
         case .pieChart:
             return dsIcons.pieChart.image
+
+        case .sound:
+            return dsIcons.sound.image
 
         case .trash:
             return dsIcons.trash.image
