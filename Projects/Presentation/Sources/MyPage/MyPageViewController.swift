@@ -28,9 +28,9 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             studentInfoView,
             editButton,
             reviewNavigateStackView,
+            helpSectionView,
             accountSectionView,
-            bugSectionView,
-            helpSectionView
+            bugSectionView
         ].forEach { self.contentView.addSubview($0) }
     }
 
@@ -60,8 +60,14 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(studentInfoView.snp.bottom)
         }
 
-        accountSectionView.snp.makeConstraints {
+        
+        helpSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        accountSectionView.snp.makeConstraints {
+            $0.top.equalTo(helpSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
 
@@ -70,10 +76,6 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
 
-        helpSectionView.snp.makeConstraints {
-            $0.top.equalTo(bugSectionView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
     }
 
     public override func bind() {
