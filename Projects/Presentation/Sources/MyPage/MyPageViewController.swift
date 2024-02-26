@@ -42,7 +42,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(helpSectionView).offset(60)
+            $0.bottom.equalTo(bugSectionView).offset(60)
         }
 
         studentInfoView.snp.makeConstraints {
@@ -60,7 +60,6 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(studentInfoView.snp.bottom)
         }
 
-        
         helpSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
