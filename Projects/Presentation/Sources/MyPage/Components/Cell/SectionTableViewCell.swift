@@ -1,7 +1,8 @@
 import UIKit
 import DesignSystem
 
-final class SectionTableViewCell: BaseTableViewCell<(String, UIImage)> {
+typealias SectionType = (String, UIImage)
+final class SectionTableViewCell: BaseTableViewCell<SectionType> {
     static let identifier = "SectionTableViewCell"
     private let sectionImageView = UIImageView()
     private let titleLabel = UILabel()
@@ -30,7 +31,7 @@ final class SectionTableViewCell: BaseTableViewCell<(String, UIImage)> {
         }
     }
 
-    override func adapt(model: (String, UIImage)) {
+    override func adapt(model: SectionType) {
         self.sectionImageView.image = model.1
         self.titleLabel.setJobisText(model.0, font: .body, color: .GrayScale.gray90)
         self.selectionStyle = .none
