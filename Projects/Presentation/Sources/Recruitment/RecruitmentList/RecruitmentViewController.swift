@@ -86,4 +86,12 @@ extension RecruitmentViewController: UITableViewDelegate {
             pageCount.accept(indexPath.row)
         }
     }
+
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        print("index : ", indexPath.row)
+        let viewController = RecruitmentDetailViewController(viewModel)
+        viewController.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
 }
