@@ -31,6 +31,7 @@ public enum JobisIcon {
     case pieChart
     case trash
     case emptyBookmark
+    case arrowUp
 
     // swiftlint: disable cyclomatic_complexity
     func uiImage() -> UIImage {
@@ -105,6 +106,8 @@ public enum JobisIcon {
 
         case .emptyBookmark:
             return dsIcons.emptyBookmark.image
+        case .arrowUp:
+            return dsIcons.arrowUp.image
         }
     }
     // swiftlint: enable cyclomatic_complexity
