@@ -68,9 +68,8 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
             explainCompanyLabel,
             scrollView,
             recruitmentListButton
-        ].forEach {
-            view.addSubview($0)
-        }
+        ].forEach(view.addSubview(_:))
+
         scrollView.addSubview(contentView)
         [
             bossLabel,
@@ -87,9 +86,7 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
             faxLabel,
             interviewReviewMenuLabel,
             interviewReviewTableView
-        ].forEach {
-            contentView.addSubview($0)
-        }
+        ].forEach(contentView.addSubview(_:))
     }
 
     public override func setLayout() {
