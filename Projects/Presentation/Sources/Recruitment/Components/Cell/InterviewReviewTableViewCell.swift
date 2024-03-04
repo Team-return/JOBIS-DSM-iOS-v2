@@ -7,6 +7,7 @@ import RxSwift
 
 final class InterviewReviewTableViewCell: BaseTableViewCell<RecruitmentViewModel> {
     static let identifier = "InterviewReviewTableViewCell"
+
     public var interviewReviewID: Int?
     private let disposeBag = DisposeBag()
 
