@@ -13,7 +13,7 @@ public final class RecruitmentDetailLabel: BaseView {
         self.title.setJobisText(text, font: .body, color: .GrayScale.gray90)
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
