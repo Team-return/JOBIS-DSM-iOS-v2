@@ -11,6 +11,6 @@ let project = Project.makeModule(
     ],
     resources: .resources,
     resourceSynthesizers: .default + [
-        .custom(name: "Lottie", parser: .json, extensions: ["json"]),
+        .custom(name: "Lottie", parser: .json, extensions: ["json"])
     ]
 )
