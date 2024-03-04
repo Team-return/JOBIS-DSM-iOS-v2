@@ -107,8 +107,10 @@ public enum JobisIcon {
 
         case .emptyBookmark:
             return dsIcons.emptyBookmark.image
+
         case .arrowUp:
             return dsIcons.arrowUp.image
+
         case .arrowDown:
             return dsIcons.arrowDown.image
         }

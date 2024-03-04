@@ -7,6 +7,7 @@ import RxSwift
 
 final class FieldTypeDetailViewCell: BaseTableViewCell<RecruitmentViewModel> {
     static let identifier = "FieldTypeDetailViewCell"
+
     public var interviewReviewID: Int?
     private let disposeBag = DisposeBag()
     private let containerView = UIView().then {
