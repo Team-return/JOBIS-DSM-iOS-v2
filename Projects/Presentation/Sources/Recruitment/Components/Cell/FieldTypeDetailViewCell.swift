@@ -101,9 +101,7 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<RecruitmentViewModel> {
         }
         useTechniquesLabel.snp.makeConstraints {
             $0.top.equalTo(useTechniquesMenuLabel.snp.bottom).offset(4)
-            $0.left.equalToSuperview().inset(16)
-            $0.right.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.left.right.bottom.equalToSuperview().inset(16)
         }
     }
 
