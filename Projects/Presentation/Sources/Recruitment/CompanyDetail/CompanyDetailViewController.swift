@@ -63,15 +63,18 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
     }
     public override func addView() {
         [
-            companyLogoImageView,
-            companyLabel,
-            explainCompanyLabel,
+//            companyLogoImageView,
+//            companyLabel,
+//            explainCompanyLabel,
             scrollView,
             recruitmentListButton
         ].forEach(view.addSubview(_:))
 
         scrollView.addSubview(contentView)
         [
+            companyLogoImageView,
+            companyLabel,
+            explainCompanyLabel,
             bossLabel,
             startedDayLabel,
             workersNumbersLabel,
@@ -91,7 +94,8 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
 
     public override func setLayout() {
         companyLogoImageView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide).inset(12)
+//            $0.top.equalTo(self.view.safeAreaLayoutGuide).inset(12)
+            $0.top.equalToSuperview().inset(12)
             $0.left.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
@@ -104,7 +108,8 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
             $0.left.right.equalToSuperview().inset(24)
         }
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(12)
+//            $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(12)
+            $0.top.equalTo(self.view.safeAreaLayoutGuide)
             $0.left.right.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(recruitmentListButton.snp.top).inset(-12)
         }
@@ -114,7 +119,7 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
             $0.bottom.equalTo(interviewReviewTableView.snp.bottom).offset(20)
         }
         bossLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
+            $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(24)
             $0.left.right.equalToSuperview().inset(24)
         }
         startedDayLabel.snp.makeConstraints {
