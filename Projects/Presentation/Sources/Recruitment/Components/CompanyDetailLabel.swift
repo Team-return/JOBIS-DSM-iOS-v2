@@ -19,7 +19,7 @@ public final class CompanyDetailLabel: BaseView {
         self.content.setJobisText(contentText, font: .subBody, color: .GrayScale.gray80)
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
