@@ -10,6 +10,7 @@ public extension UIImage {
 public enum JobisIcon {
     case arrowRight
     case arrowNavigate
+    case arrowDown
     case door
     case bugBox
     case bugReport
@@ -48,6 +49,9 @@ public enum JobisIcon {
 
         case .arrowNavigate:
             return dsIcons.arrowNavigate.image
+
+        case .arrowDown:
+            return dsIcons.arrowDown.image
 
         case .door:
             return dsIcons.door.image
