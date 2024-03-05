@@ -8,7 +8,7 @@ import DesignSystem
 import Lottie
 
 public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
-    private let animationView = JobisLottieView(.onboarding)
+    private let animationView = JobisLottieView()
     private let teamReturnLogoImage = UIImageView().then {
         $0.image = .onboardingImage(.teamReturnLogo)
     }
@@ -69,18 +69,24 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         output.animate.asObservable()
             .bind(onNext: { [weak self] in
                 guard let self else { return }
+
+                if !isOnLoading {
+                    animationView.play()
                     UIView.transition(
-                        with: self.navigateButtonStackView,
+                        with: navigateButtonStackView,
                         duration: 0.5,
                         options: .transitionCrossDissolve,
                         animations: {
                             self.setNavigateButton()
                         }
                     )
+                }
+                isOnLoading = true
             }).disposed(by: disposeBag)
     }
 
-    public override func attribute() {
-        self.animationView.play()
+    private func setNavigateButton() {
+        teamReturnLogoImage.isHidden = true
+        navigateButtonStackView.isHidden = false
     }
 }
