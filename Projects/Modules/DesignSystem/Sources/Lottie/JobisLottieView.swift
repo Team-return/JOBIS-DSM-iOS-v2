@@ -4,19 +4,45 @@ import SnapKit
 import Lottie
 
 public class JobisLottieView: UIView {
-    public enum JobisLottie: String {
-        case onboarding = "OnboardingLottie"
-    }
-
     private var lottieAnimationView: LottieAnimationView?
 
-    public init(_ type: JobisLottie) {
+    public init() {
         super.init(frame: .zero)
-        self.lottieAnimationView = .init(name: "OnboardingLottie", bundle: .module)
-        configureView()
+
+        var animation: LottieAnimation? {
+            switch UITraitCollection.current.userInterfaceStyle {
+            case .dark:
+                AnimationAsset.darkOnboarding.animation
+
+            default:
+                AnimationAsset.lightOnboarding.animation
+            }
+        }
+
+        self.lottieAnimationView = .init(animation: animation)
+
+        self.configureView()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        var animation: LottieAnimation? {
+            switch previousTraitCollection?.userInterfaceStyle {
+            case .dark:
+                AnimationAsset.lightOnboarding.animation
+
+            default:
+                AnimationAsset.darkOnboarding.animation
+            }
+        }
+
+        print(previousTraitCollection?.userInterfaceStyle == .dark)
+
+        self.lottieAnimationView = .init(animation: animation)
+        self.layoutIfNeeded()
+        self.play()
     }
 
     private func configureView() {

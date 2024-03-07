@@ -6,7 +6,7 @@ import ProjectDescription
 
 let isCI = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1" ? true : false
 
-public enum MicroFeatureTarget {
+public enum ModuleTarget {
     case unitTest
     case demo
 }
@@ -16,11 +16,12 @@ public extension Project {
         name: String,
         platform: Platform = env.platform,
         product: Product,
-        targets: Set<MicroFeatureTarget>,
+        targets: Set<ModuleTarget>,
         packages: [Package] = [],
         dependencies: [TargetDependency] = [],
         sources: SourceFilesList = .sources,
         resources: ResourceFileElements? = nil,
+        resourceSynthesizers: [ResourceSynthesizer] = .default + [],
         settings: SettingsDictionary = [:],
         additionalPlistRows: [String: ProjectDescription.InfoPlist.Value] = [:]
     ) -> Project {
@@ -78,7 +79,7 @@ public extension Project {
 
         // MARK: - Demo App
         if targets.contains(.demo) {
-            var demoDependencies: [TargetDependency] = [.target(name: name)]
+            let demoDependencies: [TargetDependency] = [.target(name: name)]
             allTargets.append(
                 Target(
                     name: "\(name)DemoApp",
@@ -109,7 +110,8 @@ public extension Project {
             packages: packages,
             settings: settings,
             targets: allTargets,
-            schemes: schemes
+            schemes: schemes,
+            resourceSynthesizers: resourceSynthesizers
         )
     }
 }
