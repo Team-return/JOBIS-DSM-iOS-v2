@@ -108,6 +108,38 @@ public final class PresentationAssembly: Assembly {
         container.register(SigninViewController.self) { resolver in
             SigninViewController(resolver.resolve(SigninReactor.self)!)
         }
+
+        container.register(NoticeViewModel.self) { _ in
+            NoticeViewModel()
+        }
+
+        container.register(NoticeViewController.self) { resolver in
+            NoticeViewController(resolver.resolve(NoticeViewModel.self)!)
+        }
+
+        container.register(NoticeDetailViewModel.self) { _ in
+            NoticeDetailViewModel()
+        }
+
+        container.register(NoticeDetailViewController.self) { resolver in
+            NoticeDetailViewController(resolver.resolve(NoticeDetailViewModel.self)!)
+        }
+
+        container.register(CompanyDetailViewModel.self) { _ in
+            CompanyDetailViewModel()
+        }
+
+        container.register(CompanyDetailViewController.self) { resolver in
+            CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
+        }
+
+        container.register(RecruitmentDetailViewModel.self) { _ in
+            RecruitmentDetailViewModel()
+        }
+
+        container.register(RecruitmentDetailViewController.self) { resolver in
+            RecruitmentDetailViewController(resolver.resolve(RecruitmentDetailViewModel.self)!)
+        }
     }
     // swiftlint:enable function_body_length
 }
