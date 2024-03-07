@@ -7,5 +7,4 @@ mv JOBIS-v2-XCConfig/XCConfig/ .
 brew install make
 curl -Ls https://install.tuist.io | bash
 
-TUIST_CI=1
 make ci_generate
