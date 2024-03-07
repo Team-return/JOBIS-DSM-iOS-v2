@@ -25,6 +25,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
         var pageChange: PublishRelay<Int>
+        let cellClicked: PublishRelay<Void>
     }
 
     public struct Output {
@@ -68,6 +69,10 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 print("bookmark!")
             }).disposed(by: disposeBag)
 
+        input.cellClicked.asObservable()
+            .map { _ in RecruitmentStep.recruitmentDetailIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
         return Output(recruitmentData: recruitmentData)
     }
 }
