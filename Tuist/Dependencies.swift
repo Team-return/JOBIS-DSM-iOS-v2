@@ -47,6 +47,10 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/RxSwiftCommunity/RxGesture",
                 requirement: .upToNextMajor(from: "4.0.0")
+            ),
+            .remote(
+                url: "https://github.com/firebase/firebase-ios-sdk",
+                requirement: .upToNextMajor(from: "10.0.0")
             )
         ],
         baseSettings: .settings(

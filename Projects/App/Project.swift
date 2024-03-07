@@ -34,7 +34,8 @@ let targets: [Target] = [
         entitlements: "Support/\(env.appName).entitlements",
         scripts: scripts,
         dependencies: [
-            .Projects.flow
+            .Projects.flow,
+            .SPM.FirebaseMessaging
         ],
         settings: .settings(base: env.baseSetting)
     ),
@@ -95,6 +96,7 @@ let schemes: [Scheme] = [
 let project = Project(
     name: env.targetName,
     organizationName: env.organizationName,
+    packages: [.FirebaseMessaging],
     settings: settings,
     targets: targets,
     schemes: schemes
