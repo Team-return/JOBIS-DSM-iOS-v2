@@ -31,12 +31,12 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
             animationView,
             teamReturnLogoImage,
             navigateButtonStackView
-        ].forEach { self.view.addSubview($0)}
+        ].forEach(self.view.addSubview(_:))
 
         [
             navigateToSignupButton,
             navigateToSigninButton
-        ].forEach { self.navigateButtonStackView.addArrangedSubview($0) }
+        ].forEach(self.navigateButtonStackView.addArrangedSubview(_:))
     }
 
     public override func setLayout() {
