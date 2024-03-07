@@ -54,6 +54,9 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output(animate: animate, showNavigationButton: showNavigationButton)
+        return Output(
+            animate: animate,
+            showNavigationButton: showNavigationButton
+        )
     }
 }
