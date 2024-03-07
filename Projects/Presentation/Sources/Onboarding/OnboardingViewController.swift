@@ -72,16 +72,21 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
 
                 if !isOnLoading {
                     animationView.play()
-                    UIView.transition(
-                        with: navigateButtonStackView,
-                        duration: 0.5,
-                        options: .transitionCrossDissolve,
-                        animations: {
-                            self.setNavigateButton()
-                        }
-                    )
                 }
                 isOnLoading = true
+            }).disposed(by: disposeBag)
+
+        output.showNavigationButton.asObservable()
+            .bind(onNext: { [weak self] in
+                guard let self, isOnLoading else { return }
+                UIView.transition(
+                    with: self.navigateButtonStackView,
+                    duration: 0.5,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        self.setNavigateButton()
+                    }
+                )
             }).disposed(by: disposeBag)
     }
 
