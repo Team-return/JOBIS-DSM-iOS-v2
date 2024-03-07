@@ -26,6 +26,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let reviewNavigate: PublishRelay<Int>
+        let helpSectionDidTap: Observable<IndexPath>
         let logoutSectionDidTap: Observable<IndexPath>
         let withdrawalSectionDidTap: Observable<IndexPath>
     }
@@ -54,6 +55,11 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
                 // TODO: 리뷰 리스트로 네비게이션 이동 해주는 코드 았어야함
                 print($0)
             }).disposed(by: disposeBag)
+
+        input.helpSectionDidTap.asObservable()
+            .map { _ in MyPageStep.noticeIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
 
         input.logoutSectionDidTap
             .do(onNext: { _ in
