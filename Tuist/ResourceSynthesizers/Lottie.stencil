@@ -50,6 +50,8 @@ import Lottie
         }
     }
 }
+// swiftformat:enable all
+// swiftlint:enable all
 #endif
 {% else %}
 // No files found
