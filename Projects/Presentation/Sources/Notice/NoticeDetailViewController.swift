@@ -52,25 +52,31 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaInsets)
         }
+
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
             $0.bottom.equalTo(attachedFileTableView.snp.bottom).offset(20)
         }
+
         noticeTitleLabel.snp.makeConstraints {
             $0.top.left.equalToSuperview().inset(24)
         }
+
         noticeDateLabel.snp.makeConstraints {
             $0.top.equalTo(noticeTitleLabel.snp.bottom)
             $0.left.equalToSuperview()
         }
+
         noticeContentLabel.snp.makeConstraints {
             $0.top.equalTo(noticeDateLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         attachedFileMenuLabel.snp.makeConstraints {
             $0.top.equalTo(noticeContentLabel.snp.bottom).offset(24)
         }
+
         attachedFileTableView.snp.makeConstraints {
             $0.top.equalTo(attachedFileMenuLabel.snp.bottom)
             $0.left.right.equalTo(view.safeAreaInsets)
