@@ -12,13 +12,13 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     init( ) { }
 
     public struct Input {
-        let recruitmentButtonDidClicked: Signal<Void>
+        let recruitmentButtonDidTap: Signal<Void>
     }
 
     public struct Output { }
 
     public func transform(_ input: Input) -> Output {
-        input.recruitmentButtonDidClicked.asObservable()
+        input.recruitmentButtonDidTap.asObservable()
             .map { _ in CompanyDetailStep.recruitmentDetailIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
