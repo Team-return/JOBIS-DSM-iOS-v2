@@ -9,6 +9,7 @@ import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
+    private let cellClick = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
     private let recruitmentTableView = UITableView().then {
         $0.register(
@@ -40,7 +41,8 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: pageCount
+            pageChange: pageCount,
+            cellClicked: cellClick
         )
 
         let output = viewModel.transform(input)
@@ -63,6 +65,17 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         recruitmentTableView.delegate = self
         searchButton.rx.tap
             .subscribe(onNext: { _ in })
+            .disposed(by: disposeBag)
+
+//        self.viewWillAppearPublisher.asObservable()
+//            .subscribe(onNext: { [weak self] in
+//                self?.showTabbar()
+//            })
+//            .disposed(by: disposeBag)
+        self.viewWillAppearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.showTabbar()
+            })
             .disposed(by: disposeBag)
     }
 
@@ -89,8 +102,7 @@ extension RecruitmentViewController: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let viewController = RecruitmentDetailViewController(viewModel)
-        viewController.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(viewController, animated: true)
+        self.hideTabbar()
+        cellClick.accept(())
     }
 }
