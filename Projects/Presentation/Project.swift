@@ -8,6 +8,7 @@ let project = Project.makeModule(
     targets: [.unitTest],
     dependencies: [
         .Projects.domain,
-        .Modules.designSystem
+        .Modules.designSystem,
+        .SPM.FCM
     ]
 )
