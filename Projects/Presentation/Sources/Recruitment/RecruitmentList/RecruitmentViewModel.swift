@@ -70,7 +70,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             }).disposed(by: disposeBag)
 
         input.cellClicked.asObservable()
-            .map { _ in RecruitmentStep.recruitmentDetailIsRequired }
+            .map { _ in
+                RecruitmentStep.recruitmentDetailIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(recruitmentData: recruitmentData)
