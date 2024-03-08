@@ -19,7 +19,8 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
 
     public func transform(_ input: Input) -> Output {
         input.companyDetailButtonDidClicked.asObservable()
-            .map { _ in RecruitmentDetailStep.companyDetailIsRequired }
+            .map { _ in
+                RecruitmentDetailStep.companyDetailIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output()
