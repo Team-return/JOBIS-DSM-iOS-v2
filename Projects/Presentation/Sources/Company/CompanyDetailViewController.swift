@@ -197,7 +197,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
 
     public override func bind() {
         let input = CompanyDetailViewModel.Input(
-            recruitmentButtonDidClicked: recruitmentButton.rx.tap.asSignal()
+            recruitmentButtonDidTap: recruitmentButton.rx.tap.asSignal()
         )
         _ = viewModel.transform(input)
     }
