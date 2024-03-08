@@ -1,23 +1,29 @@
 import UIKit
 
 public extension UIViewController {
+    private var isHiddenTabbar: Bool {
+        self.tabBarController?.tabBar.alpha == 0
+    }
+
     func showTabbar() {
-        UIView.tabbarAnimate { [weak self] in
-            self?.tabBarController?.tabBar.alpha = 1
-            guard let tabBarFrame = self?.tabBarController?.tabBar.frame else { return }
-            self?.tabBarController?.tabBar.frame.origin.y -= (tabBarFrame.height * 2)
-            self?.navigationController?.view.layoutIfNeeded()
-        } completion: { [weak self] _ in
-            self?.tabBarController?.tabBar.isHidden = false
+        if isHiddenTabbar {
+            UIView.tabbarAnimate { [weak self] in
+                self?.tabBarController?.tabBar.alpha = 1
+                guard let tabBarFrame = self?.tabBarController?.tabBar.frame else { return }
+                self?.tabBarController?.tabBar.frame.origin.y -= (tabBarFrame.height * 2)
+                self?.navigationController?.view.layoutIfNeeded()
+            }
         }
     }
 
     func hideTabbar() {
-        UIView.tabbarAnimate { [weak self] in
-            self?.tabBarController?.tabBar.alpha = 0
-            guard let tabBarFrame = self?.tabBarController?.tabBar.frame else { return }
-            self?.tabBarController?.tabBar.frame.origin.y = tabBarFrame.maxY + tabBarFrame.height
-            self?.navigationController?.view.layoutIfNeeded()
+        if !isHiddenTabbar {
+            UIView.tabbarAnimate { [weak self] in
+                self?.tabBarController?.tabBar.alpha = 0
+                guard let tabBarFrame = self?.tabBarController?.tabBar.frame else { return }
+                self?.tabBarController?.tabBar.frame.origin.y = tabBarFrame.maxY + tabBarFrame.height
+                self?.navigationController?.view.layoutIfNeeded()
+            }
         }
     }
 }
