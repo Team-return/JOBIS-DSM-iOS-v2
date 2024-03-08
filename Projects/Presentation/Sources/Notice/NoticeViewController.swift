@@ -47,15 +47,6 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
         self.setSmallTitle(title: "공지사항")
         self.navigationItem.largeTitleDisplayMode = .never
     }
-
-    public override func dismiss(
-        animated flag: Bool,
-        completion: (() -> Void)? = nil
-    ) {
-        if (completion != nil) {
-            self.showTabbar()
-        }
-    }
 }
 
 extension NoticeViewController: UITableViewDelegate, UITableViewDataSource {
