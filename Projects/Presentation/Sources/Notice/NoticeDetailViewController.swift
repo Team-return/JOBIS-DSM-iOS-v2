@@ -45,9 +45,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             noticeContentLabel,
             attachedFileMenuLabel,
             attachedFileTableView
-        ].forEach {
-            contentView.addSubview($0)
-        }
+        ].forEach(contentView.addSubview(_:))
     }
 
     public override func setLayout() {
