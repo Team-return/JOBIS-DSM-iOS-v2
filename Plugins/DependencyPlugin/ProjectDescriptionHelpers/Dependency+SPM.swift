@@ -18,9 +18,9 @@ public extension TargetDependency.SPM {
     static let KeychainSwift = TargetDependency.external(name: "KeychainSwift")
     static let ReactorKit = TargetDependency.external(name: "ReactorKit")
     static let RxGesture = TargetDependency.external(name: "RxGesture")
-    static let FirebaseMessaging = TargetDependency.package(product: "FirebaseMessaging")
+    static let FCM = TargetDependency.package(product: "FirebaseMessaging")
 }
 
 public extension Package {
-    static let FirebaseMessaging = Package.remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.5.0"))
+    static let FCM = Package.remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.5.0"))
 }
