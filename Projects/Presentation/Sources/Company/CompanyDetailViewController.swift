@@ -108,7 +108,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
 
         scrollView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide)
-            $0.left.right.equalTo(self.view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(recruitmentButton.snp.top).inset(-12)
         }
 
@@ -184,13 +184,13 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
 
         interviewReviewTableView.snp.makeConstraints {
             $0.top.equalTo(interviewReviewMenuLabel.snp.bottom).offset(8)
-            $0.left.right.equalTo(view.safeAreaInsets)
+            $0.leading.trailing.equalTo(view.safeAreaInsets)
             $0.height.greaterThanOrEqualTo(interviewReviewTableView.contentSize.height + 4)
         }
 
         recruitmentButton.snp.makeConstraints {
             $0.height.equalTo(56)
-            $0.left.right.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(36)
         }
     }
