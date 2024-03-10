@@ -12,6 +12,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     private let bookmarkUseCase: BookmarkUseCase
     private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private var pageCount: Int = 1
+    private var isStatusend: Bool = false
 
     init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
@@ -35,6 +36,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         input.viewAppear.asObservable()
             .flatMap {
+                self.isStatusend = false
                 self.pageCount = 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
@@ -50,15 +52,24 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .flatMap { value in
                 if value == self.recruitmentData.value.count-1 {
                     self.pageCount += 1
-                    return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                    if !self.isStatusend {
+                        return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                    } else {
+                        return Single.just([])
+                    }
                 } else {
                     return Single.just([])
                 }
             }
             .bind(onNext: {
-                var currentElements = self.recruitmentData.value
-                currentElements.append(contentsOf: $0)
-                self.recruitmentData.accept(currentElements)
+                if $0 == [] {
+                    self.isStatusend = true
+                } else {
+                    self.isStatusend = false
+                    var currentElements = self.recruitmentData.value
+                    currentElements.append(contentsOf: $0)
+                    self.recruitmentData.accept(currentElements)
+                }
             })
             .disposed(by: disposeBag)
 
