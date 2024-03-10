@@ -57,6 +57,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                     cell.bookmarkButtonDidTap = {
                         self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
                     }
+                    RecruitmentDetailViewController.companyID = cell.recruitmentID
                 }
                 .disposed(by: disposeBag)
     }

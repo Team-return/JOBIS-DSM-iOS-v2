@@ -8,6 +8,8 @@ import Core
 import DesignSystem
 
 public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
+    static var companyID = 0
+
     var tableViewHeightConstraint: Constraint?
     var selectedIndexPath: IndexPath?
     private var isBookmarked = false {
@@ -310,6 +312,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func bind() {
         let input = RecruitmentDetailViewModel.Input(
+            viewAppear: self.viewWillAppearPublisher,
             companyDetailButtonDidClicked: companyDetailButton.rx.tap.asSignal()
         )
         _ = viewModel.transform(input)
