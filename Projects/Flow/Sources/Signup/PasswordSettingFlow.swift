@@ -23,8 +23,8 @@ public final class PasswordSettingFlow: Flow {
         case let .passwordSettingIsRequired(name, gcn, email):
             return navigateToPasswordSetting(name: name, gcn: gcn, email: email)
 
-        case let .privacyIsRequired(name, gcn, email, password):
-            return navigateToPrivacy(name: name, gcn: gcn, email: email, password: password)
+        case let .genderSettingIsRequired(name, gcn, email, password):
+            return navigateToGenderSetting(name: name, gcn: gcn, email: email, password: password)
 
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: VerifyEmailStep.tabsIsRequired)
@@ -44,20 +44,25 @@ private extension PasswordSettingFlow {
         ))
     }
 
-    func navigateToPrivacy(name: String, gcn: Int, email: String, password: String) -> FlowContributors {
-        let privacyFlow = PrivacyFlow(container: container)
+    func navigateToGenderSetting(
+        name: String,
+        gcn: Int,
+        email: String,
+        password: String
+    ) -> FlowContributors {
+        let genderFlow = GenderSettingFlow(container: container)
 
-        Flows.use(privacyFlow, when: .created) { root in
+        Flows.use(genderFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
-                root, 
+                root,
                 animated: true
             )
         }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: privacyFlow,
+            withNextPresentable: genderFlow,
             withNextStepper: OneStepper(
-                withSingleStep: PrivacyStep.privacyIsRequired(
+                withSingleStep: GenderSettingStep.genderSettingIsRequired(
                     name: name,
                     gcn: gcn,
                     email: email,
