@@ -9,19 +9,38 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
 
-    init( ) { }
+    private let fetchRecruitmentDetailUseCase: FetchRecruitmentDetailUseCase
+
+    init(
+        fetchRecruitmentDetailUseCase: FetchRecruitmentDetailUseCase
+    ) {
+        self.fetchRecruitmentDetailUseCase = fetchRecruitmentDetailUseCase
+    }
 
     public struct Input {
+        let viewAppear: PublishRelay<Void>
         let companyDetailButtonDidClicked: Signal<Void>
     }
 
-    public struct Output { }
+    public struct Output {
+        let recruitmentDetailInfo: PublishRelay<RecruitmentDetailEntity>
+    }
 
     public func transform(_ input: Input) -> Output {
+        let recruitmentDetailInfo = PublishRelay<RecruitmentDetailEntity>()
+
+        input.viewAppear.asObservable()
+            .flatMap {
+                self.fetchRecruitmentDetailUseCase.execute(id: RecruitmentDetailViewController.companyID)
+            }
+            .bind(to: recruitmentDetailInfo)
+            .disposed(by: disposeBag)
+
         input.companyDetailButtonDidClicked.asObservable()
             .map { _ in RecruitmentDetailStep.companyDetailIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
-        return Output()
+
+        return Output(recruitmentDetailInfo: recruitmentDetailInfo)
     }
 }
