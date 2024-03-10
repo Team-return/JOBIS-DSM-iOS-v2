@@ -1,12 +1,13 @@
 import Foundation
 
 public struct RecruitmentDetailEntity: Equatable {
+    public let recruitmentID: Int
     public let companyID: Int
     public let companyProfileUrl: String
     public let companyName: String
     public let areas: [AreaEntity]
     public let requiredGrade: String?
-    public let workTime: String
+    public let workingHours: String
     public let requiredLicenses: String?
     public let hiringProgress: String
     public let trainPay: String
@@ -16,14 +17,17 @@ public struct RecruitmentDetailEntity: Equatable {
     public let submitDocument: String
     public let startDate, endDate: String
     public let etc: String
+    public let isApplicable: Bool
+    public let bookmarked: Bool
 
     public init(
+        recruitmentID: Int,
         companyID: Int,
         companyProfileUrl: String,
         companyName: String,
         areas: [AreaEntity],
         requiredGrade: String?,
-        workTime: String,
+        workingHours: String,
         requiredLicenses: String?,
         hiringProgress: String,
         trainPay: String,
@@ -33,14 +37,17 @@ public struct RecruitmentDetailEntity: Equatable {
         submitDocument: String,
         startDate: String,
         endDate: String,
-        etc: String
+        etc: String,
+        isApplicable: Bool,
+        bookmarked: Bool
     ) {
+        self.recruitmentID = recruitmentID
         self.companyID = companyID
         self.companyProfileUrl = companyProfileUrl
         self.companyName = companyName
         self.areas = areas
         self.requiredGrade = requiredGrade
-        self.workTime = workTime
+        self.workingHours = workingHours
         self.requiredLicenses = requiredLicenses
         self.hiringProgress = hiringProgress
         self.trainPay = trainPay
@@ -51,5 +58,7 @@ public struct RecruitmentDetailEntity: Equatable {
         self.startDate = startDate
         self.endDate = endDate
         self.etc = etc
+        self.isApplicable = isApplicable
+        self.bookmarked = bookmarked
     }
 }

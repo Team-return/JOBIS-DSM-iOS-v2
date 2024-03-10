@@ -133,8 +133,10 @@ public final class PresentationAssembly: Assembly {
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
         }
 
-        container.register(RecruitmentDetailViewModel.self) { _ in
-            RecruitmentDetailViewModel()
+        container.register(RecruitmentDetailViewModel.self) { resolver in
+            RecruitmentDetailViewModel(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!
+            )
         }
 
         container.register(RecruitmentDetailViewController.self) { resolver in
