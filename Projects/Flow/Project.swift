@@ -6,8 +6,10 @@ let project = Project.makeModule(
     name: "Flow",
     product: .staticLibrary,
     targets: [.unitTest],
+    packages: [.FCM],
     dependencies: [
         .Projects.data,
-        .Projects.presentation
+        .Projects.presentation,
+        .SPM.FCM
     ]
 )

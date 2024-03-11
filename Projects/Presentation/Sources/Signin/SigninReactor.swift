@@ -4,6 +4,7 @@ import RxCocoa
 import Domain
 import RxFlow
 import Core
+import FirebaseMessaging
 
 public final class SigninReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
@@ -91,25 +92,29 @@ extension SigninReactor {
         } else if password.isEmpty {
             return .just(.passwordError("빈칸을 채워주세요"))
         } else {
-            return self.signinUseCase.execute(req: .init(accountID: "\(email)@dsm.hs.kr", password: password))
-                .asObservable()
-                .map { _ in Mutation.signinSuccess }
-                .catch { error in
-                    guard let error = error as? UsersError,
-                          let description = error.errorDescription
-                    else { return .never() }
+            return self.signinUseCase.execute(req: .init(
+                accountID: "\(email)@dsm.hs.kr",
+                password: password,
+                deviceToken: Messaging.messaging().fcmToken ?? "mac"
+            ))
+            .asObservable()
+            .map { _ in Mutation.signinSuccess }
+            .catch { error in
+                guard let error = error as? UsersError,
+                      let description = error.errorDescription
+                else { return .never() }
 
-                    switch error {
-                    case .notFoundPassword, .badRequest:
-                        return .just(.passwordError(description))
+                switch error {
+                case .notFoundPassword, .badRequest:
+                    return .just(.passwordError(description))
 
-                    case .notFoundEmail:
-                        return .just(.emailError(description))
+                case .notFoundEmail:
+                    return .just(.emailError(description))
 
-                    case .internalServerError:
-                        return .just(.emailError(error.localizedDescription))
-                    }
+                case .internalServerError:
+                    return .just(.emailError(error.localizedDescription))
                 }
+            }
         }
     }
 
