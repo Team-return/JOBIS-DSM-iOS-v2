@@ -1,52 +1,39 @@
-import Moya
-import Foundation
 import Domain
+import Foundation
+import Moya
 import AppNetwork
 
-enum FilesAPI {
-    case uploadFiles(data: [Data], fileName: String)
+public enum FilesAPI {
+    case fetchPresignedURL(req: UploadFilesRequestDTO)
 }
 
 extension FilesAPI: JobisAPI {
-    typealias ErrorType = JobisError
+    public typealias ErrorType = JobisError
 
-    var domain: JobisDomain {
+    public var domain: JobisDomain {
         .files
     }
 
-    var urlPath: String {
-        return ""
+    public var urlPath: String {
+        return "/pre-signed"
     }
 
-    var method: Moya.Method {
+    public var method: Moya.Method {
         return .post
     }
 
-    var task: Moya.Task {
+    public var task: Moya.Task {
         switch self {
-        case let .uploadFiles(data, fileName):
-            var multipartData: [MultipartFormData] {
-                data.map {
-                    MultipartFormData(
-                        provider: .data($0),
-                        name: "file",
-                        fileName: fileName
-                    )
-                }
-            }
-
-            return .uploadCompositeMultipart(
-                multipartData,
-                urlParameters: ["type": "EXTENSION_FILE"]
-            )
+        case let .fetchPresignedURL(req):
+            return .requestJSONEncodable(req)
         }
     }
 
-    var jwtTokenType: JwtTokenType {
+    public var jwtTokenType: JwtTokenType {
         .none
     }
 
-    var errorMap: [Int: ErrorType]? {
+    public var errorMap: [Int: ErrorType]? {
         return [:]
     }
 }

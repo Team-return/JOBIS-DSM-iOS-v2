@@ -1,14 +1,14 @@
 import RxSwift
 import Foundation
 
-public struct UploadFilesUseCase {
+public struct FetchPresignedURLUseCase {
     public init(filesRepository: FilesRepository) {
         self.filesRepository = filesRepository
     }
 
     private let filesRepository: FilesRepository
 
-    public func execute(data: [Data], fileName: String) -> Single<[String]> {
-        return filesRepository.uploadFiles(data: data, fileName: fileName)
+    public func execute(req: UploadFilesRequestDTO) -> Single<[PresignedURLEntity]> {
+        filesRepository.fetchPresignedURL(req: req)
     }
 }
