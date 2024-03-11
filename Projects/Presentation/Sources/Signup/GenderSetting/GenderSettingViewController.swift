@@ -87,8 +87,8 @@ public final class GenderSettingViewController: BaseViewController<GenderSetting
 
         femaleSelectorButton.rx.tap
             .asObservable()
-            .bind { _ in
-                self.selectedGender.accept(.woman)
+            .bind { [weak self] _ in
+                self?.selectedGender.accept(.woman)
             }
             .disposed(by: disposeBag)
     }
