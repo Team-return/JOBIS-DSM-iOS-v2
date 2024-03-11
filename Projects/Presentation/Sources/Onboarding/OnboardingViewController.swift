@@ -8,7 +8,7 @@ import DesignSystem
 import Lottie
 
 public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
-    private let animationView = JobisLottieView(.onboarding)
+    private let animationView = JobisLottieView()
     private let teamReturnLogoImage = UIImageView().then {
         $0.image = .onboardingImage(.teamReturnLogo)
     }
@@ -31,12 +31,12 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
             animationView,
             teamReturnLogoImage,
             navigateButtonStackView
-        ].forEach { self.view.addSubview($0)}
+        ].forEach(self.view.addSubview(_:))
 
         [
             navigateToSignupButton,
             navigateToSigninButton
-        ].forEach { self.navigateButtonStackView.addArrangedSubview($0) }
+        ].forEach(self.navigateButtonStackView.addArrangedSubview(_:))
     }
 
     public override func setLayout() {
@@ -72,16 +72,21 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
 
                 if !isOnLoading {
                     animationView.play()
-                    UIView.transition(
-                        with: navigateButtonStackView,
-                        duration: 0.5,
-                        options: .transitionCrossDissolve,
-                        animations: {
-                            self.setNavigateButton()
-                        }
-                    )
                 }
                 isOnLoading = true
+            }).disposed(by: disposeBag)
+
+        output.showNavigationButton.asObservable()
+            .bind(onNext: { [weak self] in
+                guard let self, isOnLoading else { return }
+                UIView.transition(
+                    with: self.navigateButtonStackView,
+                    duration: 0.5,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        self.setNavigateButton()
+                    }
+                )
             }).disposed(by: disposeBag)
     }
 

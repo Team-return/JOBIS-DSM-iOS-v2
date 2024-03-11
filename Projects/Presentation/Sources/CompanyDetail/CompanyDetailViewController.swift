@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
+public class CompanyDetailViewController: BaseViewController<CompanyDetailViewModel> {
     private let companyLogoImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 1.0
@@ -58,13 +58,13 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = false
     }
-    private let recruitmentListButton = JobisButton(style: .main).then {
+    private let recruitmentButton = JobisButton(style: .main).then {
         $0.setText("모집의뢰서 보기")
     }
     public override func addView() {
         [
             scrollView,
-            recruitmentListButton
+            recruitmentButton
         ].forEach(view.addSubview(_:))
 
         scrollView.addSubview(contentView)
@@ -95,98 +95,116 @@ class CompanyDetailViewController: BaseViewController<RecruitmentViewModel> {
             $0.left.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
+
         companyLabel.snp.makeConstraints {
             $0.left.equalTo(companyLogoImageView.snp.right).offset(12)
             $0.centerY.equalTo(companyLogoImageView)
         }
+
         explainCompanyLabel.snp.makeConstraints {
             $0.top.equalTo(companyLogoImageView.snp.bottom).offset(8)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         scrollView.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide)
-            $0.left.right.equalTo(self.view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(recruitmentListButton.snp.top).inset(-12)
+            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(recruitmentButton.snp.top).inset(-12)
         }
+
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
             $0.bottom.equalTo(interviewReviewTableView.snp.bottom).offset(20)
         }
+
         bossLabel.snp.makeConstraints {
             $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(24)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         startedDayLabel.snp.makeConstraints {
             $0.top.equalTo(bossLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         workersNumbersLabel.snp.makeConstraints {
             $0.top.equalTo(startedDayLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         annualSalesLabel.snp.makeConstraints {
             $0.top.equalTo(workersNumbersLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         headAddressLabel.snp.makeConstraints {
             $0.top.equalTo(annualSalesLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         chainAddressLabel.snp.makeConstraints {
             $0.top.equalTo(headAddressLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         firstManagerLabel.snp.makeConstraints {
             $0.top.equalTo(chainAddressLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         firstPhoneNumberLabel.snp.makeConstraints {
             $0.top.equalTo(firstManagerLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         secondManagerLabel.snp.makeConstraints {
             $0.top.equalTo(firstPhoneNumberLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         secondPhoneNumberLabel.snp.makeConstraints {
             $0.top.equalTo(secondManagerLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         emailLabel.snp.makeConstraints {
             $0.top.equalTo(secondPhoneNumberLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         faxLabel.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
         interviewReviewMenuLabel.snp.makeConstraints {
             $0.top.equalTo(faxLabel.snp.bottom).offset(20)
         }
+
         interviewReviewTableView.snp.makeConstraints {
             $0.top.equalTo(interviewReviewMenuLabel.snp.bottom).offset(8)
-            $0.left.right.equalTo(view.safeAreaInsets)
+            $0.leading.trailing.equalTo(view.safeAreaInsets)
             $0.height.greaterThanOrEqualTo(interviewReviewTableView.contentSize.height + 4)
         }
-        recruitmentListButton.snp.makeConstraints {
+
+        recruitmentButton.snp.makeConstraints {
             $0.height.equalTo(56)
-            $0.left.right.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(36)
         }
     }
 
-    public override func bind() { }
+    public override func bind() {
+        let input = CompanyDetailViewModel.Input(
+            recruitmentButtonDidTap: recruitmentButton.rx.tap.asSignal()
+        )
+        _ = viewModel.transform(input)
+    }
 
     public override func configureViewController() {
         interviewReviewTableView.delegate = self
         interviewReviewTableView.dataSource = self
-        recruitmentListButton.rx.tap
-            .subscribe(onNext: {
-                let viewController = RecruitmentDetailViewController(self.viewModel)
-                self.navigationController?.pushViewController(viewController, animated: true)
-            })
-            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
@@ -203,11 +221,11 @@ extension UITableView {
 }
 
 extension CompanyDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = interviewReviewTableView.dequeueReusableCell(withIdentifier: InterviewReviewTableViewCell.identifier, for: indexPath)
         return cell
     }

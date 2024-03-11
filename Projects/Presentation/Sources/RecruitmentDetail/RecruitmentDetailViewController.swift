@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-class RecruitmentDetailViewController: BaseViewController<RecruitmentViewModel> {
+public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
     var tableViewHeightConstraint: Constraint?
     var selectedIndexPath: IndexPath?
     private var isBookmarked = false {
@@ -180,27 +180,33 @@ class RecruitmentDetailViewController: BaseViewController<RecruitmentViewModel> 
         }
     }
 
-    public override func bind() { }
+    public override func bind() {
+        let input = RecruitmentDetailViewModel.Input(
+            viewAppear: self.viewWillAppearPublisher,
+            companyDetailButtonDidClicked: companyDetailButton.rx.tap.asSignal()
+        )
+        _ = viewModel.transform(input)
+    }
 
     public override func configureViewController() {
         fieldTypeDetailTableView.delegate = self
         fieldTypeDetailTableView.dataSource = self
+
+//        self.viewWillAppearPublisher.asObservable()
+//            .subscribe(onNext: { [weak self] in
+//                self?.hideTabbar()
+//            })
+//            .disposed(by: disposeBag)
+
         bookmarkButton.rx.tap
             .subscribe(onNext: {
                 self.isBookmarked.toggle()
             })
             .disposed(by: disposeBag)
+
         supportButton.rx.tap
             .subscribe(onNext: {
                 self.isSupported.toggle()
-            })
-            .disposed(by: disposeBag)
-
-        companyDetailButton.rx.tap
-            .subscribe(onNext: { [weak self] _ in
-                let viewController = CompanyDetailViewController(self!.viewModel)
-                viewController.hidesBottomBarWhenPushed = true
-                self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
     }
@@ -211,11 +217,11 @@ class RecruitmentDetailViewController: BaseViewController<RecruitmentViewModel> 
 }
 
 extension RecruitmentDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = fieldTypeDetailTableView.dequeueReusableCell(
             withIdentifier: FieldTypeDetailViewCell.identifier,
             for: indexPath
@@ -224,7 +230,7 @@ extension RecruitmentDetailViewController: UITableViewDelegate, UITableViewDataS
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? FieldTypeDetailViewCell else { return }
 
         cell.isOpen.toggle()
@@ -245,11 +251,11 @@ extension RecruitmentDetailViewController: UITableViewDelegate, UITableViewDataS
         }
     }
 
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         return JobisMenuLabel(text: "모집분야")
     }
 
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 36
     }
 }

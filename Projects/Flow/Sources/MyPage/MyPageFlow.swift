@@ -24,6 +24,9 @@ public final class MyPageFlow: Flow {
 
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
+
+        case .noticeIsRequired:
+            return navigateToNotice()
         }
     }
 }
@@ -40,6 +43,21 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: myPageViewController,
             withNextStepper: myPageViewController.viewModel
+        ))
+    }
+
+    func navigateToNotice() -> FlowContributors {
+        let noticeFlow = NoticeFlow(container: container)
+
+        Flows.use(noticeFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: noticeFlow,
+            withNextStepper: OneStepper(withSingleStep: NoticeStep.noticeIsRequired)
         ))
     }
 }

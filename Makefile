@@ -13,3 +13,7 @@ reset:
 	tuist clean
 	rm -rf **/*.xcodeproj
 	rm -rf *.xcworkspace
+
+ci_generate:
+	tuist fetch
+	TUIST_CI=1 tuist generate

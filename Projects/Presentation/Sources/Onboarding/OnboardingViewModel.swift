@@ -21,10 +21,12 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let animate: PublishRelay<Void>
+        let showNavigationButton: PublishRelay<Void>
     }
 
     public func transform(_ input: Input) -> Output {
         let animate = PublishRelay<Void>()
+        let showNavigationButton = PublishRelay<Void>()
 
         input.navigateToSigninDidTap.asObservable()
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
@@ -39,12 +41,12 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.viewAppear.asObservable()
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
+            .map { _ in animate.accept(()) }
             .flatMap { [self] in
-                reissueTokenUaseCase.execute()
+                return reissueTokenUaseCase.execute()
                     .asCompletable()
                     .catch { _ in
-                        animate.accept(())
+                        showNavigationButton.accept(())
                         return .never()
                     }
                     .andThen(Single.just(OnboardingStep.tabsIsRequired))
@@ -52,6 +54,9 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output(animate: animate)
+        return Output(
+            animate: animate,
+            showNavigationButton: showNavigationButton
+        )
     }
 }
