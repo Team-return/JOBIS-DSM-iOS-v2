@@ -1,15 +1,15 @@
 import RxSwift
-import Foundation
+import AppNetwork
 import Domain
 
 protocol RemoteFilesDataSource {
-    func uploadFiles(data: [Data], fileName: String) -> Single<[String]>
+    func fetchPresignedURL(req: UploadFilesRequestDTO) -> Single<[PresignedURLEntity]>
 }
 
 final class RemoteFilesDataSourceImpl: RemoteBaseDataSource<FilesAPI>, RemoteFilesDataSource {
-    func uploadFiles(data: [Data], fileName: String) -> Single<[String]> {
-        request(.uploadFiles(data: data, fileName: fileName))
-            .map(UploadFilesResponseDTO.self)
-            .map(\.urls)
+    func fetchPresignedURL(req: UploadFilesRequestDTO) -> Single<[PresignedURLEntity]> {
+        request(.fetchPresignedURL(req: req))
+            .map(FetchPresignedURLResponseDTO.self)
+            .map { $0.toDomain() }
     }
 }

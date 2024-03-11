@@ -9,7 +9,7 @@ struct FilesRepositoryImpl: FilesRepository {
         self.remoteFilesDataSource = remoteFilesDataSource
     }
 
-    func uploadFiles(data: [Data], fileName: String) -> Single<[String]> {
-        remoteFilesDataSource.uploadFiles(data: data, fileName: fileName)
+    func fetchPresignedURL(req: UploadFilesRequestDTO) -> Single<[PresignedURLEntity]> {
+        remoteFilesDataSource.fetchPresignedURL(req: req)
     }
 }
