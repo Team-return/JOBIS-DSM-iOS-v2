@@ -10,6 +10,10 @@ import DesignSystem
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let pageCount = PublishRelay<Int>()
+    private let listEmptyView = ListEmptyView().then {
+        $0.setEmptyView(title: "아직 등록된 모집의뢰서가 없어요")
+        $0.isHidden = true
+    }
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -28,11 +32,16 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func addView() {
         self.view.addSubview(recruitmentTableView)
+        recruitmentTableView.addSubview(listEmptyView)
     }
 
     public override func setLayout() {
         recruitmentTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        listEmptyView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(80)
         }
     }
 
@@ -50,6 +59,9 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let output = viewModel.transform(input)
 
         output.recruitmentData
+            .do(onNext: {
+                self.listEmptyView.isHidden = $0.isEmpty
+            })
             .bind(
                 to: recruitmentTableView.rx.items(
                     cellIdentifier: RecruitmentTableViewCell.identifier,
