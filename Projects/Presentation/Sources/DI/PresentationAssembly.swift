@@ -102,8 +102,11 @@ public final class PresentationAssembly: Assembly {
             GenderSettingViewController(resolver.resolve(GenderSettingViewModel.self)!)
         }
 
-        container.register(ProfileSettingViewModel.self) { _ in
-            ProfileSettingViewModel()
+        container.register(ProfileSettingViewModel.self) { resolver in
+            ProfileSettingViewModel(
+                fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
+                uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!
+            )
         }
         container.register(ProfileSettingViewController.self) { resolver in
             ProfileSettingViewController(resolver.resolve(ProfileSettingViewModel.self)!)

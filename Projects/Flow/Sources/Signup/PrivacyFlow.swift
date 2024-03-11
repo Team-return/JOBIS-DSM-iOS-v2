@@ -43,7 +43,7 @@ private extension PrivacyFlow {
         email: String,
         password: String,
         isMan: Bool,
-        profileImageURL: String
+        profileImageURL: String?
     ) -> FlowContributors {
         rootViewController.name = name
         rootViewController.gcn = gcn

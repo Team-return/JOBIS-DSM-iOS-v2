@@ -71,7 +71,7 @@ private extension ProfileSettingFlow {
         email: String,
         password: String,
         isMan: Bool,
-        profileImageURL: String
+        profileImageURL: String?
     ) -> FlowContributors {
         let privacyFlow = PrivacyFlow(container: container)
 
