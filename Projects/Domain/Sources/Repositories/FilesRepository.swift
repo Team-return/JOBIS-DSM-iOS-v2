@@ -2,5 +2,5 @@ import RxSwift
 import Foundation
 
 public protocol FilesRepository {
-    func uploadFiles(data: [Data], fileName: String) -> Single<[String]>
+    func fetchPresignedURL(req: UploadFilesRequestDTO) -> Single<[PresignedURLEntity]>
 }

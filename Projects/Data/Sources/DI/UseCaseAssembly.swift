@@ -188,9 +188,14 @@ public final class UseCaseAssembly: Assembly {
         }
 
         // Files
-        container.register(UploadFilesUseCase.self) { resolver in
-            UploadFilesUseCase(
+        container.register(FetchPresignedURLUseCase.self) { resolver in
+            FetchPresignedURLUseCase(
                 filesRepository: resolver.resolve(FilesRepository.self)!
+            )
+        }
+        container.register(UploadImageToS3UseCase.self) { resolver in
+            UploadImageToS3UseCase(
+                presignedURLRepository: resolver.resolve(PresignedURLRepository.self)!
             )
         }
     }

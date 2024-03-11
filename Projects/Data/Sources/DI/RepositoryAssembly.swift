@@ -71,6 +71,11 @@ public final class RepositoryAssembly: Assembly {
                 remoteFilesDataSource: resolver.resolve(RemoteFilesDataSource.self)!
             )
         }
+        container.register(PresignedURLRepository.self) { resolver in
+            PresignedURLRepositoryImpl(
+                remotePresignedURLDataSource: resolver.resolve(RemotePresignedURLDataSource.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
