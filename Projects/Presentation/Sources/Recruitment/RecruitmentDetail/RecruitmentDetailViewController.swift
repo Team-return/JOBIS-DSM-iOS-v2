@@ -358,6 +358,10 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         }
     }
 
+//    public func isFirstLoad() {
+//        RecruitmentViewController.isFirstLoad = true
+//    }
+
     deinit {
         fieldTypeDetailTableView.removeObserver(self, forKeyPath: "contentSize")
     }

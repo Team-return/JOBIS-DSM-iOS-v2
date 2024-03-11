@@ -8,6 +8,9 @@ import Core
 import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+    static var isFirstLoad: Bool = true
+
+    private var afterViewAppear = PublishRelay<Void>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let cellClick = PublishRelay<Void>()
     private let pageCount = PublishRelay<Void>()
@@ -39,7 +42,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func bind() {
         let input = RecruitmentViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
+            viewAppear: self.afterViewAppear,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
             pageReload: pageCount,
             cellClicked: cellClick
@@ -76,6 +79,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()
+                if RecruitmentViewController.isFirstLoad {
+                    self!.afterViewAppear.accept(())
+                    RecruitmentViewController.isFirstLoad = false
+                }
             })
             .disposed(by: disposeBag)
     }
