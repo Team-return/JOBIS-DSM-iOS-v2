@@ -39,7 +39,7 @@ public final class RecruitmentDetailLabel: BaseView {
         }
     }
 
-    public func setSubTitle(subTitle: String) {
-        self.subTitleLabel.setJobisText(subTitle, font: .body, color: .GrayScale.gray90)
+    public func setSubTitle(_ subTitle: String?) {
+        self.subTitleLabel.setJobisText(subTitle ?? "-", font: .body, color: .GrayScale.gray90)
     }
 }
