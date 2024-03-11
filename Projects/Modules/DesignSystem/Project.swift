@@ -9,5 +9,8 @@ let project = Project.makeModule(
     dependencies: [
         .Projects.core
     ],
-    resources: .resources
+    resources: .resources,
+    resourceSynthesizers: .default + [
+        .custom(name: "Lottie", parser: .json, extensions: ["json"])
+    ]
 )

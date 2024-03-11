@@ -74,13 +74,13 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(accountSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
-
     }
 
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
             withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw)
         )
@@ -100,6 +100,14 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             .bind(onNext: { [weak self] in
                 self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
             }).disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
+        self.viewWillAppearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.showTabbar()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {

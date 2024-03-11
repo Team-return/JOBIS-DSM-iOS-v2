@@ -21,6 +21,9 @@ public final class RecruitmentFlow: Flow {
         switch step {
         case .recruitmentIsRequired:
             return navigateToRecruitment()
+
+        case .recruitmentDetailIsRequired:
+            return navigateToRecruitmentDetail()
         }
     }
 }
@@ -37,6 +40,21 @@ private extension RecruitmentFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentViewController,
             withNextStepper: recruitmentViewController.viewModel
+        ))
+    }
+
+    func navigateToRecruitmentDetail() -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+
+        Flows.use(recruitmentDetailFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 }
