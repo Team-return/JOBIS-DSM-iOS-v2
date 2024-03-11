@@ -6,6 +6,8 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import Photos
+import Domain
 
 public final class ProfileSettingViewController: BaseViewController<ProfileSettingViewModel> {
     public var name: String = ""
@@ -14,6 +16,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
     public var password: String = ""
     public var isMan: Bool = false
     private let picker = UIImagePickerController()
+    private let selectedFileModel = BehaviorRelay<UploadFileModel?>(value: nil)
     private let profileImageView = UIImageView().then {
         $0.image = .jobisIcon(.profile).resize(size: 80)
     }
@@ -21,7 +24,6 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("완료")
     }
-    private let selectedImage = PublishRelay<UIImage>()
 
     public override func addView() {
         [
@@ -56,7 +58,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
             email: email,
             password: password,
             isMan: isMan,
-            profileImage: .init(), // TODO: profile
+            profileImage: selectedFileModel,
             nextButtonDidTap: nextButton.rx.tap.asSignal()
         )
         _ = viewModel.transform(input)
@@ -64,6 +66,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
 
     public override func configureViewController() {
         self.picker.delegate = self
+
         editProfileButton.rx.tapGesture()
             .when(.recognized)
             .asObservable()
@@ -71,18 +74,17 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
                 self?.openLibrary()
             }
             .disposed(by: disposeBag)
-
-        selectedImage.asObservable()
-            .bind { [weak self] image in
-                self?.profileImageView.image = image
-                self?.profileImageView.asCircle()
-                self?.view.layoutIfNeeded()
-            }
-            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         setLargeTitle(title: "프로필 사진을 등록해주세요")
+    }
+
+    private func selectProfileImage(_ model: UploadFileModel) {
+        self.profileImageView.image = .init(data: model.file)
+        self.profileImageView.asCircle()
+
+        self.selectedFileModel.accept(model)
     }
 }
 
@@ -99,7 +101,8 @@ extension ProfileSettingViewController: UINavigationControllerDelegate {
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            selectedImage.accept(image)
+            guard let imageData = image.pngData() else { return }
+            self.selectProfileImage(.init(file: imageData, fileName: "profile.png"))
             dismiss(animated: true, completion: nil)
         }
     }

@@ -8,6 +8,6 @@ public enum PrivacyStep: Step {
         email: String,
         password: String,
         isMan: Bool,
-        profileImageURL: String
+        profileImageURL: String?
     )
 }

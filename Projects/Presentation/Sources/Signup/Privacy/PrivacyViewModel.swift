@@ -19,6 +19,8 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
         let gcn: Int
         let email: String
         let password: String
+        let isMan: Bool
+        let profileImageURL: String?
         let signupButtonDidTap: Signal<Void>
     }
     public struct Output {}
@@ -33,9 +35,11 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
                         password: input.password,
                         grade: input.gcn.extract(4),
                         name: input.name,
-                        gender: .man,
+                        gender: input.isMan ? .man: .woman,
                         classRoom: input.gcn.extract(3),
-                        number: input.gcn % 100
+                        number: input.gcn % 100,
+                        deviceToken: nil, // TODO: FireBase 연동
+                        profileImageURL: input.profileImageURL
                     )
                 )
                 .catch { _ in .never() }
