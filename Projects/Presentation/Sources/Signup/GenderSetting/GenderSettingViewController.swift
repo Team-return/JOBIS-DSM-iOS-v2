@@ -66,15 +66,8 @@ public final class GenderSettingViewController: BaseViewController<GenderSetting
     public override func configureViewController() {
         selectedGender.asObservable().bind { [weak self] gender in
             self?.nextButton.isEnabled = true
-            switch gender {
-            case .man:
-                self?.maleSelectorButton.isSelectedGender = true
-                self?.femaleSelectorButton.isSelectedGender = false
-
-            case .woman:
-                self?.maleSelectorButton.isSelectedGender = false
-                self?.femaleSelectorButton.isSelectedGender = true
-            }
+            self?.maleSelectorButton.isSelectedGender = gender == .man
+            self?.femaleSelectorButton.isSelectedGender = gender == .woman
         }
         .disposed(by: disposeBag)
 
