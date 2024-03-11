@@ -40,6 +40,7 @@ public enum JobisDomain: String {
     case reviews
     case files
     case bugs
+    case presignedURL = ""
 }
 
 extension JobisDomain {

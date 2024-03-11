@@ -12,6 +12,8 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
     public var gcn: Int = 0
     public var email: String = ""
     public var password: String = ""
+    public var isMan: Bool = false
+    public var profileImageURL: String?
     private let privacyWebView = WKWebView().then {
         let url = URL(string: "https://jobis-webview.team-return.com/sign-up-policy")
         let request = URLRequest(url: url!)
@@ -47,6 +49,8 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
             gcn: gcn,
             email: email,
             password: password,
+            isMan: isMan,
+            profileImageURL: profileImageURL,
             signupButtonDidTap: signupButton.rx.tap.asSignal()
         )
         _ = viewModel.transform(input)

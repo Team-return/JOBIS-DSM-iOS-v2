@@ -50,7 +50,7 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                 return true
             }
             .map { password, _ in
-                PasswordSettingStep.privacyIsRequired(
+                PasswordSettingStep.genderSettingIsRequired(
                     name: input.name,
                     gcn: input.gcn,
                     email: input.email,
