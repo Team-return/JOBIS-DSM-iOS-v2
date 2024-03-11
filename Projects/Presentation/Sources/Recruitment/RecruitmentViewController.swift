@@ -9,7 +9,6 @@ import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
-    private let cellClick = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
     private let recruitmentTableView = UITableView().then {
         $0.register(
@@ -41,8 +40,11 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: pageCount,
-            cellClicked: cellClick
+            pageChange: recruitmentTableView.rx.willDisplayCell
+                .filter {
+                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(inSection: $0.indexPath.section) - 1
+                }.asObservable(),
+            recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected
         )
 
         let output = viewModel.transform(input)
@@ -62,15 +64,14 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     }
 
     public override func configureViewController() {
-        recruitmentTableView.delegate = self
         searchButton.rx.tap
             .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
 
-        self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.showTabbar()
-            })
+        viewWillAppearPublisher.asObservable()
+            .bind {
+                self.showTabbar()
+            }
             .disposed(by: disposeBag)
     }
 
@@ -80,24 +81,5 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             UIBarButtonItem(customView: searchButton)
         ]
         setLargeTitle(title: "모집의뢰서")
-    }
-}
-
-extension RecruitmentViewController: UITableViewDelegate {
-    public func tableView(
-        _ tableView: UITableView,
-        willDisplay cell: UITableViewCell,
-        forRowAt indexPath: IndexPath
-    ) {
-        let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
-        if indexPath.row == lastRowIndex {
-            pageCount.accept(indexPath.row)
-        }
-    }
-
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.hideTabbar()
-        cellClick.accept(())
     }
 }
