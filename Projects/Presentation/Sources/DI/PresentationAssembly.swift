@@ -140,7 +140,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(RecruitmentDetailViewController.self) { resolver in
-            RecruitmentDetailViewController(resolver.resolve(RecruitmentDetailViewModel.self)!)
+            RecruitmentDetailViewController(
+                resolver.resolve(RecruitmentDetailViewModel.self)!
+            )
         }
     }
     // swiftlint:enable function_body_length

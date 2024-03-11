@@ -8,7 +8,7 @@ import RxCocoa
 
 final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
-    public var bookmarkButtonDidTap: (()->(Void))?
+    public var bookmarkButtonDidTap: (() -> Void)?
     public var recruitmentID = 0
     private var disposeBag = DisposeBag()
     private var isBookmarked = false {
