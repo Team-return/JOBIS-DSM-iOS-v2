@@ -84,6 +84,13 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
+                self.setLargeTitle(title: "모집의뢰서")
+            }
+            .disposed(by: disposeBag)
+
+        viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.setSmallTitle(title: "")
             }
             .disposed(by: disposeBag)
     }
@@ -93,6 +100,5 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             UIBarButtonItem(customView: filterButton),
             UIBarButtonItem(customView: searchButton)
         ]
-        setLargeTitle(title: "모집의뢰서")
     }
 }
