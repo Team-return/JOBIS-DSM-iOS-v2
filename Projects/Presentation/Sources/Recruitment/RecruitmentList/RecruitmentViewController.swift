@@ -10,7 +10,7 @@ import DesignSystem
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let cellClick = PublishRelay<Void>()
-    private let pageCount = PublishRelay<Int>()
+    private let pageCount = PublishRelay<Void>()
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -41,7 +41,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: pageCount,
+            pageReload: pageCount,
             cellClicked: cellClick
         )
 
@@ -97,7 +97,7 @@ extension RecruitmentViewController: UITableViewDelegate {
     ) {
         let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
         if indexPath.row == lastRowIndex {
-            pageCount.accept(indexPath.row)
+            pageCount.accept(())
         }
     }
 

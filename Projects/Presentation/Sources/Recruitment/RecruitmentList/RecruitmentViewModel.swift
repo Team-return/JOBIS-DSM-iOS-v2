@@ -12,7 +12,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     private let bookmarkUseCase: BookmarkUseCase
     private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private var pageCount: Int = 1
-    private var isStatusend: Bool = false
+    private var pageIsFull: Bool = false
 
     init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
@@ -25,7 +25,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
-        var pageChange: PublishRelay<Int>
+        var pageReload: PublishRelay<Void>
         let cellClicked: PublishRelay<Void>
     }
 
@@ -36,7 +36,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         input.viewAppear.asObservable()
             .flatMap {
-                self.isStatusend = false
+                self.pageIsFull = false
                 self.pageCount = 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
@@ -48,24 +48,23 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             })
             .disposed(by: disposeBag)
 
-        input.pageChange.asObservable()
+        input.pageReload.asObservable()
             .flatMap { value in
                 if value == self.recruitmentData.value.count-1 {
                     self.pageCount += 1
-                    if !self.isStatusend {
-                        return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
-                    } else {
-                        return Single.just([])
-                    }
+            .flatMap { _ in
+                self.pageCount += 1
+                if !self.pageIsFull {
+                    return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
                 } else {
-                    return Single.just([])
+                    return .never()
                 }
             }
             .bind(onNext: {
-                if $0 == [] {
-                    self.isStatusend = true
+                if $0.isEmpty {
+                    self.pageIsFull = true
                 } else {
-                    self.isStatusend = false
+                    self.pageIsFull = false
                     var currentElements = self.recruitmentData.value
                     currentElements.append(contentsOf: $0)
                     self.recruitmentData.accept(currentElements)
