@@ -192,11 +192,11 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         fieldTypeDetailTableView.delegate = self
         fieldTypeDetailTableView.dataSource = self
 
-//        self.viewWillAppearPublisher.asObservable()
-//            .subscribe(onNext: { [weak self] in
-//                self?.hideTabbar()
-//            })
-//            .disposed(by: disposeBag)
+        self.viewWillAppearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.hideTabbar()
+            })
+            .disposed(by: disposeBag)
 
         bookmarkButton.rx.tap
             .subscribe(onNext: {
