@@ -59,8 +59,9 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let output = viewModel.transform(input)
 
         output.recruitmentData
+            .skip(1)
             .do(onNext: {
-                self.listEmptyView.isHidden = $0.isEmpty
+                self.listEmptyView.isHidden = !$0.isEmpty
             })
             .bind(
                 to: recruitmentTableView.rx.items(
