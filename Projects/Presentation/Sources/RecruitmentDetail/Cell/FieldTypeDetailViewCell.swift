@@ -5,15 +5,28 @@ import Domain
 import DesignSystem
 import RxSwift
 
-final class FieldTypeDetailViewCell: BaseTableViewCell<RecruitmentViewModel> {
+final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
     static let identifier = "FieldTypeDetailViewCell"
-
     public var interviewReviewID: Int?
+    public var isOpen = false {
+        didSet {
+            detailView.isHidden = !isOpen
+            detailView.alpha = isOpen ? 1 : 0
+            fieldTypeArrowImageView.image = .jobisIcon(isOpen ? .arrowUp : .arrowDown)
+        }
+    }
     private let disposeBag = DisposeBag()
-    private let containerView = UIView().then {
+    private let backStackView = UIStackView().then {
         $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
+        $0.axis = .vertical
+        $0.spacing = 16
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+    }
+    private let titleView = UIStackView().then {
+        $0.axis = .horizontal
     }
     private let fieldTypeLabel = UILabel().then {
         $0.setJobisText(
@@ -22,8 +35,12 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<RecruitmentViewModel> {
             color: .GrayScale.gray90
         )
     }
-    private let fieldTypeArrowImage = UIImageView().then {
+    private let fieldTypeArrowImageView = UIImageView().then {
         $0.image = .jobisIcon(.arrowDown)
+    }
+    private let detailView = UIView().then {
+        $0.isHidden = true
+        $0.alpha = 0
     }
     private let majorTaskMenuLabel = UILabel().then {
         $0.setJobisText(
@@ -39,69 +56,71 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<RecruitmentViewModel> {
             color: .GrayScale.gray80
         )
         $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
     }
-    private let useTechniquesMenuLabel = UILabel().then {
+    private let useSkillsMenuLabel = UILabel().then {
         $0.setJobisText(
             "사용 기술",
             font: .description,
             color: .GrayScale.gray60
         )
     }
-    private let useTechniquesLabel = UILabel().then {
+    private let useSkillsLabel = UILabel().then {
         $0.setJobisText(
             "Javascript, HTML, CSS, Next.js, React",
             font: .body,
             color: .GrayScale.gray80
         )
         $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
     }
+
     override func addView() {
-        self.addSubview(containerView)
+        contentView.addSubview(backStackView)
+
+        [
+            titleView,
+            detailView
+        ].forEach(self.backStackView.addArrangedSubview(_:))
+
         [
             fieldTypeLabel,
-            fieldTypeArrowImage,
+            fieldTypeArrowImageView
+        ].forEach(self.titleView.addArrangedSubview(_:))
+
+        [
             majorTaskMenuLabel,
             majorTaskLabel,
-            useTechniquesMenuLabel,
-            useTechniquesLabel
-        ].forEach {
-            containerView.addSubview($0)
-        }
+            useSkillsMenuLabel,
+            useSkillsLabel
+        ].forEach(self.detailView.addSubview(_:))
     }
 
     override func setLayout() {
-        fieldTypeLabel.snp.makeConstraints {
-            $0.top.equalTo(fieldTypeArrowImage.snp.top)
-            $0.left.equalTo(containerView).offset(16)
+        fieldTypeArrowImageView.snp.makeConstraints {
+            $0.width.equalTo(24)
         }
-        containerView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-        fieldTypeArrowImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.right.equalToSuperview().inset(16)
-            $0.height.width.equalTo(24)
-        }
+
         majorTaskMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(fieldTypeArrowImage.snp.bottom).offset(16)
-            $0.left.equalToSuperview().inset(16)
+            $0.top.leading.equalToSuperview()
         }
+
         majorTaskLabel.snp.makeConstraints {
             $0.top.equalTo(majorTaskMenuLabel.snp.bottom).offset(4)
-            $0.left.equalToSuperview().inset(16)
-            $0.right.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview()
         }
-        useTechniquesMenuLabel.snp.makeConstraints {
+
+        useSkillsMenuLabel.snp.makeConstraints {
             $0.top.equalTo(majorTaskLabel.snp.bottom).offset(16)
-            $0.left.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview()
         }
-        useTechniquesLabel.snp.makeConstraints {
-            $0.top.equalTo(useTechniquesMenuLabel.snp.bottom).offset(4)
-            $0.left.right.bottom.equalToSuperview().inset(16)
+
+        useSkillsLabel.snp.makeConstraints {
+            $0.top.equalTo(useSkillsMenuLabel.snp.bottom).offset(4)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+
+        backStackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.top.bottom.equalToSuperview().inset(4)
         }
     }
 
