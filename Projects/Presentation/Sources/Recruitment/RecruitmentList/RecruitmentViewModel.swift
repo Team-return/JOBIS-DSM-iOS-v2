@@ -42,16 +42,14 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             }
             .bind(onNext: {
                 self.recruitmentData.accept([])
-                var currentElements = self.recruitmentData.value
-                currentElements.append(contentsOf: $0)
-                self.recruitmentData.accept(currentElements)
+                self.recruitmentData.accept(self.recruitmentData.value + $0)
             })
             .disposed(by: disposeBag)
 
         input.pageReload.asObservable()
-            .flatMap { value in
-                if value == self.recruitmentData.value.count-1 {
-                    self.pageCount += 1
+//            .filter {
+//                $0 == self.recruitmentData.value.count-1
+//            }
             .flatMap { _ in
                 self.pageCount += 1
                 if !self.pageIsFull {
@@ -65,9 +63,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                     self.pageIsFull = true
                 } else {
                     self.pageIsFull = false
-                    var currentElements = self.recruitmentData.value
-                    currentElements.append(contentsOf: $0)
-                    self.recruitmentData.accept(currentElements)
+                    self.recruitmentData.accept(self.recruitmentData.value + $0)
                 }
             })
             .disposed(by: disposeBag)
