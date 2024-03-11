@@ -57,7 +57,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                     cell.bookmarkButtonDidTap = {
                         self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
                     }
-                    RecruitmentDetailViewController.companyID = cell.recruitmentID
                 }
                 .disposed(by: disposeBag)
     }
@@ -68,11 +67,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
 
-//        self.viewWillAppearPublisher.asObservable()
-//            .subscribe(onNext: { [weak self] in
-//                self?.showTabbar()
-//            })
-//            .disposed(by: disposeBag)
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()

@@ -29,12 +29,12 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let recruitmentDetailInfo = PublishRelay<RecruitmentDetailEntity>()
 
-        input.viewAppear.asObservable()
-            .flatMap {
-                self.fetchRecruitmentDetailUseCase.execute(id: RecruitmentDetailViewController.companyID)
-            }
-            .bind(to: recruitmentDetailInfo)
-            .disposed(by: disposeBag)
+//        input.viewAppear.asObservable()
+//            .flatMap {
+//                self.fetchRecruitmentDetailUseCase.execute(id: 0)
+//            }
+//            .bind(to: recruitmentDetailInfo)
+//            .disposed(by: disposeBag)
 
         input.companyDetailButtonDidClicked.asObservable()
             .map { _ in RecruitmentDetailStep.companyDetailIsRequired }
