@@ -25,8 +25,8 @@ let dependencies = Dependencies(
                 requirement: .upToNextMajor(from: "2.8.3")
             ),
             .remote(
-                url: "https://github.com/Moya/Moya.git",
-                requirement: .upToNextMajor(from: "15.0.0")
+                url: "https://github.com/team-return/Moya.git",
+                requirement: .branch("master")
             ),
             .remote(
                 url: "https://github.com/airbnb/lottie-ios",
@@ -47,7 +47,12 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/RxSwiftCommunity/RxGesture",
                 requirement: .upToNextMajor(from: "4.0.0")
+            ),
+            .remote(
+                url: "https://github.com/firebase/firebase-ios-sdk",
+                requirement: .upToNextMajor(from: "10.3.0")
             )
+
         ],
         baseSettings: .settings(
             configurations: [

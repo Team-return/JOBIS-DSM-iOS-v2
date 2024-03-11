@@ -35,7 +35,7 @@ public enum JobisIcon {
     case arrowUp
     case arrowDown
 
-    // swiftlint: disable cyclomatic_complexity
+    // swiftlint: disable cyclomatic_complexity function_body_length
     func uiImage() -> UIImage {
         let dsIcons = DesignSystemAsset.Icons.self
 
@@ -119,5 +119,5 @@ public enum JobisIcon {
             return dsIcons.arrowDown.image
         }
     }
-    // swiftlint: enable cyclomatic_complexity
+    // swiftlint: enable cyclomatic_complexity function_body_length
 }

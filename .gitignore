@@ -70,3 +70,5 @@ Derived/
 Tuist/Dependencies
 
 XCConfig/
+
+Projects/App/Resources/GoogleService-Info.plist

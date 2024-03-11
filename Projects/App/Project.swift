@@ -95,6 +95,7 @@ let schemes: [Scheme] = [
 let project = Project(
     name: env.targetName,
     organizationName: env.organizationName,
+    packages: [.FCM],
     settings: settings,
     targets: targets,
     schemes: schemes
