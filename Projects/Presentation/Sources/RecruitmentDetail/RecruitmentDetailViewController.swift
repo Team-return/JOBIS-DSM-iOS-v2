@@ -122,7 +122,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(supportButton.snp.top).inset(-12)
         }
@@ -220,6 +220,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.hideTabbar()
+                self?.navigationController?.navigationBar.prefersLargeTitles = false
             })
             .disposed(by: disposeBag)
 
@@ -230,13 +231,10 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             .disposed(by: disposeBag)
     }
 
-    public override func configureNavigation() {
-        self.navigationController?.navigationBar.prefersLargeTitles = false
-    }
+    public override func configureNavigation() {}
 }
 
 extension RecruitmentDetailViewController: UITableViewDelegate {
-
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? FieldTypeDetailViewCell else { return }
 
