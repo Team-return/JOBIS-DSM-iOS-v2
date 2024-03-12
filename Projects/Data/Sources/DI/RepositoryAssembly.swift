@@ -76,6 +76,12 @@ public final class RepositoryAssembly: Assembly {
                 remotePresignedURLDataSource: resolver.resolve(RemotePresignedURLDataSource.self)!
             )
         }
+
+        container.register(BannersRepository.self) { resolver in
+            BannersRepositoryImpl(
+                remoteBannersDataSource: resolver.resolve(RemoteBannersDataSource.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
