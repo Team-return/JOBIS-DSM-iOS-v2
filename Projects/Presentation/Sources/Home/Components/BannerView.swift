@@ -7,12 +7,6 @@ import RxSwift
 
 final class BannerView: BaseView {
     private let disposeBag = DisposeBag()
-    private var totalPassStudent = TotalPassStudentEntity(
-        totalStudentCount: 0,
-        passedCount: 0,
-        approvedCount: 0
-    )
-    private var bannerList: [UIImage] = []
     private let collectionViewLayout = UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
         $0.minimumLineSpacing = 12
@@ -20,7 +14,7 @@ final class BannerView: BaseView {
         $0.footerReferenceSize = .zero
         $0.headerReferenceSize = .zero
     }
-    private lazy var collectionView = UICollectionView(
+    lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: collectionViewLayout
     ).then {
@@ -29,10 +23,6 @@ final class BannerView: BaseView {
         $0.decelerationRate = .fast
         $0.showsHorizontalScrollIndicator = false
         $0.contentInset = .init(top: 0, left: 24, bottom: 0, right: 24)
-        $0.register(
-            EmploymentCollectionViewCell.self,
-            forCellWithReuseIdentifier: EmploymentCollectionViewCell.identifier
-        )
         $0.register(
             BannerCollectionViewCell.self,
             forCellWithReuseIdentifier: BannerCollectionViewCell.identifier
@@ -71,7 +61,6 @@ final class BannerView: BaseView {
 
     override func configureView() {
         self.collectionView.delegate = self
-        self.collectionView.dataSource = self
         self.pageControl.rx.controlEvent(.valueChanged)
             .subscribe(onNext: { [weak self] in
                 guard let currentPage = self?.pageControl.currentPage else { return }
@@ -84,27 +73,17 @@ final class BannerView: BaseView {
 
     }
 
-    public func setTotalPassStudent(_ entity: TotalPassStudentEntity) {
-        self.totalPassStudent = entity
-        self.collectionView.reloadData()
-    }
-
-    public func setBanner(_ images: [UIImage]) {
-        self.bannerList = images
-        self.collectionView.reloadData()
-    }
-
-    private func setPageControl() {
-        self.pageControl.numberOfPages = self.bannerList.count + 1
+    public func setPageControl(count: Int) {
+        self.pageControl.numberOfPages = count
         self.pageControl.setIndicatorImage(.jobisIcon(.currentPageControl), forPage: 0)
     }
 }
 
 extension BannerView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let value = (scrollView.contentOffset.x / scrollView.bounds.size.width)
+        let value = round(scrollView.contentOffset.x / (scrollView.bounds.size.width - 48))
 
-        self.pageControl.currentPage = Int(round(value))
+        self.pageControl.currentPage = Int(value)
         for index in 0..<self.pageControl.numberOfPages {
             if index == Int(round(value)) {
                 self.pageControl.setIndicatorImage(.jobisIcon(.currentPageControl), forPage: index)
@@ -130,43 +109,7 @@ extension BannerView: UIScrollViewDelegate {
     }
 }
 
-extension BannerView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        self.setPageControl()
-
-        return self.bannerList.count + 1
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        switch indexPath.row {
-        case 0:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: EmploymentCollectionViewCell.identifier,
-                for: indexPath
-            ) as? EmploymentCollectionViewCell else { return UICollectionViewCell() }
-
-            cell.adapt(model: self.totalPassStudent)
-
-            return cell
-
-        default:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: BannerCollectionViewCell.identifier,
-                for: indexPath
-            ) as? BannerCollectionViewCell else { return UICollectionViewCell() }
-
-            cell.adapt(model: bannerList[indexPath.row - 1])
-
-            return cell
-        }
-    }
-
+extension BannerView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
