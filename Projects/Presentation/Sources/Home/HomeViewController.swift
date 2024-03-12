@@ -8,7 +8,6 @@ import Domain
 import DesignSystem
 
 public final class HomeViewController: BaseViewController<HomeViewModel> {
-    // TODO: 언젠가 지울 것
     private let isWinterSeason = BehaviorRelay(value: true)
     private let cellClick = PublishRelay<Int>()
     private let navigateToAlarmButton = UIButton().then {
@@ -108,7 +107,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func bind() {
         let input = HomeViewModel.Input(
-            viewAppear: viewDidLoadPublisher,
+            viewAppear: viewWillAppearPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal()
         )
 
@@ -123,12 +122,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                     department: studentInfo.department.localizedString()
                 )
             }
-            .disposed(by: disposeBag)
-
-        output.employmentPercentage
-            .bind(onNext: { [weak self] in
-                self?.bannerView.setTotalPassStudent($0)
-            })
             .disposed(by: disposeBag)
 
         output.applicationList
@@ -153,6 +146,19 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 cell.rejectReasonButtonDidTap = {
                     print(cell.applicationID!)
                 }
+            }
+            .disposed(by: disposeBag)
+
+        output.bannerList
+            .filter { !$0.isEmpty }
+            .do(onNext: {
+                self.bannerView.setPageControl(count: $0.count)
+            })
+            .bind(to: bannerView.collectionView.rx.items(
+                cellIdentifier: BannerCollectionViewCell.identifier,
+                cellType: BannerCollectionViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
             }
             .disposed(by: disposeBag)
     }
@@ -192,7 +198,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 print($0)
             })
             .disposed(by: disposeBag)
-        self.bannerView.setBanner([.actions, .add, .checkmark, .remove])
     }
 
     public override func configureNavigation() {
