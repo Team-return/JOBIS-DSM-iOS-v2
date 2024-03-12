@@ -24,8 +24,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
-        var pageChange: PublishRelay<Int>
-        let cellClicked: PublishRelay<Void>
+        var pageChange: Observable<WillDisplayCellEvent>
+        let recruitmentTableViewDidTap: ControlEvent<IndexPath>
     }
 
     public struct Output {
@@ -40,37 +40,32 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             }
             .bind(onNext: {
                 self.recruitmentData.accept([])
-                var currentElements = self.recruitmentData.value
-                currentElements.append(contentsOf: $0)
-                self.recruitmentData.accept(currentElements)
+                self.recruitmentData.accept(self.recruitmentData.value + $0)
             })
             .disposed(by: disposeBag)
 
         input.pageChange.asObservable()
-            .flatMap { value in
-                if value == self.recruitmentData.value.count-1 {
-                    self.pageCount += 1
-                    return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
-                } else {
-                    return Single.just([])
-                }
+            .distinctUntilChanged({ $0.indexPath.row })
+            .flatMap { _ in
+                self.pageCount += 1
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
             }
-            .bind(onNext: {
-                var currentElements = self.recruitmentData.value
-                currentElements.append(contentsOf: $0)
-                self.recruitmentData.accept(currentElements)
-            })
+            .bind { self.recruitmentData.accept(self.recruitmentData.value + $0) }
             .disposed(by: disposeBag)
 
         input.bookMarkButtonDidTap.asObservable()
             .flatMap { id in
                 self.bookmarkUseCase.execute(id: id)
-            }.subscribe(onCompleted: {
-                print("bookmark!")
-            }).disposed(by: disposeBag)
+            }
+            .subscribe()
+            .disposed(by: disposeBag)
 
-        input.cellClicked.asObservable()
-            .map { _ in RecruitmentStep.recruitmentDetailIsRequired }
+        input.recruitmentTableViewDidTap.asObservable()
+            .map {
+                RecruitmentStep.recruitmentDetailIsRequired(
+                    recruitmentId: self.recruitmentData.value[$0.row].recruitID
+                )
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
         return Output(recruitmentData: recruitmentData)

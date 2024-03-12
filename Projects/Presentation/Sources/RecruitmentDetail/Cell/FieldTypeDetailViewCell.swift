@@ -5,7 +5,7 @@ import Domain
 import DesignSystem
 import RxSwift
 
-final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
+final class FieldTypeDetailViewCell: BaseTableViewCell<AreaEntity> {
     static let identifier = "FieldTypeDetailViewCell"
     public var interviewReviewID: Int?
     public var isOpen = false {
@@ -51,7 +51,7 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
     }
     private let majorTaskLabel = UILabel().then {
         $0.setJobisText(
-            "프론트 짱 프론트 짱 프론트 짱 프론트 짱 프론트 짱 프론트 짱 프론트 짱 프론",
+            "-",
             font: .body,
             color: .GrayScale.gray80
         )
@@ -66,7 +66,22 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
     }
     private let useSkillsLabel = UILabel().then {
         $0.setJobisText(
-            "Javascript, HTML, CSS, Next.js, React",
+            "-",
+            font: .body,
+            color: .GrayScale.gray80
+        )
+        $0.numberOfLines = 0
+    }
+    private let preferElemnetMenuLabel = UILabel().then {
+        $0.setJobisText(
+            "우대사항",
+            font: .description,
+            color: .GrayScale.gray60
+        )
+    }
+    private let preferElemnetLabel = UILabel().then {
+        $0.setJobisText(
+            "-",
             font: .body,
             color: .GrayScale.gray80
         )
@@ -90,7 +105,9 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
             majorTaskMenuLabel,
             majorTaskLabel,
             useSkillsMenuLabel,
-            useSkillsLabel
+            useSkillsLabel,
+            preferElemnetMenuLabel,
+            preferElemnetLabel
         ].forEach(self.detailView.addSubview(_:))
     }
 
@@ -115,6 +132,16 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
 
         useSkillsLabel.snp.makeConstraints {
             $0.top.equalTo(useSkillsMenuLabel.snp.bottom).offset(4)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        preferElemnetMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(useSkillsLabel.snp.bottom).offset(16)
+            $0.leading.equalToSuperview()
+        }
+
+        preferElemnetLabel.snp.makeConstraints {
+            $0.top.equalTo(preferElemnetMenuLabel.snp.bottom).offset(4)
             $0.leading.trailing.bottom.equalToSuperview()
         }
 
@@ -128,5 +155,10 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<String> {
         self.selectionStyle = .none
     }
 
-    func adapt(model: RecruitmentEntity) { }
+    override func adapt(model: AreaEntity) {
+        fieldTypeLabel.text = model.job
+        majorTaskLabel.text = model.majorTask
+        useSkillsLabel.text = model.tech.joined(separator: ", ")
+        preferElemnetLabel.text = model.preferentialTreatment
+    }
 }
