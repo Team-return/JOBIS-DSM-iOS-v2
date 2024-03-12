@@ -31,7 +31,7 @@ public enum JobisIcon {
     case pieChart
     case sound
     case trash
-    case emptyBookmark
+    case listEmpty
     case arrowUp
     case arrowDown
     case male
@@ -112,8 +112,8 @@ public enum JobisIcon {
         case .trash:
             return dsIcons.trash.image
 
-        case .emptyBookmark:
-            return dsIcons.emptyBookmark.image
+        case .listEmpty:
+            return dsIcons.listEmpty.image
 
         case .arrowUp:
             return dsIcons.arrowUp.image

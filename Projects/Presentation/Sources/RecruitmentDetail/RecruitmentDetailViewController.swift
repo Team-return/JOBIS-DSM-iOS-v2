@@ -8,8 +8,7 @@ import Core
 import DesignSystem
 
 public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
-    var tableViewHeightConstraint: Constraint?
-    var selectedIndexPath: IndexPath?
+    var recruitmentID: Int?
     private var isBookmarked = false {
         didSet {
             var bookmarkImage: JobisIcon {
@@ -36,11 +35,10 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         $0.layer.borderWidth = 1.0
         $0.layer.borderColor = UIColor.GrayScale.gray30.cgColor
         $0.layer.cornerRadius = 8
-        $0.backgroundColor = .blue
     }
     private let companyLabel = UILabel().then {
         $0.setJobisText(
-            "(주)비바리퍼블리카",
+            "모집의뢰서 불러오는중...",
             font: .headLine,
             color: .GrayScale.gray90
         )
@@ -70,8 +68,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         $0.rowHeight = UITableView.automaticDimension
         $0.sectionHeaderTopPadding = 12
     }
-    private let preferElemnetLabel = RecruitmentDetailLabel(title: "우대사항")
-    private let useTechniquesLabel = RecruitmentDetailLabel(title: "사용 기술")
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "채용절차")
     private let requiredGradeLabel = RecruitmentDetailLabel(title: "필수 성적")
@@ -105,8 +101,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             recruitmentPeriodLabel,
             militaryServiceLabel,
             fieldTypeDetailTableView,
-            preferElemnetLabel,
-            useTechniquesLabel,
             certificateLabel,
             recruitmentProcessLabel,
             requiredGradeLabel,
@@ -128,7 +122,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(supportButton.snp.top).inset(-12)
         }
@@ -182,25 +176,51 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func bind() {
         let input = RecruitmentDetailViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            companyDetailButtonDidClicked: companyDetailButton.rx.tap.asSignal()
+            viewAppear: self.viewDidLoadPublisher,
+            companyDetailButtonDidClicked: companyDetailButton.rx.tap.asSignal(),
+            bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
+                .do(onNext: { [weak self] in
+                    self?.isBookmarked.toggle()
+                })
         )
-        _ = viewModel.transform(input)
+        let output = viewModel.transform(input)
+
+        output.recruitmentDetailEntity.asObservable()
+            .bind { [self] in
+                companyLogoImageView.setJobisImage(urlString: $0.companyProfileUrl)
+                companyLabel.text = $0.companyName
+                recruitmentPeriodLabel.setSubTitle("\($0.startDate) ~ \($0.endDate)")
+                militaryServiceLabel.setSubTitle("병역특례 \($0.military ? "가능" : "불가능")")
+                certificateLabel.setSubTitle($0.requiredLicenses)
+                recruitmentProcessLabel.setSubTitle($0.hiringProgress)
+                requiredGradeLabel.setSubTitle($0.requiredGrade)
+                workingHoursLabel.setSubTitle($0.workingHours)
+                awardedMoneyLabel.setSubTitle("\($0.trainPay) 만원/월")
+                permanentEmployeeLabel.setSubTitle("\($0.pay ?? "0") 만원/년")
+                benefitsWelfareLabel.setSubTitle($0.benefits)
+                needThingsLabel.setSubTitle($0.submitDocument)
+                otherMattersLabel.setSubTitle($0.etc)
+                isBookmarked = $0.bookmarked
+            }.disposed(by: disposeBag)
+
+        output.areaListEntity.asObservable()
+            .bind(to: fieldTypeDetailTableView.rx.items(
+                cellIdentifier: FieldTypeDetailViewCell.identifier,
+                cellType: FieldTypeDetailViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+                cell.layoutIfNeeded()
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         fieldTypeDetailTableView.delegate = self
-        fieldTypeDetailTableView.dataSource = self
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.hideTabbar()
-            })
-            .disposed(by: disposeBag)
-
-        bookmarkButton.rx.tap
-            .subscribe(onNext: {
-                self.isBookmarked.toggle()
+                self?.navigationController?.navigationBar.prefersLargeTitles = false
             })
             .disposed(by: disposeBag)
 
@@ -211,25 +231,10 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             .disposed(by: disposeBag)
     }
 
-    public override func configureNavigation() {
-        self.navigationController?.navigationBar.prefersLargeTitles = false
-    }
+    public override func configureNavigation() {}
 }
 
-extension RecruitmentDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = fieldTypeDetailTableView.dequeueReusableCell(
-            withIdentifier: FieldTypeDetailViewCell.identifier,
-            for: indexPath
-        )
-        cell.layoutIfNeeded()
-        return cell
-    }
-
+extension RecruitmentDetailViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? FieldTypeDetailViewCell else { return }
 

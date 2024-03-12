@@ -152,7 +152,8 @@ public final class PresentationAssembly: Assembly {
 
         container.register(RecruitmentDetailViewModel.self) { resolver in
             RecruitmentDetailViewModel(
-                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
 

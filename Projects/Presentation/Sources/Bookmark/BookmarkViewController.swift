@@ -17,8 +17,12 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
         )
         $0.showsVerticalScrollIndicator = false
     }
-    private let emptyBookmarkView = EmptyBookmarkView().then {
+    private let emptyBookmarkView = ListEmptyView().then {
         $0.isHidden = true
+        $0.setEmptyView(
+            title: "현재 등록해 둔 북마크가 없어요",
+            subTitle: "현재 북마크가 되어있는 모집의뢰서가 없어요.\n모집의뢰서를 보고 맘에든다면\n우측 하단의 북마크 버튼을 눌러주세요!"
+        )
     }
     private let navigateToRecruitmentButton = JobisButton(style: .sub).then {
         $0.setText("모집의뢰서 보러 가기")

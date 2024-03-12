@@ -9,8 +9,11 @@ import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
-    private let cellClick = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
+    private let listEmptyView = ListEmptyView().then {
+        $0.setEmptyView(title: "아직 등록된 모집의뢰서가 없어요")
+        $0.isHidden = true
+    }
     private let recruitmentTableView = UITableView().then {
         $0.register(
             RecruitmentTableViewCell.self,
@@ -29,11 +32,16 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func addView() {
         self.view.addSubview(recruitmentTableView)
+        recruitmentTableView.addSubview(listEmptyView)
     }
 
     public override func setLayout() {
         recruitmentTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        listEmptyView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(80)
         }
     }
 
@@ -41,13 +49,20 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         let input = RecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: pageCount,
-            cellClicked: cellClick
+            pageChange: recruitmentTableView.rx.willDisplayCell
+                .filter {
+                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(inSection: $0.indexPath.section) - 1
+                }.asObservable(),
+            recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected
         )
 
         let output = viewModel.transform(input)
 
         output.recruitmentData
+            .skip(1)
+            .do(onNext: {
+                self.listEmptyView.isHidden = !$0.isEmpty
+            })
             .bind(
                 to: recruitmentTableView.rx.items(
                     cellIdentifier: RecruitmentTableViewCell.identifier,
@@ -62,15 +77,21 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     }
 
     public override func configureViewController() {
-        recruitmentTableView.delegate = self
         searchButton.rx.tap
             .subscribe(onNext: { _ in })
             .disposed(by: disposeBag)
 
-        self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.showTabbar()
-            })
+        viewWillAppearPublisher.asObservable()
+            .bind {
+                self.showTabbar()
+                self.setLargeTitle(title: "모집의뢰서")
+            }
+            .disposed(by: disposeBag)
+
+        viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.setSmallTitle(title: "")
+            }
             .disposed(by: disposeBag)
     }
 
@@ -79,25 +100,5 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             UIBarButtonItem(customView: filterButton),
             UIBarButtonItem(customView: searchButton)
         ]
-        setLargeTitle(title: "모집의뢰서")
-    }
-}
-
-extension RecruitmentViewController: UITableViewDelegate {
-    public func tableView(
-        _ tableView: UITableView,
-        willDisplay cell: UITableViewCell,
-        forRowAt indexPath: IndexPath
-    ) {
-        let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
-        if indexPath.row == lastRowIndex {
-            pageCount.accept(indexPath.row)
-        }
-    }
-
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.hideTabbar()
-        cellClick.accept(())
     }
 }

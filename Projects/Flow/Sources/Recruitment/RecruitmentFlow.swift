@@ -22,8 +22,8 @@ public final class RecruitmentFlow: Flow {
         case .recruitmentIsRequired:
             return navigateToRecruitment()
 
-        case .recruitmentDetailIsRequired:
-            return navigateToRecruitmentDetail()
+        case let .recruitmentDetailIsRequired(id):
+            return navigateToRecruitmentDetail(recruitmentID: id)
         }
     }
 }
@@ -43,12 +43,14 @@ private extension RecruitmentFlow {
         ))
     }
 
-    func navigateToRecruitmentDetail() -> FlowContributors {
+    func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
         let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
 
-        Flows.use(recruitmentDetailFlow, when: .created) { root in
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            view?.viewModel.recruitmentID = recruitmentID
             self.rootViewController.pushViewController(
-                root, animated: true
+                view!, animated: true
             )
         }
 
