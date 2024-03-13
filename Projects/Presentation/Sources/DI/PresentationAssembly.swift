@@ -142,6 +142,22 @@ public final class PresentationAssembly: Assembly {
             NoticeDetailViewController(resolver.resolve(NoticeDetailViewModel.self)!)
         }
 
+        container.register(ConfirmPasswordViewModel.self) { resolver in
+            ConfirmPasswordViewModel(
+                compareCurrentPassswordUseCase: resolver.resolve(CompareCurrentPassswordUseCase.self)!
+            )
+        }
+        container.register(ConfirmPasswordViewController.self) { resolver in
+            ConfirmPasswordViewController(resolver.resolve(ConfirmPasswordViewModel.self)!)
+        }
+
+        container.register(ChangePasswordViewModel.self) { resolver in
+            ChangePasswordViewModel(changePasswordUseCase: resolver.resolve(ChangePasswordUseCase.self)!)
+        }
+        container.register(ChangePasswordViewController.self) { resolver in
+            ChangePasswordViewController(resolver.resolve(ChangePasswordViewModel.self)!)
+        }
+
         container.register(CompanyDetailViewModel.self) { _ in
             CompanyDetailViewModel()
         }
