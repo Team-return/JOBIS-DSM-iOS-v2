@@ -27,6 +27,9 @@ public final class MyPageFlow: Flow {
 
         case .noticeIsRequired:
             return navigateToNotice()
+
+        case .confirmIsRequired:
+            return navigateToConfirmPassword()
         }
     }
 }
@@ -58,6 +61,21 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: noticeFlow,
             withNextStepper: OneStepper(withSingleStep: NoticeStep.noticeIsRequired)
+        ))
+    }
+
+    func navigateToConfirmPassword() -> FlowContributors {
+        let confirmPasswordFlow = ConfirmPasswordFlow(container: container)
+
+        Flows.use(confirmPasswordFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: confirmPasswordFlow,
+            withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
         ))
     }
 }
