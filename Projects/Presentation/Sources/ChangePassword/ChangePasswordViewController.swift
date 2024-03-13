@@ -61,7 +61,7 @@ public final class ChangePasswordViewController: BaseViewController<ChangePasswo
         }
 
         changePasswordButtonDidTap.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(12)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
