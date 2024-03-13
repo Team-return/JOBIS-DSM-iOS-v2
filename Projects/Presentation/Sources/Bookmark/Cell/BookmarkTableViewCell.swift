@@ -9,7 +9,6 @@ import RxCocoa
 class BookmarkTableViewCell: BaseTableViewCell<BookmarkEntity> {
     static let identifier = "BookmarkTableViewCell"
     public var trashButtonDidTap: (() -> Void)?
-    public var bookmarkId = 0
     private let disposeBag = DisposeBag()
     private let companyImageView = UIImageView().then {
         $0.layer.cornerRadius = 8
@@ -66,10 +65,9 @@ class BookmarkTableViewCell: BaseTableViewCell<BookmarkEntity> {
     }
 
     override func adapt(model: BookmarkEntity) {
-        // TODO: 이미지도 넘겨달라고 찡찡 해야됨
-        self.companyImageView.image = .jobisIcon(.pieChart)
+        super.adapt(model: model)
+        self.companyImageView.setJobisImage(urlString: model.companyLogoUrl)
         self.companyNameLabel.setJobisText(model.companyName, font: .body, color: .GrayScale.gray90)
         self.dateLabel.setJobisText(model.createdAt, font: .description, color: .GrayScale.gray70)
-        self.bookmarkId = model.recruitmentID
     }
 }
