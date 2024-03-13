@@ -40,7 +40,7 @@ private extension ChangePasswordFlow {
     }
 
     func navigateToTab() -> FlowContributors {
-        self.rootViewController.navigationController?.popViewController(animated: true)
-        return .end(forwardToParentFlowWithStep: ConfirmPasswordStep.tabsIsRequired)
+        self.rootViewController.navigationController?.popToRootViewController(animated: true)
+        return .none
     }
 }

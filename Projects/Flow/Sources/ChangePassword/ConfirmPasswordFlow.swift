@@ -25,9 +25,6 @@ public final class ConfirmPasswordFlow: Flow {
 
         case let .changePasswordIsRequired(currentPassword):
             return navigateToChangePassword(currentPassword: currentPassword)
-
-        case .tabsIsRequired:
-            return navigateToTab()
         }
     }
 }
@@ -58,10 +55,5 @@ private extension ConfirmPasswordFlow {
                 withSingleStep: ChangePasswordStep.changePasswordIsRequired(currentPassword: currentPassword)
             )
         ))
-    }
-
-    func navigateToTab() -> FlowContributors {
-        self.rootViewController.navigationController?.popViewController(animated: false)
-        return .none
     }
 }
