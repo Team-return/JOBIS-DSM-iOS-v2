@@ -22,7 +22,7 @@ final class BannerView: BaseView {
         $0.isPagingEnabled = false
         $0.decelerationRate = .fast
         $0.showsHorizontalScrollIndicator = false
-        $0.contentInset = .init(top: 0, left: 24, bottom: 0, right: 24)
+        $0.contentInset = .init(top: 16, left: 24, bottom: 10, right: 24)
         $0.register(
             BannerCollectionViewCell.self,
             forCellWithReuseIdentifier: BannerCollectionViewCell.identifier
@@ -47,13 +47,13 @@ final class BannerView: BaseView {
 
     override func setLayout() {
         collectionView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(180)
+            $0.height.greaterThanOrEqualTo(collectionView.contentSize.height)
         }
 
         pageControl.snp.makeConstraints {
-            $0.top.equalTo(collectionView.snp.bottom).offset(10)
+            $0.top.equalTo(collectionView.snp.bottom)
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(16)
         }
@@ -118,7 +118,7 @@ extension BannerView: UICollectionViewDelegateFlowLayout {
 
         return .init(
             width: collectionView.bounds.width - 48,
-            height: collectionView.bounds.height
+            height: 180
         )
     }
 }
