@@ -23,7 +23,7 @@ class AttachedFileTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
 
     override func addView() {
-        self.addSubview(attachedFileButton)
+        contentView.addSubview(attachedFileButton)
         [
             attachedFileLabel,
             attachedFileImageView

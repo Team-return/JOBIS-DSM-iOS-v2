@@ -16,7 +16,7 @@ final class SectionTableViewCell: BaseTableViewCell<SectionType> {
         [
             sectionImageView,
             titleLabel
-        ].forEach { self.addSubview($0) }
+        ].forEach { contentView.addSubview($0) }
     }
 
     override func setLayout() {

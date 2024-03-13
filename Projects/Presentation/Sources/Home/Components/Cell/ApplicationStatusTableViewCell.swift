@@ -34,7 +34,7 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
     }
 
     override func addView() {
-        self.addSubview(containerView)
+        contentView.addSubview(containerView)
         [
             companyProfileImageView,
             companyNameLabel,

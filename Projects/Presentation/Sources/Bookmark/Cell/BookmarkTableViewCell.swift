@@ -28,7 +28,7 @@ class BookmarkTableViewCell: BaseTableViewCell<BookmarkEntity> {
             companyNameLabel,
             dateLabel,
             trashButton
-        ].forEach(self.addSubview(_:))
+        ].forEach(self.contentView.addSubview(_:))
     }
 
     override func setLayout() {
