@@ -81,9 +81,17 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             viewAppear: self.viewDidLoadPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
+            changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
             withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw)
         )
+
+        input.changePasswordSectionDidTap.asObservable()
+            .subscribe(onNext: { [weak self] _ in
+                self?.hideTabbar()
+            })
+            .disposed(by: disposeBag)
+
         let output = viewModel.transform(input)
 
         output.studentInfo.asObservable()
