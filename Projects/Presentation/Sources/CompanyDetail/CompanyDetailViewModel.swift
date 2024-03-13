@@ -10,11 +10,14 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public var companyID: Int?
     private let disposeBag = DisposeBag()
     private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
+    private let fetchReviewListUseCase: FetchReviewListUseCase
 
     init(
         fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
+        fetchReviewListUseCase: FetchReviewListUseCase
     ) {
         self.fetchCompanyInfoDetailUseCase = fetchCompanyInfoDetailUseCase
+        self.fetchReviewListUseCase = fetchReviewListUseCase
     }
 
     public struct Input {
@@ -24,16 +27,27 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let companyDetailInfo: PublishRelay<CompanyInfoDetailEntity>
+        let reviewListInfo: PublishRelay<[ReviewEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let companyDetailInfo = PublishRelay<CompanyInfoDetailEntity>()
+        let reviewListInfo = PublishRelay<[ReviewEntity]>()
+
         input.viewAppear.asObservable()
             .flatMap {
                 self.fetchCompanyInfoDetailUseCase.execute(id: self.companyID ?? 0)
             }
             .bind(to: companyDetailInfo)
             .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap {
+                self.fetchReviewListUseCase.execute(id: self.companyID ?? 0)
+            }
+            .bind(to: reviewListInfo)
+            .disposed(by: disposeBag)
+
         input.recruitmentButtonDidTap.asObservable()
             .map { _ in CompanyDetailStep.recruitmentDetailIsRequired }
             .bind(to: steps)
@@ -41,6 +55,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
         return Output(
             companyDetailInfo: companyDetailInfo,
+            reviewListInfo: reviewListInfo
         )
     }
 }
