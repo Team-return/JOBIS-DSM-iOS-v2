@@ -9,10 +9,11 @@ public struct CompanyInfoDetailEntity: Equatable {
     public let subZipCode, subAddress, subAddressDetail: String?
     public let managerName, managerPhoneNo: String
     public let subManagerName, subManagerPhoneNo, fax: String?
-    public let email, representativeName, foundedAt: String
+    public let email, representativeName, representativePhoneNo, foundedAt: String
     public let workerNumber: String
     public let take: String
     public let recruitmentID: Int?
+    public let attachments: [String]
     public let serviceName: String
     public let businessArea: String
 
@@ -34,10 +35,12 @@ public struct CompanyInfoDetailEntity: Equatable {
         fax: String?,
         email: String,
         representativeName: String,
+        representativePhoneNo: String,
         foundedAt: String,
         workerNumber: String,
         take: String,
         recruitmentID: Int?,
+        attachments: [String],
         serviceName: String,
         businessArea: String
     ) {
@@ -58,10 +61,12 @@ public struct CompanyInfoDetailEntity: Equatable {
         self.fax = fax
         self.email = email
         self.representativeName = representativeName
+        self.representativePhoneNo = representativePhoneNo
         self.foundedAt = foundedAt
         self.workerNumber = workerNumber
         self.take = take
         self.recruitmentID = recruitmentID
+        self.attachments = attachments
         self.serviceName = serviceName
         self.businessArea = businessArea
     }
