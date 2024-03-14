@@ -49,7 +49,7 @@ final class BannerView: BaseView {
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(collectionView.contentSize.height)
+            $0.height.greaterThanOrEqualTo(collectionView.numberOfItems(inSection: 0) == 0 ? 0 : 206)
         }
 
         pageControl.snp.makeConstraints {
