@@ -15,7 +15,7 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
     override func addView() {
         [
             imageView
-        ].forEach(self.addSubview(_:))
+        ].forEach(contentView.addSubview(_:))
     }
 
     override func setLayout() {
