@@ -9,17 +9,17 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
-    private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
+    private let fetchBannerListUseCase: FetchBannerListUseCase
 
     init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
-        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase,
-        fetchApplicationUseCase: FetchApplicationUseCase
+        fetchApplicationUseCase: FetchApplicationUseCase,
+        fetchBannerListUseCase: FetchBannerListUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
-        self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
         self.fetchApplicationUseCase = fetchApplicationUseCase
+        self.fetchBannerListUseCase = fetchBannerListUseCase
     }
 
     public struct Input {
@@ -29,14 +29,14 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
-        let employmentPercentage: PublishRelay<TotalPassStudentEntity>
         let applicationList: PublishRelay<[ApplicationEntity]>
+        let bannerList: BehaviorRelay<[FetchBannerEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
-        let employmentPercentage = PublishRelay<TotalPassStudentEntity>()
         let applicationList = PublishRelay<[ApplicationEntity]>()
+        let bannerList = BehaviorRelay<[FetchBannerEntity]>(value: [])
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
@@ -54,9 +54,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
-                fetchTotalPassStudentUseCase.execute()
+                fetchBannerListUseCase.execute()
             }
-            .bind(to: employmentPercentage)
+            .bind(to: bannerList)
             .disposed(by: disposeBag)
 
         input.viewAppear.asObservable()
@@ -68,8 +68,8 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
         return Output(
             studentInfo: studentInfo,
-            employmentPercentage: employmentPercentage,
-            applicationList: applicationList
+            applicationList: applicationList,
+            bannerList: bannerList
         )
     }
 }

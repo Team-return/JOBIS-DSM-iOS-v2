@@ -8,8 +8,7 @@ import Domain
 import DesignSystem
 
 public final class HomeViewController: BaseViewController<HomeViewModel> {
-    // TODO: 언젠가 지울 것
-    private let isWinterSeason = BehaviorRelay(value: true)
+    private let isWinterSeason = BehaviorRelay(value: false)
     private let cellClick = PublishRelay<Int>()
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
@@ -72,7 +71,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(applicationStatusTableView.snp.bottom)
+            $0.bottom.equalTo(applicationStatusTableView.snp.bottom).offset(62)
         }
 
         bannerView.snp.makeConstraints {
@@ -108,7 +107,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func bind() {
         let input = HomeViewModel.Input(
-            viewAppear: viewDidLoadPublisher,
+            viewAppear: viewWillAppearPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal()
         )
 
@@ -123,12 +122,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                     department: studentInfo.department.localizedString()
                 )
             }
-            .disposed(by: disposeBag)
-
-        output.employmentPercentage
-            .bind(onNext: { [weak self] in
-                self?.bannerView.setTotalPassStudent($0)
-            })
             .disposed(by: disposeBag)
 
         output.applicationList
@@ -155,10 +148,23 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 }
             }
             .disposed(by: disposeBag)
+
+        output.bannerList
+            .filter { !$0.isEmpty }
+            .do(onNext: {
+                self.bannerView.setPageControl(count: $0.count)
+            })
+            .bind(to: bannerView.collectionView.rx.items(
+                cellIdentifier: BannerCollectionViewCell.identifier,
+                cellType: BannerCollectionViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        setCardStyle(isWinterSeason: isWinterSeason.value)
+        checkWinterSeason()
 
         findCompanysCard.rx.tap.subscribe(onNext: {
             print("findCompany!")
@@ -192,7 +198,15 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 print($0)
             })
             .disposed(by: disposeBag)
-        self.bannerView.setBanner([.actions, .add, .checkmark, .remove])
+
+        isWinterSeason.asObservable()
+            .bind { [weak self] in
+                self?.findCompanysCard = CareerNavigationCard(style: $0 ? .small(type: .findCompanys) : .large)
+                self?.findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
+                self?.findWinterRecruitmentsCard.isHidden = !$0
+            }
+            .disposed(by: disposeBag)
+
     }
 
     public override func configureNavigation() {
@@ -200,14 +214,15 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         self.navigationItem.leftBarButtonItem = .init(customView: titleImageView)
     }
 
-    private func setCardStyle(isWinterSeason: Bool) {
-        if isWinterSeason {
-            findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
-            findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
-            findWinterRecruitmentsCard.isHidden = false
+    private func checkWinterSeason() {
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M"
+        dateFormatter.timeZone = NSTimeZone(name: "ko_KR") as? TimeZone
+        if "12" == dateFormatter.string(from: now) {
+            isWinterSeason.accept(true)
         } else {
-            findCompanysCard = CareerNavigationCard(style: .large)
-            findWinterRecruitmentsCard.isHidden = true
+            isWinterSeason.accept(false)
         }
     }
 }
