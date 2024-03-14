@@ -7,22 +7,55 @@ import Domain
 
 public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    public var companyID: Int?
     private let disposeBag = DisposeBag()
+    private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
+    private let fetchReviewListUseCase: FetchReviewListUseCase
 
-    init( ) { }
+    init(
+        fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
+        fetchReviewListUseCase: FetchReviewListUseCase
+    ) {
+        self.fetchCompanyInfoDetailUseCase = fetchCompanyInfoDetailUseCase
+        self.fetchReviewListUseCase = fetchReviewListUseCase
+    }
 
     public struct Input {
+        let viewAppear: PublishRelay<Void>
         let recruitmentButtonDidTap: Signal<Void>
     }
 
-    public struct Output { }
+    public struct Output {
+        let companyDetailInfo: PublishRelay<CompanyInfoDetailEntity>
+        let reviewListInfo: PublishRelay<[ReviewEntity]>
+    }
 
     public func transform(_ input: Input) -> Output {
+        let companyDetailInfo = PublishRelay<CompanyInfoDetailEntity>()
+        let reviewListInfo = PublishRelay<[ReviewEntity]>()
+
+        input.viewAppear.asObservable()
+            .flatMap {
+                self.fetchCompanyInfoDetailUseCase.execute(id: self.companyID ?? 0)
+            }
+            .bind(to: companyDetailInfo)
+            .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap {
+                self.fetchReviewListUseCase.execute(id: self.companyID ?? 0)
+            }
+            .bind(to: reviewListInfo)
+            .disposed(by: disposeBag)
+
         input.recruitmentButtonDidTap.asObservable()
             .map { _ in CompanyDetailStep.recruitmentDetailIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output()
+        return Output(
+            companyDetailInfo: companyDetailInfo,
+            reviewListInfo: reviewListInfo
+        )
     }
 }

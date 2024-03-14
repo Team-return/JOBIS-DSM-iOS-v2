@@ -187,6 +187,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
         output.recruitmentDetailEntity.asObservable()
             .bind { [self] in
+                viewModel.companyId = $0.companyID
                 companyLogoImageView.setJobisImage(urlString: $0.companyProfileUrl)
                 companyLabel.text = $0.companyName
                 recruitmentPeriodLabel.setSubTitle("\($0.startDate) ~ \($0.endDate)")
