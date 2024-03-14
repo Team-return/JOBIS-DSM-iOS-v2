@@ -40,7 +40,7 @@ class EditProfileButton: BaseView {
             .when(.began)
             .asObservable()
             .bind { [weak self] _ in
-                self?.backgroundColor = .init(hexCode: "E9E9EF")
+                self?.backgroundColor = .Primary.blue20
             }
             .disposed(by: disposeBag)
 
