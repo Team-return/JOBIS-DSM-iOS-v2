@@ -37,6 +37,7 @@ public enum JobisIcon {
     case male
     case female
     case edit
+    case renewal
 
     // swiftlint: disable cyclomatic_complexity function_body_length
     func uiImage() -> UIImage {
@@ -129,6 +130,9 @@ public enum JobisIcon {
 
         case .edit:
             return dsIcons.edit.image
+
+        case .renewal:
+            return dsIcons.renewal.image
         }
     }
     // swiftlint: enable cyclomatic_complexity function_body_length

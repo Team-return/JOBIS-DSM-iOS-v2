@@ -25,6 +25,9 @@ public final class SigninFlow: Flow {
 
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: OnboardingStep.tabsIsRequired)
+
+        case .confirmEmailIsRequired:
+            return navigateToConfirmEmail()
         }
     }
 }
@@ -34,6 +37,24 @@ private extension SigninFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
+        ))
+    }
+
+    func navigateToConfirmEmail() -> FlowContributors {
+        let confirmEmailFlow = ConfirmEmailFlow(container: container)
+
+        Flows.use(confirmEmailFlow, when: .created) { root in
+            self.rootViewController.navigationController?.pushViewController(
+                root,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: confirmEmailFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: ConfirmEmailStep.confirmEmailIsRequired
+            )
         ))
     }
 }
