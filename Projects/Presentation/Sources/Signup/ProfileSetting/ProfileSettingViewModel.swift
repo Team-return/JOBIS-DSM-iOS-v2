@@ -27,6 +27,7 @@ public final class ProfileSettingViewModel: BaseViewModel, Stepper {
         let password: String
         let isMan: Bool
         let profileImage: BehaviorRelay<UploadFileModel?>
+        let laterButtonDidTap: Signal<Void>
         let nextButtonDidTap: Signal<Void>
     }
 
@@ -77,6 +78,21 @@ public final class ProfileSettingViewModel: BaseViewModel, Stepper {
                 .disposed(by: self.disposeBag)
             }
             .disposed(by: self.disposeBag)
+
+        input.laterButtonDidTap.asObservable()
+            .map { _ in
+                ProfileSettingStep.privacyIsRequired(
+                    name: input.name,
+                    gcn: input.gcn,
+                    email: input.email,
+                    password: input.password,
+                    isMan: input.isMan,
+                    profileImageURL: nil
+                )
+            }
+            .bind(to: self.steps)
+            .disposed(by: self.disposeBag)
+
         return Output()
     }
 }
