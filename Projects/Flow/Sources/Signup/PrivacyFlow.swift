@@ -31,7 +31,7 @@ public final class PrivacyFlow: Flow {
             )
 
         case .tabsIsRequired:
-            return .end(forwardToParentFlowWithStep: PasswordSettingStep.tabsIsRequired)
+            return .end(forwardToParentFlowWithStep: ProfileSettingStep.tabsIsRequired)
         }
     }
 }

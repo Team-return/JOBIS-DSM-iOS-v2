@@ -52,7 +52,7 @@ private extension VerifyEmailFlow {
                 animated: true
             )
         }
-        
+
         return .one(flowContributor: .contribute(
             withNextPresentable: passwordSettingFlow,
             withNextStepper: OneStepper(
