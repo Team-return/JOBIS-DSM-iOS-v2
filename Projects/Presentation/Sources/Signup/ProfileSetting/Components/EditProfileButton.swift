@@ -10,7 +10,7 @@ class EditProfileButton: BaseView {
         $0.tintColor = .Primary.blue20
     }
     private let editLabel = UILabel().then {
-        $0.setJobisText("이미지 수정하기", font: .subHeadLine, color: .Primary.blue20)
+        $0.setJobisText("이미지 수정하기", font: .subHeadLine, color: .Primary.blue30)
     }
 
     override func addView() {
