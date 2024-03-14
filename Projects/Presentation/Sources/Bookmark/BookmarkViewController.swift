@@ -60,7 +60,13 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
     public override func bind() {
         let input = BookmarkViewModel.Input(
             viewWillAppear: self.viewWillAppearPublisher,
-            removeBookmark: removeBookmark
+            removeBookmark: removeBookmark,
+            bookmarkListDidTap: bookmarkTableView.rx.itemSelected.asObservable()
+                .map {
+                    guard let cell = self.bookmarkTableView.cellForRow(at: $0) as? BookmarkTableViewCell
+                    else { return 0 }
+                    return cell.model?.recruitmentID ?? 0
+                }
         )
         let ouput = viewModel.transform(input)
 
@@ -80,7 +86,7 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
             )) { _, item, cell in
                 cell.adapt(model: item)
                 cell.trashButtonDidTap = {
-                    self.removeBookmark.accept(cell.bookmarkId)
+                    self.removeBookmark.accept(cell.model?.recruitmentID ?? 0)
                 }
             }
             .disposed(by: disposeBag)
@@ -92,9 +98,20 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
                 self?.tabBarController?.selectedIndex = 1
             })
             .disposed(by: disposeBag)
+
+        viewWillAppearPublisher.asObservable()
+            .bind {
+                self.showTabbar()
+                self.setLargeTitle(title: "북마크")
+            }
+            .disposed(by: disposeBag)
+
+        viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.setSmallTitle(title: "")
+            }
+            .disposed(by: disposeBag)
     }
 
-    public override func configureNavigation() {
-        setLargeTitle(title: "북마크")
-    }
+    public override func configureNavigation() { }
 }

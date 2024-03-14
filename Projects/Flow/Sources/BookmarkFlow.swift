@@ -21,6 +21,8 @@ public final class BookmarkFlow: Flow {
         switch step {
         case .bookmarkIsRequired:
             return navigateToBookmark()
+        case let .recruitmentDetailIsRequired(id):
+            return navigateToRecruitmentDetail(id)
         }
     }
 }
@@ -37,6 +39,22 @@ private extension BookmarkFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: bookmarkViewController,
             withNextStepper: bookmarkViewController.viewModel
+        ))
+    }
+
+    func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailViewController = container.resolve(RecruitmentDetailViewController.self)!.then {
+            $0.viewModel.recruitmentID = recruitmentID
+        }
+
+        self.rootViewController.pushViewController(
+            recruitmentDetailViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailViewController,
+            withNextStepper: recruitmentDetailViewController.viewModel
         ))
     }
 }

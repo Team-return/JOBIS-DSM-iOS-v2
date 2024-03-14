@@ -34,6 +34,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.separatorStyle = .none
         $0.estimatedSectionHeaderHeight = 64
         $0.sectionHeaderTopPadding = 0
+        $0.isScrollEnabled = false
         $0.setEmptyHeaderView()
     }
     private let careerStackView = UIStackView().then {
