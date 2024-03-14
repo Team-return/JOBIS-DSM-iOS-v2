@@ -40,7 +40,7 @@ struct CompanyInfoDetailResponseDTO: Decodable {
         case workerNumber = "worker_number"
         case take
         case recruitmentID = "recruitment_id"
-        case attachments = "attachments"
+        case attachments
         case serviceName = "service_name"
         case businessArea = "business_area"
     }
