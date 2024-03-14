@@ -19,6 +19,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
     private let selectedFileModel = BehaviorRelay<UploadFileModel?>(value: nil)
     private let profileImageView = UIImageView().then {
         $0.image = .jobisIcon(.profile).resize(size: 80)
+        $0.contentMode = .scaleAspectFill
     }
     private let editProfileButton = EditProfileButton()
     private let nextButton = JobisButton(style: .main).then {
