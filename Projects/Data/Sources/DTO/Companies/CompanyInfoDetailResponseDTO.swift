@@ -10,10 +10,11 @@ struct CompanyInfoDetailResponseDTO: Decodable {
     let subZipCode, subAddress, subAddressDetail: String?
     let managerName, managerPhoneNo: String
     let subManagerName, subManagerPhoneNo, fax: String?
-    let email, representativeName, foundedAt: String
+    let email, representativeName, representativePhoneNo, foundedAt: String
     let workerNumber: Int
     let take: Double
     let recruitmentID: Int?
+    let attachments: [String]
     let serviceName: String
     let businessArea: String
 
@@ -34,10 +35,12 @@ struct CompanyInfoDetailResponseDTO: Decodable {
         case subManagerPhoneNo = "sub_manager_phone_no"
         case fax, email
         case representativeName = "representative_name"
+        case representativePhoneNo = "representative_phone_no"
         case foundedAt = "founded_at"
         case workerNumber = "worker_number"
         case take
         case recruitmentID = "recruitment_id"
+        case attachments
         case serviceName = "service_name"
         case businessArea = "business_area"
     }
@@ -63,10 +66,12 @@ extension CompanyInfoDetailResponseDTO {
             fax: fax ?? "없음",
             email: email,
             representativeName: representativeName,
+            representativePhoneNo: representativePhoneNo,
             foundedAt: foundedAt,
             workerNumber: String(workerNumber) + "명",
             take: String(take) + "억원",
             recruitmentID: recruitmentID,
+            attachments: attachments,
             serviceName: serviceName,
             businessArea: businessArea
         )

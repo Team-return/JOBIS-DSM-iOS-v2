@@ -8,15 +8,19 @@ public final class CompanyDetailLabel: BaseView {
         $0.lineBreakMode = .byWordWrapping
     }
     private let content = UILabel().then {
+        $0.setJobisText("-", font: .subBody, color: .GrayScale.gray80)
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
 
-    public init(menuText: String, contentText: String) {
+    public init(menuText: String) {
         super.init()
 
-        self.title.setJobisText(menuText, font: .description, color: .GrayScale.gray60)
-        self.content.setJobisText(contentText, font: .subBody, color: .GrayScale.gray80)
+        self.title.setJobisText(menuText, font: .subBody, color: .GrayScale.gray80)
+    }
+
+    public func setContent(contentText: String) {
+        self.content.text = contentText
     }
 
     public required init?(coder: NSCoder) {

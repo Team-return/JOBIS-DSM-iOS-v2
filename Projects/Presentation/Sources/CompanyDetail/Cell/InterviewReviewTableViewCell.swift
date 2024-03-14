@@ -5,7 +5,7 @@ import Domain
 import DesignSystem
 import RxSwift
 
-final class InterviewReviewTableViewCell: BaseTableViewCell<RecruitmentViewModel> {
+final class InterviewReviewTableViewCell: BaseTableViewCell<CompanyDetailViewModel> {
     static let identifier = "InterviewReviewTableViewCell"
 
     public var interviewReviewID: Int?
@@ -70,13 +70,12 @@ final class InterviewReviewTableViewCell: BaseTableViewCell<RecruitmentViewModel
         self.selectionStyle = .none
     }
 
-    func adapt(model: RecruitmentEntity) {
+    public func adapt(model: ReviewEntity) {
         interviewReviewLabel.setJobisText(
-            "길강민님의 후기",
+            model.writer + "님의 후기",
             font: .subHeadLine,
             color: .GrayScale.gray90
         )
-        interviewReviewYearLabel.text = "2022"
-        interviewReviewArrowImageViwe.image = .jobisIcon(.arrowRight)
+        interviewReviewYearLabel.text = String(model.year)
     }
 }

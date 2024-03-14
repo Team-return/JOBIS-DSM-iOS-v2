@@ -8,6 +8,7 @@ import Domain
 public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentID: Int?
+    public var companyId: Int?
     private let disposeBag = DisposeBag()
 
     private let fetchRecruitmentDetailUseCase: FetchRecruitmentDetailUseCase
@@ -47,7 +48,11 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.companyDetailButtonDidClicked.asObservable()
-            .map { _ in RecruitmentDetailStep.companyDetailIsRequired }
+            .map {
+                RecruitmentDetailStep.companyDetailIsRequired(
+                    id: self.companyId ?? 0
+                )
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
