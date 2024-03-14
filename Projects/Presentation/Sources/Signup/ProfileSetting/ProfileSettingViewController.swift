@@ -22,6 +22,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
         $0.contentMode = .scaleAspectFill
     }
     private let editProfileButton = EditProfileButton()
+    private let laterButton = LaterButton()
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("완료")
     }
@@ -30,6 +31,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
         [
             profileImageView,
             editProfileButton,
+            laterButton,
             nextButton
         ].forEach { self.view.addSubview($0) }
     }
@@ -46,6 +48,11 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
             $0.top.equalTo(profileImageView.snp.bottom).offset(8)
         }
 
+        laterButton.snp.makeConstraints {
+            $0.centerX.equalTo(nextButton)
+            $0.bottom.equalTo(nextButton.snp.top).offset(-10)
+        }
+
         nextButton.snp.makeConstraints {
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -60,6 +67,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
             password: password,
             isMan: isMan,
             profileImage: selectedFileModel,
+            laterButtonDidTap: laterButton.rx.tap.asSignal(),
             nextButtonDidTap: nextButton.rx.tap.asSignal()
         )
         _ = viewModel.transform(input)
