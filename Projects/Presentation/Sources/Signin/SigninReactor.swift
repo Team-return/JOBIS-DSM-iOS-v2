@@ -20,6 +20,7 @@ public final class SigninReactor: BaseReactor, Stepper {
     public enum Action {
         case updateEmail(String)
         case updatePassword(String)
+        case foregetPasswordButtonDidTap
         case signinButtonDidTap
     }
 
@@ -29,6 +30,7 @@ public final class SigninReactor: BaseReactor, Stepper {
         case emailError(String)
         case passwordError(String)
         case errorReset
+        case navigateToRenewalPassword
         case signinSuccess
     }
 
@@ -52,6 +54,9 @@ extension SigninReactor {
                 ),
                 .just(.errorReset)
             ])
+
+        case .foregetPasswordButtonDidTap:
+            return .just(.navigateToRenewalPassword)
 
         case let .updateEmail(email):
             return .just(.updateEmail(email))
@@ -79,6 +84,9 @@ extension SigninReactor {
         case .signinSuccess:
             steps.accept(SigninStep.tabsIsRequired)
 
+        case .navigateToRenewalPassword:
+            steps.accept(SigninStep.confirmEmailIsRequired)
+
         case .errorReset:
             newState.emailError = ""
             newState.passwordError = ""
@@ -95,7 +103,7 @@ extension SigninReactor {
             return self.signinUseCase.execute(req: .init(
                 accountID: "\(email)@dsm.hs.kr",
                 password: password,
-                deviceToken: Messaging.messaging().fcmToken ?? "mac"
+                deviceToken: Messaging.messaging().fcmToken
             ))
             .asObservable()
             .map { _ in Mutation.signinSuccess }

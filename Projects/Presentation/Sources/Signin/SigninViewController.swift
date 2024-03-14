@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxGesture
 import SnapKit
 import Then
 import Core
@@ -31,6 +32,7 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             textFieldType: .secure
         )
     }
+    private let forgetPasswordButton = ForgetPasswordButton()
     private let signinButton = JobisButton(style: .main).then {
         $0.setText("로그인")
     }
@@ -43,6 +45,7 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             titleImageView,
             emailTextField,
             passwordTextField,
+            forgetPasswordButton,
             signinButton
         ].forEach { self.view.addSubview($0) }
     }
@@ -71,6 +74,10 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             $0.top.equalTo(emailTextField.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
+        forgetPasswordButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(8)
+        }
         signinButton.snp.makeConstraints {
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -88,6 +95,13 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
             .distinctUntilChanged()
             .map { SigninReactor.Action.updatePassword($0) }
             .drive(reactor.action)
+            .disposed(by: disposeBag)
+
+        forgetPasswordButton.rx.tapGesture()
+            .when(.recognized)
+            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .map { _ in SigninReactor.Action.foregetPasswordButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         signinButton.rx.tap

@@ -6,9 +6,15 @@ import Then
 import Core
 import DesignSystem
 
-public final class VerifyEmailViewController: SignupViewController<VerifyEmailViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
+public final class ConfirmEmailViewController: BaseViewController<ConfirmEmailViewModel> {
+    private let titleLabel = UILabel().then {
+        $0.setJobisText(
+            "비밀번호 변경을 위해\n이메일을 인증해주세요",
+            font: .pageTitle,
+            color: .GrayScale.gray90
+        )
+        $0.numberOfLines = 2
+    }
     private let emailTextField = JobisTextField().then {
         $0.textField.keyboardType = .emailAddress
         $0.setTextField(
@@ -24,34 +30,44 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
     }
+    let nextPublishRelay = PublishRelay<Void>()
+
+    func nextButtonAction() {
+        self.nextPublishRelay.accept(())
+    }
 
     public override func addView() {
         [
+            titleLabel,
             emailTextField,
             authCodeTextField,
             nextButton
-        ].forEach { self.view.addSubview($0) }
+        ].forEach(view.addSubview(_:))
     }
 
     public override func setLayout() {
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).inset(20)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+
         emailTextField.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.top.equalTo(self.titleLabel.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
         }
         authCodeTextField.snp.makeConstraints {
             $0.top.equalTo(emailTextField.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
+
         nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(12)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
 
     public override func bind() {
-        let input = VerifyEmailViewModel.Input(
-            name: name,
-            gcn: gcn,
+        let input = ConfirmEmailViewModel.Input(
             email: emailTextField.textField.rx.text.orEmpty.asDriver(),
             authCode: authCodeTextField.textField.rx.text.orEmpty.asDriver(),
             sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),
@@ -90,37 +106,23 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
     }
 
     public override func configureViewController() {
-        emailTextField.textField.delegate = self
-        authCodeTextField.textField.delegate = self
-
         authCodeTextField.textField.rx.text.orEmpty
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(6) { [weak self] in
                 self?.authCodeTextField.textField.resignFirstResponder()
-                self?.nextSignupStep()
+                self?.nextButtonAction()
             }
             .bind(to: authCodeTextField.textField.rx.text )
             .disposed(by: disposeBag)
 
         nextButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
+                self?.nextButtonAction()
             })
             .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
-        setLargeTitle(title: "이메일을 입력해주세요")
-    }
-}
-
-extension VerifyEmailViewController: UITextFieldDelegate {
-    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == emailTextField.textField {
-            self.authCodeTextField.textField.becomeFirstResponder()
-        } else if textField == authCodeTextField.textField {
-            self.nextSignupStep()
-        }
-        return true
+        self.navigationController?.navigationBar.prefersLargeTitles = false
     }
 }

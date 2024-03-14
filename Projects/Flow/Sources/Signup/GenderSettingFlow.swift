@@ -38,7 +38,7 @@ public final class GenderSettingFlow: Flow {
             )
 
         case .tabsIsRequired:
-            return .end(forwardToParentFlowWithStep: VerifyEmailStep.tabsIsRequired)
+            return .end(forwardToParentFlowWithStep: PasswordSettingStep.tabsIsRequired)
         }
     }
 }
