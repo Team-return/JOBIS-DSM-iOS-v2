@@ -40,7 +40,7 @@ public final class ProfileSettingFlow: Flow {
             )
 
         case .tabsIsRequired:
-            return .end(forwardToParentFlowWithStep: VerifyEmailStep.tabsIsRequired)
+            return .end(forwardToParentFlowWithStep: GenderSettingStep.tabsIsRequired)
         }
     }
 }

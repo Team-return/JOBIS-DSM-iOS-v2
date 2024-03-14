@@ -4,6 +4,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Domain
+import FirebaseMessaging
 
 public final class PrivacyViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -38,7 +39,7 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
                         gender: input.isMan ? .man: .woman,
                         classRoom: input.gcn.extract(3),
                         number: input.gcn % 100,
-                        deviceToken: nil, // TODO: FireBase 연동
+                        deviceToken: Messaging.messaging().fcmToken,
                         profileImageURL: input.profileImageURL
                     )
                 )
