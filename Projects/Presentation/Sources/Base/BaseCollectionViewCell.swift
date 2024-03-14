@@ -9,12 +9,12 @@ public class BaseCollectionViewCell<Model>: UICollectionViewCell,
     public override init(frame: CGRect) {
         super.init(frame: .zero)
         configureView()
+        addView()
+        setLayout()
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        addView()
-        setLayout()
     }
 
     required public init?(coder: NSCoder) {
