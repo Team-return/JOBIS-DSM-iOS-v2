@@ -71,7 +71,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(applicationStatusTableView.snp.bottom)
+            $0.bottom.equalTo(applicationStatusTableView.snp.bottom).offset(62)
         }
 
         bannerView.snp.makeConstraints {
