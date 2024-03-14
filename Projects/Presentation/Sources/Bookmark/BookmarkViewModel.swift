@@ -22,6 +22,7 @@ public final class BookmarkViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewWillAppear: PublishRelay<Void>
         let removeBookmark: PublishRelay<Int>
+        let bookmarkListDidTap: Observable<Int>
     }
 
     public struct Output {
@@ -39,13 +40,18 @@ public final class BookmarkViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.removeBookmark.asObservable()
+            .do(onNext: { id in
+                bookmarkList.accept(bookmarkList.value.filter { $0.recruitmentID != id})
+            })
             .flatMap {
                 self.bookmarkUseCase.execute(id: $0)
-                    .do(onCompleted: {
-                        input.viewWillAppear.accept(())
-                    })
             }
-            .subscribe(onCompleted: .none)
+            .subscribe()
+            .disposed(by: disposeBag)
+
+        input.bookmarkListDidTap.asObservable()
+            .map { BookmarkStep.recruitmentDetailIsRequired(id: $0) }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         return Output(bookmarkList: bookmarkList)
