@@ -198,6 +198,13 @@ public final class UseCaseAssembly: Assembly {
                 presignedURLRepository: resolver.resolve(PresignedURLRepository.self)!
             )
         }
+
+        // Banners
+        container.register(FetchBannerListUseCase.self) { resolver in
+            FetchBannerListUseCase(
+                bannersRepository: resolver.resolve(BannersRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }

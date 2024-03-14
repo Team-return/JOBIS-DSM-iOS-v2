@@ -4,16 +4,18 @@ import SnapKit
 import Then
 import DesignSystem
 
-final class BannerCollectionViewCell: BaseCollectionViewCell<UIImage> {
+final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> {
     static let identifier = "BannerCollectionViewCell"
     private let imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
+        $0.layer.cornerRadius = 16
+        $0.clipsToBounds = true
     }
 
     override func addView() {
         [
             imageView
-        ].forEach(self.addSubview(_:))
+        ].forEach(contentView.addSubview(_:))
     }
 
     override func setLayout() {
@@ -27,7 +29,7 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<UIImage> {
         self.backgroundColor = .GrayScale.gray30
     }
 
-    override func adapt(model: UIImage) {
-        self.imageView.image = model
+    override func adapt(model: FetchBannerEntity) {
+        self.imageView.setJobisImage(urlString: model.bannerURL)
     }
 }
