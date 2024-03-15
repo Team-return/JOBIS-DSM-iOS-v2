@@ -25,6 +25,9 @@ public final class RecruitmentDetailFlow: Flow {
 
         case let .companyDetailIsRequired(id):
             return navigateToCompanyDetail(id)
+
+        case let .applyIsRequired(id, name, imageURL):
+            return navigateToApply(id: id, name: name, imageURL: imageURL)
         }
     }
 }
@@ -52,6 +55,24 @@ private extension RecruitmentDetailFlow {
             withNextPresentable: companyDetailFlow,
             withNextStepper: OneStepper(
                 withSingleStep: CompanyDetailStep.companyDetailIsRequired
+            )
+        ))
+    }
+
+    func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
+        let applyFlow = ApplyFlow(container: container)
+
+        Flows.use(applyFlow, when: .created) { (root) in
+            self.rootViewController.navigationController?.pushViewController(
+                root,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: applyFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: ApplyStep.applyIsRequired(id: id, name: name, imageURL: imageURL)
             )
         ))
     }
