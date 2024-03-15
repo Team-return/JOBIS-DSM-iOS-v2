@@ -4,7 +4,7 @@ import Domain
 struct RecruitmentDetailResponseDTO: Decodable {
     let recruitmentID: Int
     let companyID: Int
-    let companyProfileUrl: String
+    let companyProfileURL: String
     let companyName: String
     let areas: [AreaResponseDTO]
     let requiredGrade: Int?
@@ -24,7 +24,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     init(
         recruitmentID: Int,
         companyID: Int,
-        companyProfileUrl: String,
+        companyProfileURL: String,
         companyName: String,
         areas: [AreaResponseDTO],
         requiredGrade: Int?,
@@ -44,7 +44,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     ) {
         self.recruitmentID = recruitmentID
         self.companyID = companyID
-        self.companyProfileUrl = companyProfileUrl
+        self.companyProfileURL = companyProfileURL
         self.companyName = companyName
         self.areas = areas
         self.requiredGrade = requiredGrade
@@ -66,7 +66,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     enum CodingKeys: String, CodingKey {
         case recruitmentID = "recruitment_id"
         case companyID = "company_id"
-        case companyProfileUrl = "company_profile_url"
+        case companyProfileURL = "company_profile_url"
         case companyName = "company_name"
         case areas
         case requiredGrade = "required_grade"
@@ -93,7 +93,7 @@ extension RecruitmentDetailResponseDTO {
         return RecruitmentDetailEntity(
             recruitmentID: recruitmentID,
             companyID: companyID,
-            companyProfileUrl: companyProfileUrl,
+            companyProfileURL: companyProfileURL,
             companyName: companyName,
             areas: areas.map { $0.toDomain() },
             requiredGrade: unwrappedRequiredGrade,
