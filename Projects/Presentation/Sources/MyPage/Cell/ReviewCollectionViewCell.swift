@@ -1,24 +1,24 @@
 import UIKit
 import DesignSystem
+import Domain
 
-final class ReviewNavigateView: BaseView {
-    var reviewID = 0
+final class ReviewCollectionViewCell: BaseCollectionViewCell<WritableReviewCompanyEntity> {
+    static let identifier = "ReviewCollectionViewCell"
     private let reviewImageView = UIImageView().then {
         $0.image = .jobisIcon(.door)
     }
-    let titleLabel = UILabel().then {
-        $0.font = .jobisFont(.description)
-        $0.textColor = .GrayScale.gray70
+    private let titleLabel = UILabel().then {
+        $0.setJobisText("", font: .description, color: .GrayScale.gray70)
     }
-    let reviewNavigateButton = UIButton(type: .system).then {
+    private let reviewNavigateLabel = UILabel().then {
         $0.setJobisText("작성하러 가기 →", font: .subHeadLine, color: .Primary.blue20)
     }
     override func addView() {
         [
             reviewImageView,
             titleLabel,
-            reviewNavigateButton
-        ].forEach { self.addSubview($0) }
+            reviewNavigateLabel
+        ].forEach(contentView.addSubview(_:))
     }
 
     override func setLayout() {
@@ -33,9 +33,8 @@ final class ReviewNavigateView: BaseView {
             $0.height.equalTo(20)
             $0.trailing.equalToSuperview().inset(16)
         }
-        reviewNavigateButton.snp.makeConstraints {
+        reviewNavigateLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom)
-            $0.bottom.equalToSuperview().inset(16)
             $0.height.equalTo(24)
             $0.leading.equalTo(reviewImageView.snp.trailing).offset(8)
         }
@@ -44,5 +43,10 @@ final class ReviewNavigateView: BaseView {
     override func configureView() {
         self.layer.cornerRadius = 12
         self.backgroundColor = .Primary.blue10
+    }
+
+    override func adapt(model: WritableReviewCompanyEntity) {
+        super.adapt(model: model)
+        titleLabel.text = "\(model.name) 면접 후기를 적어 주세요."
     }
 }

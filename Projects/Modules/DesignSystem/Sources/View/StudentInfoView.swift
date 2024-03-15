@@ -19,6 +19,9 @@ public final class StudentInfoView: UIView {
     private let departmentLabel = UILabel().then {
         $0.setJobisText("가가가가가가가가", font: .description, color: .GrayScale.gray70)
     }
+    private let editButton = UIButton(type: .system).then {
+        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
+    }
 
     public init() {
         super.init(frame: .zero)
@@ -46,7 +49,8 @@ public final class StudentInfoView: UIView {
     private func configureView() {
         [
             profileImageView,
-            labelStackView
+            labelStackView,
+            editButton
         ].forEach(addSubview(_:))
 
         [
@@ -62,6 +66,10 @@ public final class StudentInfoView: UIView {
         labelStackView.snp.makeConstraints {
             $0.centerY.equalTo(profileImageView)
             $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
+        }
+        editButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(28)
+            $0.centerY.equalToSuperview()
         }
     }
 }
