@@ -183,7 +183,6 @@ public final class PresentationAssembly: Assembly {
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
-
         container.register(CompanyDetailViewController.self) { resolver in
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
         }
@@ -194,11 +193,17 @@ public final class PresentationAssembly: Assembly {
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
-
         container.register(RecruitmentDetailViewController.self) { resolver in
             RecruitmentDetailViewController(
                 resolver.resolve(RecruitmentDetailViewModel.self)!
             )
+        }
+
+        container.register(ApplyViewModel.self) { resolver in
+            ApplyViewModel()
+        }
+        container.register(ApplyViewController.self) { resolver in
+            ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
         }
     }
     // swiftlint:enable function_body_length
