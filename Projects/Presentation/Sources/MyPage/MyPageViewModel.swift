@@ -25,7 +25,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
-        let reviewNavigate: PublishRelay<Int>
+        let reviewNavigate: Observable<Int>
         let helpSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutSectionDidTap: Observable<IndexPath>

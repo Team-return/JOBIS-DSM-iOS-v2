@@ -11,27 +11,43 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
-    private let contentView = UIView()
-    private let studentInfoView = StudentInfoView()
-    private let editButton = UIButton(type: .system).then {
-        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
+    private let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.layoutMargins = .init(top: 0, left: 0, bottom: 60, right: 0)
+        $0.isLayoutMarginsRelativeArrangement = true
     }
-    private let reviewNavigateStackView = ReviewNavigateStackView()
+    private let studentInfoView = StudentInfoView()
+    private let flowLayout = UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .vertical
+        $0.minimumLineSpacing = 0
+        $0.minimumInteritemSpacing = 12
+        $0.itemSize = .init(width: UIScreen.main.bounds.width - 48, height: 76)
+        $0.sectionInset = .init(top: 12, left: 24, bottom: 12, right: 24)
+    }
+    private lazy var reviewCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout).then {
+        $0.register(
+            ReviewCollectionViewCell.self,
+            forCellWithReuseIdentifier: ReviewCollectionViewCell.identifier
+        )
+        $0.isScrollEnabled = false
+        $0.showsVerticalScrollIndicator = false
+        $0.contentInset = .init(top: 12, left: 24, bottom: 12, right: 24)
+        $0.contentInsetAdjustmentBehavior = .never
+    }
     private let accountSectionView = AccountSectionView()
     private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
 
     public override func addView() {
         self.view.addSubview(scrollView)
-        self.scrollView.addSubview(contentView)
+        self.scrollView.addSubview(stackView)
         [
             studentInfoView,
-            editButton,
-            reviewNavigateStackView,
+            reviewCollectionView,
             helpSectionView,
             accountSectionView,
             bugSectionView
-        ].forEach { self.contentView.addSubview($0) }
+        ].forEach { self.stackView.addArrangedSubview($0) }
     }
 
     public override func setLayout() {
@@ -39,47 +55,25 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.edges.equalToSuperview()
         }
 
-        contentView.snp.makeConstraints {
+        stackView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(bugSectionView).offset(60)
         }
 
-        studentInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        editButton.snp.makeConstraints {
-            $0.centerY.equalTo(studentInfoView)
-            $0.trailing.equalToSuperview().offset(-28)
-        }
-
-        reviewNavigateStackView.snp.updateConstraints {
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.top.equalTo(studentInfoView.snp.bottom)
-        }
-
-        helpSectionView.snp.makeConstraints {
-            $0.top.equalTo(reviewNavigateStackView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        accountSectionView.snp.makeConstraints {
-            $0.top.equalTo(helpSectionView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        bugSectionView.snp.makeConstraints {
-            $0.top.equalTo(accountSectionView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+        reviewCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo((reviewCollectionView.numberOfItems(inSection: 0) * 88) + 12)
         }
     }
 
     public override func bind() {
         let input = MyPageViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
-            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            viewAppear: self.viewWillAppearPublisher,
+            reviewNavigate: reviewCollectionView.rx.itemSelected
+                .map {
+                    guard let cell = self.reviewCollectionView.cellForItem(at: $0) as? ReviewCollectionViewCell
+                    else { return 0 }
+                    return cell.model?.reviewID ?? 0
+                },
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
@@ -104,10 +98,18 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                 )
             }).disposed(by: disposeBag)
 
-        output.writableReviewList
-            .bind(onNext: { [weak self] in
-                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
-            }).disposed(by: disposeBag)
+        output.writableReviewList.asObservable()
+            .filter {
+                self.reviewCollectionView.isHidden = $0.isEmpty
+                return !$0.isEmpty
+            }
+            .bind(to: reviewCollectionView.rx.items(
+                cellIdentifier: ReviewCollectionViewCell.identifier,
+                cellType: ReviewCollectionViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
