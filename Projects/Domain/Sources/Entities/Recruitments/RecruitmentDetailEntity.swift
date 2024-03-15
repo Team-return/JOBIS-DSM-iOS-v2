@@ -3,7 +3,7 @@ import Foundation
 public struct RecruitmentDetailEntity: Equatable {
     public let recruitmentID: Int
     public let companyID: Int
-    public let companyProfileUrl: String
+    public let companyProfileURL: String
     public let companyName: String
     public let areas: [AreaEntity]
     public let requiredGrade: String?
@@ -23,7 +23,7 @@ public struct RecruitmentDetailEntity: Equatable {
     public init(
         recruitmentID: Int,
         companyID: Int,
-        companyProfileUrl: String,
+        companyProfileURL: String,
         companyName: String,
         areas: [AreaEntity],
         requiredGrade: String?,
@@ -43,7 +43,7 @@ public struct RecruitmentDetailEntity: Equatable {
     ) {
         self.recruitmentID = recruitmentID
         self.companyID = companyID
-        self.companyProfileUrl = companyProfileUrl
+        self.companyProfileURL = companyProfileURL
         self.companyName = companyName
         self.areas = areas
         self.requiredGrade = requiredGrade
