@@ -13,12 +13,12 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
     }
     private let contentView = UIView()
     private let noticeTitleLabel = UILabel().then {
-        $0.setJobisText("[중요] 신입생 오리엔테이션 안내", font: .headLine, color: .GrayScale.gray80)
+        $0.setJobisText("공지사항 불러오는 중.....", font: .headLine, color: .GrayScale.gray80)
     }
-    private let noticeDateLabel = JobisMenuLabel(text: "2023-12-05")
+    private var noticeDateLabel = UILabel()
     private let noticeContentLabel = UILabel().then {
         $0.setJobisText(
-            "신입생 오리엔테이션 책자에 있는 입학전 과제의 양식입니다. 첨부파일을 다운받아 사용하시고, 영어와 전공은 특별한 양식이 없으니 내용에 맞게 작성하여 학교 홈페이지에 제출하시기 바랍니다.\n\n■ 과제 제출 마감: 2024년 2월 20일 화요일\n■ 학교 홈페이지 학생 회원가입 -> 학교 담당자가 승인",
+            "-",
             font: .body,
             color: .GrayScale.gray80
         )
@@ -65,7 +65,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
 
         noticeDateLabel.snp.makeConstraints {
             $0.top.equalTo(noticeTitleLabel.snp.bottom)
-            $0.left.equalToSuperview()
+            $0.left.equalToSuperview().inset(24)
         }
 
         noticeContentLabel.snp.makeConstraints {
@@ -84,26 +84,30 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         }
     }
 
-    public override func bind() { }
+    public override func bind() {
+        let input = NoticeDetailViewModel.Input(
+            viewAppear: self.viewWillAppearPublisher
+        )
 
-    public override func configureViewController() {
-        attachedFileTableView.dataSource = self
-        attachedFileTableView.delegate = self
+        let output = viewModel.transform(input)
+
+        output.noticeDetailInfo.asObservable()
+            .bind(onNext: { noticeDetailInfo in
+                self.noticeTitleLabel.text = noticeDetailInfo.title
+                self.noticeDateLabel.setJobisText(
+                    noticeDetailInfo.createdAt,
+                    font: .description,
+                    color: .GrayScale.gray60
+                )
+                self.noticeContentLabel.text = noticeDetailInfo.content
+            })
+            .disposed(by: disposeBag)
     }
+
+    public override func configureViewController() { }
 
     public override func configureNavigation() {
         self.setSmallTitle(title: "공지사항")
         self.navigationItem.largeTitleDisplayMode = .never
-    }
-}
-
-extension NoticeDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = attachedFileTableView.dequeueReusableCell(withIdentifier: AttachedFileTableViewCell.identifier, for: indexPath)
-        return cell
     }
 }
