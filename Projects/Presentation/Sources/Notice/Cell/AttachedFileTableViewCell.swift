@@ -9,7 +9,6 @@ import RxCocoa
 class AttachedFileTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "AttachedFileTableViewCell"
 
-    public var noticeDetailID = 0
     private var disposeBag = DisposeBag()
     private let attachedFileButton = UIButton().then {
         $0.backgroundColor = .GrayScale.gray30
