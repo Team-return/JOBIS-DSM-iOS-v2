@@ -23,8 +23,8 @@ public final class NoticeFlow: Flow {
         case .noticeIsRequired:
             return navigateToNotice()
 
-        case .noticeDetailIsRequired:
-            return navigateToNoticeDetail()
+        case let .noticeDetailIsRequired(id):
+            return navigateToNoticeDetail(id)
         }
     }
 }
@@ -37,17 +37,20 @@ private extension NoticeFlow {
         ))
     }
 
-    func navigateToNoticeDetail() -> FlowContributors {
-        let noticeDetailViewController = self.container.resolve(NoticeDetailViewController.self)!
+    func navigateToNoticeDetail(_ id: Int) -> FlowContributors {
+        let noticeDetailFlow = NoticeDetailFlow(container: container)
 
-        self.rootViewController.navigationController?.pushViewController(
-            noticeDetailViewController,
-            animated: true
-        )
+        Flows.use(noticeDetailFlow, when: .created) { (root) in
+            let view = root as? NoticeDetailViewController
+            view?.viewModel.noticeID = id
+            self.rootViewController.navigationController?.pushViewController(
+                view!, animated: true
+            )
+        }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: noticeDetailViewController,
-            withNextStepper: noticeDetailViewController.viewModel
+            withNextPresentable: noticeDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: NoticeDetailStep.noticeDetailIsRequired)
         ))
     }
 }
