@@ -1,4 +1,5 @@
 import Foundation
+import DesignSystem
 import Domain
 
 struct NoticeListResponseDTO: Decodable {
@@ -20,11 +21,11 @@ struct NoticeResponseDTO: Decodable {
 extension NoticeListResponseDTO {
     func toDomain() -> [NoticeEntity] {
         notices.map {
-            let noticeDate = String($0.createdAt.prefix(while: { $0 != "T" }))
+            let noticeDate = $0.createdAt.toDateFormat("yyyy-MM-dd")
             return NoticeEntity(
                 companyId: $0.id,
                 title: $0.title,
-                createdAt: noticeDate
+                createdAt: noticeDate.toSting()
             )
         }
     }
