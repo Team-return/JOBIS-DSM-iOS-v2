@@ -29,10 +29,11 @@ struct NoticeDetailResponseDTO: Decodable {
 
 extension NoticeDetailResponseDTO {
     func toDomain() -> NoticeDetailEntity {
+        var noticeDate = String(createdAt.prefix(while: { $0 != "T" }))
         return NoticeDetailEntity(
             title: title,
             content: content,
-            createdAt: createdAt,
+            createdAt: noticeDate,
             attachments: attachments.map { $0.toDomain() }
         )
     }
