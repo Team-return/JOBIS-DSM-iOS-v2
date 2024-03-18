@@ -23,7 +23,7 @@ public final class NoticeDetailFlow: Flow {
         case .noticeDetailIsRequired:
             return navigateToNoticeDetail()
         case .noticeListIsRequired:
-            return dismissNoticeList()
+            return popNoticeList()
         }
     }
 }
@@ -36,7 +36,7 @@ private extension NoticeDetailFlow {
         ))
     }
 
-    func dismissNoticeList() -> FlowContributors {
+    func popNoticeList() -> FlowContributors {
         rootViewController.navigationController?.popViewController(animated: true)
         return .none
     }
