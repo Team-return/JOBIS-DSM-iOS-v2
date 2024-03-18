@@ -69,14 +69,14 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         let output = viewModel.transform(input)
 
         output.noticeDetailInfo.asObservable()
-            .bind(onNext: { noticeDetailInfo in
-                self.noticeTitleLabel.text = noticeDetailInfo.title
-                self.noticeDateLabel.setJobisText(
-                    noticeDetailInfo.createdAt,
+            .bind(onNext: { [self] in
+                noticeTitleLabel.text = $0.title
+                noticeDateLabel.setJobisText(
+                    $0.createdAt,
                     font: .description,
                     color: .GrayScale.gray60
                 )
-                self.noticeContentLabel.text = noticeDetailInfo.content
+                noticeContentLabel.text = $0.content
             })
             .disposed(by: disposeBag)
     }
