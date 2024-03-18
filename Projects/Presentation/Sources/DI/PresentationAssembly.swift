@@ -197,6 +197,14 @@ public final class PresentationAssembly: Assembly {
                 resolver.resolve(RecruitmentDetailViewModel.self)!
             )
         }
+
+        container.register(WriteReviewViewController.self) { resolver in
+            WriteReviewViewController(resolver.resolve(WriteReviewViewModel.self)!)
+        }
+
+        container.register(WriteReviewViewModel.self) { _ in
+            WriteReviewViewModel()
+        }
     }
     // swiftlint:enable function_body_length
 }

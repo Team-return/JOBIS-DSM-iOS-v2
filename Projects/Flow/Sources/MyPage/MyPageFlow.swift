@@ -30,6 +30,9 @@ public final class MyPageFlow: Flow {
 
         case .confirmIsRequired:
             return navigateToConfirmPassword()
+
+        case .writeReviewIsRequired:
+            return navigateToWriteReview()
         }
     }
 }
@@ -76,6 +79,21 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: confirmPasswordFlow,
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
+        ))
+    }
+
+    func navigateToWriteReview() -> FlowContributors {
+        let writeReviewFlow = WriteReviewFlow(container: container)
+
+        Flows.use(writeReviewFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: writeReviewFlow,
+            withNextStepper: OneStepper(withSingleStep: WriteReviewStep.writeReviewIsRequired)
         ))
     }
 }
