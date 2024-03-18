@@ -20,7 +20,7 @@ struct NoticeResponseDTO: Decodable {
 extension NoticeListResponseDTO {
     func toDomain() -> [NoticeEntity] {
         notices.map {
-            var noticeDate = String($0.createdAt.prefix(while: { $0 != "T" }))
+            let noticeDate = String($0.createdAt.prefix(while: { $0 != "T" }))
             return NoticeEntity(
                 companyId: $0.id,
                 title: $0.title,
