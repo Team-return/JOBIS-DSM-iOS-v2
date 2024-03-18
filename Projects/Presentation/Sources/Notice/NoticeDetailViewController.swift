@@ -25,26 +25,13 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
-    private let attachedFileMenuLabel = JobisMenuLabel(text: "첨부파일")
-    private let attachedFileTableView = UITableView().then {
-        $0.register(
-            AttachedFileTableViewCell.self,
-            forCellReuseIdentifier: AttachedFileTableViewCell.identifier
-        )
-        $0.separatorStyle = .none
-        $0.rowHeight = 68
-        $0.showsVerticalScrollIndicator = false
-        $0.isScrollEnabled = false
-    }
     public override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         [
             noticeTitleLabel,
             noticeDateLabel,
-            noticeContentLabel,
-            attachedFileMenuLabel,
-            attachedFileTableView
+            noticeContentLabel
         ].forEach(contentView.addSubview(_:))
     }
 
@@ -56,7 +43,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
-            $0.bottom.equalTo(attachedFileTableView.snp.bottom).offset(20)
+            $0.bottom.equalTo(noticeContentLabel.snp.bottom).offset(20)
         }
 
         noticeTitleLabel.snp.makeConstraints {
@@ -71,16 +58,6 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         noticeContentLabel.snp.makeConstraints {
             $0.top.equalTo(noticeDateLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
-        }
-
-        attachedFileMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(noticeContentLabel.snp.bottom).offset(24)
-        }
-
-        attachedFileTableView.snp.makeConstraints {
-            $0.top.equalTo(attachedFileMenuLabel.snp.bottom)
-            $0.left.right.equalTo(view.safeAreaInsets)
-            $0.height.greaterThanOrEqualTo(attachedFileTableView.contentSize.height + 4)
         }
     }
 
