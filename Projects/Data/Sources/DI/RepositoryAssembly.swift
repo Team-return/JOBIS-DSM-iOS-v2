@@ -82,6 +82,12 @@ public final class RepositoryAssembly: Assembly {
                 remoteBannersDataSource: resolver.resolve(RemoteBannersDataSource.self)!
             )
         }
+
+        container.register(NoticesRepository.self) { resolver in
+            NoticesRepositoryImpl(
+                remoteNoticesDataSource: resolver.resolve(RemoteNoticesDataSource.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }

@@ -7,22 +7,43 @@ import Domain
 
 public final class NoticeViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    private let fetchNoticeListUseCase: FetchNoticeListUseCase
     private let disposeBag = DisposeBag()
 
-    init( ) { }
-
-    public struct Input {
-        let cellClick: PublishRelay<Void>
+    init(
+        fetchNoticeListUseCase: FetchNoticeListUseCase
+    ) {
+        self.fetchNoticeListUseCase = fetchNoticeListUseCase
     }
 
-    public struct Output { }
+    public struct Input {
+        let viewAppear: PublishRelay<Void>
+        let noticeTableViewCellDidTap: PublishRelay<Int>
+    }
+
+    public struct Output {
+        let noticeListInfo: PublishRelay<[NoticeEntity]>
+    }
 
     public func transform(_ input: Input) -> Output {
-        input.cellClick.asObservable()
-            .map { _ in NoticeStep.noticeDetailIsRequired }
+        let noticeListInfo = PublishRelay<[NoticeEntity]>()
+
+        input.viewAppear.asObservable()
+            .flatMap { _ in
+                self.fetchNoticeListUseCase.execute()
+            }
+            .bind(to: noticeListInfo)
+            .disposed(by: disposeBag)
+
+        input.noticeTableViewCellDidTap.asObservable()
+            .map { id in
+                NoticeStep.noticeDetailIsRequired(id: id)
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output()
+        return Output(
+            noticeListInfo: noticeListInfo
+        )
     }
 }
