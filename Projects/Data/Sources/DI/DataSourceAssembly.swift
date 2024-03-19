@@ -65,5 +65,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(RemoteBannersDataSource.self) { resolver in
             RemoteBannersDataSourceImpl(keychain: self.keychain(resolver))
         }
+
+        container.register(RemoteNoticesDataSource.self) { resolver in
+            RemoteNoticesDataSourceDataSourceImpl(keychain: self.keychain(resolver))
+        }
     }
 }

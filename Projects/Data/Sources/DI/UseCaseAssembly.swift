@@ -205,6 +205,18 @@ public final class UseCaseAssembly: Assembly {
                 bannersRepository: resolver.resolve(BannersRepository.self)!
             )
         }
+
+        // Notices
+        container.register(FetchNoticeListUseCase.self) { resolver in
+            FetchNoticeListUseCase(
+                noticesRepository: resolver.resolve(NoticesRepository.self)!
+            )
+        }
+        container.register(FetchNoticeDetailUseCase.self) { resolver in
+            FetchNoticeDetailUseCase(
+                noticesRepository: resolver.resolve(NoticesRepository.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
