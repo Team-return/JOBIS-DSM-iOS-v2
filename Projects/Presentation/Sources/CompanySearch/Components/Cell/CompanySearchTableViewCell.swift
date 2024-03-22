@@ -66,9 +66,7 @@ final class CompanySearchTableViewCell: BaseTableViewCell<CompanyEntity> {
         }
     }
 
-    override func configureView() {
-        companyProfileImageView.layer.cornerRadius = 8
-    }
+    override func configureView() { }
 
     override func adapt(model: CompanyEntity) {
         companyProfileImageView.setJobisImage(
