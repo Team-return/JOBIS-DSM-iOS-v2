@@ -3,8 +3,8 @@ import Domain
 
 struct AreaResponseDTO: Decodable {
     let areaID: Int
-    let job: [String]
-    let tech: [String]
+    let job: [JobResponseDTO]
+    let tech: [TechReponseDTO]
     let hiring: Int
     let majorTask: String
     let preferentialTreatment: String?
@@ -21,8 +21,8 @@ extension AreaResponseDTO {
     func toDomain() -> AreaEntity {
         AreaEntity(
             areaID: areaID,
-            job: job.joined(separator: ", "),
-            tech: tech,
+            job: job.map { $0.name }.joined(separator: ", "),
+            tech: tech.map { $0.name },
             hiring: hiring,
             majorTask: majorTask,
             preferentialTreatment: preferentialTreatment
