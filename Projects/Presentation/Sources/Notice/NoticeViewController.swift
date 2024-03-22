@@ -62,6 +62,7 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
             .subscribe(onNext: {
                 self.hideTabbar()
             })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
