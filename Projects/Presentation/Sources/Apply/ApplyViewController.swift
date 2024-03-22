@@ -5,12 +5,19 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import Domain
 
 public final class ApplyViewController: BaseViewController<ApplyViewModel> {
     public var companyID: Int?
     public var companyName: String?
     public var companyImageURL: String?
 
+    private let companyView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 12
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.layoutMargins = .init(top: 12, left: 24, bottom: 12, right: 24)
+    }
     private let companyLogoImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 1.0
@@ -25,46 +32,27 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
         )
     }
     private let attachmentDocsMenuLabel = JobisMenuLabel(text: "첨부파일")
-    private let collectionViewLayout = UICollectionViewFlowLayout().then {
-        $0.minimumInteritemSpacing = 8
-        $0.itemSize = .init(width: UIScreen.main.bounds.size.width - 48, height: 48)
-        $0.sectionInset = .init(top: 4, left: 24, bottom: 4, right: 24)
-    }
-    private let docsStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 8
-    }
-    private lazy var attachedDocsCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: collectionViewLayout
-    ).then {
-        $0.register(
-            AttachmentDocsCollectionViewCell.self,
-            forCellWithReuseIdentifier: AttachmentDocsCollectionViewCell.identifier
-        )
+    private let attachmentDocsTableView = UITableView().then {
+        $0.register(AttachmentDocsTableViewCell.self, forCellReuseIdentifier: AttachmentDocsTableViewCell.identifier)
+        $0.rowHeight = 56
         $0.showsHorizontalScrollIndicator = false
+        $0.separatorStyle = .none
+        $0.isScrollEnabled = false
     }
-    private let attachmentURLsMenuLabel = JobisMenuLabel(text: "URL")
-    private let urlsStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 8
-    }
-    private lazy var attachedURLsCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: collectionViewLayout
-    ).then {
-        $0.register(
-            AttachmentURLsCollectionViewCell.self,
-            forCellWithReuseIdentifier: AttachmentURLsCollectionViewCell.identifier
-        )
+    private let attachmentUrlMenuLabel = JobisMenuLabel(text: "첨부파일")
+    private let attachmentUrlTableView = UITableView().then {
+        $0.register(AttachmentURLsTableViewCell.self, forCellReuseIdentifier: AttachmentURLsTableViewCell.identifier)
+        $0.rowHeight = 56
         $0.showsHorizontalScrollIndicator = false
+        $0.separatorStyle = .none
+        $0.isScrollEnabled = false
     }
-    private let addDocsButton = AddAttachmentButton(.docs)
-    private let addURLsButton = AddAttachmentButton(.urls)
     private let applyButton = JobisButton(style: .main).then {
         $0.setText("지원하기")
     }
-    let docsPicker = UIDocumentPickerViewController(forOpeningContentTypes: [
+    let addDocsButton = AddAttachmentButton(.docs)
+    let addUrlsButton = AddAttachmentButton(.urls)
+    private let docsPicker = UIDocumentPickerViewController(forOpeningContentTypes: [
         .pdf,
         .png,
         .jpeg,
@@ -74,81 +62,59 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
         .init(filenameExtension: "pptx")!
     ])
 
-    private let documents = BehaviorRelay<[URL]>(value: [])
-    private let urls = BehaviorRelay<[String]>(value: [])
+    private let documents = PublishRelay<AttachmentsEntity>()
+    private let urls = BehaviorRelay<[AttachmentsEntity]>(value: [])
+    private let urlsWillChanged = PublishRelay<(Int, String)>()
+    private let removeDidTap = PublishRelay<Int>()
 
     public override func addView() {
         [
-            companyLogoImageView,
-            companyLabel,
+            companyView,
             attachmentDocsMenuLabel,
-            docsStackView,
-            attachmentURLsMenuLabel,
-            urlsStackView,
+            attachmentDocsTableView,
+            attachmentUrlMenuLabel,
+            attachmentUrlTableView,
             applyButton
         ].forEach(self.view.addSubview(_:))
-
         [
-            attachedDocsCollectionView,
-            addDocsButton
-        ].forEach(docsStackView.addArrangedSubview(_:))
-
-        [
-            attachedURLsCollectionView,
-            addURLsButton
-        ].forEach(urlsStackView.addArrangedSubview(_:))
+            companyLogoImageView,
+            companyLabel
+        ].forEach(self.companyView.addArrangedSubview(_:))
     }
 
     public override func setLayout() {
+        companyView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+
         companyLogoImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
-            $0.leading.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
 
-        companyLabel.snp.makeConstraints {
-            $0.leading.equalTo(companyLogoImageView.snp.trailing).offset(12)
-            $0.trailing.equalToSuperview().inset(24)
-            $0.centerY.equalTo(companyLogoImageView)
-        }
-
         attachmentDocsMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(companyLogoImageView.snp.bottom).offset(24)
+            $0.top.equalTo(companyView.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
         }
 
-        docsStackView.snp.makeConstraints {
+        attachmentDocsTableView.snp.makeConstraints {
             $0.top.equalTo(attachmentDocsMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.greaterThanOrEqualTo(attachmentDocsTableView.contentSize.height).priority(1)
+            $0.height.lessThanOrEqualTo(168).priority(2)
+        }
+
+        attachmentUrlMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(attachmentDocsTableView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
         }
 
-        attachedDocsCollectionView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(attachedDocsCollectionView.contentSize.height)
+        attachmentUrlTableView.snp.makeConstraints {
+            $0.top.equalTo(attachmentUrlMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.greaterThanOrEqualTo(attachmentUrlTableView.contentSize.height).priority(1)
+            $0.height.lessThanOrEqualTo(168).priority(2)
         }
-
-//        addDocsButton.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview().inset(24)
-//        }
-
-        attachmentURLsMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(docsStackView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        urlsStackView.snp.makeConstraints {
-            $0.top.equalTo(attachmentURLsMenuLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        attachedURLsCollectionView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(attachedURLsCollectionView.contentSize.height)
-        }
-
-//        addURLsButton.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview().inset(24)
-//        }
 
         applyButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
@@ -157,50 +123,55 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
     }
 
     public override func bind() {
-        let input = ApplyViewModel.Input()
+        let input = ApplyViewModel.Input(
+            documentAddButtonDidTap: documents,
+            urlsAddButtonDidTap: addUrlsButton.rx.tap.asSignal(),
+            urlsWillChanged: urlsWillChanged,
+            applyButtonDidTap: applyButton.rx.tap.asSignal(),
+            removeButtonDidTap: removeDidTap.asSignal()
+        )
         let output = viewModel.transform(input)
+
+        output.documents.asObservable()
+            .bind(to: attachmentDocsTableView.rx
+                .items(
+                    cellIdentifier: AttachmentDocsTableViewCell.identifier,
+                    cellType: AttachmentDocsTableViewCell.self
+                )) { _, element, cell in
+                    cell.adapt(model: element)
+                    self.attachmentDocsTableView.snp.updateConstraints {
+                        $0.height.greaterThanOrEqualTo(self.attachmentDocsTableView.contentSize.height).priority(1)
+                    }
+                }
+                .disposed(by: disposeBag)
+
+        output.urls.asObservable()
+            .bind(to: attachmentUrlTableView.rx
+                .items(
+                cellIdentifier: AttachmentURLsTableViewCell.identifier,
+                cellType: AttachmentURLsTableViewCell.self
+            )) { index, element, cell in
+                cell.adapt(model: element)
+                self.attachmentUrlTableView.snp.updateConstraints {
+                    $0.height.greaterThanOrEqualTo(self.attachmentUrlTableView.contentSize.height).priority(1)
+                }
+                cell.textFieldWillChanged = { text in
+                    self.urlsWillChanged.accept((index, text))
+                }
+                cell.removeButtonDidTap = {
+                    self.removeDidTap.accept(index)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         docsPicker.delegate = self
-
-        self.addDocsButton.rx.tap
-            .asObservable()
-            .bind { [self] _ in
-                present(docsPicker, animated: true)
-            }
-            .disposed(by: disposeBag)
-
-        self.addURLsButton.rx.tap
-            .asObservable()
+        attachmentDocsTableView.delegate = self
+        attachmentUrlTableView.delegate = self
+        addDocsButton.rx.tap
             .bind { [self] in
-                urls.accept(urls.value + [""])
-            }
-            .disposed(by: disposeBag)
-
-        self.documents.asObservable()
-            .do(onNext: { [weak self] urls in
-                self?.addDocsButton.isHidden = urls.count >= 3
-            })
-            .bind(to: attachedDocsCollectionView.rx
-                .items(
-                cellIdentifier: AttachmentDocsCollectionViewCell.identifier,
-                cellType: AttachmentDocsCollectionViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
-            }
-            .disposed(by: disposeBag)
-
-        self.urls.asObservable()
-            .do(onNext: { [weak self] urls in
-                self?.addURLsButton.isHidden = urls.count >= 3
-            })
-            .bind(to: attachedURLsCollectionView.rx
-                .items(
-                cellIdentifier: AttachmentURLsCollectionViewCell.identifier,
-                cellType: AttachmentURLsCollectionViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
+                present(docsPicker, animated: true)
             }
             .disposed(by: disposeBag)
 
@@ -221,6 +192,27 @@ extension ApplyViewController: UIDocumentPickerDelegate {
         _ controller: UIDocumentPickerViewController,
         didPickDocumentsAt urls: [URL]
     ) {
-        documents.accept(documents.value + urls)
+        documents.accept(.init(url: urls.first?.lastPathComponent ?? "", type: .file))
+    }
+}
+
+extension ApplyViewController: UITableViewDelegate {
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if tableView.numberOfRows(inSection: 0) >= 3 {
+            return UIView()
+        } else {
+            if tableView == attachmentDocsTableView {
+                return addDocsButton
+            } else {
+                return addUrlsButton
+            }
+        }
+    }
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if tableView.numberOfRows(inSection: 0) >= 3 {
+            return 0
+        } else {
+            return UITableView.automaticDimension
+        }
     }
 }
