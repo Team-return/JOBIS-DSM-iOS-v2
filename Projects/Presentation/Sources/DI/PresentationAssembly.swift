@@ -204,6 +204,15 @@ public final class PresentationAssembly: Assembly {
                 resolver.resolve(RecruitmentDetailViewModel.self)!
             )
         }
+
+        container.register(CompanySearchViewController.self) { resolver in
+            CompanySearchViewController(
+                resolver.resolve(CompanySearchViewModel.self)!
+            )
+        }
+        container.register(CompanySearchViewModel.self) { resolver in
+            CompanySearchViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        }
     }
     // swiftlint:enable function_body_length
 }
