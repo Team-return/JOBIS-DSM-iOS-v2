@@ -76,7 +76,7 @@ public class CompanySearchViewController: BaseViewController<CompanySearchViewMo
     }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "상세 보기")
+        self.setSmallTitle(title: "기업 탐색")
         self.navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: searchButton)
