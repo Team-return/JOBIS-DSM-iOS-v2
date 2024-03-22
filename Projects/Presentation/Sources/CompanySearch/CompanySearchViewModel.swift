@@ -13,7 +13,7 @@ public final class CompanySearchViewModel: BaseViewModel, Stepper {
     private var pageCount: Int = 1
     private var companyId: Int?
 
-    init(
+    public init(
         fetchCompanyListUseCase: FetchCompanyListUseCase
     ) {
         self.fetchCompanyListUseCase = fetchCompanyListUseCase
