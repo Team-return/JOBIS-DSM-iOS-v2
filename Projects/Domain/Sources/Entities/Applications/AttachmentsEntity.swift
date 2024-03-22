@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AttachmentsEntity: Equatable {
+public struct AttachmentsEntity: Equatable, Hashable {
     public let url: String
     public let type: AttachmentType
 
