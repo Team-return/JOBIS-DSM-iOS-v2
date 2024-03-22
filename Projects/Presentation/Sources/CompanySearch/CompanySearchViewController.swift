@@ -42,7 +42,8 @@ public class CompanySearchViewController: BaseViewController<CompanySearchViewMo
             pageChange: companySearchTableView.rx.willDisplayCell
                 .filter {
                     $0.indexPath.row == self.companySearchTableView.numberOfRows(inSection: $0.indexPath.section) - 1
-                }.asObservable(),
+                }
+                .asObservable(),
             companySearchTableViewCellDidTap: companySearchTableViewCellDidTap
         )
 
