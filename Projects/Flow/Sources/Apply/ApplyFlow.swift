@@ -22,19 +22,26 @@ public final class ApplyFlow: Flow {
         switch step {
         case let .applyIsRequired(id, name, imageURL):
             return navigateToApply(id: id, name: name, imageURL: imageURL)
+        case .popToRecruitmentDetail:
+            return popToRecruitmentDetail()
         }
     }
 }
 
 private extension ApplyFlow {
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        rootViewController.companyID = id
-        rootViewController.companyName = name
-        rootViewController.companyImageURL = imageURL
+        rootViewController.viewModel.recruitmentId = id
+        rootViewController.viewModel.companyName = name
+        rootViewController.viewModel.companyImageURL = imageURL
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
         ))
+    }
+
+    func popToRecruitmentDetail() -> FlowContributors {
+        self.rootViewController.navigationController?.popViewController(animated: true)
+        return .none
     }
 }
