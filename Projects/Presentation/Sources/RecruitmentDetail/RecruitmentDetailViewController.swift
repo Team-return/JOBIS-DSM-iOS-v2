@@ -20,16 +20,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             )
         }
     }
-    private var isSupported = true {
-        didSet {
-            var isApply: Bool {
-                isSupported ? false: true
-            }
-            applyButton = JobisButton(style: .sub).then {
-                $0.setText("3학년만 지원할 수 있어요")
-            }
-        }
-    }
     private let companyLogoImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 1.0
@@ -215,6 +205,11 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     }
 
     public override func configureViewController() {
+        if UserDefaults.standard.string(forKey: "user_grade")! != "3" {
+            applyButton = JobisButton(style: .sub).then {
+                $0.setText("3학년만 지원할 수 있어요")
+            }
+        }
         fieldTypeDetailTableView.delegate = self
 
         self.viewWillAppearPublisher.asObservable()
