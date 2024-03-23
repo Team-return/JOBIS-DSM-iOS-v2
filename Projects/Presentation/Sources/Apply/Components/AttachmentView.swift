@@ -2,15 +2,14 @@ import UIKit
 import DesignSystem
 import SnapKit
 import Then
+import Domain
 import RxSwift
 import RxCocoa
-import Domain
-import RxGesture
 
-final class AttachmentURLsTableViewCell: BaseTableViewCell<AttachmentsEntity> {
-    static let identifier = "AttachmentURLsTableViewCell"
-    public var textFieldWillChanged: ((String) -> Void)?
-    public var removeButtonDidTap: (() -> Void)?
+final class AttachmentView: BaseView {
+    var removeButtonDidTap: ((Int) -> Void)?
+    var urlWillChanged: (((Int, String)) -> Void)?
+    private var index: Int?
     private let disposeBag = DisposeBag()
     private let backStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -24,6 +23,9 @@ final class AttachmentURLsTableViewCell: BaseTableViewCell<AttachmentsEntity> {
         $0.image = .jobisIcon(.link).resize(size: 24)
         $0.tintColor = UIColor.GrayScale.gray60
     }
+    private let docsNameLabel = UILabel().then {
+        $0.setJobisText("", font: .body, color: .GrayScale.gray90)
+    }
     private let urlTextField = UITextField().then {
         $0.font = .jobisFont(.body)
         $0.placeholder = "링크를 입력해주세요"
@@ -35,44 +37,47 @@ final class AttachmentURLsTableViewCell: BaseTableViewCell<AttachmentsEntity> {
     }
 
     override func addView() {
-        contentView.addSubview(backStackView)
+        self.addSubview(backStackView)
         [
             linkImageView,
+            docsNameLabel,
             urlTextField,
             removeButton
         ].forEach(backStackView.addArrangedSubview(_:))
     }
 
     override func setLayout() {
-        linkImageView.snp.makeConstraints {
-            $0.width.height.equalTo(24)
-        }
-
         removeButton.snp.makeConstraints {
             $0.width.height.equalTo(24)
         }
 
+        linkImageView.snp.makeConstraints {
+            $0.width.height.equalTo(24)
+        }
+
         backStackView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(8)
+            $0.edges.equalToSuperview()
         }
     }
 
-    override func configureView() {
-        self.selectionStyle = .none
-        urlTextField.rx.text.orEmpty.asObservable()
-            .distinctUntilChanged()
-            .bind { self.textFieldWillChanged?($0) }
-            .disposed(by: disposeBag)
-        removeButton.rx.tapGesture().asObservable()
+    func configureView(_ type: AttachedType, data: String, index: Int) {
+        super.configureView()
+        self.index = index
+        linkImageView.isHidden = type == .docs
+        urlTextField.isHidden = type == .docs
+        docsNameLabel.isHidden = type == .urls
+        docsNameLabel.text = data
+        urlTextField.text = data
+        removeButton.rx.tapGesture()
             .bind { _ in
-                self.removeButtonDidTap?()
+                self.removeButtonDidTap?(index)
             }
             .disposed(by: disposeBag)
-    }
-
-    override func adapt(model: AttachmentsEntity) {
-        super.adapt(model: model)
-        self.urlTextField.text = model.url
+        urlTextField.rx.text.orEmpty.asObservable()
+            .distinctUntilChanged()
+            .bind(onNext: {
+                self.urlWillChanged?((index, $0))
+            })
+            .disposed(by: disposeBag)
     }
 }
