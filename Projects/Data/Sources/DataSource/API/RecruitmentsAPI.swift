@@ -38,7 +38,8 @@ extension RecruitmentsAPI: JobisAPI {
                 "page": page,
                 "job_code": jobCode ?? "",
                 "tech_code": techCode?.joined(separator: ",") ?? "",
-                "name": name ?? ""
+                "name": name ?? "",
+                "winter_intern": false
             ], encoding: URLEncoding.queryString)
 
         default:
