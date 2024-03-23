@@ -204,7 +204,7 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(ApplyViewModel.self) { resolver in
-            ApplyViewModel()
+            ApplyViewModel(applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!)
         }
         container.register(ApplyViewController.self) { resolver in
             ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
