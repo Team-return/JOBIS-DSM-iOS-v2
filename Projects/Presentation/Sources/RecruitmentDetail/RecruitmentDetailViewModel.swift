@@ -68,7 +68,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .withLatestFrom(recruitmentDetailEntity)
             .map { recruitmentDetail in
                 RecruitmentDetailStep.applyIsRequired(
-                    id: recruitmentDetail.companyID,
+                    id: recruitmentDetail.recruitmentID,
                     name: recruitmentDetail.companyName,
                     imageURL: recruitmentDetail.companyProfileURL
                 )
