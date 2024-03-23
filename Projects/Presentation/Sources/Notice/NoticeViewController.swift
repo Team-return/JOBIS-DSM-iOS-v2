@@ -44,11 +44,12 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
                 to: noticeTableView.rx.items(
                     cellIdentifier: NoticeTableViewCell.identifier,
                     cellType: NoticeTableViewCell.self
-                )) { _, element, cell in
-                    cell.adapt(model: element)
-                    self.noticeId = element.companyId
-                }
-                .disposed(by: disposeBag)
+                ))
+        { _, element, cell in
+            cell.adapt(model: element)
+            self.noticeId = element.companyId
+        }
+        .disposed(by: disposeBag)
 
         noticeTableView.rx.modelSelected(NoticeEntity.self)
             .subscribe(onNext: { data in
@@ -62,6 +63,7 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
             .subscribe(onNext: {
                 self.hideTabbar()
             })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {

@@ -8,8 +8,9 @@ import Domain
 import DesignSystem
 
 public final class HomeViewController: BaseViewController<HomeViewModel> {
-    private let isWinterSeason = BehaviorRelay(value: false)
+    private let isWinterSeason = BehaviorRelay(value: true)
     private let cellClick = PublishRelay<Int>()
+    private let companySearchButtonDidClicked = PublishRelay<Void>()
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
@@ -42,10 +43,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         $0.distribution = .fillEqually
         $0.spacing = 12
     }
-    private var findCompanysCard = CareerNavigationCard(style: .small(type: .findCompanys))
-    private var findWinterRecruitmentsCard = CareerNavigationCard(
-        style: .small(type: .findWinterRecruitments)
-    )
+    private var findCompanysCard = CareerNavigationCard()
+    private var findWinterRecruitmentsCard = CareerNavigationCard()
 
     public override func addView() {
         self.view.addSubview(scrollView)
@@ -109,7 +108,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     public override func bind() {
         let input = HomeViewModel.Input(
             viewAppear: viewWillAppearPublisher,
-            navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal()
+            navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
+            navigateToCompanySearchButtonDidTap: findCompanysCard.rx.tap.asSignal()
         )
 
         let output = viewModel.transform(input)
@@ -167,16 +167,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     public override func configureViewController() {
         checkWinterSeason()
 
-        findCompanysCard.rx.tap.subscribe(onNext: {
-            print("findCompany!")
-        })
-        .disposed(by: disposeBag)
-
-        findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
-            print("findWinterRecruitment!!")
-        })
-        .disposed(by: disposeBag)
-
         navigateToAlarmButton.rx.tap.asObservable()
             .subscribe(onNext: { [weak self] _ in
                 self?.hideTabbar()
@@ -202,12 +192,21 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
         isWinterSeason.asObservable()
             .bind { [weak self] in
-                self?.findCompanysCard = CareerNavigationCard(style: $0 ? .small(type: .findCompanys) : .large)
-                self?.findWinterRecruitmentsCard = CareerNavigationCard(style: .small(type: .findWinterRecruitments))
+                self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
+                self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
                 self?.findWinterRecruitmentsCard.isHidden = !$0
             }
             .disposed(by: disposeBag)
 
+        viewWillAppearPublisher
+            .bind {
+                self.showTabbar()
+            }.disposed(by: disposeBag)
+
+        findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
+            print("findWinterRecruitment!!")
+        })
+        .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {

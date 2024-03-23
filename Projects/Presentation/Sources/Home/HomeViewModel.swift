@@ -25,6 +25,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let navigateToAlarmButtonDidTap: Signal<Void>
+        let navigateToCompanySearchButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -52,6 +53,11 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .map { _ in
                 HomeStep.alarmIsRequired
             }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.navigateToCompanySearchButtonDidTap.asObservable()
+            .map { _ in HomeStep.companySearchIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

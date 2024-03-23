@@ -24,6 +24,9 @@ public final class HomeFlow: Flow {
 
         case .alarmIsRequired:
             return navigateToAlarm()
+
+        case .companySearchIsRequired:
+            return navigateToCompanySearch()
         }
     }
 }
@@ -55,6 +58,23 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: alarmFlow,
             withNextStepper: OneStepper(withSingleStep: AlarmStep.alarmIsRequired)
+        ))
+    }
+
+    func navigateToCompanySearch() -> FlowContributors {
+        let companySearchFlow = CompanySearchFlow(container: container)
+        Flows.use(companySearchFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: companySearchFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: CompanySearchStep.companySearchIsRequired
+            )
         ))
     }
 }
