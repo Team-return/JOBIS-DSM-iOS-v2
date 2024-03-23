@@ -7,25 +7,34 @@ import RxCocoa
 
 public final class ApplyViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    public var recruitmentId: Int?
+    public var companyName: String?
+    public var companyImageURL: String?
     private let disposeBag = DisposeBag()
-    private let documents = BehaviorRelay<[AttachmentsEntity]>(value: [])
-    private var updateUrls: [AttachmentsEntity] = []
-    private let urls = BehaviorRelay<[AttachmentsEntity]>(value: [])
-    public init() {}
+    private let documents = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
+    private var updateUrls: [AttachmentsRequestQuery] = []
+    private let urls = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
+    private let applyCompanyUseCase: ApplyCompanyUseCase
+    public init(applyCompanyUseCase: ApplyCompanyUseCase) {
+        self.applyCompanyUseCase = applyCompanyUseCase
+    }
 
     public struct Input {
-        let documentAddButtonDidTap: PublishRelay<AttachmentsEntity>
+        let documentAddButtonDidTap: PublishRelay<AttachmentsRequestQuery>
         let urlsAddButtonDidTap: Signal<Void>
         let urlsWillChanged: PublishRelay<(Int, String)>
         let applyButtonDidTap: Signal<Void>
-        let removeButtonDidTap: Signal<Int>
+        let removeUrlsButtonDidTap: Signal<Int>
+        let removeDocsButtonDidTap: Signal<Int>
     }
     public struct Output {
-        let documents: BehaviorRelay<[AttachmentsEntity]>
-        let urls: BehaviorRelay<[AttachmentsEntity]>
+        let documents: BehaviorRelay<[AttachmentsRequestQuery]>
+        let urls: BehaviorRelay<[AttachmentsRequestQuery]>
+        let applyButtonEnabled: BehaviorRelay<Bool>
     }
 
     public func transform(_ input: Input) -> Output {
+        let applyButtonEnabled = BehaviorRelay<Bool>(value: false)
         input.documentAddButtonDidTap.asObservable()
             .subscribe(onNext: {
                 self.documents.accept(self.documents.value + [$0])
@@ -34,8 +43,8 @@ public final class ApplyViewModel: BaseViewModel, Stepper {
 
         input.urlsAddButtonDidTap.asObservable()
             .bind { [weak self] in
-                self?.urls.accept((self?.urls.value ?? []) + [.init(url: "", type: .url)])
-                self?.updateUrls += [.init(url: "", type: .url)]
+                self?.updateUrls.append(.init(url: "", type: .url))
+                self?.urls.accept(self?.updateUrls ?? [])
             }
             .disposed(by: disposeBag)
 
@@ -46,19 +55,37 @@ public final class ApplyViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.applyButtonDidTap.asObservable()
-            .bind {
-                print(self.updateUrls)
+            .map { self.documents.value + self.updateUrls }
+            .flatMap { [self] in
+                return applyCompanyUseCase.execute(
+                    id: recruitmentId ?? 0,
+                    req: .init(attachments: $0)
+                )
+                .andThen(Single.just(ApplyStep.popToRecruitmentDetail))
             }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
-        input.removeButtonDidTap.asObservable()
+        input.removeUrlsButtonDidTap.asObservable()
             .bind { index in
-                self.updateUrls = self.updateUrls.enumerated()
-                    .filter { $0.offset != index }
-                    .map { $0.element }
+                self.updateUrls.remove(at: index)
+                self.urls.accept(self.updateUrls)
             }
             .disposed(by: disposeBag)
 
-        return Output(documents: documents, urls: urls)
+        input.removeDocsButtonDidTap.asObservable()
+            .bind { index in
+                var olderList = self.documents.value
+                olderList.remove(at: index)
+                self.documents.accept(olderList)
+            }
+            .disposed(by: disposeBag)
+
+        Observable.combineLatest(documents, urls)
+            .map { !($0.0.isEmpty && $0.1.isEmpty) }
+            .bind(to: applyButtonEnabled)
+            .disposed(by: disposeBag)
+
+        return Output(documents: documents, urls: urls, applyButtonEnabled: applyButtonEnabled)
     }
 }
