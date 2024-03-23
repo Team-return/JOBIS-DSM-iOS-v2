@@ -20,7 +20,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             forCellReuseIdentifier: RecruitmentTableViewCell.identifier
         )
         $0.separatorStyle = .none
-        $0.rowHeight = 96
+        $0.rowHeight = 72
         $0.showsVerticalScrollIndicator = false
     }
     private let filterButton = UIButton().then {
