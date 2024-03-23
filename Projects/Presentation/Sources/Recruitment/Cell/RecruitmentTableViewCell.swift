@@ -24,11 +24,11 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
     private let companyProfileImageView = UIImageView().then {
         $0.layer.cornerRadius = 8
-        $0.clipsToBounds = true
+        $0.clipsToBounds =  true
     }
-    private let fieldTypeLabel = UILabel().then {
+    private let companyLabel = UILabel().then {
         $0.setJobisText(
-            "프론트엔드 개발자",
+            "(주)마이다스아이디",
             font: .subHeadLine,
             color: UIColor.GrayScale.gray90
         )
@@ -42,13 +42,6 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
             color: UIColor.GrayScale.gray70
         )
     }
-    private let companyLabel = UILabel().then {
-        $0.setJobisText(
-            "(주)마이다스아이디",
-            font: .description,
-            color: UIColor.GrayScale.gray70
-        )
-    }
     public let bookmarkButton = UIButton().then {
         $0.setImage(.jobisIcon(.bookmarkOff).resize(size: 28), for: .normal)
     }
@@ -56,7 +49,6 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     override func addView() {
         [
             companyProfileImageView,
-            fieldTypeLabel,
             benefitsLabel,
             companyLabel,
             bookmarkButton
@@ -75,17 +67,12 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
             $0.top.equalToSuperview().inset(12)
             $0.right.equalToSuperview().inset(24)
         }
-        fieldTypeLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
+        companyLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
             $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
-            $0.right.equalToSuperview().inset(52)
         }
         benefitsLabel.snp.makeConstraints {
-            $0.top.equalTo(fieldTypeLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
-        }
-        companyLabel.snp.makeConstraints {
-            $0.top.equalTo(benefitsLabel.snp.bottom).offset(4)
+            $0.top.equalTo(companyLabel.snp.bottom).offset(4)
             $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
         }
     }
@@ -104,22 +91,9 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
         companyProfileImageView.setJobisImage(
             urlString: model.companyProfileURL
         )
-        fieldTypeLabel.setJobisText(
-            model.hiringJobs,
-            font: .subHeadLine,
-            color: .GrayScale.gray90
-        )
         let militarySupport = model.militarySupport ? "O": "X"
-        benefitsLabel.setJobisText(
-            "병역특례 \(militarySupport) · 실습 수당 \(model.trainPay)만원",
-            font: .subBody,
-            color: .GrayScale.gray70
-        )
-        companyLabel.setJobisText(
-            model.companyName,
-            font: .description,
-            color: .GrayScale.gray70
-        )
+        companyLabel.text = model.companyName
+        benefitsLabel.text = "병역특례 \(militarySupport) · 실습 수당 \(model.trainPay)만원"
         recruitmentID = model.recruitID
         isBookmarked = model.bookmarked
     }
