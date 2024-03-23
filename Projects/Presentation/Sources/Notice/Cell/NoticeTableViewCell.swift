@@ -8,7 +8,6 @@ import RxCocoa
 
 final class NoticeTableViewCell: BaseTableViewCell<NoticeEntity> {
     static let identifier = "NoticeTableViewCell"
-
     public var noticeID = 0
     private var disposeBag = DisposeBag()
     private let noticeTitleLabel = UILabel().then {
