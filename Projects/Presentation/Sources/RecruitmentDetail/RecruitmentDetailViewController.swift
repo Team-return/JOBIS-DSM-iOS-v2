@@ -20,16 +20,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             )
         }
     }
-    private var isSupported = true {
-        didSet {
-            var isApply: Bool {
-                isSupported ? false: true
-            }
-            supportButton = JobisButton(style: .sub).then {
-                $0.setText("3학년만 지원할 수 있어요")
-            }
-        }
-    }
     private let companyLogoImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 1.0
@@ -77,7 +67,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     private let benefitsWelfareLabel = RecruitmentDetailLabel(title: "복리후생")
     private let needThingsLabel = RecruitmentDetailLabel(title: "제출 서류")
     private let otherMattersLabel = RecruitmentDetailLabel(title: "기타 사항")
-    private var supportButton = JobisButton(style: .main).then {
+    private var applyButton = JobisButton(style: .main).then {
         $0.setText("지원하기")
     }
     private let bookmarkButton = UIButton().then {
@@ -92,7 +82,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     public override func addView() {
         [
             scrollView,
-            supportButton,
+            applyButton,
             bookmarkButton
         ].forEach { view.addSubview($0) }
         scrollView.addSubview(contentView)
@@ -124,7 +114,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         scrollView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(supportButton.snp.top).inset(-12)
+            $0.bottom.equalTo(applyButton.snp.top).inset(-12)
         }
 
         contentView.snp.makeConstraints {
@@ -160,16 +150,15 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             $0.height.greaterThanOrEqualTo(fieldTypeDetailTableView.contentSize.height)
         }
 
-        supportButton.snp.makeConstraints {
-            $0.height.equalTo(56)
-            $0.bottom.equalToSuperview().inset(36)
+        applyButton.snp.makeConstraints {
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalTo(bookmarkButton.snp.leading).inset(-8)
         }
 
         bookmarkButton.snp.makeConstraints {
             $0.width.height.equalTo(56)
-            $0.bottom.equalToSuperview().inset(36)
+            $0.centerY.equalTo(applyButton)
             $0.trailing.equalToSuperview().inset(24)
         }
     }
@@ -181,14 +170,14 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
                 .do(onNext: { [weak self] in
                     self?.isBookmarked.toggle()
-                })
+                }),
+            applyButtonDidTap: applyButton.rx.tap.asSignal()
         )
         let output = viewModel.transform(input)
 
         output.recruitmentDetailEntity.asObservable()
             .bind { [self] in
-                viewModel.companyId = $0.companyID
-                companyLogoImageView.setJobisImage(urlString: $0.companyProfileUrl)
+                companyLogoImageView.setJobisImage(urlString: $0.companyProfileURL)
                 companyLabel.text = $0.companyName
                 recruitmentPeriodLabel.setSubTitle("\($0.startDate) ~ \($0.endDate)")
                 militaryServiceLabel.setSubTitle("병역특례 \($0.military ? "가능" : "불가능")")
@@ -216,18 +205,17 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     }
 
     public override func configureViewController() {
+        if UserDefaults.standard.string(forKey: "user_grade")! != "3" {
+            applyButton = JobisButton(style: .sub).then {
+                $0.setText("3학년만 지원할 수 있어요")
+            }
+        }
         fieldTypeDetailTableView.delegate = self
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.hideTabbar()
                 self?.navigationController?.navigationBar.prefersLargeTitles = false
-            })
-            .disposed(by: disposeBag)
-
-        supportButton.rx.tap
-            .subscribe(onNext: {
-                self.isSupported.toggle()
             })
             .disposed(by: disposeBag)
     }
