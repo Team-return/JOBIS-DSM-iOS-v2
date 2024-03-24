@@ -28,7 +28,7 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
     private let companyLabel = UILabel().then {
         $0.setJobisText(
-            "(주)마이다스아이디",
+            "-",
             font: .subHeadLine,
             color: UIColor.GrayScale.gray90
         )
@@ -37,7 +37,7 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
     private let benefitsLabel = UILabel().then {
         $0.setJobisText(
-            "병역특례 O · 실습 수당 100,000원",
+            "-",
             font: .subBody,
             color: UIColor.GrayScale.gray70
         )
