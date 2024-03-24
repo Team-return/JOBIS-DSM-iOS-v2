@@ -43,6 +43,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .flatMap { [self] in
                 fetchStudentInfoUseCase.execute()
             }
+            .do(onNext: {
+                UserDefaults.standard.set($0.studentGcn.prefix(1), forKey: "user_grade")
+            })
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
 
