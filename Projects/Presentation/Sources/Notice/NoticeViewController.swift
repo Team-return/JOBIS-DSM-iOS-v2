@@ -44,8 +44,7 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
                 to: noticeTableView.rx.items(
                     cellIdentifier: NoticeTableViewCell.identifier,
                     cellType: NoticeTableViewCell.self
-                ))
-        { _, element, cell in
+                )) { _, element, cell in
             cell.adapt(model: element)
             self.noticeId = element.companyId
         }
