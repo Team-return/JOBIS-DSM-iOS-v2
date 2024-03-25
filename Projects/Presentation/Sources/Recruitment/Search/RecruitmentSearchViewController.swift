@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel>, UITextFieldDelegate {
-    private let searchButtonDidTap = PublishRelay<Void>()
+    private let searchButtonDidTap = PublishRelay<String>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
@@ -89,10 +89,6 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
         let output = viewModel.transform(input)
 
         output.recruitmentListInfo
-            .skip(1)
-            .do(onNext: {
-                self.emptySearchView.isHidden = !$0.isEmpty
-            })
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: RecruitmentTableViewCell.identifier,
                 cellType: RecruitmentTableViewCell.self
@@ -102,6 +98,13 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
                     self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
                 }
             }
+            .disposed(by: disposeBag)
+
+        output.emptyViewIsHidden.asObservable()
+            .map {
+                self.emptySearchView.isHidden = $0
+            }
+            .subscribe()
             .disposed(by: disposeBag)
     }
 
@@ -114,7 +117,7 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
-        searchButtonDidTap.accept(())
+        searchButtonDidTap.accept(textField.text ?? "")
         return true
     }
 }
