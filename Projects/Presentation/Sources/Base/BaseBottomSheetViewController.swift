@@ -68,12 +68,14 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
 
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        self.setLayoutButtonSheet()
         self.addView()
         self.setLayout()
     }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.configureButtonSheet()
         self.bind()
         self.configureNavigation()
         self.configureViewController()
@@ -105,7 +107,17 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
         self.view.endEditing(true)
     }
 
-    public func addView() {
+    public func addView() {}
+
+    public func setLayout() {}
+
+    public func bind() {}
+
+    public func configureViewController() {}
+
+    public func configureNavigation() {}
+
+    private func setLayoutButtonSheet() {
         [
             dimmedView,
             bottomSheetView
@@ -114,9 +126,7 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             dragIndicatorView,
             contentView
         ].forEach(bottomSheetView.addSubview(_:))
-    }
 
-    public func setLayout() {
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -125,8 +135,8 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(bottomSheetViewTopInset)
         }
         dragIndicatorView.snp.makeConstraints {
-            $0.width.lessThanOrEqualTo(64)
-            $0.height.lessThanOrEqualTo(4)
+            $0.width.equalTo(64)
+            $0.height.equalTo(4)
             $0.centerX.equalToSuperview()
             $0.top.lessThanOrEqualToSuperview().inset(12)
         }
@@ -136,9 +146,7 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
         }
     }
 
-    public func bind() {}
-
-    public func configureViewController() {
+    private func configureButtonSheet() {
         dimmedView.rx.tapGesture()
             .when(.recognized)
             .bind { [weak self] _ in
@@ -184,8 +192,6 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             })
             .disposed(by: disposeBag)
     }
-
-    public func configureNavigation() {}
 }
 
 extension BaseBottomSheetViewController {
@@ -216,7 +222,7 @@ extension BaseBottomSheetViewController {
         ) { self.dimmedView.alpha = 1 }
 
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.3,
             delay: 0,
             usingSpringWithDamping: 0.76,
             initialSpringVelocity: 0.0
