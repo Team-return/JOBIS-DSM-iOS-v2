@@ -131,6 +131,11 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
 
         companyLogoImageView.setJobisImage(urlString: viewModel.companyImageURL ?? "")
         companyLabel.text = viewModel.companyName
+        viewWillAppearPublisher.asObservable()
+            .bind(with: self, onNext: { owner, _ in
+                owner.hideTabbar()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
