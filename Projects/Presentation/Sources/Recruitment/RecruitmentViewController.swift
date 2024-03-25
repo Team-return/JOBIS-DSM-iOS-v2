@@ -9,6 +9,7 @@ import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
+    private let searchButtonDidTap = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
         $0.setEmptyView(title: "아직 등록된 모집의뢰서가 없어요")
@@ -53,7 +54,8 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 .filter {
                     $0.indexPath.row == self.recruitmentTableView.numberOfRows(inSection: $0.indexPath.section) - 1
                 }.asObservable(),
-            recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected
+            recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected,
+            searchButtonDidTap: searchButtonDidTap
         )
 
         let output = viewModel.transform(input)
@@ -78,13 +80,16 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func configureViewController() {
         searchButton.rx.tap
-            .subscribe(onNext: { _ in })
+            .subscribe(onNext: { _ in
+                self.searchButtonDidTap.accept(())
+            })
             .disposed(by: disposeBag)
 
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
                 self.setLargeTitle(title: "모집의뢰서")
+                self.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
 
