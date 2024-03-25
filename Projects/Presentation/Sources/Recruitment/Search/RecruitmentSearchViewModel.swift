@@ -25,16 +25,18 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let pageChange: Observable<WillDisplayCellEvent>
-        let searchButtonDidTap: PublishRelay<Void>
+        let searchButtonDidTap: PublishRelay<String>
         let bookmarkButtonDidClicked: PublishRelay<Int>
         let searchTableViewDidTap: ControlEvent<IndexPath>
     }
 
     public struct Output {
-        var recruitmentListInfo = BehaviorRelay<[RecruitmentEntity]>(value: [])
+        let recruitmentListInfo: BehaviorRelay<[RecruitmentEntity]>
+        let emptyViewIsHidden: PublishRelay<Bool>
     }
 
     public func transform(_ input: Input) -> Output {
+        let emptyViewIsHidden = PublishRelay<Bool>()
         input.pageChange.asObservable()
             .distinctUntilChanged({ $0.indexPath.row })
             .flatMap { _ in
@@ -45,9 +47,13 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.searchButtonDidTap.asObservable()
+            .filter {
+                emptyViewIsHidden.accept($0 != "")
+                return $0 != ""
+            }
             .flatMap {
                 self.pageCount = 1
-                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount, name: self.searchText)
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount, name: $0)
             }
             .bind(onNext: {
                 self.recruitmentListInfo.accept([])
@@ -71,6 +77,9 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output(recruitmentListInfo: recruitmentListInfo)
+        return Output(
+            recruitmentListInfo: recruitmentListInfo,
+            emptyViewIsHidden: emptyViewIsHidden
+        )
     }
 }
