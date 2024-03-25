@@ -110,6 +110,12 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
 
     public override func configureViewController() {
         self.searchTextField.delegate = self
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        viewWillAppearPublisher.asObservable()
+            .bind {
+                self.searchTableView.reloadData()
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() { }
