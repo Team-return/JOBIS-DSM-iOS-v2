@@ -37,6 +37,19 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
 
     public func transform(_ input: Input) -> Output {
         let emptyViewIsHidden = PublishRelay<Bool>()
+        input.viewAppear.asObservable()
+            .skip(1)
+            .flatMap {
+                self.pageCount = 1
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount, name: self.searchText)
+            }
+            .bind(onNext: {
+                self.recruitmentListInfo.accept([])
+                self.recruitmentListInfo.accept(self.recruitmentListInfo.value + $0)
+                self.pageCount = 1
+            })
+            .disposed(by: disposeBag)
+
         input.pageChange.asObservable()
             .distinctUntilChanged({ $0.indexPath.row })
             .flatMap { _ in

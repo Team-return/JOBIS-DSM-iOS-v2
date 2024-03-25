@@ -42,6 +42,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .bind(onNext: {
                 self.recruitmentData.accept([])
                 self.recruitmentData.accept(self.recruitmentData.value + $0)
+                self.pageCount = 1
             })
             .disposed(by: disposeBag)
 
