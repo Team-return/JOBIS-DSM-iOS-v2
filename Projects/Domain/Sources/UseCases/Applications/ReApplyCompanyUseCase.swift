@@ -7,7 +7,7 @@ public struct ReApplyCompanyUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    func execute(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
+    public func execute(id: Int, req: ApplyCompanyRequestQuery) -> Completable {
         applicationsRepository.reApplyCompany(id: id, req: req)
     }
 }
