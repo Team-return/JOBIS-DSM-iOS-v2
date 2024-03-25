@@ -204,7 +204,10 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(ApplyViewModel.self) { resolver in
-            ApplyViewModel(applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!)
+            ApplyViewModel(
+                applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
+            )
         }
         container.register(ApplyViewController.self) { resolver in
             ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
@@ -217,6 +220,12 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(CompanySearchViewModel.self) { resolver in
             CompanySearchViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        }
+
+        container.register(RejectReasonViewModel.self) { resolver in
+            RejectReasonViewModel(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
+            )
         }
     }
     // swiftlint:enable function_body_length
