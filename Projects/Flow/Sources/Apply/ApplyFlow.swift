@@ -24,6 +24,8 @@ public final class ApplyFlow: Flow {
             return navigateToApply(id: id, name: name, imageURL: imageURL)
         case .popToRecruitmentDetail:
             return popToRecruitmentDetail()
+        case let .reApplyIsRequired(id, name, imageURL):
+            return navigateToReApply(id: id, name: name, imageURL: imageURL)
         }
     }
 }
@@ -31,6 +33,17 @@ public final class ApplyFlow: Flow {
 private extension ApplyFlow {
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
         rootViewController.viewModel.recruitmentId = id
+        rootViewController.viewModel.companyName = name
+        rootViewController.viewModel.companyImageURL = imageURL
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: rootViewController,
+            withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToReApply(id: Int, name: String, imageURL: String) -> FlowContributors {
+        rootViewController.viewModel.applicationId = id
         rootViewController.viewModel.companyName = name
         rootViewController.viewModel.companyImageURL = imageURL
 

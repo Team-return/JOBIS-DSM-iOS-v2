@@ -27,6 +27,12 @@ public final class HomeFlow: Flow {
 
         case .companySearchIsRequired:
             return navigateToCompanySearch()
+
+        case let .rejectReasonIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
+            return navigateToRejectReason(recruitmentID, applicationID, companyName, companyImageUrl)
+
+        case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageURL):
+            return navigateToReApply(recruitmentID, applicationID, companyName, companyImageURL)
         }
     }
 }
@@ -74,6 +80,61 @@ private extension HomeFlow {
             withNextPresentable: companySearchFlow,
             withNextStepper: OneStepper(
                 withSingleStep: CompanySearchStep.companySearchIsRequired
+            )
+        ))
+    }
+
+    func navigateToRejectReason(
+        _ recruitmentID: Int,
+        _ applicationID: Int,
+        _ companyName: String,
+        _ companyImageUrl: String
+    ) -> FlowContributors {
+        let rejectReasonFlow = RejectReasonFlow(container: container)
+        Flows.use(rejectReasonFlow, when: .created) { root in
+            let view = root as? RejectReasonViewController
+            view?.viewModel.recruitmentID = recruitmentID
+            view?.viewModel.applicationID = applicationID
+            view?.viewModel.companyName = companyName
+            view?.viewModel.companyImageUrl = companyImageUrl
+            self.rootViewController.present(
+                root,
+                animated: false
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: rejectReasonFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: RejectReasonStep.rejectReasonIsRequired
+            )
+        ))
+    }
+
+    func navigateToReApply(
+        _ recruitmentID: Int,
+        _ applicationID: Int,
+        _ companyName: String,
+        _ companyImageUrl: String
+    ) -> FlowContributors {
+        let applyFlow = ApplyFlow(container: container)
+        Flows.use(applyFlow, when: .created) { root in
+            let view = root as? ApplyViewController
+            view?.viewModel.applyType = .reApply
+            self.rootViewController.pushViewController(
+                view!,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: applyFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: ApplyStep.reApplyIsRequired(
+                    applicationId: applicationID,
+                    name: companyName,
+                    imageURL: companyImageUrl
+                )
             )
         ))
     }
