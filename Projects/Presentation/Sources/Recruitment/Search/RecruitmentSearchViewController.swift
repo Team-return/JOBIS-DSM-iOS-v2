@@ -114,7 +114,7 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
-         searchButtonDidTap.accept(())
+        searchButtonDidTap.accept(())
         return true
     }
 }
