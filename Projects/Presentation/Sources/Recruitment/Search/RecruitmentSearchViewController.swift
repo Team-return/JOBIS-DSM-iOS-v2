@@ -7,16 +7,28 @@ import Then
 import Core
 import DesignSystem
 
-public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel> {
+public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel>, UITextFieldDelegate {
     private let searchButtonDidTap = PublishRelay<Void>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
-    private let searchBar = UISearchBar()
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
         $0.setEmptyView(
             title: "검색어와 관련 된 회사를 못찾았어요",
             subTitle: "제대로 입력했는지 다시 한번 확인해주세요"
         )
+    }
+
+    private let searchImageView = UIImageView().then {
+        $0.image = .jobisIcon(.searchIcon)
+    }
+    private let searchTextField = UITextField().then {
+        $0.placeholder = "검색어를 입력해주세요"
+        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 44, height: 0))
+        $0.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
+        $0.leftViewMode = .always
+        $0.rightViewMode = .always
+        $0.backgroundColor = .GrayScale.gray30
+        $0.layer.cornerRadius = 12
     }
 
     private let searchTableView = UITableView().then {
@@ -30,7 +42,8 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     }
     public override func addView() {
         [
-            searchBar,
+            searchTextField,
+            searchImageView,
             searchTableView
         ].forEach(self.view.addSubview(_:))
         [
@@ -39,17 +52,25 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     }
 
     public override func setLayout() {
-        searchBar.snp.makeConstraints {
-            $0.top.left.right.equalTo(view.safeAreaInsets)
+        searchTextField.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaInsets)
+            $0.trailing.leading.equalToSuperview().inset(24)
+            $0.height.equalTo(48)
         }
+
+        searchImageView.snp.makeConstraints {
+            $0.centerY.equalTo(searchTextField)
+            $0.left.equalTo(searchTextField.snp.left).inset(16)
+        }
+
         searchTableView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.top.equalTo(searchBar.snp.bottom)
+            $0.top.equalTo(searchTextField.snp.bottom).offset(12)
         }
 
         emptySearchView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(80)
-            $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(view.safeAreaLayoutGuide)
+            $0.centerX.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
@@ -85,20 +106,15 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     }
 
     public override func configureViewController() {
-        searchBar.placeholder = "검색어를 입력해주세요"
-        searchBar.showsCancelButton = false
-        searchBar.delegate = self
-        self.emptySearchView.isHidden = false
+        self.searchTextField.delegate = self
     }
 
     public override func configureNavigation() { }
-}
 
-extension RecruitmentSearchViewController: UISearchBarDelegate {
-    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let title = searchBar.text
-        guard let text = title else { return }
-        viewModel.searchText = text
-        searchButtonDidTap.accept(())
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let title = textField.text
+        viewModel.searchText = title
+         searchButtonDidTap.accept(())
+        return true
     }
 }
