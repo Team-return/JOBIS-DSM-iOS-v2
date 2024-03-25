@@ -20,19 +20,16 @@ final class CareerNavigationCard: UIButton {
     private let iconView = UIView().then {
         $0.backgroundColor = .GrayScale.gray10
         $0.layer.cornerRadius = 32
-        $0.isUserInteractionEnabled = false
         $0.clipsToBounds = true
     }
     private let iconImageView = UIImageView()
 
-    public init(
-        style: CardSize
-    ) {
+    public init() {
         super.init(frame: .zero)
         self.backgroundColor = .GrayScale.gray30
         self.layer.cornerRadius = 12
 
-        setCard(style: style)
+//        setCard(style: style)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -54,7 +51,7 @@ final class CareerNavigationCard: UIButton {
         }
     }
 
-    private func setCard(style: CardSize) {
+    public func setCard(style: CardSize) {
         var info: (text: String, icon: JobisIcon) {
             switch style {
             case let .small(type):

@@ -39,7 +39,7 @@ public final class ConfirmPasswordViewModel: BaseViewModel, Stepper {
                         )
                     ))
                     .catch { _ in
-                        passwordErrorDescription.accept(.error(description: "비밀번호가 틀렸어요"))
+                        passwordErrorDescription.accept(.error(description: "비밀번호가 옳지 않아요"))
                         return .never()
                     }
             }

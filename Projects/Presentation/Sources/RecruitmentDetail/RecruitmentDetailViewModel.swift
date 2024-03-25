@@ -8,6 +8,7 @@ import Domain
 public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentID: Int?
+    public var companyId: Int?
     private let disposeBag = DisposeBag()
 
     private let fetchRecruitmentDetailUseCase: FetchRecruitmentDetailUseCase
@@ -25,6 +26,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
         let viewAppear: PublishRelay<Void>
         let companyDetailButtonDidClicked: Signal<Void>
         let bookMarkButtonDidTap: Signal<Void>
+        let applyButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -47,7 +49,11 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.companyDetailButtonDidClicked.asObservable()
-            .map { _ in RecruitmentDetailStep.companyDetailIsRequired }
+            .map {
+                RecruitmentDetailStep.companyDetailIsRequired(
+                    id: self.companyId ?? 0
+                )
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
@@ -58,6 +64,17 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .subscribe()
             .disposed(by: disposeBag)
 
+        input.applyButtonDidTap.asObservable()
+            .withLatestFrom(recruitmentDetailEntity)
+            .map { recruitmentDetail in
+                RecruitmentDetailStep.applyIsRequired(
+                    id: recruitmentDetail.recruitmentID,
+                    name: recruitmentDetail.companyName,
+                    imageURL: recruitmentDetail.companyProfileURL
+                )
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
         return Output(
             recruitmentDetailEntity: recruitmentDetailEntity,
             areaListEntity: areaListEntity

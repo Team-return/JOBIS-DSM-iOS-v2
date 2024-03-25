@@ -25,6 +25,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let navigateToAlarmButtonDidTap: Signal<Void>
+        let navigateToCompanySearchButtonDidTap: Signal<Void>
+        let rejectButtonDidTap: PublishRelay<ApplicationEntity>
+        let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
     }
 
     public struct Output {
@@ -42,6 +45,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .flatMap { [self] in
                 fetchStudentInfoUseCase.execute()
             }
+            .do(onNext: {
+                UserDefaults.standard.set($0.studentGcn.prefix(1), forKey: "user_grade")
+            })
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
 
@@ -49,6 +55,11 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .map { _ in
                 HomeStep.alarmIsRequired
             }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.navigateToCompanySearchButtonDidTap.asObservable()
+            .map { _ in HomeStep.companySearchIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
@@ -64,6 +75,30 @@ public final class HomeViewModel: BaseViewModel, Stepper {
                 fetchApplicationUseCase.execute()
             }
             .bind(to: applicationList)
+            .disposed(by: disposeBag)
+
+        input.rejectButtonDidTap.asObservable()
+            .map {
+                HomeStep.rejectReasonIsRequired(
+                    recruitmentID: $0.recruitmentID,
+                    applicationID: $0.applicationID,
+                    companyName: $0.company,
+                    companyImageURL: $0.companyLogoUrl
+                )
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.reApplyButtonDidTap.asObservable()
+            .map {
+                HomeStep.reApplyIsRequired(
+                    recruitmentID: $0.recruitmentID,
+                    applicationID: $0.applicationID,
+                    companyName: $0.company,
+                    companyImageURL: $0.companyLogoUrl
+                )
+            }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         return Output(

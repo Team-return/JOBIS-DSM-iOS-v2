@@ -145,16 +145,20 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
-        container.register(NoticeViewModel.self) { _ in
-            NoticeViewModel()
+        container.register(NoticeViewModel.self) { resolver in
+            NoticeViewModel(
+                fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
+            )
         }
 
         container.register(NoticeViewController.self) { resolver in
             NoticeViewController(resolver.resolve(NoticeViewModel.self)!)
         }
 
-        container.register(NoticeDetailViewModel.self) { _ in
-            NoticeDetailViewModel()
+        container.register(NoticeDetailViewModel.self) { resolver in
+            NoticeDetailViewModel(
+                fetchNoticeDetailUseCase: resolver.resolve(FetchNoticeDetailUseCase.self)!
+            )
         }
 
         container.register(NoticeDetailViewController.self) { resolver in
@@ -177,10 +181,12 @@ public final class PresentationAssembly: Assembly {
             ChangePasswordViewController(resolver.resolve(ChangePasswordViewModel.self)!)
         }
 
-        container.register(CompanyDetailViewModel.self) { _ in
-            CompanyDetailViewModel()
+        container.register(CompanyDetailViewModel.self) { resolver in
+            CompanyDetailViewModel(
+                fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!, 
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
         }
-
         container.register(CompanyDetailViewController.self) { resolver in
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
         }
@@ -191,7 +197,6 @@ public final class PresentationAssembly: Assembly {
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
-
         container.register(RecruitmentDetailViewController.self) { resolver in
             RecruitmentDetailViewController(
                 resolver.resolve(RecruitmentDetailViewModel.self)!
@@ -201,9 +206,33 @@ public final class PresentationAssembly: Assembly {
         container.register(WriteReviewViewController.self) { resolver in
             WriteReviewViewController(resolver.resolve(WriteReviewViewModel.self)!)
         }
-
         container.register(WriteReviewViewModel.self) { _ in
             WriteReviewViewModel()
+        }
+
+        container.register(ApplyViewModel.self) { resolver in
+            ApplyViewModel(
+                applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
+            )
+        }
+        container.register(ApplyViewController.self) { resolver in
+            ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
+        }
+
+        container.register(CompanySearchViewController.self) { resolver in
+            CompanySearchViewController(
+                resolver.resolve(CompanySearchViewModel.self)!
+            )
+        }
+        container.register(CompanySearchViewModel.self) { resolver in
+            CompanySearchViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        }
+
+        container.register(RejectReasonViewModel.self) { resolver in
+            RejectReasonViewModel(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
+            )
         }
     }
     // swiftlint:enable function_body_length

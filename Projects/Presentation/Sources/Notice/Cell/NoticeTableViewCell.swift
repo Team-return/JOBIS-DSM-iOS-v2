@@ -6,14 +6,13 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class NoticeTableViewCell: BaseTableViewCell<RecruitmentEntity> {
+final class NoticeTableViewCell: BaseTableViewCell<NoticeEntity> {
     static let identifier = "NoticeTableViewCell"
-
     public var noticeID = 0
     private var disposeBag = DisposeBag()
     private let noticeTitleLabel = UILabel().then {
         $0.setJobisText(
-            "[중요] 오리엔테이션날 일정 안내",
+            "불러오는 중...",
             font: .body,
             color: UIColor.GrayScale.gray90
         )
@@ -56,5 +55,17 @@ final class NoticeTableViewCell: BaseTableViewCell<RecruitmentEntity> {
 
     override func configureView() { }
 
-    override func adapt(model: RecruitmentEntity) { }
+    override func adapt(model: NoticeEntity) {
+        noticeTitleLabel.setJobisText(
+            model.title,
+            font: .subHeadLine,
+            color: .GrayScale.gray90
+        )
+        noticeDateLabel.setJobisText(
+            model.createdAt,
+            font: .description,
+            color: .GrayScale.gray60
+        )
+        noticeID = model.companyId
+    }
 }

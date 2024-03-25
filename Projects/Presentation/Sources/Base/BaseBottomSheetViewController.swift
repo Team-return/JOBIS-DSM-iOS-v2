@@ -68,6 +68,7 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
 
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        self.setLayoutButtonSheet()
         self.addView()
         self.setLayout()
         self.setLayoutButtonSheet()
@@ -75,6 +76,7 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.configureButtonSheet()
         self.bind()
         self.configureNavigation()
         self.configureViewController()
@@ -126,6 +128,7 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             dragIndicatorView,
             contentView
         ].forEach(bottomSheetView.addSubview(_:))
+
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -134,8 +137,8 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(bottomSheetViewTopInset)
         }
         dragIndicatorView.snp.makeConstraints {
-            $0.width.lessThanOrEqualTo(64)
-            $0.height.lessThanOrEqualTo(4)
+            $0.width.equalTo(64)
+            $0.height.equalTo(4)
             $0.centerX.equalToSuperview()
             $0.top.lessThanOrEqualToSuperview().inset(12)
         }
@@ -221,7 +224,7 @@ extension BaseBottomSheetViewController {
         ) { self.dimmedView.alpha = 1 }
 
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.3,
             delay: 0,
             usingSpringWithDamping: 0.76,
             initialSpringVelocity: 0.0

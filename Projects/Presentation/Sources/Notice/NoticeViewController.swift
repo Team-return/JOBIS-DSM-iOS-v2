@@ -9,6 +9,9 @@ import DesignSystem
 
 public final class NoticeViewController: BaseViewController<NoticeViewModel> {
     private let cellClick = PublishRelay<Void>()
+    private let noticeTableViewCellDidTap = PublishRelay<Int>()
+    private var noticeId: Int = 0
+
     private let noticeTableView = UITableView().then {
         $0.register(
             NoticeTableViewCell.self,
@@ -29,41 +32,41 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
     }
 
     public override func bind() {
-        let input = NoticeViewModel.Input(cellClick: cellClick)
-        _ = viewModel.transform(input)
+        let input = NoticeViewModel.Input(
+            viewAppear: self.viewWillAppearPublisher,
+            noticeTableViewCellDidTap: noticeTableViewCellDidTap
+        )
+
+        let output = viewModel.transform(input)
+
+        output.noticeListInfo.asObservable()
+            .bind(
+                to: noticeTableView.rx.items(
+                    cellIdentifier: NoticeTableViewCell.identifier,
+                    cellType: NoticeTableViewCell.self
+                )) { _, element, cell in
+            cell.adapt(model: element)
+            self.noticeId = element.companyId
+        }
+        .disposed(by: disposeBag)
+
+        noticeTableView.rx.modelSelected(NoticeEntity.self)
+            .subscribe(onNext: { data in
+                self.noticeTableViewCellDidTap.accept(data.companyId)
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        noticeTableView.dataSource = self
-        noticeTableView.delegate = self
-
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: {
                 self.hideTabbar()
             })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         self.setSmallTitle(title: "공지사항")
         self.navigationItem.largeTitleDisplayMode = .never
-    }
-}
-
-extension NoticeViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = noticeTableView.dequeueReusableCell(withIdentifier: NoticeTableViewCell.identifier, for: indexPath)
-        return cell
-    }
-
-    public func tableView(
-        _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        cellClick.accept(())
     }
 }
