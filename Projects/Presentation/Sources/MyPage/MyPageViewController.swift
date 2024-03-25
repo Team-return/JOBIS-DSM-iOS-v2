@@ -116,11 +116,16 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()
+                self?.setLargeTitle(title: "마이페이지")
             })
+            .disposed(by: disposeBag)
+
+        self.viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.setSmallTitle(title: "")
+            }
             .disposed(by: disposeBag)
     }
 
-    public override func configureNavigation() {
-        self.setLargeTitle(title: "마이페이지")
-    }
+    public override func configureNavigation() { }
 }
