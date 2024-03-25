@@ -5,18 +5,31 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
+public enum ApplyType {
+    case apply
+    case reApply
+}
+
 public final class ApplyViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentId: Int?
+    public var applicationId: Int?
     public var companyName: String?
     public var companyImageURL: String?
+    public var applyType: ApplyType = .apply
     private let disposeBag = DisposeBag()
     private let documents = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
     private var updateUrls: [AttachmentsRequestQuery] = []
     private let urls = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
     private let applyCompanyUseCase: ApplyCompanyUseCase
-    public init(applyCompanyUseCase: ApplyCompanyUseCase) {
+    private let reApplyCompanyUseCase: ReApplyCompanyUseCase
+
+    public init(
+        applyCompanyUseCase: ApplyCompanyUseCase,
+        reApplyCompanyUseCase: ReApplyCompanyUseCase
+    ) {
         self.applyCompanyUseCase = applyCompanyUseCase
+        self.reApplyCompanyUseCase = reApplyCompanyUseCase
     }
 
     public struct Input {
@@ -57,11 +70,16 @@ public final class ApplyViewModel: BaseViewModel, Stepper {
         input.applyButtonDidTap.asObservable()
             .map { self.documents.value + self.updateUrls }
             .flatMap { [self] in
-                return applyCompanyUseCase.execute(
-                    id: recruitmentId ?? 0,
+                return applyType == .apply ?
+                applyCompanyUseCase.execute(
+                    id: recruitmentId!,
                     req: .init(attachments: $0)
                 )
                 .andThen(Single.just(ApplyStep.popToRecruitmentDetail))
+                : reApplyCompanyUseCase.execute(
+                    id: applicationId!,
+                    req: .init(attachments: $0)
+                ).andThen(Single.just(ApplyStep.popToRecruitmentDetail))
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

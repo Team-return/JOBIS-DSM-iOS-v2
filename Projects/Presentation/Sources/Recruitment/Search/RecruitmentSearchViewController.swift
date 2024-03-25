@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel>, UITextFieldDelegate {
+public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel> {
     private let searchButtonDidTap = PublishRelay<String>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let emptySearchView = ListEmptyView().then {
@@ -113,11 +113,14 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     }
 
     public override func configureNavigation() { }
+}
 
+extension RecruitmentSearchViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
         searchButtonDidTap.accept(textField.text ?? "")
+        self.view.endEditing(true)
         return true
     }
 }

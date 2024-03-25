@@ -72,7 +72,7 @@ private extension RecruitmentDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: applyFlow,
             withNextStepper: OneStepper(
-                withSingleStep: ApplyStep.applyIsRequired(id: id, name: name, imageURL: imageURL)
+                withSingleStep: ApplyStep.applyIsRequired(recruitmentId: id, name: name, imageURL: imageURL)
             )
         ))
     }

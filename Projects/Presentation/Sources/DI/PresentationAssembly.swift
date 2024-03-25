@@ -204,7 +204,10 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(ApplyViewModel.self) { resolver in
-            ApplyViewModel(applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!)
+            ApplyViewModel(
+                applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
+            )
         }
         container.register(ApplyViewController.self) { resolver in
             ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
@@ -228,6 +231,12 @@ public final class PresentationAssembly: Assembly {
             RecruitmentSearchViewModel(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
+        container.register(RejectReasonViewModel.self) { resolver in
+            RejectReasonViewModel(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
             )
         }
     }
