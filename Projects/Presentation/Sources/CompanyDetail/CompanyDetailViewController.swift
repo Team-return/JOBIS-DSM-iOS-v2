@@ -13,7 +13,6 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         $0.layer.borderWidth = 1.0
         $0.layer.borderColor = UIColor.GrayScale.gray30.cgColor
         $0.layer.cornerRadius = 8
-        $0.backgroundColor = .blue
     }
     private let companyLabel = UILabel().then {
         $0.setJobisText(
