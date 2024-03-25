@@ -9,8 +9,8 @@ import DesignSystem
 
 public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let isWinterSeason = BehaviorRelay(value: true)
-    private let cellClick = PublishRelay<Int>()
-    private let companySearchButtonDidClicked = PublishRelay<Void>()
+    private let rejectButtonDidTap = PublishRelay<ApplicationEntity>()
+    private let reApplyButtonDidTap = PublishRelay<ApplicationEntity>()
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
@@ -109,7 +109,9 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         let input = HomeViewModel.Input(
             viewAppear: viewWillAppearPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
-            navigateToCompanySearchButtonDidTap: findCompanysCard.rx.tap.asSignal()
+            navigateToCompanySearchButtonDidTap: findCompanysCard.rx.tap.asSignal(),
+            rejectButtonDidTap: rejectButtonDidTap,
+            reApplyButtonDidTap: reApplyButtonDidTap
         )
 
         let output = viewModel.transform(input)
@@ -145,7 +147,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
                 cell.adapt(model: element)
                 cell.selectionStyle = .none
                 cell.rejectReasonButtonDidTap = {
-                    print(cell.applicationID!)
+                    self.rejectButtonDidTap.accept($0)
+                }
+                cell.reApplyButtonDidTap = {
+                    self.reApplyButtonDidTap.accept($0)
                 }
             }
             .disposed(by: disposeBag)
@@ -170,23 +175,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         navigateToAlarmButton.rx.tap.asObservable()
             .subscribe(onNext: { [weak self] _ in
                 self?.hideTabbar()
-            })
-            .disposed(by: disposeBag)
-
-        applicationStatusTableView.rx.itemSelected
-            .map { index -> Int? in
-                guard let cell = self.applicationStatusTableView.cellForRow(at: index)
-                        as? ApplicationStatusTableViewCell
-                else { return nil }
-                return cell.applicationID
-            }
-            .compactMap { $0 }
-            .bind(to: cellClick)
-            .disposed(by: disposeBag)
-
-        cellClick.asObservable()
-            .subscribe(onNext: {
-                print($0)
             })
             .disposed(by: disposeBag)
 

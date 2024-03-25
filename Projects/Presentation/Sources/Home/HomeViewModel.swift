@@ -26,6 +26,8 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let viewAppear: PublishRelay<Void>
         let navigateToAlarmButtonDidTap: Signal<Void>
         let navigateToCompanySearchButtonDidTap: Signal<Void>
+        let rejectButtonDidTap: PublishRelay<ApplicationEntity>
+        let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
     }
 
     public struct Output {
@@ -73,6 +75,30 @@ public final class HomeViewModel: BaseViewModel, Stepper {
                 fetchApplicationUseCase.execute()
             }
             .bind(to: applicationList)
+            .disposed(by: disposeBag)
+
+        input.rejectButtonDidTap.asObservable()
+            .map {
+                HomeStep.rejectReasonIsRequired(
+                    recruitmentID: $0.recruitmentID,
+                    applicationID: $0.applicationID,
+                    companyName: $0.company,
+                    companyImageURL: $0.companyLogoUrl
+                )
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.reApplyButtonDidTap.asObservable()
+            .map {
+                HomeStep.reApplyIsRequired(
+                    recruitmentID: $0.recruitmentID,
+                    applicationID: $0.applicationID,
+                    companyName: $0.company,
+                    companyImageURL: $0.companyLogoUrl
+                )
+            }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         return Output(
