@@ -46,7 +46,8 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
 
         input.searchButtonDidTap.asObservable()
             .flatMap {
-                self.fetchRecruitmentListUseCase.execute(page: self.pageCount, name: self.searchText)
+                self.pageCount = 1
+                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount, name: self.searchText)
             }
             .bind(onNext: {
                 self.recruitmentListInfo.accept([])
