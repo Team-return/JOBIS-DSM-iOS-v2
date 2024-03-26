@@ -89,7 +89,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             .bind {
                 self.showTabbar()
                 self.setLargeTitle(title: "모집의뢰서")
-//                self.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
 
