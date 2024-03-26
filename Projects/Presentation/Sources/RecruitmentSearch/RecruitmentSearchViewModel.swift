@@ -61,7 +61,7 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
 
         input.searchButtonDidTap.asObservable()
             .filter {
-                emptyViewIsHidden.accept($0 != "")
+                emptyViewIsHidden.accept(!$0.isEmpty)
                 return $0 != ""
             }
             .flatMap {

@@ -229,6 +229,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             )) { _, element, cell in
                 cell.adapt(model: element)
             }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() { }

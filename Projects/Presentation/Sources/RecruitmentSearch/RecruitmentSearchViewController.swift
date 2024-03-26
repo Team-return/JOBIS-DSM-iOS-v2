@@ -89,6 +89,10 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
         let output = viewModel.transform(input)
 
         output.recruitmentListInfo
+            .skip(1)
+            .do(onNext: {
+                self.emptySearchView.isHidden = !$0.isEmpty
+            })
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: RecruitmentTableViewCell.identifier,
                 cellType: RecruitmentTableViewCell.self
@@ -110,10 +114,10 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
 
     public override func configureViewController() {
         self.searchTextField.delegate = self
-        self.navigationController?.navigationBar.prefersLargeTitles = false
         viewWillAppearPublisher.asObservable()
             .bind {
-                self.searchTableView.reloadData()
+                self.hideTabbar()
+                self.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
     }
