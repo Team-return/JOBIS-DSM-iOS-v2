@@ -26,6 +26,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         let bookMarkButtonDidTap: PublishRelay<Int>
         var pageChange: Observable<WillDisplayCellEvent>
         let recruitmentTableViewDidTap: ControlEvent<IndexPath>
+        let searchButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
@@ -41,6 +42,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .bind(onNext: {
                 self.recruitmentData.accept([])
                 self.recruitmentData.accept(self.recruitmentData.value + $0)
+                self.pageCount = 1
             })
             .disposed(by: disposeBag)
 
@@ -68,6 +70,14 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
+        input.searchButtonDidTap.asObservable()
+            .map {
+                RecruitmentStep.recruitmentSearchIsRequired
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
         return Output(recruitmentData: recruitmentData)
     }
 }

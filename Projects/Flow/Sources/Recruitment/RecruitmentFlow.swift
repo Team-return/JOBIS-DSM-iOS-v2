@@ -24,6 +24,9 @@ public final class RecruitmentFlow: Flow {
 
         case let .recruitmentDetailIsRequired(id):
             return navigateToRecruitmentDetail(recruitmentID: id)
+
+        case .recruitmentSearchIsRequired:
+            return navigateToRecruitmentSearch()
         }
     }
 }
@@ -57,6 +60,22 @@ private extension RecruitmentFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
             withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+        ))
+    }
+
+    func navigateToRecruitmentSearch() -> FlowContributors {
+        let recruitmentSearchFlow = RecruitmentSearchFlow(container: container)
+
+        Flows.use(recruitmentSearchFlow, when: .created) { (root) in
+            let view = root as? RecruitmentSearchViewController
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentSearchFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentSearchStep.recruitmentSearchIsRequired)
         ))
     }
 }
