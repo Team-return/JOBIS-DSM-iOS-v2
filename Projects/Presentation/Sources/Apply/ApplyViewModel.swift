@@ -76,10 +76,12 @@ public final class ApplyViewModel: BaseViewModel, Stepper {
                     req: .init(attachments: $0)
                 )
                 .andThen(Single.just(ApplyStep.popToRecruitmentDetail))
+                .catchAndReturn(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
                 : reApplyCompanyUseCase.execute(
                     id: applicationId!,
                     req: .init(attachments: $0)
                 ).andThen(Single.just(ApplyStep.popToRecruitmentDetail))
+                .catchAndReturn(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
