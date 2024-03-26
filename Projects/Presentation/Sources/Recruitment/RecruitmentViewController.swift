@@ -52,8 +52,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
             pageChange: recruitmentTableView.rx.willDisplayCell
                 .filter {
-                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(inSection: $0.indexPath.section) - 1
-                }.asObservable(),
+                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(
+                        inSection: $0.indexPath.section
+                    ) - 1
+                },
             recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected,
             searchButtonDidTap: searchButtonDidTap
         )
