@@ -9,6 +9,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentID: Int?
     public var companyId: Int?
+    public var isApplicable: Bool = true
     private let disposeBag = DisposeBag()
 
     private let fetchRecruitmentDetailUseCase: FetchRecruitmentDetailUseCase
@@ -32,11 +33,13 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public struct Output {
         let recruitmentDetailEntity: PublishRelay<RecruitmentDetailEntity>
         let areaListEntity: BehaviorRelay<[AreaEntity]>
+        let isApplicable: PublishRelay<Void>
     }
 
     public func transform(_ input: Input) -> Output {
         let recruitmentDetailEntity = PublishRelay<RecruitmentDetailEntity>()
         let areaListEntity = BehaviorRelay<[AreaEntity]>(value: [])
+        let isApplicable = PublishRelay<Void>()
 
         input.viewAppear.asObservable()
             .flatMap {
@@ -65,6 +68,12 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.applyButtonDidTap.asObservable()
+            .filter {
+                if !self.isApplicable {
+                    isApplicable.accept(())
+                }
+                return self.isApplicable
+            }
             .withLatestFrom(recruitmentDetailEntity)
             .map { recruitmentDetail in
                 RecruitmentDetailStep.applyIsRequired(
@@ -77,7 +86,8 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
         return Output(
             recruitmentDetailEntity: recruitmentDetailEntity,
-            areaListEntity: areaListEntity
+            areaListEntity: areaListEntity,
+            isApplicable: isApplicable
         )
     }
 }
