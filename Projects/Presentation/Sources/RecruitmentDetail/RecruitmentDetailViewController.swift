@@ -192,6 +192,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
                 needThingsLabel.setSubTitle($0.submitDocument)
                 otherMattersLabel.setSubTitle($0.etc)
                 isBookmarked = $0.bookmarked
+                viewModel.isApplicable = $0.isApplicable
             }.disposed(by: disposeBag)
 
         output.areaListEntity.asObservable()
@@ -203,13 +204,19 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
                 cell.layoutIfNeeded()
             }
             .disposed(by: disposeBag)
+
+        output.isApplicable.asObservable()
+            .bind {
+                self.applyButton.isEnabled = false
+                self.applyButton.setText("이미 지원한 기업이에요")
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         if UserDefaults.standard.string(forKey: "user_grade")! != "3" {
-            applyButton = JobisButton(style: .sub).then {
-                $0.setText("3학년만 지원할 수 있어요")
-            }
+            applyButton.isEnabled = false
+            applyButton.setText("3학년만 지원할 수 있어요")
         }
         fieldTypeDetailTableView.delegate = self
 
