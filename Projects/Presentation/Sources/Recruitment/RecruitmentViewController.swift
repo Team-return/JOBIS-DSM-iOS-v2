@@ -103,8 +103,8 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func configureNavigation() {
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: searchButton),
-            UIBarButtonItem(customView: filterButton)
+            UIBarButtonItem(customView: searchButton)
+//            UIBarButtonItem(customView: filterButton)
         ]
     }
 }
