@@ -4,8 +4,9 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "ThirdPartyLib",
-    product: .framework,
+    product: .staticFramework,
     targets: [],
+    packages: [.FCM],
     dependencies: [
         .SPM.RxCocoa,
         .SPM.RxFlow,
@@ -19,6 +20,7 @@ let project = Project.makeModule(
         .SPM.kingfisher,
         .SPM.KeychainSwift,
         .SPM.ReactorKit,
-        .SPM.RxGesture
-    ], sources: []
+        .SPM.RxGesture,
+        .SPM.FCM
+    ]
 )
