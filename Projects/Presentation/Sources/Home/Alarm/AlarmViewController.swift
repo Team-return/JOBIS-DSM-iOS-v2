@@ -26,10 +26,28 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
         }
     }
 
-    public override func configureViewController() {
-        alarmTableView.dataSource = self
-        alarmTableView.delegate = self
+    public override func bind() {
+        let input = AlarmViewModel.Input(
+            viewAppear: viewDidAppearPublisher,
+            readNotification:
+                Observable.zip(
+                    alarmTableView.rx.modelSelected(NotificationEntity.self),
+                    alarmTableView.rx.itemSelected
+                )
+        )
+        let output = viewModel.transform(input)
 
+        output.notificationList.asObservable()
+            .bind(to: alarmTableView.rx.items(
+                cellIdentifier: AlarmTableViewCell.identifier,
+                cellType: AlarmTableViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
         self.viewWillDisappearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()
@@ -39,26 +57,5 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
 
     public override func configureNavigation() {
         setSmallTitle(title: "알림")
-    }
-}
-
-extension AlarmViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 30
-    }
-
-    public func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: AlarmTableViewCell.identifier,
-            for: indexPath
-        ) as? AlarmTableViewCell else { return UITableViewCell() }
-
-        cell.setCell()
-        cell.layoutIfNeeded()
-
-        return cell
     }
 }
