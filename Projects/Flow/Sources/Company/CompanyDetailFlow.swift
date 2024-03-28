@@ -23,8 +23,11 @@ public final class CompanyDetailFlow: Flow {
         case .companyDetailIsRequired:
             return navigateToCompanyDetail()
 
-        case .recruitmentDetailIsRequired:
-            return dismissCompanyDetail()
+        case .popIsRequired:
+            return popCompanyDetail()
+
+        case let.recruitmentDetailIsRequired(id):
+            return navigateToRecruimtentDetail(recruitmentID: id)
         }
     }
 }
@@ -37,8 +40,26 @@ private extension CompanyDetailFlow {
         ))
     }
 
-    func dismissCompanyDetail() -> FlowContributors {
+    func popCompanyDetail() -> FlowContributors {
         rootViewController.navigationController?.popViewController(animated: true)
         return .none
+    }
+
+    func navigateToRecruimtentDetail(recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            view?.viewModel.recruitmentID = recruitmentID
+            view?.viewModel.type = .companyDeatil
+            self.rootViewController.navigationController?.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+        ))
     }
 }
