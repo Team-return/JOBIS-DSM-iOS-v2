@@ -5,9 +5,16 @@ import RxFlow
 import Core
 import Domain
 
+public enum CompanyDetailPreviousViewType {
+    case searchCompany
+    case recruitmentDetail
+}
+
 public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var companyID: Int?
+    public var recruitmentID: Int?
+    public var type: CompanyDetailPreviousViewType = .recruitmentDetail
     private let disposeBag = DisposeBag()
     private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
     private let fetchReviewListUseCase: FetchReviewListUseCase
@@ -49,7 +56,11 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.recruitmentButtonDidTap.asObservable()
-            .map { _ in CompanyDetailStep.recruitmentDetailIsRequired }
+            .map { _ in
+                self.type != .recruitmentDetail
+                ? CompanyDetailStep.recruitmentDetailIsRequired(id: self.recruitmentID!)
+                : CompanyDetailStep.popIsRequired
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
