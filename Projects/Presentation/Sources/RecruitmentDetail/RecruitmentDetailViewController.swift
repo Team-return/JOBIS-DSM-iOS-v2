@@ -20,22 +20,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             )
         }
     }
-    private let companyLogoImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.borderWidth = 1.0
-        $0.layer.borderColor = UIColor.GrayScale.gray30.cgColor
-        $0.layer.cornerRadius = 8
-    }
-    private let companyLabel = UILabel().then {
-        $0.setJobisText(
-            "모집의뢰서 불러오는중...",
-            font: .headLine,
-            color: .GrayScale.gray90
-        )
-    }
-    private let companyDetailButton = JobisButton(style: .sub).then {
-        $0.setText("기업 상세 정보 보기")
-    }
+    private let companyProfileView = CompanyProfileView()
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -62,8 +47,8 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "채용절차")
     private let requiredGradeLabel = RecruitmentDetailLabel(title: "필수 성적")
     private let workingHoursLabel = RecruitmentDetailLabel(title: "근무시간")
-    private let awardedMoneyLabel = RecruitmentDetailLabel(title: "실습 수당")
-    private let permanentEmployeeLabel = RecruitmentDetailLabel(title: "정규직 전환 시")
+//    private let awardedMoneyLabel = RecruitmentDetailLabel(title: "실습 수당")
+//    private let permanentEmployeeLabel = RecruitmentDetailLabel(title: "정규직 전환 시")
     private let benefitsWelfareLabel = RecruitmentDetailLabel(title: "복리후생")
     private let needThingsLabel = RecruitmentDetailLabel(title: "제출 서류")
     private let otherMattersLabel = RecruitmentDetailLabel(title: "기타 사항")
@@ -95,17 +80,15 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             recruitmentProcessLabel,
             requiredGradeLabel,
             workingHoursLabel,
-            awardedMoneyLabel,
-            permanentEmployeeLabel,
+//            awardedMoneyLabel,
+//            permanentEmployeeLabel,
             benefitsWelfareLabel,
             needThingsLabel,
             otherMattersLabel
         ].forEach(mainStackView.addArrangedSubview(_:))
 
         [
-            companyLogoImageView,
-            companyLabel,
-            companyDetailButton,
+            companyProfileView,
             mainStackView
         ].forEach(contentView.addSubview(_:))
     }
@@ -123,26 +106,12 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             $0.bottom.equalTo(mainStackView.snp.bottom).offset(20)
         }
 
-        companyLogoImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.leading.equalToSuperview().inset(24)
-            $0.width.height.equalTo(48)
-        }
-
-        companyLabel.snp.makeConstraints {
-            $0.leading.equalTo(companyLogoImageView.snp.trailing).offset(12)
-            $0.trailing.equalToSuperview().inset(24)
-            $0.centerY.equalTo(companyLogoImageView)
-        }
-
-        companyDetailButton.snp.makeConstraints {
-            $0.top.equalTo(companyLogoImageView.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(56)
+        companyProfileView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
         }
 
         mainStackView.snp.makeConstraints {
-            $0.top.equalTo(companyDetailButton.snp.bottom).offset(16)
+            $0.top.equalTo(companyProfileView.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
         }
 
@@ -166,7 +135,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     public override func bind() {
         let input = RecruitmentDetailViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
-            companyDetailButtonDidClicked: companyDetailButton.rx.tap.asSignal(),
+            companyDetailButtonDidClicked: companyProfileView.companyDetailButton.rx.tap.asSignal(),
             bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
                 .do(onNext: { [weak self] in
                     self?.isBookmarked.toggle()
@@ -178,16 +147,18 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         output.recruitmentDetailEntity.asObservable()
             .bind { [self] in
                 viewModel.companyId = $0.companyID
-                companyLogoImageView.setJobisImage(urlString: $0.companyProfileURL)
-                companyLabel.text = $0.companyName
+                companyProfileView.setCompanyProfile(
+                    imageUrl: $0.companyProfileURL,
+                    companyName: $0.companyName
+                )
                 recruitmentPeriodLabel.setSubTitle("\($0.startDate) ~ \($0.endDate)")
                 militaryServiceLabel.setSubTitle("병역특례 \($0.military ? "가능" : "불가능")")
                 certificateLabel.setSubTitle($0.requiredLicenses)
                 recruitmentProcessLabel.setSubTitle($0.hiringProgress)
                 requiredGradeLabel.setSubTitle($0.requiredGrade)
                 workingHoursLabel.setSubTitle($0.workingHours)
-                awardedMoneyLabel.setSubTitle("\($0.trainPay) 만원/월")
-                permanentEmployeeLabel.setSubTitle("\($0.pay ?? "0") 만원/년")
+//                awardedMoneyLabel.setSubTitle("\($0.trainPay) 만원/월")
+//                permanentEmployeeLabel.setSubTitle("\($0.pay ?? "0") 만원/년")
                 benefitsWelfareLabel.setSubTitle($0.benefits)
                 needThingsLabel.setSubTitle($0.submitDocument)
                 otherMattersLabel.setSubTitle($0.etc)
@@ -218,6 +189,8 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             applyButton.isEnabled = false
             applyButton.setText("3학년만 지원할 수 있어요")
         }
+
+        companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDeatil
         fieldTypeDetailTableView.delegate = self
 
         self.viewWillAppearPublisher.asObservable()
@@ -226,6 +199,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
                 self?.navigationController?.navigationBar.prefersLargeTitles = false
             })
             .disposed(by: disposeBag)
+
     }
 
     public override func configureNavigation() {}
