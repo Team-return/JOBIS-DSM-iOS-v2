@@ -6,6 +6,7 @@ let project = Project.makeModule(
     name: "ThirdPartyLib",
     product: .framework,
     targets: [],
+    packages: [.FCM],
     dependencies: [
         .SPM.RxCocoa,
         .SPM.RxFlow,
@@ -19,6 +20,7 @@ let project = Project.makeModule(
         .SPM.kingfisher,
         .SPM.KeychainSwift,
         .SPM.ReactorKit,
-        .SPM.RxGesture
+        .SPM.RxGesture,
+        .SPM.FCM
     ]
 )
