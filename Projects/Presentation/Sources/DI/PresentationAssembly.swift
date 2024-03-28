@@ -184,7 +184,7 @@ public final class PresentationAssembly: Assembly {
 
         container.register(CompanyDetailViewModel.self) { resolver in
             CompanyDetailViewModel(
-                fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!, 
+                fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!,
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
