@@ -5,7 +5,7 @@ import RxFlow
 import Core
 import Domain
 
-public enum RecruitmentDetailPreviousView {
+public enum RecruitmentDetailPreviousViewType {
     case companyDeatil
     case recruitmentList
 }
@@ -14,7 +14,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentID: Int?
     public var companyId: Int?
-    public var type: RecruitmentDetailPreviousView = .recruitmentList
+    public var type: RecruitmentDetailPreviousViewType = .recruitmentList
     public var isApplicable: Bool = true
     private let disposeBag = DisposeBag()
 
