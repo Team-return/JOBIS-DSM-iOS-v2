@@ -88,6 +88,12 @@ public final class RepositoryAssembly: Assembly {
                 remoteNoticesDataSource: resolver.resolve(RemoteNoticesDataSource.self)!
             )
         }
+
+        container.register(NotificationsRepository.self) { resolver in
+            NotificationsRepositoryImpl(
+                remoteNotificationsDataSource: resolver.resolve(RemoteNotificationsDataSource.self)!
+            )
+        }
     }
     // swiftlint:enable function_body_length
 }
