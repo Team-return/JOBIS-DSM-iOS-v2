@@ -25,7 +25,7 @@ public final class RejectReasonFlow: Flow {
         switch step {
         case .rejectReasonIsRequired:
             return navigateToRejectReason()
-        case let .reApplyIsRequired(recruitmentID, applicationID,companyName, companyImageUrl):
+        case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
             return navigateToReApply(recruitmentID, applicationID, companyName, companyImageUrl)
         }
     }

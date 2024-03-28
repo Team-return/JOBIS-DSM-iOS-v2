@@ -4,7 +4,7 @@ import DependencyPlugin
 
 let project = Project.makeModule(
     name: "ThirdPartyLib",
-    product: .framework,
+    product: .staticFramework,
     targets: [],
     packages: [.FCM],
     dependencies: [
