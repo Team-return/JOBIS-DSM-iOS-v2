@@ -6,10 +6,8 @@ let project = Project.makeModule(
     name: "Presentation",
     product: .staticLibrary,
     targets: [.unitTest],
-    packages: [.FCM],
     dependencies: [
         .Projects.domain,
-        .Modules.designSystem,
-        .SPM.FCM
+        .Modules.designSystem
     ]
 )
