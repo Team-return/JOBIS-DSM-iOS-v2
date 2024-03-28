@@ -59,6 +59,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     }
     private let recruitmentButton = JobisButton(style: .main).then {
         $0.setText("모집의뢰서 보기")
+        $0.isHidden = true
     }
     public override func addView() {
         [
@@ -219,6 +220,8 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
                 self.secondPhoneNumberLabel.setContent(contentText: companyDetailInfo.subManagerPhoneNo ?? "-")
                 self.emailLabel.setContent(contentText: companyDetailInfo.email)
                 self.faxLabel.setContent(contentText: companyDetailInfo.fax ?? "-")
+                self.viewModel.recruitmentID = companyDetailInfo.recruitmentID
+                self.recruitmentButton.isHidden = companyDetailInfo.recruitmentID == nil
             })
             .disposed(by: disposeBag)
 
