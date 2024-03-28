@@ -43,18 +43,19 @@ private extension BookmarkFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailViewController = container.resolve(RecruitmentDetailViewController.self)!.then {
-            $0.viewModel.recruitmentID = recruitmentID
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            view?.viewModel.recruitmentID = recruitmentID
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
         }
 
-        self.rootViewController.pushViewController(
-            recruitmentDetailViewController,
-            animated: true
-        )
-
         return .one(flowContributor: .contribute(
-            withNextPresentable: recruitmentDetailViewController,
-            withNextStepper: recruitmentDetailViewController.viewModel
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 }

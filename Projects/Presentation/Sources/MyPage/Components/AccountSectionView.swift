@@ -7,15 +7,15 @@ import DesignSystem
 
 final class AccountSectionView: BaseView {
     enum AccountSectionType: Int {
-        case interestField = 0
-        case changePassword = 1
-        case logout = 2
-        case withDraw = 3
+//        case interestField = 0
+        case changePassword = 0
+        case logout = 1
+        case withDraw = 2
     }
     private let accountSectionView = SectionView(
         menuText: "계정",
         items: [
-            ("관심분야 선택", .jobisIcon(.code)),
+//            ("관심분야 선택", .jobisIcon(.code)),
             ("비밀번호 변경", .jobisIcon(.changePassword)),
             ("로그아웃", .jobisIcon(.logout)),
             ("회원 탈퇴", .jobisIcon(.withdrawal))

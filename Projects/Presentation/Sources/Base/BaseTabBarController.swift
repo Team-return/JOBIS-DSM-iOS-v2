@@ -9,6 +9,7 @@ public class BaseTabBarController: UITabBarController,
     private let stroke = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
     }
+    private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,10 @@ public class BaseTabBarController: UITabBarController,
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1)
         }
+    }
+
+    public override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        self.impactFeedbackGenerator.impactOccurred()
     }
 }
 

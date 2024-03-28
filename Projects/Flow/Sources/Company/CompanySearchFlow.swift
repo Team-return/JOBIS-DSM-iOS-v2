@@ -42,6 +42,7 @@ private extension CompanySearchFlow {
         Flows.use(companyDetailFlow, when: .created) { (root) in
             let view = root as? CompanyDetailViewController
             view?.viewModel.companyID = id
+            view?.viewModel.type = .searchCompany
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

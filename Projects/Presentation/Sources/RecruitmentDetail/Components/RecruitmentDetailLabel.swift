@@ -40,6 +40,10 @@ public final class RecruitmentDetailLabel: BaseView {
     }
 
     public func setSubTitle(_ subTitle: String?) {
-        self.subTitleLabel.setJobisText(subTitle ?? "-", font: .body, color: .GrayScale.gray90)
+        self.subTitleLabel.setJobisText(
+            subTitle == "" ? "-" : subTitle ?? "-",
+            font: .body,
+            color: .GrayScale.gray90
+        )
     }
 }

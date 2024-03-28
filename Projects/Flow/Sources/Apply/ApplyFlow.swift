@@ -22,10 +22,15 @@ public final class ApplyFlow: Flow {
         switch step {
         case let .applyIsRequired(id, name, imageURL):
             return navigateToApply(id: id, name: name, imageURL: imageURL)
+
         case .popToRecruitmentDetail:
             return popToRecruitmentDetail()
+
         case let .reApplyIsRequired(id, name, imageURL):
             return navigateToReApply(id: id, name: name, imageURL: imageURL)
+
+        case let .errorToast(message):
+            return errorToast(message: message)
         }
     }
 }
@@ -55,6 +60,11 @@ private extension ApplyFlow {
 
     func popToRecruitmentDetail() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
+        return .none
+    }
+
+    func errorToast(message: String) -> FlowContributors {
+        self.rootViewController.showJobisToast(text: message, inset: 92)
         return .none
     }
 }

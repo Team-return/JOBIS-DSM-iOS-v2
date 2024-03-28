@@ -47,10 +47,13 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.pageChange.asObservable()
-            .distinctUntilChanged({ $0.indexPath.row })
             .flatMap { _ in
                 self.pageCount += 1
                 return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                    .asObservable()
+                    .take(while: {
+                        !$0.isEmpty
+                    })
             }
             .bind { self.recruitmentData.accept(self.recruitmentData.value + $0) }
             .disposed(by: disposeBag)

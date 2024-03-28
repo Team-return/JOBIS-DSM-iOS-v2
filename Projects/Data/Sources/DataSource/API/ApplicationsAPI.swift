@@ -12,7 +12,7 @@ enum ApplicationsAPI {
 }
 
 extension ApplicationsAPI: JobisAPI {
-    typealias ErrorType = JobisError
+    typealias ErrorType = ApplicationsError
 
     var domain: JobisDomain {
         .applications
@@ -81,10 +81,18 @@ extension ApplicationsAPI: JobisAPI {
     public var errorMap: [Int: ErrorType]? {
         switch self {
         case .applyCompany:
-            return [:]
+            return [
+                404: .badRequest,
+                409: .conflict,
+                500: .internalServerError
+            ]
 
         case .reApplyCompany:
-            return [:]
+            return [
+                404: .badRequest,
+                409: .conflict,
+                500: .internalServerError
+            ]
 
         case .cancelApply:
             return [:]
