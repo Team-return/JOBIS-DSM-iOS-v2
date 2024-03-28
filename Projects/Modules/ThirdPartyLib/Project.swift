@@ -20,5 +20,5 @@ let project = Project.makeModule(
         .SPM.KeychainSwift,
         .SPM.ReactorKit,
         .SPM.RxGesture
-    ], sources: []
+    ]
 )
