@@ -34,7 +34,8 @@ let targets: [Target] = [
         entitlements: "Support/\(env.appName).entitlements",
         scripts: scripts,
         dependencies: [
-            .Projects.flow
+            .Projects.flow,
+            .SPM.FCM
         ],
         settings: .settings(base: env.baseSetting)
     ),
