@@ -43,6 +43,7 @@ public enum JobisDomain: String {
     case presignedURL = ""
     case banners
     case notices
+    case notifications
 }
 
 extension JobisDomain {
