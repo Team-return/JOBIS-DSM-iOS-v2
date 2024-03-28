@@ -157,8 +157,8 @@ final class FieldTypeDetailViewCell: BaseTableViewCell<AreaEntity> {
 
     override func adapt(model: AreaEntity) {
         fieldTypeLabel.text = model.job
-        majorTaskLabel.text = model.majorTask
+        majorTaskLabel.text = model.majorTask == "-" ? "" : model.majorTask
         useSkillsLabel.text = model.tech.joined(separator: ", ")
-        preferElemnetLabel.text = model.preferentialTreatment
+        preferElemnetLabel.text = model.preferentialTreatment ?? "-"
     }
 }
