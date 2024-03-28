@@ -39,6 +39,7 @@ extension NotificationsAPI: JobisAPI {
         case .fetchNotificationList:
             return .requestParameters(
                 parameters:
+//                  // TODO: 추후 읽음와 안읽음 분기처리 필요
                     ["is_new": ""],
                 encoding: URLEncoding.queryString)
         default:
