@@ -22,9 +22,10 @@ public final class PresentationAssembly: Assembly {
         container.register(AlarmViewController.self) { resolver in
             AlarmViewController(resolver.resolve(AlarmViewModel.self)!)
         }
-        container.register(AlarmViewModel.self) { _ in
+        container.register(AlarmViewModel.self) { resolver in
             AlarmViewModel(
-//                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+                fetchNotificationListUseCase: resolver.resolve(FetchNotificationListUseCase.self)!,
+                readNotificationUseCase: resolver.resolve(ReadNotificationUseCase.self)!
             )
         }
 
