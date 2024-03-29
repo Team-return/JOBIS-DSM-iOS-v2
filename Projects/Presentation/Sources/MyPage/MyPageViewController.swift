@@ -6,6 +6,7 @@ import Then
 import Core
 import Kingfisher
 import DesignSystem
+import Domain
 
 public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let scrollView = UIScrollView().then {
@@ -13,20 +14,19 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     }
     private let contentView = UIView()
     private let studentInfoView = StudentInfoView()
-    private let editButton = UIButton(type: .system).then {
-        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
-    }
+//    private let editButton = UIButton(type: .system).then {
+//        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
+//    }
 //    private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = AccountSectionView()
 //    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
-
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         [
             studentInfoView,
-            editButton,
+//            editButton,
 //            reviewNavigateStackView,
             helpSectionView,
             accountSectionView
@@ -50,10 +50,10 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
 
-        editButton.snp.makeConstraints {
-            $0.centerY.equalTo(studentInfoView)
-            $0.trailing.equalToSuperview().offset(-28)
-        }
+//        editButton.snp.makeConstraints {
+//            $0.centerY.equalTo(studentInfoView)
+//            $0.trailing.equalToSuperview().offset(-28)
+//        }
 
 //        reviewNavigateStackView.snp.updateConstraints {
 //            $0.leading.trailing.equalToSuperview().inset(24)

@@ -1,5 +1,5 @@
 import Foundation
-import DesignSystem
+import Utility
 import Domain
 
 struct NoticeListResponseDTO: Decodable {
@@ -25,7 +25,7 @@ extension NoticeListResponseDTO {
             return NoticeEntity(
                 companyId: $0.id,
                 title: $0.title,
-                createdAt: noticeDate.toSting()
+                createdAt: noticeDate.toStringFormat("yyyy-MM-dd")
             )
         }
     }

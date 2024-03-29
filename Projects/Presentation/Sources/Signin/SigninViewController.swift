@@ -6,6 +6,7 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import Utility
 
 public final class SigninViewController: BaseReactorViewController<SigninReactor> {
     private let titleLabel = UILabel().then {
@@ -99,13 +100,13 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
 
         forgetPasswordButton.rx.tapGesture()
             .when(.recognized)
-            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .avoidDuplication
             .map { _ in SigninReactor.Action.foregetPasswordButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         signinButton.rx.tap
-            .throttle(.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .avoidDuplication
             .map { SigninReactor.Action.signinButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)

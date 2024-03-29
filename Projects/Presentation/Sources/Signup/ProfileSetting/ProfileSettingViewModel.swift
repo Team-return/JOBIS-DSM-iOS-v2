@@ -4,6 +4,7 @@ import Domain
 import RxFlow
 import RxSwift
 import RxCocoa
+import Utility
 
 public final class ProfileSettingViewModel: BaseViewModel, Stepper {
     public var steps = PublishRelay<Step>()
@@ -34,50 +35,45 @@ public final class ProfileSettingViewModel: BaseViewModel, Stepper {
     public struct Output {}
 
     public func transform(_ input: Input) -> Output {
-        // TODO: 리팩토링 해야함
         input.nextButtonDidTap.asObservable()
             .withLatestFrom(input.profileImage)
-            .bind { model in
-                guard let file = model?.file else {
-                    self.steps.accept(
-                        ProfileSettingStep.privacyIsRequired(
-                            name: input.name,
-                            gcn: input.gcn,
-                            email: input.email,
-                            password: input.password,
-                            isMan: input.isMan,
-                            profileImageURL: nil
-                        )
-                    )
-                    return
-                }
-
-                return self.fetchPresignedURLUseCase.execute(
-                    req: .init(files: [.init(fileName: "\(input.name)_profileImage.png")])
+            .avoidDuplication
+            .filter { $0?.file != nil }
+            .flatMap { file in
+                self.fetchPresignedURLUseCase.execute(
+                    req: .init(files: [.init(fileName: file?.fileName ?? "")])
                 )
                 .asObservable()
-                .bind { url in
-                    guard let presigneURL = url.first?.presignedUrl else { return }
-                    self.uploadImageToS3UseCase.execute(presignedURL: presigneURL, data: file)
-                        .andThen(
-                            Single.just(
-                                ProfileSettingStep.privacyIsRequired(
-                                    name: input.name,
-                                    gcn: input.gcn,
-                                    email: input.email,
-                                    password: input.password,
-                                    isMan: input.isMan,
-                                    profileImageURL: presigneURL
-                                )
-                            )
-                        )
-                        .asObservable()
-                        .bind(to: self.steps)
-                        .disposed(by: self.disposeBag)
-                }
-                .disposed(by: self.disposeBag)
+                .map { ($0.first, file?.file) }
             }
-            .disposed(by: self.disposeBag)
+            .flatMap { url, data in
+                self.uploadImageToS3UseCase.execute(
+                    presignedURL: url?.presignedUrl ?? "",
+                    data: data ?? .empty
+                )
+                .andThen(
+                    Single.just(ProfileSettingStep.privacyIsRequired(
+                        name: input.name,
+                        gcn: input.gcn,
+                        email: input.email,
+                        password: input.password,
+                        isMan: input.isMan,
+                        profileImageURL: url?.filePath ?? ""
+                    ))
+                )
+            }
+            .catchAndReturn(
+                ProfileSettingStep.privacyIsRequired(
+                    name: input.name,
+                    gcn: input.gcn,
+                    email: input.email,
+                    password: input.password,
+                    isMan: input.isMan,
+                    profileImageURL: nil
+                )
+            )
+            .bind(to: steps)
+            .disposed(by: disposeBag)
 
         input.laterButtonDidTap.asObservable()
             .map { _ in

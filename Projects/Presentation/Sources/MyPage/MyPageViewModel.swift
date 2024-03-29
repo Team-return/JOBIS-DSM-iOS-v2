@@ -7,15 +7,24 @@ import Domain
 
 public final class MyPageViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    private let fetchPresignedURLUseCase: FetchPresignedURLUseCase
+    private let uploadImageToS3UseCase: UploadImageToS3UseCase
+    private let changeProfileImageUseCase: ChangeProfileImageUseCase
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
     private let logoutUseCase: LogoutUseCase
 
     init(
+        fetchPresignedURLUseCase: FetchPresignedURLUseCase,
+        uploadImageToS3UseCase: UploadImageToS3UseCase,
+        changeProfileImageUseCase: ChangeProfileImageUseCase,
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchWritableReviewListUseCase: FetchWritableReviewListUseCase,
         logoutUseCase: LogoutUseCase
     ) {
+        self.fetchPresignedURLUseCase = fetchPresignedURLUseCase
+        self.uploadImageToS3UseCase = uploadImageToS3UseCase
+        self.changeProfileImageUseCase = changeProfileImageUseCase
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
         self.logoutUseCase = logoutUseCase
@@ -40,6 +49,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let writableReviewList = BehaviorRelay<[WritableReviewCompanyEntity]>(value: [])
+        let changedImageURL = PublishRelay<String>()
 
         input.viewAppear.asObservable()
             .flatMap { self.fetchStudentInfoUseCase.execute() }

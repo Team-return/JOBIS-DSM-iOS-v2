@@ -3,10 +3,10 @@ import ProjectDescriptionHelpers
 import DependencyPlugin
 
 let project = Project.makeModule(
-    name: "Domain",
-    product: .staticFramework,
-    targets: [.unitTest],
+    name: "Utility",
+    product: .framework,
+    targets: [],
     dependencies: [
-        .Modules.utility
+        .Projects.core
     ]
 )

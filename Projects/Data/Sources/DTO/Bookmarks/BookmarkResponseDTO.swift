@@ -25,7 +25,8 @@ extension BookmarkListResponseDTO {
             BookmarkEntity(
                 companyName: $0.companyName,
                 recruitmentID: $0.recruitmentID,
-                createdAt: $0.createdAt.toJobisDate().toSting(),
+                createdAt: $0.createdAt.toJobisDate()
+                    .toStringFormat("yyyy-MM-dd"),
                 companyLogoUrl: $0.companyLogoUrl
             )
         }

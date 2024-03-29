@@ -41,4 +41,8 @@ public extension TargetDependency.Modules {
         target: "DesignSystem",
         path: .relativeToRoot("Projects/Modules/DesignSystem")
     )
+    static let utility = TargetDependency.project(
+        target: "Utility",
+        path: .relativeToRoot("Projects/Modules/Utility")
+    )
 }

@@ -55,6 +55,9 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(MyPageViewModel.self) { resolver in
             MyPageViewModel(
+                fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
+                uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!,
+                changeProfileImageUseCase: resolver.resolve(ChangeProfileImageUseCase.self)!,
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchWritableReviewListUseCase: resolver.resolve(FetchWritableReviewListUseCase.self)!,
                 logoutUseCase: resolver.resolve(LogoutUseCase.self)!
