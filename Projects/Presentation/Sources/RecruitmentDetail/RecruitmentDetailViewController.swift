@@ -151,11 +151,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
                     imageUrl: $0.companyProfileURL,
                     companyName: $0.companyName
                 )
-                recruitmentPeriodLabel.setSubTitle(
-                    $0.startDate == nil || $0.endDate == nil
-                    ? "상시 모집"
-                    : "\($0.startDate!) ~ \($0.endDate!)"
-                )
+                recruitmentPeriodLabel.setSubTitle($0.period)
                 militaryServiceLabel.setSubTitle("병역특례 \($0.military ? "가능" : "불가능")")
                 certificateLabel.setSubTitle($0.requiredLicenses)
                 recruitmentProcessLabel.setSubTitle($0.hiringProgress)
