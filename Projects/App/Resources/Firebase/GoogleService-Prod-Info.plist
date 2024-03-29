@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>141556093175-27lem5p24mt34c71r1f3tf02nu6m9nd9.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.141556093175-27lem5p24mt34c71r1f3tf02nu6m9nd9</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCEClASUHznRfBoYDrtVkdKM8zVbyICraE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>141556093175</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.team.return.JOBIS-DSM-iOS</string>
+	<key>PROJECT_ID</key>
+	<string>jobis-927fa</string>
+	<key>STORAGE_BUCKET</key>
+	<string>jobis-927fa.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:141556093175:ios:1e3b06801fb63013c9c3f2</string>
+</dict>
+</plist>
