@@ -15,7 +15,7 @@ public struct RecruitmentDetailEntity: Equatable {
     public let benefits: String?
     public let military: Bool
     public let submitDocument: String
-    public let startDate, endDate: String
+    public let startDate, endDate: String?
     public let etc: String
     public let isApplicable: Bool
     public let bookmarked: Bool
@@ -35,8 +35,8 @@ public struct RecruitmentDetailEntity: Equatable {
         benefits: String?,
         military: Bool,
         submitDocument: String,
-        startDate: String,
-        endDate: String,
+        startDate: String?,
+        endDate: String?,
         etc: String,
         isApplicable: Bool,
         bookmarked: Bool

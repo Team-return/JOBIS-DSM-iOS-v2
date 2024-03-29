@@ -16,7 +16,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     let benefits: String?
     let military: Bool
     let submitDocument: String
-    let startDate, endDate: String
+    let startDate, endDate: String?
     let etc: String?
     let isApplicable: Bool
     let bookmarked: Bool
@@ -36,8 +36,8 @@ struct RecruitmentDetailResponseDTO: Decodable {
         benefits: String?,
         military: Bool,
         submitDocument: String,
-        startDate: String,
-        endDate: String,
+        startDate: String?,
+        endDate: String?,
         etc: String?,
         isApplicable: Bool,
         bookmarked: Bool
