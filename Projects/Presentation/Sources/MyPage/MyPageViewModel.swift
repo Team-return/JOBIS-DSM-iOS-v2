@@ -35,8 +35,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
 //        let reviewNavigate: PublishRelay<Int>
-        let reviewNavigate: PublishRelay<Int>
-        let selectedImage: PublishRelay<UploadFileModel>
         let helpSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutSectionDidTap: Observable<IndexPath>
@@ -46,7 +44,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
         let writableReviewList: BehaviorRelay<[WritableReviewCompanyEntity]>
-        let changedImageURL: PublishRelay<String>
     }
 
     public func transform(_ input: Input) -> Output {
@@ -69,30 +66,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 //                // TODO: 리뷰 리스트로 네비게이션 이동 해주는 코드 았어야함
 //                print($0)
 //            }).disposed(by: disposeBag)
-
-        input.selectedImage.asObservable()
-            .flatMap { file in
-                self.fetchPresignedURLUseCase.execute(
-                    req: .init(files: [.init(fileName: file.fileName)])
-                )
-                .asObservable()
-                .map { ($0.first, file.file) }
-            }
-            .map { url, data in
-                self.uploadImageToS3UseCase.execute(
-                    presignedURL: url?.presignedUrl ?? "",
-                    data: data
-                )
-                .asObservable()
-                .flatMap { _ in
-                    self.changeProfileImageUseCase.execute(url: url?.filePath ?? "")
-                        .asObservable()
-                        .map { _ in url?.filePath ?? "" }
-                }
-                .map { _ in url?.filePath ?? "" }
-            }
-            .bind(to: changedImageURL)
-            .disposed(by: disposeBag)
 
         input.helpSectionDidTap.asObservable()
             .map { _ in MyPageStep.noticeIsRequired }
@@ -122,8 +95,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
         return Output(
             studentInfo: studentInfo,
-            writableReviewList: writableReviewList,
-            changedImageURL: changedImageURL
+            writableReviewList: writableReviewList
         )
     }
 }
