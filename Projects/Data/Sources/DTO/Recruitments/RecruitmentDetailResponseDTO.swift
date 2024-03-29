@@ -90,6 +90,11 @@ extension RecruitmentDetailResponseDTO {
             guard let requiredGrade else { return nil }
             return String(requiredGrade) + "% 이내"
         }
+        var recruitmentPeriod: String {
+            guard let startDate, let endDate else { return "상시 모집" }
+            return "\(startDate) ~ \(endDate)"
+        }
+
         return RecruitmentDetailEntity(
             recruitmentID: recruitmentID,
             companyID: companyID,
@@ -107,8 +112,7 @@ extension RecruitmentDetailResponseDTO {
             benefits: benefits,
             military: military,
             submitDocument: submitDocument,
-            startDate: startDate,
-            endDate: endDate,
+            period: recruitmentPeriod,
             etc: etc ?? "없음",
             isApplicable: isApplicable,
             bookmarked: bookmarked
