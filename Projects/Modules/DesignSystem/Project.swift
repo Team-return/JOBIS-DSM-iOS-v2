@@ -7,7 +7,7 @@ let project = Project.makeModule(
     product: .framework,
     targets: [.demo],
     dependencies: [
-        .Projects.core
+        .Modules.utility
     ],
     resources: .resources,
     resourceSynthesizers: .default + [

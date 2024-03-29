@@ -7,6 +7,6 @@ let project = Project.makeModule(
     product: .framework,
     targets: [.unitTest],
     dependencies: [
-        .Projects.core
+        .Modules.utility
     ]
 )

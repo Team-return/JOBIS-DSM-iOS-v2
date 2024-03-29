@@ -3,6 +3,7 @@ import Domain
 import RxFlow
 import RxSwift
 import RxCocoa
+import Utility
 
 public final class OnboardingViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -29,13 +30,13 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
         let showNavigationButton = PublishRelay<Void>()
 
         input.navigateToSigninDidTap.asObservable()
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .avoidDuplication
             .map { _ in OnboardingStep.signinIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
         input.navigateToSignupDidTap.asObservable()
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .avoidDuplication
             .map { _ in OnboardingStep.signupIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)

@@ -5,6 +5,7 @@ import RxSwift
 import RxCocoa
 import Domain
 import FirebaseMessaging
+import Utility
 
 public final class PrivacyViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -29,6 +30,7 @@ public final class PrivacyViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         input.signupButtonDidTap
             .asObservable()
+            .avoidDuplication
             .flatMap { [self] in
                 signupUseCase.execute(
                     req: .init(
