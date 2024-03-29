@@ -4,6 +4,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Domain
+import Utility
 
 public final class VerifyEmailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -43,6 +44,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
         input.sendAuthCodeButtonDidTap
             .asObservable()
             .withLatestFrom(input.email)
+            .avoidDuplication
             .filter {
                 if $0.isEmpty {
                     emailErrorDescription.accept(.error(description: "이메일은 공백일 수 없어요."))
@@ -64,6 +66,7 @@ public final class VerifyEmailViewModel: BaseViewModel, Stepper {
         input.nextButtonDidTap
             .asObservable()
             .withLatestFrom(info)
+            .avoidDuplication
             .flatMap { [self] email, authCode in
                 verifyAuthCodeUseCase.execute(email: email.dsmEmail(), authCode: authCode)
                     .catch { _ in
