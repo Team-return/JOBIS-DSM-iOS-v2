@@ -4,6 +4,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Domain
+import Utility
 
 public final class PasswordSettingViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -30,6 +31,7 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
 
         input.nextButtonDidTap.asObservable()
             .withLatestFrom(info)
+            .avoidDuplication
             .filter { password, checkingPassword in
                 let passwordExpression =
                 #"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$"#

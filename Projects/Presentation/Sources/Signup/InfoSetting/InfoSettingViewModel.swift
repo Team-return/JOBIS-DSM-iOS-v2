@@ -4,6 +4,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Domain
+import Utility
 
 public final class InfoSettingViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
@@ -32,6 +33,7 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
         input.nextButtonDidTap
             .asObservable()
             .withLatestFrom(info)
+            .avoidDuplication
             .filter { name, gcn in
                 if name.isEmpty {
                     nameErrorDescription.accept(.error(description: "이름을 입력해주세요"))

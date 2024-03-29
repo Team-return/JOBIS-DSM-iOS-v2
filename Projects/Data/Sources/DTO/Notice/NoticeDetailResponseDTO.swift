@@ -1,5 +1,6 @@
 import Foundation
 import Domain
+import Utility
 
 struct NoticeDetailResponseDTO: Decodable {
     let title: String
@@ -33,7 +34,7 @@ extension NoticeDetailResponseDTO {
         return NoticeDetailEntity(
             title: title,
             content: content,
-            createdAt: noticeDate.toSting(),
+            createdAt: noticeDate.toStringFormat("yyyy-MM-dd"),
             attachments: attachments.map { $0.toDomain() }
         )
     }
