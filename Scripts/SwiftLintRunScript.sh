@@ -1,5 +1,5 @@
 if test -d "/opt/homebrew/bin/"; then
-	PATH="/opt/homebrew/bin/:${PATH}"
+	PATH="/opt/homebrew/bin/: -f ${PATH}"
 fi
 
 export PATH
