@@ -9,7 +9,6 @@ import RxCocoa
 final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
     public var bookmarkButtonDidTap: (() -> Void)?
-    public var recruitmentID = 0
     private var disposeBag = DisposeBag()
     private var isBookmarked = false {
         didSet {
@@ -60,20 +59,22 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     override func setLayout() {
         companyProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
-            $0.left.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
         bookmarkButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.right.equalToSuperview().inset(24)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(24)
+            $0.width.height.equalTo(28)
         }
         companyLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
+            $0.trailing.equalTo(bookmarkButton.snp.leading).offset(4)
         }
         benefitsLabel.snp.makeConstraints {
             $0.top.equalTo(companyLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
         }
     }
 
@@ -88,13 +89,13 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
 
     override func adapt(model: RecruitmentEntity) {
+        super.adapt(model: model)
         companyProfileImageView.setJobisImage(
             urlString: model.companyProfileURL
         )
         let militarySupport = model.militarySupport ? "O": "X"
         companyLabel.text = model.companyName
-        benefitsLabel.text = "병역특례 \(militarySupport) · 실습 수당 \(model.trainPay)만원"
-        recruitmentID = model.recruitID
+        benefitsLabel.text = "병역특례 \(militarySupport)"
         isBookmarked = model.bookmarked
     }
 }

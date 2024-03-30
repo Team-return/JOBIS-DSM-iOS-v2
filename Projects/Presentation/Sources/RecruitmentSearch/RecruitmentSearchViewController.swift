@@ -99,7 +99,7 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
             )) { _, element, cell in
                 cell.adapt(model: element)
                 cell.bookmarkButtonDidTap = {
-                    self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
+                    self.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
                 }
             }
             .disposed(by: disposeBag)

@@ -34,6 +34,9 @@ public final class RecruitmentFlow: Flow {
 private extension RecruitmentFlow {
     func navigateToRecruitment() -> FlowContributors {
         let recruitmentViewController = container.resolve(RecruitmentViewController.self)!
+        recruitmentViewController.viewWillappearWithTap = {
+            recruitmentViewController.viewDidLoadPublisher.accept(())
+        }
 
         self.rootViewController.setViewControllers(
             [recruitmentViewController],
@@ -52,6 +55,17 @@ private extension RecruitmentFlow {
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
             view?.viewModel.recruitmentID = recruitmentID
+            view?.isPopViewController = { id, bookmark in
+                let popView = self.rootViewController.topViewController as? RecruitmentViewController
+                var oldData = popView?.viewModel.recruitmentData.value
+                oldData?.enumerated().forEach {
+                    if $0.element.recruitID == id {
+                        oldData![$0.offset].bookmarked = bookmark
+                    }
+                }
+                popView?.viewModel.recruitmentData.accept(oldData!)
+                popView?.isTabNavigation = false
+            }
             self.rootViewController.pushViewController(
                 view!, animated: true
             )
