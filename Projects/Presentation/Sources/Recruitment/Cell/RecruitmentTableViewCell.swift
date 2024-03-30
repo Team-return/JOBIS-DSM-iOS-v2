@@ -60,20 +60,22 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     override func setLayout() {
         companyProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
-            $0.left.equalToSuperview().inset(24)
+            $0.leading.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
         bookmarkButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.right.equalToSuperview().inset(24)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(24)
+            $0.width.height.equalTo(28)
         }
         companyLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
+            $0.trailing.equalTo(bookmarkButton.snp.leading).offset(4)
         }
         benefitsLabel.snp.makeConstraints {
             $0.top.equalTo(companyLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(12)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
         }
     }
 
