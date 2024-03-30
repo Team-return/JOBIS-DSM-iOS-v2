@@ -9,7 +9,6 @@ import RxCocoa
 final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
     public var bookmarkButtonDidTap: (() -> Void)?
-    public var recruitmentID = 0
     private var disposeBag = DisposeBag()
     private var isBookmarked = false {
         didSet {
@@ -90,13 +89,13 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     }
 
     override func adapt(model: RecruitmentEntity) {
+        super.adapt(model: model)
         companyProfileImageView.setJobisImage(
             urlString: model.companyProfileURL
         )
         let militarySupport = model.militarySupport ? "O": "X"
         companyLabel.text = model.companyName
-        benefitsLabel.text = "병역특례 \(militarySupport) · 실습 수당 \(model.trainPay)만원"
-        recruitmentID = model.recruitID
+        benefitsLabel.text = "병역특례 \(militarySupport)"
         isBookmarked = model.bookmarked
     }
 }

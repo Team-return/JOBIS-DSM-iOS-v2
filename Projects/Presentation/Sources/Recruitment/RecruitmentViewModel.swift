@@ -7,10 +7,10 @@ import Domain
 
 public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    public var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
-    private var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private var pageCount: Int = 1
 
     init(
@@ -25,7 +25,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         let viewAppear: PublishRelay<Void>
         let bookMarkButtonDidTap: PublishRelay<Int>
         var pageChange: Observable<WillDisplayCellEvent>
-        let recruitmentTableViewDidTap: ControlEvent<IndexPath>
+        let recruitmentTableViewDidTap: Observable<Int>
         let searchButtonDidTap: PublishRelay<Void>
     }
 
@@ -59,6 +59,15 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.bookMarkButtonDidTap.asObservable()
+            .do(onNext: { id in
+                var oldData = self.recruitmentData.value
+                oldData.enumerated().forEach {
+                    if $0.element.recruitID == id {
+                        oldData[$0.offset].bookmarked.toggle()
+                    }
+                }
+                self.recruitmentData.accept(oldData)
+            })
             .flatMap { id in
                 self.bookmarkUseCase.execute(id: id)
             }
@@ -68,7 +77,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.recruitmentTableViewDidTap.asObservable()
             .map {
                 RecruitmentStep.recruitmentDetailIsRequired(
-                    recruitmentId: self.recruitmentData.value[$0.row].recruitID
+                    recruitmentId: $0
                 )
             }
             .bind(to: steps)

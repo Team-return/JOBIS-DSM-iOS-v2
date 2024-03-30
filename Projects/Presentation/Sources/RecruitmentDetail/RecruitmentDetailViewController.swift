@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
-    var recruitmentID: Int?
+    public var isPopViewController: ((Int, Bool) -> Void)?
     private var isBookmarked = false {
         didSet {
             var bookmarkImage: JobisIcon {
@@ -31,18 +31,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     }
     private let recruitmentPeriodLabel = RecruitmentDetailLabel(title: "모집기간")
     private let militaryServiceLabel = RecruitmentDetailLabel(title: "병역특례 여부")
-    private let fieldTypeDetailTableView = UITableView().then {
-        $0.register(
-            FieldTypeDetailViewCell.self,
-            forCellReuseIdentifier: FieldTypeDetailViewCell.identifier
-        )
-        $0.separatorStyle = .none
-        $0.showsVerticalScrollIndicator = false
-        $0.isScrollEnabled = false
-        $0.estimatedRowHeight = UITableView.automaticDimension
-        $0.rowHeight = UITableView.automaticDimension
-        $0.sectionHeaderTopPadding = 12
-    }
+    private let fieldTypeDetailStackView = FieldTypeDetailStackView()
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "채용절차")
     private let requiredGradeLabel = RecruitmentDetailLabel(title: "필수 성적")
@@ -75,7 +64,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         [
             recruitmentPeriodLabel,
             militaryServiceLabel,
-            fieldTypeDetailTableView,
+            fieldTypeDetailStackView,
             certificateLabel,
             recruitmentProcessLabel,
             requiredGradeLabel,
@@ -115,10 +104,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             $0.leading.trailing.equalToSuperview()
         }
 
-        fieldTypeDetailTableView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(fieldTypeDetailTableView.contentSize.height)
-        }
-
         applyButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
             $0.leading.equalToSuperview().offset(24)
@@ -134,7 +119,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func bind() {
         let input = RecruitmentDetailViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
+            viewAppear: self.viewWillAppearPublisher,
             companyDetailButtonDidClicked: companyProfileView.companyDetailButton.rx.tap.asSignal(),
             bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
                 .do(onNext: { [weak self] in
@@ -167,12 +152,8 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             }.disposed(by: disposeBag)
 
         output.areaListEntity.asObservable()
-            .bind(to: fieldTypeDetailTableView.rx.items(
-                cellIdentifier: FieldTypeDetailViewCell.identifier,
-                cellType: FieldTypeDetailViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
-                cell.layoutIfNeeded()
+            .bind {
+                self.fieldTypeDetailStackView.setFieldType($0)
             }
             .disposed(by: disposeBag)
 
@@ -191,7 +172,6 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         }
 
         companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDeatil
-        fieldTypeDetailTableView.delegate = self
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
@@ -200,38 +180,12 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             })
             .disposed(by: disposeBag)
 
+        self.viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.isPopViewController?(self.viewModel.recruitmentID!, self.isBookmarked)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {}
-}
-
-extension RecruitmentDetailViewController: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? FieldTypeDetailViewCell else { return }
-
-        cell.isOpen.toggle()
-
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            options: .transitionCrossDissolve
-        ) {
-            tableView.beginUpdates()
-            cell.layoutIfNeeded()
-            tableView.endUpdates()
-        }
-        tableView.layoutIfNeeded()
-
-        self.fieldTypeDetailTableView.snp.remakeConstraints {
-            $0.height.greaterThanOrEqualTo(self.fieldTypeDetailTableView.contentSize.height)
-        }
-    }
-
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return JobisMenuLabel(text: "모집분야")
-    }
-
-    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 36
-    }
 }

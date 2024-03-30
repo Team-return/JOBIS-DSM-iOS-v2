@@ -8,6 +8,8 @@ import Core
 import DesignSystem
 
 public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+    public var viewWillappearWithTap: (() -> Void)?
+    public var isTabNavigation: Bool = true
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let searchButtonDidTap = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
@@ -48,7 +50,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func bind() {
         let input = RecruitmentViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
+            viewAppear: self.viewDidLoadPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
             pageChange: recruitmentTableView.rx.willDisplayCell
                 .filter {
@@ -56,7 +58,13 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                         inSection: $0.indexPath.section
                     ) - 1
                 },
-            recruitmentTableViewDidTap: recruitmentTableView.rx.itemSelected,
+            recruitmentTableViewDidTap: recruitmentTableView.rx
+                .modelSelected(RecruitmentEntity.self)
+                .asObservable()
+                .map { $0.recruitID }
+                .do(onNext: { _ in
+                    self.isTabNavigation = false
+                }),
             searchButtonDidTap: searchButtonDidTap
         )
 
@@ -74,7 +82,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 )) { _, element, cell in
                     cell.adapt(model: element)
                     cell.bookmarkButtonDidTap = {
-                        self.bookmarkButtonDidClicked.accept(cell.recruitmentID)
+                        self.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
                     }
                 }
                 .disposed(by: disposeBag)
@@ -91,6 +99,10 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             .bind {
                 self.showTabbar()
                 self.setLargeTitle(title: "모집의뢰서")
+                if self.isTabNavigation {
+                    self.viewWillappearWithTap?()
+                }
+                self.isTabNavigation = true
             }
             .disposed(by: disposeBag)
 
