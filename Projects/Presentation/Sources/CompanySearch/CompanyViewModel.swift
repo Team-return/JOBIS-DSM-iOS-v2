@@ -54,9 +54,7 @@ public final class CompanyViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.companyTableViewCellDidTap.asObservable()
-            .map {
-                CompanyStep.companyDetailIsRequired(id: $0)
-            }
+            .map { CompanyStep.companyDetailIsRequired(id: $0) }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

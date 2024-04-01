@@ -42,7 +42,7 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
                         inSection: $0.indexPath.section
                     ) - 1
                 },
-            companyTableViewCellDidTap: companyTableView.rx.modelDeleted(CompanyEntity.self)
+            companyTableViewCellDidTap: companyTableView.rx.modelSelected(CompanyEntity.self)
                 .map { $0.companyID }
         )
 
