@@ -25,8 +25,8 @@ public final class HomeFlow: Flow {
         case .alarmIsRequired:
             return navigateToAlarm()
 
-        case .companySearchIsRequired:
-            return navigateToCompanySearch()
+        case .companyIsRequired:
+            return navigateToCompany()
 
         case let .rejectReasonIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
             return navigateToRejectReason(recruitmentID, applicationID, companyName, companyImageUrl)
@@ -67,9 +67,9 @@ private extension HomeFlow {
         ))
     }
 
-    func navigateToCompanySearch() -> FlowContributors {
-        let companySearchFlow = CompanySearchFlow(container: container)
-        Flows.use(companySearchFlow, when: .created) { root in
+    func navigateToCompany() -> FlowContributors {
+        let companyFlow = CompanyFlow(container: container)
+        Flows.use(companyFlow, when: .created) { root in
             self.rootViewController.pushViewController(
                 root,
                 animated: true
@@ -77,9 +77,9 @@ private extension HomeFlow {
         }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: companySearchFlow,
+            withNextPresentable: companyFlow,
             withNextStepper: OneStepper(
-                withSingleStep: CompanySearchStep.companySearchIsRequired
+                withSingleStep: CompanyStep.companyIsRequired
             )
         ))
     }
