@@ -36,6 +36,7 @@ final class JobisAlertViewController: UIViewController {
             font: .body,
             color: .GrayScale.gray70
         )
+        $0.numberOfLines = 0
     }
 
     private lazy var cancelButton = AlertButton(style: .cancel).then {
