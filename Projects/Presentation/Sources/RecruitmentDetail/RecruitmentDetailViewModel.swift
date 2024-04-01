@@ -30,7 +30,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
     }
 
     public struct Input {
-        let viewAppear: PublishRelay<Void>
+        let viewDidLoad: PublishRelay<Void>
         let companyDetailButtonDidClicked: Signal<Void>
         let bookMarkButtonDidTap: Signal<Void>
         let applyButtonDidTap: Signal<Void>
@@ -47,7 +47,7 @@ public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
         let areaListEntity = BehaviorRelay<[AreaEntity]>(value: [])
         let isApplicable = PublishRelay<Void>()
 
-        input.viewAppear.asObservable()
+        input.viewDidLoad.asObservable()
             .flatMap {
                 self.fetchRecruitmentDetailUseCase.execute(id: self.recruitmentID ?? 0)
             }

@@ -119,7 +119,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
     public override func bind() {
         let input = RecruitmentDetailViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
+            viewDidLoad: self.viewDidLoadPublisher,
             companyDetailButtonDidClicked: companyProfileView.companyDetailButton.rx.tap.asSignal(),
             bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
                 .do(onNext: { [weak self] in
