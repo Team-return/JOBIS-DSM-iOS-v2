@@ -109,7 +109,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         let input = HomeViewModel.Input(
             viewAppear: viewWillAppearPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
-            navigateToCompanySearchButtonDidTap: findCompanysCard.rx.tap.asSignal(),
+            navigateToCompanyButtonDidTap: findCompanysCard.rx.tap.asSignal(),
             rejectButtonDidTap: rejectButtonDidTap,
             reApplyButtonDidTap: reApplyButtonDidTap
         )
