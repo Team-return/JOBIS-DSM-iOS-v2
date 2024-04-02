@@ -24,8 +24,8 @@ public final class CompanyFlow: Flow {
             return navigateToCompany()
         case let .companyDetailIsRequired(id):
             return navigateToCompanyDetail(id)
-        case .companySearchIsRequired:
-            return navigateToCompanySearch()
+        case .searchCompanyIsRequired:
+            return navigateToSearchCompany()
         }
     }
 }
@@ -56,19 +56,19 @@ private extension CompanyFlow {
         ))
     }
 
-    func navigateToCompanySearch() -> FlowContributors {
-        let companySearchFlow = CompanySearchFlow(container: container)
+    func navigateToSearchCompany() -> FlowContributors {
+        let searchCompanyFlow = SearchCompanyFlow(container: container)
 
-        Flows.use(companySearchFlow, when: .created) { (root) in
-            let view = root as? CompanySearchViewController
+        Flows.use(searchCompanyFlow, when: .created) { (root) in
+            let view = root as? SearchCompanyViewController
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )
         }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: companySearchFlow,
-            withNextStepper: OneStepper(withSingleStep: CompanySearchStep.companySearchIsRequired)
+            withNextPresentable: searchCompanyFlow,
+            withNextStepper: OneStepper(withSingleStep: SearchCompanyStep.searchCompanyIsRequired)
         ))
     }
 }
