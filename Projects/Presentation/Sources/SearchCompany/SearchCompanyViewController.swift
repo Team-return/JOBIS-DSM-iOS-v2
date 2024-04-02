@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class CompanySearchViewController: BaseViewController<CompanySearchViewModel> {
+public final class SearchCompanyViewController: BaseViewController<SearchCompanyViewModel> {
     private let searchButtonDidTap = PublishRelay<String>()
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
@@ -74,7 +74,7 @@ public final class CompanySearchViewController: BaseViewController<CompanySearch
     }
 
     public override func bind() {
-        let input = CompanySearchViewModel.Input(
+        let input = SearchCompanyViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             pageChange: searchTableView.rx.willDisplayCell
                 .filter {
@@ -120,7 +120,7 @@ public final class CompanySearchViewController: BaseViewController<CompanySearch
     public override func configureNavigation() { }
 }
 
-extension CompanySearchViewController: UITextFieldDelegate {
+extension SearchCompanyViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
