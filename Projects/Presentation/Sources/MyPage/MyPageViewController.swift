@@ -21,6 +21,9 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let accountSectionView = AccountSectionView()
 //    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
+    private let logoutPublisher = PublishRelay<Void>()
+    private let withdrawalPublisher = PublishRelay<Void>()
+
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
@@ -82,8 +85,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
-            logoutSectionDidTap: accountSectionView.getSelectedItem(type: .logout),
-            withdrawalSectionDidTap: accountSectionView.getSelectedItem(type: .withDraw)
+            logoutPublisher: logoutPublisher,
+            withdrawalPublisher: withdrawalPublisher
         )
 
         input.changePasswordSectionDidTap.asObservable()
@@ -114,6 +117,32 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()
+            })
+            .disposed(by: disposeBag)
+
+        self.accountSectionView.getSelectedItem(type: .logout)
+            .asObservable()
+            .subscribe(onNext: {_ in
+                AlertBuilder(viewController: self)
+                    .setTitle("JOBIS에서 로그아웃 하시겠어요?")
+                    .setMessage("JOBIS에서 로그아웃 하면,\n로그인 할 때 까지 사용하지 못해요")
+                    .addActionConfirm("로그아웃") {
+                        self.withdrawalPublisher.accept(())
+                    }
+                    .show()
+            })
+            .disposed(by: disposeBag)
+
+        self.accountSectionView.getSelectedItem(type: .withDraw)
+            .asObservable()
+            .subscribe(onNext: {_ in
+                AlertBuilder(viewController: self)
+                    .setTitle("JOBIS에서 탈퇴하시겠어요?")
+                    .setMessage("JOBIS에서 탈퇴하면,\n다시 가입 할 때 까지 사용하지 못해요")
+                    .addActionConfirm("회원탈퇴") {
+                        self.logoutPublisher.accept(())
+                    }
+                    .show()
             })
             .disposed(by: disposeBag)
     }

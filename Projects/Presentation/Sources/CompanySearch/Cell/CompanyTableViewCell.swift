@@ -6,8 +6,8 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class CompanySearchTableViewCell: BaseTableViewCell<CompanyEntity> {
-    static let identifier = "CompanySearchTableViewCell"
+final class CompanyTableViewCell: BaseTableViewCell<CompanyEntity> {
+    static let identifier = "CompanyTableViewCell"
     public var companyID = 0
     private var disposeBag = DisposeBag()
     private var companyProfileImageView = UIImageView().then {
@@ -49,20 +49,23 @@ final class CompanySearchTableViewCell: BaseTableViewCell<CompanyEntity> {
     override func setLayout() {
         companyProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
             $0.width.height.equalTo(48)
         }
         companyNameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(8)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
         }
         existRecruitmentLabel.snp.makeConstraints {
             $0.top.equalTo(companyNameLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(8)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
         }
         benefitLabel.snp.makeConstraints {
             $0.top.equalTo(existRecruitmentLabel.snp.bottom).offset(4)
-            $0.left.equalTo(companyProfileImageView.snp.right).offset(8)
+            $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
         }
     }
 
