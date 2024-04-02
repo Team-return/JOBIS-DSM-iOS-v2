@@ -217,13 +217,13 @@ public final class PresentationAssembly: Assembly {
             ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
         }
 
-        container.register(CompanySearchViewController.self) { resolver in
-            CompanySearchViewController(
-                resolver.resolve(CompanySearchViewModel.self)!
+        container.register(CompanyViewController.self) { resolver in
+            CompanyViewController(
+                resolver.resolve(CompanyViewModel.self)!
             )
         }
-        container.register(CompanySearchViewModel.self) { resolver in
-            CompanySearchViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        container.register(CompanyViewModel.self) { resolver in
+            CompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
         container.register(RecruitmentSearchViewController.self) { resolver in

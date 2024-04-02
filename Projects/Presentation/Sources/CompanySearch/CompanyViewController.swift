@@ -7,14 +7,11 @@ import Then
 import Core
 import DesignSystem
 
-public class CompanySearchViewController: BaseViewController<CompanySearchViewModel> {
-    private let companySearchTableViewCellDidTap = PublishRelay<Int>()
-    private var companyId: Int?
-
-    private let companySearchTableView = UITableView().then {
+public class CompanyViewController: BaseViewController<CompanyViewModel> {
+    private let companyTableView = UITableView().then {
         $0.register(
-            CompanySearchTableViewCell.self,
-            forCellReuseIdentifier: CompanySearchTableViewCell.identifier
+            CompanyTableViewCell.self,
+            forCellReuseIdentifier: CompanyTableViewCell.identifier
         )
         $0.separatorStyle = .none
         $0.rowHeight = 104
@@ -26,25 +23,27 @@ public class CompanySearchViewController: BaseViewController<CompanySearchViewMo
 
     public override func addView() {
         [
-            companySearchTableView
+            companyTableView
         ].forEach(view.addSubview(_:))
     }
 
     public override func setLayout() {
-        companySearchTableView.snp.makeConstraints {
+        companyTableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
 
     public override func bind() {
-        let input = CompanySearchViewModel.Input(
+        let input = CompanyViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
-            pageChange: companySearchTableView.rx.willDisplayCell
+            pageChange: companyTableView.rx.willDisplayCell
                 .filter {
-                    $0.indexPath.row == self.companySearchTableView.numberOfRows(inSection: $0.indexPath.section) - 1
-                }
-                .asObservable(),
-            companySearchTableViewCellDidTap: companySearchTableViewCellDidTap
+                    $0.indexPath.row == self.companyTableView.numberOfRows(
+                        inSection: $0.indexPath.section
+                    ) - 1
+                },
+            companyTableViewCellDidTap: companyTableView.rx.modelSelected(CompanyEntity.self)
+                .map { $0.companyID }
         )
 
         let output = viewModel.transform(input)
@@ -52,9 +51,9 @@ public class CompanySearchViewController: BaseViewController<CompanySearchViewMo
         output.companyList
             .skip(1)
             .bind(
-                to: companySearchTableView.rx.items(
-                    cellIdentifier: CompanySearchTableViewCell.identifier,
-                    cellType: CompanySearchTableViewCell.self
+                to: companyTableView.rx.items(
+                    cellIdentifier: CompanyTableViewCell.identifier,
+                    cellType: CompanyTableViewCell.self
                 )) { _, element, cell in
                     cell.adapt(model: element)
                 }
@@ -66,12 +65,6 @@ public class CompanySearchViewController: BaseViewController<CompanySearchViewMo
             .bind {
                 self.hideTabbar()
             }
-            .disposed(by: disposeBag)
-
-        companySearchTableView.rx.modelSelected(CompanyEntity.self)
-            .subscribe(onNext: { data in
-                self.companySearchTableViewCellDidTap.accept(data.companyID)
-            })
             .disposed(by: disposeBag)
     }
 

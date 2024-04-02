@@ -4,32 +4,32 @@ import Swinject
 import RxFlow
 import Core
 
-public final class CompanySearchFlow: Flow {
+public final class CompanyFlow: Flow {
     public let container: Container
-    private let rootViewController: CompanySearchViewController
+    private let rootViewController: CompanyViewController
     public var root: Presentable {
         return rootViewController
     }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(CompanySearchViewController.self)!
+        self.rootViewController = container.resolve(CompanyViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
-        guard let step = step as? CompanySearchStep else { return .none }
+        guard let step = step as? CompanyStep else { return .none }
 
         switch step {
-        case .companySearchIsRequired:
-            return navigateToCompanySearch()
+        case .companyIsRequired:
+            return navigateToCompany()
         case let .companyDetailIsRequired(id):
             return navigateToCompanyDetail(id)
         }
     }
 }
 
-private extension CompanySearchFlow {
-    func navigateToCompanySearch() -> FlowContributors {
+private extension CompanyFlow {
+    func navigateToCompany() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel

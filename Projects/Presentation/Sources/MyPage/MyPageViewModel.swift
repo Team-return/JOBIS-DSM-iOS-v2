@@ -37,8 +37,8 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 //        let reviewNavigate: PublishRelay<Int>
         let helpSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
-        let logoutSectionDidTap: Observable<IndexPath>
-        let withdrawalSectionDidTap: Observable<IndexPath>
+        let logoutPublisher: PublishRelay<Void>
+        let withdrawalPublisher: PublishRelay<Void>
     }
 
     public struct Output {
@@ -77,7 +77,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        input.logoutSectionDidTap
+        input.logoutPublisher
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
             })
@@ -85,7 +85,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        input.withdrawalSectionDidTap
+        input.withdrawalPublisher
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
             })
