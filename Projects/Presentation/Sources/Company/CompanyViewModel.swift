@@ -60,7 +60,7 @@ public final class CompanyViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.searchButtonDidTap.asObservable()
-            .map { CompanyStep.companySearchIsRequired }
+            .map { CompanyStep.searchCompanyIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
