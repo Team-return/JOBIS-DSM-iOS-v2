@@ -242,5 +242,9 @@ public final class PresentationAssembly: Assembly {
                 fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
             )
         }
+
+        container.register(EasterEggViewController.self) { resolver in
+            EasterEggViewController()
+        }
     }
 }

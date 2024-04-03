@@ -45,7 +45,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     }
     private var findCompanysCard = CareerNavigationCard()
     private var findWinterRecruitmentsCard = CareerNavigationCard()
-
+    private var navigateToEasterEggDidTap = PublishRelay<Void>()
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
@@ -108,11 +108,19 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     public override func bind() {
         let input = HomeViewModel.Input(
             viewAppear: viewWillAppearPublisher,
+            viewDisappear: viewWillDisappearPublisher,
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
+            navigateToEasterEggDidTap: navigateToEasterEggDidTap,
             navigateToCompanyButtonDidTap: findCompanysCard.rx.tap.asSignal(),
             rejectButtonDidTap: rejectButtonDidTap,
             reApplyButtonDidTap: reApplyButtonDidTap
         )
+
+        titleImageView.rx.tapGesture().when(.recognized).asObservable()
+            .bind { [weak self] _ in
+                self?.navigateToEasterEggDidTap.accept(())
+            }
+            .disposed(by: disposeBag)
 
         let output = viewModel.transform(input)
 
@@ -171,12 +179,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
 
     public override func configureViewController() {
         checkWinterSeason()
-
-        navigateToAlarmButton.rx.tap.asObservable()
-            .subscribe(onNext: { [weak self] _ in
-                self?.hideTabbar()
-            })
-            .disposed(by: disposeBag)
 
         isWinterSeason.asObservable()
             .bind { [weak self] in
