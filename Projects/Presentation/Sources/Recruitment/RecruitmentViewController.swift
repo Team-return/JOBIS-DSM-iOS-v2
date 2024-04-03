@@ -11,7 +11,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
-    private let searchButtonDidTap = PublishRelay<Void>()
     private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
         $0.setEmptyView(title: "아직 등록된 모집의뢰서가 없어요")
@@ -65,7 +64,8 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
                 .do(onNext: { _ in
                     self.isTabNavigation = false
                 }),
-            searchButtonDidTap: searchButtonDidTap
+            searchButtonDidTap: searchButton.rx.tap.asSignal(),
+            filterButtonDidTap: filterButton.rx.tap.asSignal()
         )
 
         let output = viewModel.transform(input)
@@ -89,12 +89,6 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
     }
 
     public override func configureViewController() {
-        searchButton.rx.tap
-            .subscribe(onNext: { _ in
-                self.searchButtonDidTap.accept(())
-            })
-            .disposed(by: disposeBag)
-
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
@@ -115,8 +109,8 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
 
     public override func configureNavigation() {
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: searchButton)
-//            UIBarButtonItem(customView: filterButton)
+            UIBarButtonItem(customView: searchButton),
+            UIBarButtonItem(customView: filterButton)
         ]
     }
 }

@@ -26,7 +26,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         let bookMarkButtonDidTap: PublishRelay<Int>
         var pageChange: Observable<WillDisplayCellEvent>
         let recruitmentTableViewDidTap: Observable<Int>
-        let searchButtonDidTap: PublishRelay<Void>
+        let searchButtonDidTap: Signal<Void>
+        let filterButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -87,6 +88,11 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .map {
                 RecruitmentStep.recruitmentSearchIsRequired
             }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.filterButtonDidTap.asObservable()
+            .map { _ in RecruitmentStep.recruitmentFilterIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

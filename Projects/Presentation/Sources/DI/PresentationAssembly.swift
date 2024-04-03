@@ -242,5 +242,16 @@ public final class PresentationAssembly: Assembly {
                 fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
             )
         }
+
+        container.register(RecruitmentFilterViewController.self) { resolver in
+            RecruitmentFilterViewController(
+                resolver.resolve(RecruitmentFilterViewModel.self)!
+            )
+        }
+        container.register(RecruitmentFilterViewModel.self) { resolver in
+            RecruitmentFilterViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
     }
 }
