@@ -8,6 +8,7 @@ import Core
 import DesignSystem
 
 public class CompanyViewController: BaseViewController<CompanyViewModel> {
+    private let searchButtonDidTap = PublishRelay<Void>()
     private let companyTableView = UITableView().then {
         $0.register(
             CompanyTableViewCell.self,
@@ -43,7 +44,8 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
                     ) - 1
                 },
             companyTableViewCellDidTap: companyTableView.rx.modelSelected(CompanyEntity.self)
-                .map { $0.companyID }
+                .map { $0.companyID },
+            searchButtonDidTap: searchButtonDidTap
         )
 
         let output = viewModel.transform(input)
@@ -65,6 +67,12 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
             .bind {
                 self.hideTabbar()
             }
+            .disposed(by: disposeBag)
+
+        searchButton.rx.tap
+            .subscribe(onNext: { _ in
+                self.searchButtonDidTap.accept(())
+            })
             .disposed(by: disposeBag)
     }
 

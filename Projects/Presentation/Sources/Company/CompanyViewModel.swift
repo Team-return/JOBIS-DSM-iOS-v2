@@ -23,6 +23,7 @@ public final class CompanyViewModel: BaseViewModel, Stepper {
         let viewAppear: PublishRelay<Void>
         var pageChange: Observable<WillDisplayCellEvent>
         let companyTableViewCellDidTap: Observable<Int>
+        let searchButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
@@ -55,6 +56,11 @@ public final class CompanyViewModel: BaseViewModel, Stepper {
 
         input.companyTableViewCellDidTap.asObservable()
             .map { CompanyStep.companyDetailIsRequired(id: $0) }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.searchButtonDidTap.asObservable()
+            .map { CompanyStep.searchCompanyIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
