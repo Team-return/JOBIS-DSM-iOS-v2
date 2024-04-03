@@ -7,11 +7,11 @@ import Domain
 
 public final class SearchCompanyViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    public var searchText: String?
     private let disposeBag = DisposeBag()
     private let fetchCompanyListUseCase: FetchCompanyListUseCase
     private var companyListInfo = BehaviorRelay<[CompanyEntity]>(value: [])
     private var pageCount: Int = 1
-    public var searchText: String?
 
     init(
         fetchCompanyListUseCase: FetchCompanyListUseCase
