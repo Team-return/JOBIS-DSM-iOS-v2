@@ -20,7 +20,7 @@ public enum DepartmentType: String, Codable {
             return "정보보안과"
 
         case .ai:
-            return "인공지능소프트웨어개발과"
+            return "인공지능소프트웨어과"
 
         case .common:
             return "공통과정"
