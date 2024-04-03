@@ -261,6 +261,7 @@ public final class PresentationAssembly: Assembly {
             RecruitmentFilterViewModel(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
+        }
 
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
