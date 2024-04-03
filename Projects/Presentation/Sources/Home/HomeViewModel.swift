@@ -12,6 +12,8 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     private let fetchApplicationUseCase: FetchApplicationUseCase
     private let fetchBannerListUseCase: FetchBannerListUseCase
 
+    private var touchedPopcatCount = 0
+
     init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchApplicationUseCase: FetchApplicationUseCase,
@@ -24,7 +26,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
+        let viewDisappear: PublishRelay<Void>
         let navigateToAlarmButtonDidTap: Signal<Void>
+        let navigateToEasterEggDidTap: PublishRelay<Void>
         let navigateToCompanyButtonDidTap: Signal<Void>
         let rejectButtonDidTap: PublishRelay<ApplicationEntity>
         let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
@@ -51,9 +55,29 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
 
+        input.viewAppear.asObservable()
+            .bind { _ in
+                self.touchedPopcatCount = 0
+            }
+            .disposed(by: disposeBag)
+
         input.navigateToAlarmButtonDidTap.asObservable()
             .map { _ in
                 HomeStep.alarmIsRequired
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.navigateToEasterEggDidTap.asObservable()
+            .do { _ in
+                self.touchedPopcatCount += 1
+            }
+            .filter { _ in
+                self.touchedPopcatCount >= 5
+            }
+            .map { _ in
+                self.touchedPopcatCount = 0
+                return HomeStep.easterEggIsRequired
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

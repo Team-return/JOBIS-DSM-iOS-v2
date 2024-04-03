@@ -14,10 +14,10 @@ public final class StudentInfoView: UIView {
         $0.alignment = .leading
     }
     private let userInfoLabel = UILabel().then {
-        $0.setJobisText("0000 가가가", font: .subHeadLine, color: .GrayScale.gray90)
+        $0.setJobisText("불러오는 중...", font: .subHeadLine, color: .GrayScale.gray90)
     }
     private let departmentLabel = UILabel().then {
-        $0.setJobisText("가가가가가가가가", font: .description, color: .GrayScale.gray70)
+        $0.setJobisText("", font: .description, color: .GrayScale.gray70)
     }
 
     public init() {

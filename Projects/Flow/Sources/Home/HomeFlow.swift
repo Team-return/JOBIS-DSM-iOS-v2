@@ -28,6 +28,9 @@ public final class HomeFlow: Flow {
         case .companyIsRequired:
             return navigateToCompany()
 
+        case .easterEggIsRequired:
+            return navigateToEasterEgg()
+
         case let .rejectReasonIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
             return navigateToRejectReason(recruitmentID, applicationID, companyName, companyImageUrl)
 
@@ -64,6 +67,21 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: alarmFlow,
             withNextStepper: OneStepper(withSingleStep: AlarmStep.alarmIsRequired)
+        ))
+    }
+
+    func navigateToEasterEgg() -> FlowContributors {
+        let easterEggFlow = EasterEggFlow(container: container)
+
+        Flows.use(easterEggFlow, when: .created) { root in
+            self.rootViewController.present(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: easterEggFlow,
+            withNextStepper: OneStepper(withSingleStep: EasterEggStep.easterEggIsRequired)
         ))
     }
 

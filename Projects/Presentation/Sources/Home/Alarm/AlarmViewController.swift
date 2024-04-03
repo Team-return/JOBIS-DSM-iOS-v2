@@ -48,9 +48,9 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
     }
 
     public override func configureViewController() {
-        self.viewWillDisappearPublisher.asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.showTabbar()
+        self.viewWillAppearPublisher.asObservable()
+            .subscribe(onNext: {
+                self.hideTabbar()
             })
             .disposed(by: disposeBag)
     }
