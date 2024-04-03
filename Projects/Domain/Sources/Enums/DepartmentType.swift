@@ -14,7 +14,7 @@ public enum DepartmentType: String, Codable {
             return "소프트웨어개발과"
 
         case .embeddedSoftware:
-            return "임베디드소프트웨어개발과"
+            return "임베디드소프트웨어과"
 
         case .informationSecurity:
             return "정보보안과"
