@@ -42,7 +42,6 @@ public enum JobisIcon {
     case link
     case close
 
-    // swiftlint: disable cyclomatic_complexity function_body_length
     func uiImage() -> UIImage {
         let dsIcons = DesignSystemAsset.Icons.self
 
@@ -147,5 +146,4 @@ public enum JobisIcon {
             return dsIcons.close.image
         }
     }
-    // swiftlint: enable cyclomatic_complexity function_body_length
 }
