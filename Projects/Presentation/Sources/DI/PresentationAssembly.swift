@@ -6,7 +6,6 @@ import Domain
 public final class PresentationAssembly: Assembly {
     public init() {}
 
-    // swiftlint:disable function_body_length
     public func assemble(container: Container) {
         container.register(HomeViewController.self) { resolver in
             HomeViewController(resolver.resolve(HomeViewModel.self)!)
@@ -244,5 +243,4 @@ public final class PresentationAssembly: Assembly {
             )
         }
     }
-    // swiftlint:enable function_body_length
 }

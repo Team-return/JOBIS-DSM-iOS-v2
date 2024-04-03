@@ -8,18 +8,6 @@ struct NoticeDetailResponseDTO: Decodable {
     let createdAt: String
     let attachments: [AttachmentsResponseDTO]
 
-    init(
-        title: String,
-        content: String,
-        createdAt: String,
-        attachments: [AttachmentsResponseDTO]
-    ) {
-        self.title = title
-        self.content = content
-        self.createdAt = createdAt
-        self.attachments = attachments
-    }
-
     enum CodingKeys: String, CodingKey {
         case title
         case content

@@ -46,10 +46,10 @@ private extension AppFlow {
             )
         )
     }
-    
+
     func navigationToTabs() -> FlowContributors {
         let tabsFlow = TabsFlow(container: container)
-        
+
         Flows.use(tabsFlow, when: .created) { (root) in
             UIView.transition(
                 with: self.window,
