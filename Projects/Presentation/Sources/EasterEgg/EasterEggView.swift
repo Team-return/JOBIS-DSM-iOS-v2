@@ -3,8 +3,25 @@ import DesignSystem
 
 struct EasterEggView: View {
     @State private var count = 0
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Button("") {}
+                .buttonStyle(CatButtonStyle(count: $count))
+
+            Text("\(count)")
+                .padding(.top, 50)
+        }
+    }
+}
+
+struct CatButtonStyle: ButtonStyle {
+    @Binding var count: Int
     @State private var angle = 0
     @State private var index = 0
+
+    init(count: Binding<Int>) {
+        _count = count
+    }
     private var colors: [Color] = [
         .yellow,
         .red,
@@ -15,46 +32,19 @@ struct EasterEggView: View {
         .mint,
         .white
     ]
-    var body: some View {
-        VStack {
-            Button("", action: addAction)
-                .buttonStyle(CatButtonStyle())
-                .rotationEffect(.degrees(Double(angle)))
-
-            Text("\(count)")
-                .padding(.top, 50)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-        .background(colors[index])
-    }
-
-    private func addAction() {
-        count += 1
-        angle = (angle + 45) % 360
-        index = Int.random(in: 0..<colors.count)
-        HapticManager.instance.impact(style: .heavy)
-    }
-}
-
-private struct CatButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
-        configuration.isPressed ? DesignSystemAsset.Images.EasterEgg.open.swiftUIImage:
-        DesignSystemAsset.Images.EasterEgg.close.swiftUIImage
-    }
-}
-
-final private class HapticManager {
-    static let instance = HapticManager()
-
-    func notification(type: UINotificationFeedbackGenerator.FeedbackType) {
-
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(type)
-    }
-
-    func impact(style: UIImpactFeedbackGenerator.FeedbackStyle) {
-        let generator = UIImpactFeedbackGenerator(style: style)
-        generator.impactOccurred()
+        (configuration.isPressed ? DesignSystemAsset.Images.EasterEgg.open.swiftUIImage:
+        DesignSystemAsset.Images.EasterEgg.close.swiftUIImage)
+        .rotationEffect(.degrees(Double(angle)))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(colors[index])
+        .onChange(of: configuration.isPressed) {
+            if $0 {
+                angle = (angle + 45) % 360
+                index = Int.random(in: 0..<colors.count)
+                count += 1
+                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+            }
+        }
     }
 }
