@@ -34,6 +34,10 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         $0.showsVerticalScrollIndicator = false
     }
     private let contentView = UIView()
+    private let mainStackView = UIStackView().then {
+        $0.spacing = 0
+        $0.axis = .vertical
+    }
     private let bossLabel = CompanyDetailLabel(menuText: "대표자")
     private let startedDayLabel = CompanyDetailLabel(menuText: "설립일")
     private let workersNumbersLabel = CompanyDetailLabel(menuText: "근로자 수")
@@ -61,6 +65,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         $0.setText("모집의뢰서 보기")
         $0.isHidden = true
     }
+
     public override func addView() {
         [
             scrollView,
@@ -68,6 +73,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         ].forEach(view.addSubview(_:))
 
         scrollView.addSubview(contentView)
+
         [
             companyLogoImageView,
             companyLabel,
@@ -83,7 +89,11 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             secondManagerLabel,
             secondPhoneNumberLabel,
             emailLabel,
-            faxLabel,
+            faxLabel
+        ].forEach(mainStackView.addArrangedSubview(_:))
+
+        [
+            mainStackView,
             interviewReviewMenuLabel,
             interviewReviewTableView
         ].forEach(contentView.addSubview(_:))
