@@ -214,24 +214,26 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         let output = viewModel.transform(input)
 
         output.companyDetailInfo
-            .bind(onNext: { companyDetailInfo in
-                self.companyLogoImageView.setJobisImage(urlString: companyDetailInfo.companyProfileURL)
-                self.companyLabel.text = companyDetailInfo.companyName
-                self.explainCompanyLabel.text = companyDetailInfo.companyIntroduce
-                self.bossLabel.setContent(contentText: companyDetailInfo.representativeName)
-                self.startedDayLabel.setContent(contentText: companyDetailInfo.foundedAt)
-                self.workersNumbersLabel.setContent(contentText: companyDetailInfo.workerNumber)
-                self.annualSalesLabel.setContent(contentText: companyDetailInfo.take)
-                self.headAddressLabel.setContent(contentText: companyDetailInfo.mainAddress)
-                self.chainAddressLabel.setContent(contentText: companyDetailInfo.subAddress ?? "-")
-                self.firstManagerLabel.setContent(contentText: companyDetailInfo.managerName)
-                self.firstPhoneNumberLabel.setContent(contentText: companyDetailInfo.managerPhoneNo)
-                self.secondManagerLabel.setContent(contentText: companyDetailInfo.subManagerName ?? "-")
-                self.secondPhoneNumberLabel.setContent(contentText: companyDetailInfo.subManagerPhoneNo ?? "-")
-                self.emailLabel.setContent(contentText: companyDetailInfo.email)
-                self.faxLabel.setContent(contentText: companyDetailInfo.fax ?? "-")
-                self.viewModel.recruitmentID = companyDetailInfo.recruitmentID
-                self.recruitmentButton.isHidden = companyDetailInfo.recruitmentID == nil
+            .bind(onNext: { [self] in
+                companyDetailProfileView.setCompanyProfile(
+                    imageUrl: $0.companyProfileURL,
+                    companyName: $0.companyName,
+                    companyContent: $0.companyIntroduce
+                )
+                bossLabel.setContent(contentText: $0.representativeName)
+                startedDayLabel.setContent(contentText: $0.foundedAt)
+                workersNumbersLabel.setContent(contentText: $0.workerNumber)
+                annualSalesLabel.setContent(contentText: $0.take)
+                headAddressLabel.setContent(contentText: $0.mainAddress)
+                chainAddressLabel.setContent(contentText: $0.subAddress ?? "-")
+                firstManagerLabel.setContent(contentText: $0.managerName)
+                firstPhoneNumberLabel.setContent(contentText: $0.managerPhoneNo)
+                secondManagerLabel.setContent(contentText: $0.subManagerName ?? "-")
+                secondPhoneNumberLabel.setContent(contentText: $0.subManagerPhoneNo ?? "-")
+                emailLabel.setContent(contentText: $0.email)
+                faxLabel.setContent(contentText: $0.fax ?? "-")
+                viewModel.recruitmentID = $0.recruitmentID
+                recruitmentButton.isHidden = $0.recruitmentID == nil
             })
             .disposed(by: disposeBag)
 
