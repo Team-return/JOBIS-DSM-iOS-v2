@@ -17,11 +17,10 @@
     
     여러분들의 취업의 지름길
 ---
-## 👨‍💻 팀원 소개
-### 8기
-| BE | FE | iOS | Android | Design |
-| --- | --- | --- | --- | --- |
-| [길근우](https://github.com/geunoo) [이하성](https://github.com/tedsoftj1123) [강민](https://github.com/alsdl0629) | [강용수](https://github.com/KANGYONGSU23) [강지인](https://github.com/JJIIIINN) [정지관](https://github.com/jikwan0327) | [홍승재](https://github.com/HongSJae) [박주영](https://github.com/juyeong525) | [정승훈](https://github.com/tmdhoon2) [김은오](https://github.com/rladmsdh) | 김하온 박시원
+## 👨‍💻 개발자 소개
+| 8기 | 9기 |
+| --- | --- | 
+| [홍승재](https://github.com/HongSJae) [박주영](https://github.com/juyeong525) | [이태규](https://github.com/ray3238) |
 
 ---
 ## 📱 화면
