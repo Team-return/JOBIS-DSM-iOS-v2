@@ -69,7 +69,7 @@
 |[Lottie](https://github.com/airbnb/lottie-ios.git)|Lotti 에니메이션 처리|4.3.3|
 |[KeychainSwift](https://github.com/evgenyneu/keychain-swift.git)|Keychain 간편 사용|20.0.0|
 |[ReactorKit](https://github.com/ReactorKit/ReactorKit.git)|ReactorKit|3.2.0|
-|[ReactorKit](https://github.com/ReactorKit/ReactorKit.git)| Messaging (FCM) | 10.3.0|
+|[Firebase](https://github.com/firebase/firebase-ios-sdk.git)| Messaging (FCM) | 10.3.0|
 
  <br>
 
