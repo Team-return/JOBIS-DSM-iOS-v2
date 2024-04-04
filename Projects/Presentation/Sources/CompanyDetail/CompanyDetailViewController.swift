@@ -8,28 +8,7 @@ import Core
 import DesignSystem
 
 public class CompanyDetailViewController: BaseViewController<CompanyDetailViewModel> {
-    private let companyLogoImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.borderWidth = 1.0
-        $0.layer.borderColor = UIColor.GrayScale.gray30.cgColor
-        $0.layer.cornerRadius = 8
-    }
-    private let companyLabel = UILabel().then {
-        $0.setJobisText(
-            "회사 정보 불러오는 중...",
-            font: .headLine,
-            color: .GrayScale.gray90
-        )
-    }
-    private let explainCompanyLabel = UILabel().then {
-        $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
-        $0.setJobisText(
-            "-",
-            font: .body,
-            color: .GrayScale.gray70
-        )
-    }
+    private let companyDetailProfileView = CompanyDetailProfileView()
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -75,9 +54,6 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         scrollView.addSubview(contentView)
 
         [
-            companyLogoImageView,
-            companyLabel,
-            explainCompanyLabel,
             bossLabel,
             startedDayLabel,
             workersNumbersLabel,
@@ -93,6 +69,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         ].forEach(mainStackView.addArrangedSubview(_:))
 
         [
+            companyDetailProfileView,
             mainStackView,
             interviewReviewMenuLabel,
             interviewReviewTableView
@@ -100,24 +77,8 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     }
 
     public override func setLayout() {
-        companyLogoImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.left.equalToSuperview().inset(24)
-            $0.width.height.equalTo(48)
-        }
-
-        companyLabel.snp.makeConstraints {
-            $0.left.equalTo(companyLogoImageView.snp.right).offset(12)
-            $0.centerY.equalTo(companyLogoImageView)
-        }
-
-        explainCompanyLabel.snp.makeConstraints {
-            $0.top.equalTo(companyLogoImageView.snp.bottom).offset(8)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(recruitmentButton.snp.top).inset(-12)
         }
@@ -128,68 +89,17 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             $0.bottom.equalTo(interviewReviewTableView.snp.bottom).offset(20)
         }
 
-        bossLabel.snp.makeConstraints {
-            $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(24)
-            $0.left.right.equalToSuperview().inset(24)
+        companyDetailProfileView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
         }
 
-        startedDayLabel.snp.makeConstraints {
-            $0.top.equalTo(bossLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        workersNumbersLabel.snp.makeConstraints {
-            $0.top.equalTo(startedDayLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        annualSalesLabel.snp.makeConstraints {
-            $0.top.equalTo(workersNumbersLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        headAddressLabel.snp.makeConstraints {
-            $0.top.equalTo(annualSalesLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        chainAddressLabel.snp.makeConstraints {
-            $0.top.equalTo(headAddressLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        firstManagerLabel.snp.makeConstraints {
-            $0.top.equalTo(chainAddressLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        firstPhoneNumberLabel.snp.makeConstraints {
-            $0.top.equalTo(firstManagerLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        secondManagerLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPhoneNumberLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        secondPhoneNumberLabel.snp.makeConstraints {
-            $0.top.equalTo(secondManagerLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        emailLabel.snp.makeConstraints {
-            $0.top.equalTo(secondPhoneNumberLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        faxLabel.snp.makeConstraints {
-            $0.top.equalTo(emailLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
+        mainStackView.snp.makeConstraints {
+            $0.top.equalTo(companyDetailProfileView.snp.bottom).offset(12)
+            $0.leading.trailing.equalToSuperview()
         }
 
         interviewReviewMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(faxLabel.snp.bottom).offset(20)
+            $0.top.equalTo(mainStackView.snp.bottom).offset(20)
         }
 
         interviewReviewTableView.snp.makeConstraints {
