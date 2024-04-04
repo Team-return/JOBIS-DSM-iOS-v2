@@ -250,7 +250,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     public override func configureViewController() { }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "상세 보기")
+        self.setSmallTitle(title: "기업 상세")
         self.navigationItem.largeTitleDisplayMode = .never
     }
 }
