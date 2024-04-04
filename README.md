@@ -18,10 +18,15 @@
     여러분들의 취업의 지름길
 ---
 ## 👨‍💻 개발자 소개
-| 8기 | 9기 |
-| --- | --- | 
-| [홍승재](https://github.com/HongSJae) [박주영](https://github.com/juyeong525) | [이태규](https://github.com/ray3238) |
-
+<table>
+  <tbody>
+    <tr>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/HongSJae"><img src="https://avatars.githubusercontent.com/HongSJae" width="100px;" alt="HongSJae"/><br/><sub><b>HongSJae</b></sub></a><br/></td>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/juyeong525"><img src="https://avatars.githubusercontent.com/juyeong525" width="100px;" alt="juyeong525"/><br/><sub><b>juyeong525</b></sub></a><br/></td>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/ray3238"><img src="https://avatars.githubusercontent.com/ray3238" width="100px;" alt="ray3238"/><br/><sub><b>ray3238</b></sub></a><br/></td>
+    </tr>
+  </tbody>
+</table>
 ---
 ## 📱 화면
 **iOS**
