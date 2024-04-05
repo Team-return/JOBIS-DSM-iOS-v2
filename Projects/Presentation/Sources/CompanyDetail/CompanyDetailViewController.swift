@@ -124,26 +124,26 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         let output = viewModel.transform(input)
 
         output.companyDetailInfo
-            .bind(onNext: { [self] in
-                companyDetailProfileView.setCompanyProfile(
+            .bind(onNext: { [weak self] in
+                self?.companyDetailProfileView.setCompanyProfile(
                     imageUrl: $0.companyProfileURL,
                     companyName: $0.companyName,
                     companyContent: $0.companyIntroduce
                 )
-                bossLabel.setContent(contentText: $0.representativeName)
-                startedDayLabel.setContent(contentText: $0.foundedAt)
-                workersNumbersLabel.setContent(contentText: $0.workerNumber)
-                annualSalesLabel.setContent(contentText: $0.take)
-                headAddressLabel.setContent(contentText: $0.mainAddress)
-                chainAddressLabel.setContent(contentText: $0.subAddress ?? "-")
-                firstManagerLabel.setContent(contentText: $0.managerName)
-                firstPhoneNumberLabel.setContent(contentText: $0.managerPhoneNo)
-                secondManagerLabel.setContent(contentText: $0.subManagerName ?? "-")
-                secondPhoneNumberLabel.setContent(contentText: $0.subManagerPhoneNo ?? "-")
-                emailLabel.setContent(contentText: $0.email)
-                faxLabel.setContent(contentText: $0.fax ?? "-")
-                viewModel.recruitmentID = $0.recruitmentID
-                recruitmentButton.isHidden = $0.recruitmentID == nil
+                self?.bossLabel.setContent(contentText: $0.representativeName)
+                self?.startedDayLabel.setContent(contentText: $0.foundedAt)
+                self?.workersNumbersLabel.setContent(contentText: $0.workerNumber)
+                self?.annualSalesLabel.setContent(contentText: $0.take)
+                self?.headAddressLabel.setContent(contentText: $0.mainAddress)
+                self?.chainAddressLabel.setContent(contentText: $0.subAddress ?? "-")
+                self?.firstManagerLabel.setContent(contentText: $0.managerName)
+                self?.firstPhoneNumberLabel.setContent(contentText: $0.managerPhoneNo)
+                self?.secondManagerLabel.setContent(contentText: $0.subManagerName ?? "-")
+                self?.secondPhoneNumberLabel.setContent(contentText: $0.subManagerPhoneNo ?? "-")
+                self?.emailLabel.setContent(contentText: $0.email)
+                self?.faxLabel.setContent(contentText: $0.fax ?? "-")
+                self?.viewModel.recruitmentID = $0.recruitmentID
+                self?.recruitmentButton.isHidden = $0.recruitmentID == nil
             })
             .disposed(by: disposeBag)
 
