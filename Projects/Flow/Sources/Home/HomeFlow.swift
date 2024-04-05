@@ -74,7 +74,7 @@ private extension HomeFlow {
         let easterEggFlow = EasterEggFlow(container: container)
 
         Flows.use(easterEggFlow, when: .created) { root in
-            self.rootViewController.present(
+            self.rootViewController.pushViewController(
                 root, animated: true
             )
         }
