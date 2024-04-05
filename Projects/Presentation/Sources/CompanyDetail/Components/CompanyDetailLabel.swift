@@ -34,13 +34,15 @@ public final class CompanyDetailLabel: BaseView {
 
     public override func setLayout() {
         title.snp.makeConstraints {
-            $0.top.left.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().inset(24)
             $0.width.equalTo(64)
         }
         content.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.left.equalTo(title.snp.right).offset(8)
-            $0.right.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.equalTo(title.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
 }
