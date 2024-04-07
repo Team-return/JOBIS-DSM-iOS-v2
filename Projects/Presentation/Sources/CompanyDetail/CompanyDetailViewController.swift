@@ -8,32 +8,15 @@ import Core
 import DesignSystem
 
 public class CompanyDetailViewController: BaseViewController<CompanyDetailViewModel> {
-    private let companyLogoImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.borderWidth = 1.0
-        $0.layer.borderColor = UIColor.GrayScale.gray30.cgColor
-        $0.layer.cornerRadius = 8
-    }
-    private let companyLabel = UILabel().then {
-        $0.setJobisText(
-            "회사 정보 불러오는 중...",
-            font: .headLine,
-            color: .GrayScale.gray90
-        )
-    }
-    private let explainCompanyLabel = UILabel().then {
-        $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
-        $0.setJobisText(
-            "-",
-            font: .body,
-            color: .GrayScale.gray70
-        )
-    }
+    private let companyDetailProfileView = CompanyDetailProfileView()
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
     private let contentView = UIView()
+    private let mainStackView = UIStackView().then {
+        $0.spacing = 0
+        $0.axis = .vertical
+    }
     private let bossLabel = CompanyDetailLabel(menuText: "대표자")
     private let startedDayLabel = CompanyDetailLabel(menuText: "설립일")
     private let workersNumbersLabel = CompanyDetailLabel(menuText: "근로자 수")
@@ -61,6 +44,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         $0.setText("모집의뢰서 보기")
         $0.isHidden = true
     }
+
     public override func addView() {
         [
             scrollView,
@@ -68,10 +52,8 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         ].forEach(view.addSubview(_:))
 
         scrollView.addSubview(contentView)
+
         [
-            companyLogoImageView,
-            companyLabel,
-            explainCompanyLabel,
             bossLabel,
             startedDayLabel,
             workersNumbersLabel,
@@ -83,31 +65,20 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             secondManagerLabel,
             secondPhoneNumberLabel,
             emailLabel,
-            faxLabel,
+            faxLabel
+        ].forEach(mainStackView.addArrangedSubview(_:))
+
+        [
+            companyDetailProfileView,
+            mainStackView,
             interviewReviewMenuLabel,
             interviewReviewTableView
         ].forEach(contentView.addSubview(_:))
     }
 
     public override func setLayout() {
-        companyLogoImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.left.equalToSuperview().inset(24)
-            $0.width.height.equalTo(48)
-        }
-
-        companyLabel.snp.makeConstraints {
-            $0.left.equalTo(companyLogoImageView.snp.right).offset(12)
-            $0.centerY.equalTo(companyLogoImageView)
-        }
-
-        explainCompanyLabel.snp.makeConstraints {
-            $0.top.equalTo(companyLogoImageView.snp.bottom).offset(8)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(recruitmentButton.snp.top).inset(-12)
         }
@@ -118,68 +89,17 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             $0.bottom.equalTo(interviewReviewTableView.snp.bottom).offset(20)
         }
 
-        bossLabel.snp.makeConstraints {
-            $0.top.equalTo(explainCompanyLabel.snp.bottom).offset(24)
-            $0.left.right.equalToSuperview().inset(24)
+        companyDetailProfileView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
         }
 
-        startedDayLabel.snp.makeConstraints {
-            $0.top.equalTo(bossLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        workersNumbersLabel.snp.makeConstraints {
-            $0.top.equalTo(startedDayLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        annualSalesLabel.snp.makeConstraints {
-            $0.top.equalTo(workersNumbersLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        headAddressLabel.snp.makeConstraints {
-            $0.top.equalTo(annualSalesLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        chainAddressLabel.snp.makeConstraints {
-            $0.top.equalTo(headAddressLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        firstManagerLabel.snp.makeConstraints {
-            $0.top.equalTo(chainAddressLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        firstPhoneNumberLabel.snp.makeConstraints {
-            $0.top.equalTo(firstManagerLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        secondManagerLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPhoneNumberLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        secondPhoneNumberLabel.snp.makeConstraints {
-            $0.top.equalTo(secondManagerLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        emailLabel.snp.makeConstraints {
-            $0.top.equalTo(secondPhoneNumberLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
-        }
-
-        faxLabel.snp.makeConstraints {
-            $0.top.equalTo(emailLabel.snp.bottom).offset(16)
-            $0.left.right.equalToSuperview().inset(24)
+        mainStackView.snp.makeConstraints {
+            $0.top.equalTo(companyDetailProfileView.snp.bottom).offset(12)
+            $0.leading.trailing.equalToSuperview()
         }
 
         interviewReviewMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(faxLabel.snp.bottom).offset(20)
+            $0.top.equalTo(mainStackView.snp.bottom).offset(20)
         }
 
         interviewReviewTableView.snp.makeConstraints {
@@ -204,24 +124,26 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         let output = viewModel.transform(input)
 
         output.companyDetailInfo
-            .bind(onNext: { companyDetailInfo in
-                self.companyLogoImageView.setJobisImage(urlString: companyDetailInfo.companyProfileURL)
-                self.companyLabel.text = companyDetailInfo.companyName
-                self.explainCompanyLabel.text = companyDetailInfo.companyIntroduce
-                self.bossLabel.setContent(contentText: companyDetailInfo.representativeName)
-                self.startedDayLabel.setContent(contentText: companyDetailInfo.foundedAt)
-                self.workersNumbersLabel.setContent(contentText: companyDetailInfo.workerNumber)
-                self.annualSalesLabel.setContent(contentText: companyDetailInfo.take)
-                self.headAddressLabel.setContent(contentText: companyDetailInfo.mainAddress)
-                self.chainAddressLabel.setContent(contentText: companyDetailInfo.subAddress ?? "-")
-                self.firstManagerLabel.setContent(contentText: companyDetailInfo.managerName)
-                self.firstPhoneNumberLabel.setContent(contentText: companyDetailInfo.managerPhoneNo)
-                self.secondManagerLabel.setContent(contentText: companyDetailInfo.subManagerName ?? "-")
-                self.secondPhoneNumberLabel.setContent(contentText: companyDetailInfo.subManagerPhoneNo ?? "-")
-                self.emailLabel.setContent(contentText: companyDetailInfo.email)
-                self.faxLabel.setContent(contentText: companyDetailInfo.fax ?? "-")
-                self.viewModel.recruitmentID = companyDetailInfo.recruitmentID
-                self.recruitmentButton.isHidden = companyDetailInfo.recruitmentID == nil
+            .bind(onNext: { [weak self] in
+                self?.companyDetailProfileView.setCompanyProfile(
+                    imageUrl: $0.companyProfileURL,
+                    companyName: $0.companyName,
+                    companyContent: $0.companyIntroduce
+                )
+                self?.bossLabel.setContent(contentText: $0.representativeName)
+                self?.startedDayLabel.setContent(contentText: $0.foundedAt)
+                self?.workersNumbersLabel.setContent(contentText: $0.workerNumber)
+                self?.annualSalesLabel.setContent(contentText: $0.take)
+                self?.headAddressLabel.setContent(contentText: $0.mainAddress)
+                self?.chainAddressLabel.setContent(contentText: $0.subAddress ?? "-")
+                self?.firstManagerLabel.setContent(contentText: $0.managerName)
+                self?.firstPhoneNumberLabel.setContent(contentText: $0.managerPhoneNo)
+                self?.secondManagerLabel.setContent(contentText: $0.subManagerName ?? "-")
+                self?.secondPhoneNumberLabel.setContent(contentText: $0.subManagerPhoneNo ?? "-")
+                self?.emailLabel.setContent(contentText: $0.email)
+                self?.faxLabel.setContent(contentText: $0.fax ?? "-")
+                self?.viewModel.recruitmentID = $0.recruitmentID
+                self?.recruitmentButton.isHidden = $0.recruitmentID == nil
             })
             .disposed(by: disposeBag)
 
@@ -238,7 +160,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     public override func configureViewController() { }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "상세 보기")
+        self.setSmallTitle(title: "기업 상세")
         self.navigationItem.largeTitleDisplayMode = .never
     }
 }
