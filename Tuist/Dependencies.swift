@@ -29,27 +29,27 @@ let dependencies = Dependencies(
                 requirement: .branch("master")
             ),
             .remote(
-                url: "https://github.com/airbnb/lottie-ios",
+                url: "https://github.com/airbnb/lottie-ios.git",
                 requirement: .upToNextMajor(from: "4.3.3")
             ),
             .remote(
-                url: "https://github.com/onevcat/Kingfisher",
+                url: "https://github.com/onevcat/Kingfisher.git",
                 requirement: .upToNextMajor(from: "7.0.0")
             ),
             .remote(
-                url: "https://github.com/evgenyneu/keychain-swift",
+                url: "https://github.com/evgenyneu/keychain-swift.git",
                 requirement: .upToNextMajor(from: "20.0.0")
             ),
             .remote(
-                url: "https://github.com/ReactorKit/ReactorKit",
+                url: "https://github.com/ReactorKit/ReactorKit.git",
                 requirement: .upToNextMajor(from: "3.2.0")
             ),
             .remote(
-                url: "https://github.com/RxSwiftCommunity/RxGesture",
+                url: "https://github.com/RxSwiftCommunity/RxGesture.git",
                 requirement: .upToNextMajor(from: "4.0.0")
             ),
             .remote(
-                url: "https://github.com/firebase/firebase-ios-sdk",
+                url: "https://github.com/firebase/firebase-ios-sdk.git",
                 requirement: .upToNextMajor(from: "10.3.0")
             )
 

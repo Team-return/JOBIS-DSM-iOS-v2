@@ -14,7 +14,7 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
         $0.setTextField(
             title: "비밀번호",
             placeholder: "계정의 비밀번호를 설정해주세요.",
-            descriptionType: .info(description: "8 ~ 16자, 영문자, 숫자, 특수문자 포함"),
+            descriptionType: .info(description: "8 ~ 16자, 영문자, 숫자, 특수문자(!@#$%^&*) 포함"),
             textFieldType: .secure
         )
     }

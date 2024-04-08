@@ -7,7 +7,7 @@ class EditProfileButton: BaseView {
     private let disposeBag = DisposeBag()
     private let editImageView = UIImageView().then {
         $0.image = .jobisIcon(.edit)
-        $0.tintColor = .Primary.blue20
+        $0.tintColor = .Primary.blue30
     }
     private let editLabel = UILabel().then {
         $0.setJobisText("이미지 수정하기", font: .subHeadLine, color: .Primary.blue30)

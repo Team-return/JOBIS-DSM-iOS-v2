@@ -17,7 +17,7 @@ public final class SigninViewController: BaseReactorViewController<SigninReactor
         $0.backgroundColor = .GrayScale.gray90
     }
     private let titleImageView = UIImageView().then {
-        $0.image = .jobisIcon(.door)
+        $0.image = .jobisIcon(.door).resize(size: 32)
     }
     private let emailTextField = JobisTextField().then {
         $0.setTextField(
