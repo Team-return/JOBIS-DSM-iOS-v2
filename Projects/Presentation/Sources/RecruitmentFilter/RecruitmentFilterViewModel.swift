@@ -20,10 +20,12 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let jobList: BehaviorRelay<[CodeEntity]>
+        let techList: BehaviorRelay<[CodeEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let jobList = BehaviorRelay<[CodeEntity]>(value: [])
+        let techList = BehaviorRelay<[CodeEntity]>(value: [])
         input.viewWillAppear.asObservable()
             .flatMap {
                 self.fetchCodeListUseCase.execute(keyword: nil, type: .job, parentCode: nil)
@@ -31,6 +33,13 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
             .bind(to: jobList)
             .disposed(by: disposeBag)
 
-        return Output(jobList: jobList)
+        input.viewWillAppear.asObservable()
+            .flatMap {
+                self.fetchCodeListUseCase.execute(keyword: nil, type: .tech, parentCode: nil)
+            }
+            .bind(to: techList)
+            .disposed(by: disposeBag)
+
+        return Output(jobList: jobList, techList: techList)
     }
 }

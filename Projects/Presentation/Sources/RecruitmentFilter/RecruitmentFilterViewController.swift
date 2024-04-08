@@ -11,6 +11,11 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     private let searchTextField = JobisSearchTextField().then {
         $0.setTextField(placeholder: "검색어를 입력해주세요")
     }
+    private let scrollView = UIScrollView()
+    private let contentStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+    }
     private let layout = LeftAlignedCollectionViewFlowLayout().then {
         $0.minimumLineSpacing = 8
         $0.minimumInteritemSpacing = 8
@@ -26,14 +31,28 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         $0.isScrollEnabled = false
         $0.register(
             JobsCollectionViewCell.self,
-            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+            forCellWithReuseIdentifier: JobsCollectionViewCelxl.identifier
         )
     }
+    private let techTableView = UITableView().then {
+        $0.register(TechTableViewCell.self, forCellReuseIdentifier: TechTableViewCell.identifier)
+        $0.rowHeight = UITableView.automaticDimension
+        $0.showsVerticalScrollIndicator = false
+        $0.estimatedRowHeight = UITableView.automaticDimension
+        $0.isScrollEnabled = false
+        $0.separatorStyle = .none
+    }
+
     public override func addView() {
         [
             searchTextField,
-            jobsCollectionView
+            scrollView
         ].forEach(self.view.addSubview(_:))
+        scrollView.addSubview(contentStackView)
+        [
+            jobsCollectionView,
+            techTableView
+        ].forEach(self.contentStackView.addArrangedSubview(_:))
     }
 
     public override func setLayout() {
@@ -41,10 +60,23 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
-        jobsCollectionView.snp.makeConstraints {
+
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(searchTextField.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalToSuperview()
+        }
+
+        jobsCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(jobsCollectionView.contentSize.height)
+        }
+
+        techTableView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(techTableView.contentSize.height)
         }
     }
 
@@ -57,10 +89,17 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                 cellType: JobsCollectionViewCell.self
             )) { _, element, cell in
                 cell.adapt(model: element)
-                cell.layoutIfNeeded()
-                self.jobsCollectionView.snp.updateConstraints {
-                    $0.height.greaterThanOrEqualTo(self.jobsCollectionView.contentSize.height)
-                }
+                self.jobsCollectionView.layoutIfNeeded()
+            }
+            .disposed(by: disposeBag)
+
+        output.techList
+            .bind(to: techTableView.rx.items(
+                cellIdentifier: TechTableViewCell.identifier,
+                cellType: TechTableViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+                self.techTableView.layoutIfNeeded()
             }
             .disposed(by: disposeBag)
     }
