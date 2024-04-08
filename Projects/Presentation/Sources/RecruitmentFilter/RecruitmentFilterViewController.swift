@@ -31,7 +31,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         $0.isScrollEnabled = false
         $0.register(
             JobsCollectionViewCell.self,
-            forCellWithReuseIdentifier: JobsCollectionViewCelxl.identifier
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
         )
     }
     private let techTableView = UITableView().then {
