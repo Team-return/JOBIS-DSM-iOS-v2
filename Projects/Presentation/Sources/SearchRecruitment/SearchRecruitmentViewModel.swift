@@ -5,7 +5,7 @@ import RxFlow
 import Core
 import Domain
 
-public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
+public final class SearchRecruitmentViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
@@ -83,7 +83,7 @@ public final class RecruitmentSearchViewModel: BaseViewModel, Stepper {
 
         input.searchTableViewDidTap.asObservable()
             .map {
-                RecruitmentSearchStep.recruitmentDetailIsRequired(
+                SearchRecruitmentStep.recruitmentDetailIsRequired(
                     id: self.recruitmentListInfo.value[$0.row].recruitID
                 )
             }
