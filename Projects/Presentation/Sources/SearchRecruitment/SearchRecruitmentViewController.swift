@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class RecruitmentSearchViewController: BaseViewController<RecruitmentSearchViewModel> {
+public final class SearchRecruitmentViewController: BaseViewController<SearchRecruitmentViewModel> {
     private let searchButtonDidTap = PublishRelay<String>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let emptySearchView = ListEmptyView().then {
@@ -75,7 +75,7 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     }
 
     public override func bind() {
-        let input = RecruitmentSearchViewModel.Input(
+        let input = SearchRecruitmentViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             pageChange: searchTableView.rx.willDisplayCell
                 .filter {
@@ -125,7 +125,7 @@ public final class RecruitmentSearchViewController: BaseViewController<Recruitme
     public override func configureNavigation() { }
 }
 
-extension RecruitmentSearchViewController: UITextFieldDelegate {
+extension SearchRecruitmentViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
