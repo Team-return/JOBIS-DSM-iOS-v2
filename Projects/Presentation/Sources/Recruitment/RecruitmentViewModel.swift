@@ -85,7 +85,7 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
 
         input.searchButtonDidTap.asObservable()
             .map {
-                RecruitmentStep.recruitmentSearchIsRequired
+                RecruitmentStep.searchRecruitmentIsRequired
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
