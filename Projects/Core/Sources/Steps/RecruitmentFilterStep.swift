@@ -2,5 +2,5 @@ import RxFlow
 
 public enum RecruitmentFilterStep: Step {
     case recruitmentFilterIsRequired
-    case popToRecruitment
+    case popToRecruitment(jobCode: String?, techCode: String?)
 }
