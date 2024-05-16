@@ -45,6 +45,7 @@ private extension RecruitmentDetailFlow {
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             let view = root as? CompanyDetailViewController
+            print(root)
             view?.viewModel.companyID = companyDetailId
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
