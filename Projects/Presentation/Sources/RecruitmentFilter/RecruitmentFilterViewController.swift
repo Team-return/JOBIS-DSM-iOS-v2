@@ -9,10 +9,9 @@ import Domain
 
 public final class RecruitmentFilterViewController: BaseViewController<RecruitmentFilterViewModel> {
     private let collectionViewDidTap = PublishRelay<String>()
-    private let selectJobsCode = PublishRelay<Void>()
     private let filterApplyButtonDidTap = PublishRelay<Void>()
-    private var jobsCodeString: String = ""
-    private var techCodeArray: [Int] = []
+    private var appendTechCode = PublishRelay<String>()
+    private var resetTechCode = PublishRelay<Void>()
 
     private let searchTextField = JobisSearchTextField().then {
         $0.setTextField(placeholder: "검색어를 입력해주세요")
@@ -40,14 +39,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
         )
     }
-    private lazy var techTableView = UITableView().then {
-        $0.register(TechTableViewCell.self, forCellReuseIdentifier: TechTableViewCell.identifier)
-        $0.rowHeight = UITableView.automaticDimension
-        $0.showsVerticalScrollIndicator = false
-        $0.estimatedRowHeight = UITableView.automaticDimension
-        $0.isScrollEnabled = false
-        $0.separatorStyle = .none
-    }
+    private lazy var techStackView = TechStackView()
     private let filterApplyButton = JobisButton(style: .main).then {
         $0.setText("적용하기")
     }
@@ -61,7 +53,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         scrollView.addSubview(contentStackView)
         [
             jobsCollectionView,
-            techTableView
+            techStackView
         ].forEach(self.contentStackView.addArrangedSubview(_:))
     }
 
@@ -86,10 +78,6 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             $0.height.greaterThanOrEqualTo(jobsCollectionView.contentSize.height)
         }
 
-        techTableView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(techTableView.contentSize.height)
-        }
-
         filterApplyButton.snp.makeConstraints {
             $0.height.equalTo(56)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -100,8 +88,14 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     public override func bind() {
         let input = RecruitmentFilterViewModel.Input(
             viewWillAppear: viewWillAppearPublisher,
-            selectJobsCode: selectJobsCode,
-            filterApplyButtonDidTap: filterApplyButtonDidTap
+            selectJobsCode: jobsCollectionView.rx
+                .modelSelected(CodeEntity.self).asObservable()
+                .do(onNext: { _ in
+                    self.resetTechCode.accept(())
+                }),
+            filterApplyButtonDidTap: filterApplyButtonDidTap,
+            appendTechCode: appendTechCode,
+            resetTechCode: resetTechCode
         )
 
         let output = viewModel.transform(input)
@@ -111,36 +105,22 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                 cellType: JobsCollectionViewCell.self
             )) { _, element, cell in
                 cell.adapt(model: element)
+                cell.isCheck = Int(self.viewModel.jobCode) == cell.model?.code
                 self.jobsCollectionView.layoutIfNeeded()
             }
             .disposed(by: disposeBag)
 
         output.techList
-            .bind(to: techTableView.rx.items(
-                cellIdentifier: TechTableViewCell.identifier,
-                cellType: TechTableViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
-                self.techTableView.layoutIfNeeded()
-                cell.techCheckBoxDidTap = {
-                    cell.isCheck ? self.techCodeArray.append(cell.model?.code ?? 0) :
-                    self.techCodeArray.removeAll { $0 == cell.model?.code }
+            .bind { [weak self] in
+                self?.techStackView.setTech(techList: $0)
+                self?.techStackView.techDidTap = { code in
+                    self?.appendTechCode.accept(code)
                 }
             }
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        jobsCollectionView.rx.itemSelected.asObservable()
-            .bind {
-                guard let cell = self.jobsCollectionView.cellForItem(
-                    at: IndexPath(row: $0.row, section: 0)
-                ) as? JobsCollectionViewCell else { return }
-                cell.isCheck.toggle()
-                cell.isCheck ? (self.viewModel.jobCode = String(cell.model?.code ?? 0)) : (self.viewModel.jobCode = "")
-                self.selectJobsCode.accept(())
-            }
-            .disposed(by: disposeBag)
 
         viewWillAppearPublisher.asObservable()
             .bind {
@@ -152,22 +132,10 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
 
         filterApplyButton.rx.tap.asObservable()
             .subscribe(onNext: {
-                print("------------------ Filter! ---------------------")
-                dump(self.jobsCodeString)
-                dump(self.techCodeArray.toString())
-                print("------------------ ------- ---------------------")
-                self.viewModel.techCode = self.techCodeArray.toString()
                 self.filterApplyButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {}
-}
-
-extension Array {
-        func toString() -> String {
-            let stringArray = self.map { String(describing: $0) }
-            return stringArray.joined(separator: ", ")
-        }
 }

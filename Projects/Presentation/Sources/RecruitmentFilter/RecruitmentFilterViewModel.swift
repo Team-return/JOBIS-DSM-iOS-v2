@@ -10,7 +10,7 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
     public var jobCode: String = ""
-    public var techCode: String = ""
+    public let techCode = BehaviorRelay<[String]>(value: [])
 
     init(
         fetchCodeListUseCase: FetchCodeListUseCase
@@ -20,8 +20,10 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewWillAppear: PublishRelay<Void>
-        let selectJobsCode: PublishRelay<Void>
+        let selectJobsCode: Observable<CodeEntity>
         let filterApplyButtonDidTap: PublishRelay<Void>
+        let appendTechCode: PublishRelay<String>
+        let resetTechCode: PublishRelay<Void>
     }
 
     public struct Output {
@@ -47,24 +49,39 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.selectJobsCode.asObservable()
-            .flatMap {
-                self.fetchCodeListUseCase.execute(keyword: self.jobCode, type: .tech, parentCode: nil)
+            .do(onNext: {
+                self.jobCode = self.jobCode == "\($0.code)" ? "" : "\($0.code)"
+                jobList.accept(jobList.value)
+            })
+            .flatMap { _ in
+                self.fetchCodeListUseCase.execute(keyword: nil, type: .tech, parentCode: self.jobCode)
             }
             .bind(to: techList)
             .disposed(by: disposeBag)
 
         input.filterApplyButtonDidTap.asObservable()
             .map {
-                print("------------------ Filter viewModel! ---------------------")
-                dump(self.jobCode)
-                dump(self.techCode)
-                print("------------------ ------- --------- ---------------------")
                 return RecruitmentFilterStep.popToRecruitment(
                     jobCode: self.jobCode,
-                    techCode: self.techCode
+                    techCode: self.techCode.value
                 )
             }
             .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.appendTechCode.asObservable()
+            .filter { $0 != "" }
+            .bind {
+                var value = self.techCode.value
+                value.append($0)
+                self.techCode.accept(value)
+            }
+            .disposed(by: disposeBag)
+
+        input.resetTechCode.asObservable()
+            .bind {
+                self.techCode.accept([])
+            }
             .disposed(by: disposeBag)
 
         return Output(jobList: jobList, techList: techList)
