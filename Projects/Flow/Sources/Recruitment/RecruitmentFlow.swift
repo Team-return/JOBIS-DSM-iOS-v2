@@ -25,9 +25,6 @@ public final class RecruitmentFlow: Flow {
         case let .recruitmentDetailIsRequired(id):
             return navigateToRecruitmentDetail(recruitmentID: id)
 
-        case .recruitmentSearchIsRequired:
-            return navigateToRecruitmentSearch()
-
         case .recruitmentFilterIsRequired:
             return navigateToRecruitmentFilter()
 
