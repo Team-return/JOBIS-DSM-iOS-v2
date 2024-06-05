@@ -5,4 +5,5 @@ public enum RecruitmentStep: Step {
     case recruitmentDetailIsRequired(recruitmentId: Int)
     case recruitmentSearchIsRequired
     case recruitmentFilterIsRequired
+    case searchRecruitmentIsRequired
 }

@@ -225,13 +225,13 @@ public final class PresentationAssembly: Assembly {
             CompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
-        container.register(RecruitmentSearchViewController.self) { resolver in
-            RecruitmentSearchViewController(
-                resolver.resolve(RecruitmentSearchViewModel.self)!
+        container.register(SearchRecruitmentViewController.self) { resolver in
+            SearchRecruitmentViewController(
+                resolver.resolve(SearchRecruitmentViewModel.self)!
             )
         }
-        container.register(RecruitmentSearchViewModel.self) { resolver in
-            RecruitmentSearchViewModel(
+        container.register(SearchRecruitmentViewModel.self) { resolver in
+            SearchRecruitmentViewModel(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
