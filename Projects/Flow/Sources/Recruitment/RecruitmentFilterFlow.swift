@@ -24,7 +24,7 @@ public final class RecruitmentFilterFlow: Flow {
             return navigateToRecruitmentFilter()
 
         case let .popToRecruitment(jobCode, techCode):
-            return popToRecruitment(jobCode: jobCode ?? "", techCode: techCode ?? "")
+            return popToRecruitment(jobCode: jobCode ?? "", techCode: techCode)
         }
     }
 }
@@ -37,15 +37,10 @@ private extension RecruitmentFilterFlow {
         ))
     }
 
-    func popToRecruitment(jobCode: String, techCode: String) -> FlowContributors {
-
-        let view = container.resolve(RecruitmentViewController.self)!
-
-        print("view:", view)
-        print("job, techCode:", jobCode, techCode)
-        view.viewModel.jobCode = jobCode
-        view.viewModel.techCode = techCode
-        print("viewModel job, techCode:", view.viewModel.jobCode, view.viewModel.techCode)
+    func popToRecruitment(jobCode: String, techCode: [String]?) -> FlowContributors {
+        let popView = self.rootViewController.navigationController?.viewControllers.first as? RecruitmentViewController
+        popView?.viewModel.jobCode = jobCode
+        popView?.viewModel.techCode = techCode
         self.rootViewController.navigationController?.popViewController(animated: true)
 
         return .none
