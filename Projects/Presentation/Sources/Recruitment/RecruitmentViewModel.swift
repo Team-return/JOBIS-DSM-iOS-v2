@@ -8,7 +8,7 @@ import Domain
 public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var jobCode: String = ""
-    public var techCode: String = ""
+    public var techCode: [String]?
     public var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
@@ -40,14 +40,10 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.viewAppear.asObservable()
             .flatMap {
                 self.pageCount = 1
-                print("------------------ recruit! ---------------------")
-                dump(self.jobCode)
-                dump(self.techCode)
-                print("------------------ ------- ---------------------")
                 return self.fetchRecruitmentListUseCase.execute(
-                    page: self.pageCount
-//                    jobCode: self.jobCode,
-//                    techCode: self.techCode
+                    page: self.pageCount,
+                    jobCode: self.jobCode,
+                    techCode: self.techCode
                 )
             }
             .bind(onNext: {
@@ -60,7 +56,11 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.pageChange.asObservable()
             .flatMap { _ in
                 self.pageCount += 1
-                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                return self.fetchRecruitmentListUseCase.execute(
+                    page: self.pageCount,
+                    jobCode: self.jobCode,
+                    techCode: self.techCode
+                )
                     .asObservable()
                     .take(while: {
                         !$0.isEmpty
