@@ -148,6 +148,18 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
+        container.register(WritableReviewViewModel.self) { resolver in
+            WritableReviewViewModel()
+        }
+
+        container.register(WritableReviewViewController.self) { resolver in
+            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+        }
+
+        container.register(AddReviewViewModel.self) { resolver in
+            AddReviewViewModel()
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
