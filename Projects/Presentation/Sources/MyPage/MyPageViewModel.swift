@@ -34,7 +34,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
-//        let reviewNavigate: PublishRelay<Int>
+        let reviewNavigate: PublishRelay<Int>
         let helpSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
@@ -56,16 +56,15 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: studentInfo)
             .disposed(by: disposeBag)
 
-//        input.viewAppear.asObservable()
-//            .flatMap { self.fetchWritableReviewListUseCase.execute() }
-//            .bind(to: writableReviewList)
-//            .disposed(by: disposeBag)
+        input.viewAppear.asObservable()
+            .flatMap { self.fetchWritableReviewListUseCase.execute() }
+            .bind(to: writableReviewList)
+            .disposed(by: disposeBag)
 
-//        input.reviewNavigate.asObservable()
-//            .subscribe(onNext: {
-//                // TODO: 리뷰 리스트로 네비게이션 이동 해주는 코드 았어야함
-//                print($0)
-//            }).disposed(by: disposeBag)
+        input.reviewNavigate.asObservable()
+            .map { _ in MyPageStep.writableReviewIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
 
         input.helpSectionDidTap.asObservable()
             .map { _ in MyPageStep.noticeIsRequired }
