@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
-    private let writableReviewButtonDidTap = PublishRelay<Void>()
+    private let addReviewButtonDidTap = PublishRelay<Void>()
 
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -105,7 +105,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func bind() {
         let input = WritableReviewViewModel.Input(
-            writableReviewButtonDidTap: writableReviewButtonDidTap
+            addReviewButtonDidTap: addReviewButtonDidTap
         )
 
         let _ = viewModel.transform(input)
@@ -119,9 +119,9 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
             })
             .disposed(by: disposeBag)
 
-        writableReviewButton.rx.tap.asObservable()
+        addReviewButton.rx.tap.asObservable()
             .subscribe(onNext: {
-                self.writableReviewButtonDidTap.accept(())
+                self.addReviewButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }
