@@ -30,6 +30,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let recruitmentButtonDidTap: Signal<Void>
+        let interviewReviewTableViewDidTap: Observable<Int>
     }
 
     public struct Output {
@@ -64,6 +65,12 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
+        input.interviewReviewTableViewDidTap.asObservable()
+            .map { _ in
+                CompanyDetailStep.interviewReviewDetailIsRequired
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
         return Output(
             companyDetailInfo: companyDetailInfo,
             reviewListInfo: reviewListInfo

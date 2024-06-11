@@ -13,6 +13,7 @@ public final class AddReviewViewModel: BaseViewModel, Stepper {
 
     public struct Input {
 //        let viewWillAppear: PublishRelay<Void>
+        let nextButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
@@ -20,6 +21,12 @@ public final class AddReviewViewModel: BaseViewModel, Stepper {
     }
 
     public func transform(_ input: Input) -> Output {
+        input.nextButtonDidTap.asObservable()
+            .map {
+                AddReviewStep.techCodeIsRequired
+            }.bind(to: steps)
+            .disposed(by: disposeBag)
+
         return Output()
     }
 }
