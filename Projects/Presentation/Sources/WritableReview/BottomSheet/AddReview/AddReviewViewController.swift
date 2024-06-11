@@ -8,6 +8,8 @@ import Domain
 import DesignSystem
 
 public final class AddReviewViewController: BaseBottomSheetViewController<AddReviewViewModel> {
+    private let nextButtonDidTap = PublishRelay<Void>()
+
     private let addReviewTitleLabel = UILabel().then {
         $0.setJobisText(
             "질문 추가하기",
@@ -99,6 +101,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     public override func bind() {
         let input = AddReviewViewModel.Input(
 //            viewWillAppear: viewWillAppearPublisher
+            nextButtonDidTap: nextButtonDidTap
         )
         let output = viewModel.transform(input)
     }
@@ -109,6 +112,12 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             .bind {
                 self.hideTabbar()
             }
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap.asObservable()
+            .subscribe(onNext: {
+                self.nextButtonDidTap.accept(())
+            })
             .disposed(by: disposeBag)
     }
 }
