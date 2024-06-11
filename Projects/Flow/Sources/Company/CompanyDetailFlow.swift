@@ -28,6 +28,9 @@ public final class CompanyDetailFlow: Flow {
 
         case let.recruitmentDetailIsRequired(id):
             return navigateToRecruimtentDetail(recruitmentID: id)
+
+        case .interviewReviewDetailIsRequired:
+            return navigateToInterviewReviewDetail()
         }
     }
 }
@@ -60,6 +63,22 @@ private extension CompanyDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
             withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+        ))
+    }
+
+    func navigateToInterviewReviewDetail() -> FlowContributors {
+        let interviewReviewDetailFlow = InterviewReviewDetailFlow(container: container)
+
+        Flows.use(interviewReviewDetailFlow, when: .created) { (root) in
+            let view = root as? InterviewReviewDetailViewController
+            self.rootViewController.navigationController?.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interviewReviewDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: InterviewReviewDetailStep.interviewReviewDetailIsRequired)
         ))
     }
 }

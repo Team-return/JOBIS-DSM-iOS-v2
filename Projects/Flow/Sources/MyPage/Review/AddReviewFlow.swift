@@ -25,6 +25,9 @@ public final class AddReviewFlow: Flow {
         switch step {
         case .addReviewIsRequired:
             return navigateToAddReview()
+
+        case .techCodeIsRequired:
+            return navigateToTechCode()
         }
     }
 }
@@ -34,6 +37,28 @@ private extension AddReviewFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToTechCode() -> FlowContributors {
+        let techCodeFlow = TechCodeFlow(container: container)
+        Flows.use(techCodeFlow, when: .created) { root in
+            let view = root as? TechCodeViewController
+//            self.rootViewController.dismiss(animated: true, completion: { modal에서 modal 넘어갈때 이전 modal 삭제하는 로직 구성해야함
+//            })
+//////=================================================
+//            self.rootViewController.dismissBottomSheet()
+            self.rootViewController.present(
+                root,
+                animated: false
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: techCodeFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: TechCodeStep.techCodeIsRequired
+            )
         ))
     }
 }
