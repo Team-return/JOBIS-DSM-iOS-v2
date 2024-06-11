@@ -160,6 +160,10 @@ public final class PresentationAssembly: Assembly {
             AddReviewViewModel()
         }
 
+        container.register(TechCodeViewModel.self) { resolver in
+            TechCodeViewModel()
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
@@ -204,6 +208,13 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(CompanyDetailViewController.self) { resolver in
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
+        }
+
+        container.register(InterviewReviewDetailViewModel.self) { resolver in
+            InterviewReviewDetailViewModel()
+        }
+        container.register(InterviewReviewDetailViewController.self) { resolver in
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
         }
 
         container.register(RecruitmentDetailViewModel.self) { resolver in
