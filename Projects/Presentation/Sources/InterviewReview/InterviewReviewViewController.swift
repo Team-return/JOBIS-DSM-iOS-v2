@@ -81,16 +81,23 @@ public final class InterviewReviewDetailViewController: BaseViewController<Inter
 
     public override func bind() {
         let input = InterviewReviewDetailViewModel.Input(
-        )
+            viewWillAppear: self.viewWillAppearPublisher)
 
-        let _ = viewModel.transform(input)
+        let output = viewModel.transform(input)
+
+        output.qnaListEntity.asObservable()
+            .bind {
+                self.questionListDetailStackView.setFieldType($0)
+            }
+            .disposed(by: disposeBag)
+
+        self.pageTitleLabel.text = "\(output.writerName)님의 면접 후기"
     }
 
     public override func configureViewController() {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: {
                 self.hideTabbar()
-                self.questionListDetailStackView.setFieldType()
             })
             .disposed(by: disposeBag)
     }
