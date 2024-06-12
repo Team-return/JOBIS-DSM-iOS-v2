@@ -211,7 +211,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(InterviewReviewDetailViewModel.self) { resolver in
-            InterviewReviewDetailViewModel()
+            InterviewReviewDetailViewModel(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+            )
         }
         container.register(InterviewReviewDetailViewController.self) { resolver in
             InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
