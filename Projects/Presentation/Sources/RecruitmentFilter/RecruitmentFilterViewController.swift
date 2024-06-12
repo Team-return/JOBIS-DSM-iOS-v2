@@ -91,7 +91,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             selectJobsCode: jobsCollectionView.rx
                 .modelSelected(CodeEntity.self).asObservable()
                 .do(onNext: { _ in
-                    self.resetTechCode.accept(())
+                    self.viewModel.techCode.accept([])
                 }),
             filterApplyButtonDidTap: filterApplyButtonDidTap,
             appendTechCode: appendTechCode,
