@@ -123,7 +123,7 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             interviewReviewTableViewDidTap: interviewReviewTableView.rx
                 .modelSelected(ReviewEntity.self)
                 .asObservable()
-                .map { $0.reviewID }
+                .map { ($0.reviewID, $0.writer) }
                 .do(onNext: { _ in
                     self.isTabNavigation = false
                 })
