@@ -29,8 +29,8 @@ public final class CompanyDetailFlow: Flow {
         case let.recruitmentDetailIsRequired(id):
             return navigateToRecruimtentDetail(recruitmentID: id)
 
-        case .interviewReviewDetailIsRequired:
-            return navigateToInterviewReviewDetail()
+        case let .interviewReviewDetailIsRequired(id, name):
+            return navigateToInterviewReviewDetail(id, name)
         }
     }
 }
@@ -66,11 +66,13 @@ private extension CompanyDetailFlow {
         ))
     }
 
-    func navigateToInterviewReviewDetail() -> FlowContributors {
+    func navigateToInterviewReviewDetail(_ id: Int, _ name: String) -> FlowContributors {
         let interviewReviewDetailFlow = InterviewReviewDetailFlow(container: container)
 
         Flows.use(interviewReviewDetailFlow, when: .created) { (root) in
             let view = root as? InterviewReviewDetailViewController
+            view?.viewModel.reviewId = id
+            view?.viewModel.writerName = name
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )
