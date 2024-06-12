@@ -25,14 +25,12 @@ public final class QuestionListDetailStackView: BaseView {
         }
     }
 
-    func setFieldType() {
-//        list.forEach { data in
-        for _ in 1...4 {
+    func setFieldType(_ list: [QnaEntity]) {
+        list.forEach { data in
             let attachmentView = QuestionListDetailView().then {
-                $0.configureView("안")
+                $0.configureView(model: data)
             }
             self.backStackView.addArrangedSubview(attachmentView)
         }
-//        }
     }
 }

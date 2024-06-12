@@ -9,18 +9,14 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
 
-    init(
-
-    ) {
-
-    }
+    init( ) { }
 
     public struct Input {
+//        let viewWillAppear: PublishRelay<Void>
         let addReviewButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
-
     }
 
     public func transform(_ input: Input) -> Output {

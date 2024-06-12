@@ -9,6 +9,7 @@ import DesignSystem
 
 public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
     private let addReviewButtonDidTap = PublishRelay<Void>()
+//    private let interviewReviewList = BehaviorRelay<>
 
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -105,17 +106,31 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func bind() {
         let input = WritableReviewViewModel.Input(
+//            viewWillAppear: self.viewWillAppearPublisher,
             addReviewButtonDidTap: addReviewButtonDidTap
         )
 
-        let _ = viewModel.transform(input)
+        let output = viewModel.transform(input)
+
+//        output.companyListInfo
+//            .skip(1)
+//            .do(onNext: {
+//                self.emptySearchView.isHidden = !$0.isEmpty
+//            })
+//            .bind(to: searchTableView.rx.items(
+//                cellIdentifier: CompanyTableViewCell.identifier,
+//                cellType: CompanyTableViewCell.self
+//            )) { _, element, cell in
+//                cell.adapt(model: element)
+//            }
+//            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: {
                 self.hideTabbar()
-                self.questionListDetailStackView.setFieldType()
+//                self.questionListDetailStackView.setFieldType($0) 이거 output으로 옮겨야함
             })
             .disposed(by: disposeBag)
 
