@@ -252,8 +252,20 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(RecruitmentFilterViewController.self) { resolver in
+            RecruitmentFilterViewController(
+                resolver.resolve(RecruitmentFilterViewModel.self)!
+            )
+        }
+        container.register(RecruitmentFilterViewModel.self) { resolver in
+            RecruitmentFilterViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
         }
+
     }
 }

@@ -7,6 +7,8 @@ import Domain
 
 public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    public var jobCode: String = ""
+    public var techCode: [String]?
     public var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
@@ -26,7 +28,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         let bookMarkButtonDidTap: PublishRelay<Int>
         var pageChange: Observable<WillDisplayCellEvent>
         let recruitmentTableViewDidTap: Observable<Int>
-        let searchButtonDidTap: PublishRelay<Void>
+        let searchButtonDidTap: Signal<Void>
+        let filterButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -37,7 +40,11 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.viewAppear.asObservable()
             .flatMap {
                 self.pageCount = 1
-                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                return self.fetchRecruitmentListUseCase.execute(
+                    page: self.pageCount,
+                    jobCode: self.jobCode,
+                    techCode: self.techCode
+                )
             }
             .bind(onNext: {
                 self.recruitmentData.accept([])
@@ -49,7 +56,11 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
         input.pageChange.asObservable()
             .flatMap { _ in
                 self.pageCount += 1
-                return self.fetchRecruitmentListUseCase.execute(page: self.pageCount)
+                return self.fetchRecruitmentListUseCase.execute(
+                    page: self.pageCount,
+                    jobCode: self.jobCode,
+                    techCode: self.techCode
+                )
                     .asObservable()
                     .take(while: {
                         !$0.isEmpty
@@ -87,6 +98,11 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
             .map {
                 RecruitmentStep.searchRecruitmentIsRequired
             }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.filterButtonDidTap.asObservable()
+            .map { _ in RecruitmentStep.recruitmentFilterIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
