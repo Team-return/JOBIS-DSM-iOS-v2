@@ -51,7 +51,7 @@ final class QuestionListDetailView: BaseView {
     }
     private let questionLabel = UILabel().then {
         $0.setJobisText(
-            "나에게 모든 물어봐",
+            "-",
             font: .subHeadLine,
             color: .GrayScale.gray90
         )
@@ -59,7 +59,7 @@ final class QuestionListDetailView: BaseView {
     }
     private let codeLabel = UILabel().then {
         $0.setJobisText(
-            "Spring Boot",
+            "-",
             font: .description,
             color: .Sub.skyBlue20
         )
@@ -83,7 +83,7 @@ final class QuestionListDetailView: BaseView {
     }
     private let answerLabel = UILabel().then {
         $0.setJobisText(
-            "대답은 바르게 해줄게\n니가 보고싶은 상처들\n오늘은 좀 더 벌어졌는지",
+            "-",
             font: .description,
             color: .GrayScale.gray70
         )
@@ -146,16 +146,15 @@ final class QuestionListDetailView: BaseView {
         }
     }
 
-    func configureView(_ str: String) {
+    func configureView(model: QnaEntity) {
         super.configureView()
-        questionLabel.text = "아니아니아니이거왜 왜오애ㅏㅇㄴ돼"
-        codeLabel.text = "xorbxorbcxorbxorb"
-        answerLabel.text = "대답대답대ㅏ배답다배다ㅐ바ㅐ"
+        questionLabel.text = model.question
+        codeLabel.text = model.area
+        answerLabel.text = model.answer
         self.rx.tapGesture()
             .when(.recognized)
             .bind { _ in
                 self.isOpen.toggle()
-                print("isOpen:", self.isOpen)
             }
             .disposed(by: disposeBag)
     }

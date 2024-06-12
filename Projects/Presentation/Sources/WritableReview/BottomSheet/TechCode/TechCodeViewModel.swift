@@ -19,7 +19,7 @@ public final class TechCodeViewModel: BaseViewModel, Stepper {
     }
 
     public struct Output {
-        
+
     }
 
     public func transform(_ input: Input) -> Output {
