@@ -8,29 +8,38 @@ import Domain
 public final class InterviewReviewDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
+    public var reviewId: Int = 0
+    public var writerName: String = ""
+    let fetchReviewDetailUseCase: FetchReviewDetailUseCase
 
     init(
-
+        fetchReviewDetailUseCase: FetchReviewDetailUseCase
     ) {
-
+        self.fetchReviewDetailUseCase = fetchReviewDetailUseCase
     }
 
     public struct Input {
-//        let addReviewButtonDidTap: PublishRelay<Void>
+        let viewWillAppear: PublishRelay<Void>
     }
 
     public struct Output {
-
+        let qnaListEntity: PublishRelay<[QnaEntity]>
+        let writerName: String
     }
 
     public func transform(_ input: Input) -> Output {
-//        input.addReviewButtonDidTap.asObservable()
-//            .map {
-//                WritableReviewStep.addReviewIsRequired
-//            }
-//            .bind(to: steps)
-//            .disposed(by: disposeBag)
+        let qnaListEntity = PublishRelay<[QnaEntity]>()
 
-        return Output()
+        input.viewWillAppear.asObservable()
+            .flatMap {
+                self.fetchReviewDetailUseCase.execute(id: self.reviewId)
+            }
+            .bind(to: qnaListEntity)
+            .disposed(by: disposeBag)
+
+        return Output(
+            qnaListEntity: qnaListEntity,
+            writerName: writerName
+        )
     }
 }
