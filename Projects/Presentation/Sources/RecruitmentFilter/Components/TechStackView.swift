@@ -7,7 +7,7 @@ import RxSwift
 import DesignSystem
 
 class TechStackView: UIStackView {
-    public var techDidTap: ((String) -> Void)?
+    public var techDidTap: ((CodeEntity) -> Void)?
     private let disposeBag = DisposeBag()
 
     init() {
@@ -31,7 +31,7 @@ class TechStackView: UIStackView {
             techStackViewCell.adapt(model: data)
 
             techStackViewCell.techCheckBoxDidTap = {
-                self.techDidTap?("\($0 ?? 0)")
+                self.techDidTap?($0 ?? CodeEntity(code: 0, keyword: ""))
             }
             self.addArrangedSubview(techStackViewCell)
         }

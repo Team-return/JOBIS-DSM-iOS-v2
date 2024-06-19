@@ -22,7 +22,7 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
         let viewWillAppear: PublishRelay<Void>
         let selectJobsCode: Observable<CodeEntity>
         let filterApplyButtonDidTap: PublishRelay<Void>
-        let appendTechCode: PublishRelay<String>
+        let appendTechCode: PublishRelay<CodeEntity>
         let resetTechCode: PublishRelay<Void>
     }
 
@@ -61,7 +61,7 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
 
         input.filterApplyButtonDidTap.asObservable()
             .map {
-                return RecruitmentFilterStep.popToRecruitment(
+                RecruitmentFilterStep.popToRecruitment(
                     jobCode: self.jobCode,
                     techCode: self.techCode.value
                 )
@@ -70,10 +70,10 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.appendTechCode.asObservable()
-            .filter { $0 != "" }
+            .filter { "\($0.code)" != "" }
             .bind {
                 var value = self.techCode.value
-                value.append($0)
+                value.append("\($0.code)")
                 self.techCode.accept(value)
             }
             .disposed(by: disposeBag)

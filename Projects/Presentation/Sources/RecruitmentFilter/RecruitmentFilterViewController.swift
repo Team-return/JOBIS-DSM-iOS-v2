@@ -10,7 +10,7 @@ import Domain
 public final class RecruitmentFilterViewController: BaseViewController<RecruitmentFilterViewModel> {
     private let collectionViewDidTap = PublishRelay<String>()
     private let filterApplyButtonDidTap = PublishRelay<Void>()
-    private var appendTechCode = PublishRelay<String>()
+    private var appendTechCode = PublishRelay<CodeEntity>()
     private var resetTechCode = PublishRelay<Void>()
 
     private let searchTextField = JobisSearchTextField().then {

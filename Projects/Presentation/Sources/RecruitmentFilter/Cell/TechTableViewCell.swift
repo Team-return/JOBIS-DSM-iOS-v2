@@ -7,8 +7,8 @@ import RxSwift
 import RxCocoa
 
 final class TechStackViewCell: BaseView {
-    public var code: Int?
-    public var techCheckBoxDidTap: ((Int?) -> Void)?
+    public var code: CodeEntity?
+    public var techCheckBoxDidTap: ((CodeEntity?) -> Void)?
     public var isCheck: Bool = false {
         didSet {
             techCheckBoxDidTap?(code)
@@ -51,7 +51,7 @@ final class TechStackViewCell: BaseView {
     }
 
     func adapt(model: CodeEntity) {
-        self.code = model.code
+        self.code = model
         self.techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
     }
 }
