@@ -6,7 +6,6 @@ import DesignSystem
 import RxSwift
 
 final class QuestionListDetailView: BaseView {
-    public var interviewReviewID: Int?
     public var isOpen = false {
         didSet {
             UIView.animate(
@@ -16,7 +15,6 @@ final class QuestionListDetailView: BaseView {
                 initialSpringVelocity: 1,
                 options: .transitionCrossDissolve
             ) { [self] in
-                print("뷰 업데이트")
                 detailView.arrangedSubviews.forEach { $0.isHidden = !isOpen }
                 detailView.arrangedSubviews.forEach { $0.alpha = isOpen ? 1 : 0 }
                 interviewReviewArrowImageView.image = .jobisIcon(isOpen ? .arrowUp : .arrowDown)
@@ -147,7 +145,7 @@ final class QuestionListDetailView: BaseView {
     }
 
     func configureView(model: QnaEntity) {
-        super.configureView()
+        super.configureView()        
         questionLabel.text = model.question
         codeLabel.text = model.area
         answerLabel.text = model.answer
