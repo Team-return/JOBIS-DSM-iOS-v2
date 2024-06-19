@@ -8,8 +8,6 @@ import Core
 import DesignSystem
 
 public final class InterviewReviewDetailViewController: BaseViewController<InterviewReviewDetailViewModel> {
-    private let addReviewButtonDidTap = PublishRelay<Void>()
-
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -22,13 +20,6 @@ public final class InterviewReviewDetailViewController: BaseViewController<Inter
         )
         $0.numberOfLines = 2
     }
-//    private let interviewReviewQuestionLabel = UILabel().then {
-//        $0.setJobisText(
-//            "받은 면접 질문",
-//            font: .description,
-//            color: .GrayScale.gray60
-//        )
-//    }
     private let interviewReviewQuestionLabel = JobisMenuLabel(text: "받은 면접 질문")
     private let mainStackView = UIStackView().then {
         $0.axis = .vertical
