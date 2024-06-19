@@ -149,7 +149,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(WritableReviewViewModel.self) { resolver in
-            WritableReviewViewModel()
+            WritableReviewViewModel(
+                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
+            )
         }
 
         container.register(WritableReviewViewController.self) { resolver in
@@ -157,11 +159,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(AddReviewViewModel.self) { resolver in
-            AddReviewViewModel()
-        }
-
-        container.register(TechCodeViewModel.self) { resolver in
-            TechCodeViewModel()
+            AddReviewViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
         }
 
         container.register(NoticeViewModel.self) { resolver in
