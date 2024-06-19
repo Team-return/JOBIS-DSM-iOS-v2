@@ -6,15 +6,16 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class TechCodeTableViewCell: BaseView {
-    public var code: Int?
-    public var techCheckBoxDidTap: ((Int?) -> Void)?
+final class TechCodeStackViewCell: BaseView {
+    public var code: CodeEntity?
+    public var techCheckBoxDidTap: ((CodeEntity?) -> Void)?
     public var isCheck: Bool = false {
         didSet {
             techCheckBoxDidTap?(code)
             techCheckBox.isCheck = isCheck
         }
     }
+
     private let backStackView = UIStackView().then {
         $0.spacing = 8
         $0.axis = .horizontal
@@ -23,7 +24,7 @@ final class TechCodeTableViewCell: BaseView {
     }
     private let techCheckBox = JobisCheckBox()
     private let techLabel = UILabel().then {
-        $0.text = "CheckBox!!"
+        $0.text = "-"
     }
     private var disposeBag = DisposeBag()
 
@@ -52,8 +53,8 @@ final class TechCodeTableViewCell: BaseView {
             .disposed(by: disposeBag)
     }
 
-//    func adapt(/*model: CodeEntity*/) {
-//        self.code = model.code
-//        self.techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
-//    }
+    func adapt(model: CodeEntity) {
+        self.code = model
+        self.techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
+    }
 }

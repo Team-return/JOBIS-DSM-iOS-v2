@@ -4,11 +4,12 @@ import RxCocoa
 import SnapKit
 import Then
 import Core
-import Domain
 import DesignSystem
+import Domain
 
-public final class AddReviewViewController: BaseBottomSheetViewController<AddReviewViewModel> {
-    private let nextButtonDidTap = PublishRelay<Void>()
+class AddReviewView: BaseView {
+    private let disposeBag = DisposeBag()
+    public let nextButtonDidTap = PublishRelay<Void>()
 
     private let addReviewTitleLabel = UILabel().then {
         $0.setJobisText(
@@ -24,7 +25,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             color: .GrayScale.gray90
         )
     }
-    private let questionTextField = UITextField().then {
+    public let questionTextField = UITextField().then {
         $0.placeholder = "example"
         $0.setPlaceholderColor(.GrayScale.gray60)
         $0.layer.cornerRadius = 12
@@ -40,7 +41,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             color: .GrayScale.gray90
         )
     }
-    private let answerTextView = UITextView().then {
+    public let answerTextView = UITextView().then {
         $0.text = "example"
         $0.layer.cornerRadius = 12
         $0.textColor = UIColor.GrayScale.gray60
@@ -50,6 +51,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     }
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
+        $0.isEnabled = false
     }
 
     public override func addView() {
@@ -60,7 +62,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             answerLabel,
             answerTextView,
             nextButton
-        ].forEach(self.contentView.addSubview(_:))
+        ].forEach(self.addSubview(_:))
     }
 
     public override func setLayout() {
@@ -92,26 +94,21 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
         }
 
         nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
+            $0.bottom.equalToSuperview().inset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(56)
         }
     }
 
-    public override func bind() {
-        let input = AddReviewViewModel.Input(
-//            viewWillAppear: viewWillAppearPublisher
-            nextButtonDidTap: nextButtonDidTap
-        )
-        let output = viewModel.transform(input)
-    }
-
-    public override func configureViewController() {
+    public override func configureView() {
         answerTextView.delegate = self
-        viewDidLoadPublisher.asObservable()
-            .bind {
-                self.hideTabbar()
-            }
+        let textFieldIsEmpty = questionTextField.rx.text.orEmpty.map { !$0.isEmpty }
+        let textViewIsEmpty = answerTextView.rx.text.orEmpty.map {
+            !$0.isEmpty && $0 != "example"
+        }
+
+        Observable.combineLatest(textFieldIsEmpty, textViewIsEmpty) { $0 && $1 }
+            .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
 
         nextButton.rx.tap.asObservable()
@@ -122,7 +119,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     }
 }
 
-extension AddReviewViewController: UITextViewDelegate {
+extension AddReviewView: UITextViewDelegate {
     public func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == UIColor.GrayScale.gray60 {
             textView.text = nil
