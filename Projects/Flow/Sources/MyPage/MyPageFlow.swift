@@ -25,8 +25,8 @@ public final class MyPageFlow: Flow {
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
 
-        case .writableReviewIsRequired:
-            return navigateToWritableReview()
+        case let .writableReviewIsRequired(id):
+            return navigateToWritableReview(id)
 
         case .noticeIsRequired:
             return navigateToNotice()
@@ -52,11 +52,12 @@ private extension MyPageFlow {
         ))
     }
 
-    func navigateToWritableReview() -> FlowContributors {
+    func navigateToWritableReview(_ id: Int) -> FlowContributors {
         let writableReviewFlow = WritableReviewFlow(container: container)
 
         Flows.use(writableReviewFlow, when: .created) { (root) in
             let view = root as? WritableReviewViewController
+            view?.viewModel.companyID = id
             self.rootViewController.pushViewController(
                 view!, animated: true
             )

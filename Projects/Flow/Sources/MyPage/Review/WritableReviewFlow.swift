@@ -3,6 +3,7 @@ import Presentation
 import Swinject
 import RxFlow
 import Core
+import Domain
 
 public final class WritableReviewFlow: Flow {
     public let container: Container
@@ -41,6 +42,16 @@ private extension WritableReviewFlow {
         let addReviewFlow = AddReviewFlow(container: container)
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
+            view?.dismiss = { question, answer, techCode in
+                self.rootViewController.viewModel.techCode = techCode.code
+                self.rootViewController.viewModel.interviewReviewInfo.accept(
+                    [QnaEntity(
+                        question: question,
+                        answer: answer,
+                        area: techCode.keyword
+                    )]
+                )
+            }
             self.rootViewController.present(
                 root,
                 animated: false
