@@ -62,7 +62,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.reviewNavigate.asObservable()
-            .map { _ in MyPageStep.writableReviewIsRequired }
+            .map { MyPageStep.writableReviewIsRequired($0) }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
