@@ -9,7 +9,7 @@ import DesignSystem
 
 public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
     private let addReviewButtonDidTap = PublishRelay<Void>()
-//    private let interviewReviewList = BehaviorRelay<>
+    private let writableReviewButtonDidTap = PublishRelay<Void>()
 
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -33,7 +33,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         $0.layer.cornerRadius = 12
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.GrayScale.gray40.cgColor
-//        $0.isHidden = true
     }
     private let emptyQuestionLabel = UILabel().then {
         $0.setJobisText(
@@ -48,6 +47,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
     }
     private var writableReviewButton = JobisButton(style: .main).then {
         $0.setText("후기를 작성해주세요")
+        $0.isEnabled = false
     }
 
     public override func addView() {
@@ -106,37 +106,42 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func bind() {
         let input = WritableReviewViewModel.Input(
-//            viewWillAppear: self.viewWillAppearPublisher,
-            addReviewButtonDidTap: addReviewButtonDidTap
+            viewWillAppear: self.viewWillAppearPublisher,
+            addReviewButtonDidTap: addReviewButtonDidTap,
+            writableReviewButtonDidTap: writableReviewButtonDidTap
         )
 
         let output = viewModel.transform(input)
 
-//        output.companyListInfo
-//            .skip(1)
-//            .do(onNext: {
-//                self.emptySearchView.isHidden = !$0.isEmpty
-//            })
-//            .bind(to: searchTableView.rx.items(
-//                cellIdentifier: CompanyTableViewCell.identifier,
-//                cellType: CompanyTableViewCell.self
-//            )) { _, element, cell in
-//                cell.adapt(model: element)
-//            }
-//            .disposed(by: disposeBag)
+        output.interviewReviewInfo.asObservable()
+            .bind(onNext: {
+                self.emptyQuestionListView.isHidden = !$0.isEmpty
+                self.questionListDetailStackView.setFieldType($0)
+                if !$0.isEmpty {
+                    self.showJobisToast(text: "질문이 추가되었어요!", inset: 92)
+                    self.writableReviewButton.isEnabled = true
+                    self.writableReviewButton.setText("작성 완료")
+                }
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: {
                 self.hideTabbar()
-//                self.questionListDetailStackView.setFieldType($0) 이거 output으로 옮겨야함
             })
             .disposed(by: disposeBag)
 
         addReviewButton.rx.tap.asObservable()
             .subscribe(onNext: {
                 self.addReviewButtonDidTap.accept(())
+            })
+            .disposed(by: disposeBag)
+
+        writableReviewButton.rx.tap.asObservable()
+            .subscribe(onNext: {
+                self.writableReviewButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }

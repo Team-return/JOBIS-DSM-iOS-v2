@@ -8,15 +8,26 @@ import Domain
 public final class WritableReviewViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
+    public var companyID = 0
+    private let postReviewUseCase: PostReviewUseCase
+    public var interviewReviewInfo = BehaviorRelay<[QnaEntity]>(value: [])
+    public var interviewReviewInfoList: [QnaElementRequestQuery] = []
+    public var techCode: Int?
 
-    init( ) { }
+    init(
+        postReviewUseCase: PostReviewUseCase
+    ) {
+        self.postReviewUseCase = postReviewUseCase
+    }
 
     public struct Input {
-//        let viewWillAppear: PublishRelay<Void>
+        let viewWillAppear: PublishRelay<Void>
         let addReviewButtonDidTap: PublishRelay<Void>
+        let writableReviewButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
+        let interviewReviewInfo: BehaviorRelay<[QnaEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
@@ -27,6 +38,30 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        return Output()
+        self.interviewReviewInfo.asObservable()
+            .subscribe(onNext: { data in
+                data.forEach { qnaEntity in
+                    self.interviewReviewInfoList.append(QnaElementRequestQuery(
+                        question: qnaEntity.question,
+                        answer: qnaEntity.answer,
+                        codeID: self.techCode ?? 0
+                    ))
+                }
+            })
+            .disposed(by: disposeBag)
+
+        input.writableReviewButtonDidTap.asObservable()
+            .flatMap {
+                self.postReviewUseCase.execute(req: PostReviewRequestQuery(
+                    companyID: self.companyID,
+                    qnaElements: self.interviewReviewInfoList
+                ))
+            }
+            .subscribe()
+            .disposed(by: disposeBag)
+
+        return Output(
+            interviewReviewInfo: interviewReviewInfo
+        )
     }
 }
