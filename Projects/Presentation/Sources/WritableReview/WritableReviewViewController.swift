@@ -113,10 +113,15 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
         let output = viewModel.transform(input)
 
-        output.interviewReviewInfo.asObservable()
+        output.qnaInfoList.asObservable()
+            .bind(onNext: {
+                self.questionListDetailStackView.setFieldType($0)
+            })
+            .disposed(by: disposeBag)
+
+        output.interviewReviewInfoList.asObservable()
             .bind(onNext: {
                 self.emptyQuestionListView.isHidden = !$0.isEmpty
-                self.questionListDetailStackView.setFieldType($0)
                 if !$0.isEmpty {
                     self.showJobisToast(text: "질문이 추가되었어요!", inset: 92)
                     self.writableReviewButton.isEnabled = true

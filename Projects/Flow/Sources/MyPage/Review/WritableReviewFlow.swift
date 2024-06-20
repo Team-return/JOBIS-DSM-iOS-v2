@@ -45,11 +45,11 @@ private extension WritableReviewFlow {
             view?.dismiss = { question, answer, techCode in
                 self.rootViewController.viewModel.techCode = techCode.code
                 self.rootViewController.viewModel.interviewReviewInfo.accept(
-                    [QnaEntity(
+                    QnaEntity(
                         question: question,
                         answer: answer,
                         area: techCode.keyword
-                    )]
+                    )
                 )
             }
             self.rootViewController.present(

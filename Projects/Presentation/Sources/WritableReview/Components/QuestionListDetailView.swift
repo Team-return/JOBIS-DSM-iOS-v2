@@ -145,7 +145,7 @@ final class QuestionListDetailView: BaseView {
     }
 
     func configureView(model: QnaEntity) {
-        super.configureView()        
+        super.configureView()
         questionLabel.text = model.question
         codeLabel.text = model.area
         answerLabel.text = model.answer

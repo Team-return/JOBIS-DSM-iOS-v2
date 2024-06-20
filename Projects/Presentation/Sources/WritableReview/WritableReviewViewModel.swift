@@ -10,8 +10,9 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     public var companyID = 0
     private let postReviewUseCase: PostReviewUseCase
-    public var interviewReviewInfo = BehaviorRelay<[QnaEntity]>(value: [])
-    public var interviewReviewInfoList: [QnaElementRequestQuery] = []
+    public var interviewReviewInfo = PublishRelay<QnaEntity>()
+    public var qnaInfoList = PublishRelay<[QnaEntity]>()
+    public var interviewReviewInfoList = BehaviorRelay<[QnaElementRequestQuery]>(value: [])
     public var techCode: Int?
 
     init(
@@ -27,7 +28,8 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     }
 
     public struct Output {
-        let interviewReviewInfo: BehaviorRelay<[QnaEntity]>
+        let interviewReviewInfoList: BehaviorRelay<[QnaElementRequestQuery]>
+        let qnaInfoList: PublishRelay<[QnaEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
@@ -39,14 +41,17 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         self.interviewReviewInfo.asObservable()
-            .subscribe(onNext: { data in
-                data.forEach { qnaEntity in
-                    self.interviewReviewInfoList.append(QnaElementRequestQuery(
+            .subscribe(onNext: { qnaEntity in
+                self.qnaInfoList.accept([qnaEntity])
+                var value = self.interviewReviewInfoList.value
+                value.append(
+                    QnaElementRequestQuery(
                         question: qnaEntity.question,
                         answer: qnaEntity.answer,
                         codeID: self.techCode ?? 0
-                    ))
-                }
+                    )
+                )
+                self.interviewReviewInfoList.accept(value)
             })
             .disposed(by: disposeBag)
 
@@ -54,14 +59,15 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             .flatMap {
                 self.postReviewUseCase.execute(req: PostReviewRequestQuery(
                     companyID: self.companyID,
-                    qnaElements: self.interviewReviewInfoList
+                    qnaElements: self.interviewReviewInfoList.value
                 ))
             }
             .subscribe()
             .disposed(by: disposeBag)
 
         return Output(
-            interviewReviewInfo: interviewReviewInfo
+            interviewReviewInfoList: interviewReviewInfoList,
+            qnaInfoList: self.qnaInfoList
         )
     }
 }
