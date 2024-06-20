@@ -65,6 +65,11 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             .subscribe()
             .disposed(by: disposeBag)
 
+        input.writableReviewButtonDidTap.asObservable()
+            .map { _ in WritableReviewStep.popToMyPage }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
         return Output(
             interviewReviewInfoList: interviewReviewInfoList,
             qnaInfoList: self.qnaInfoList

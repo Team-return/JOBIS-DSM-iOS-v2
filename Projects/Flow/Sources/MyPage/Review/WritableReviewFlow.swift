@@ -26,6 +26,9 @@ public final class WritableReviewFlow: Flow {
 
         case .addReviewIsRequired:
             return navigateToAddReview()
+
+        case .popToMyPage:
+            return popToMyPage()
         }
     }
 }
@@ -64,5 +67,10 @@ private extension WritableReviewFlow {
                 withSingleStep: AddReviewStep.addReviewIsRequired
             )
         ))
+    }
+
+    func popToMyPage() -> FlowContributors {
+        self.rootViewController.navigationController?.popViewController(animated: true)
+        return .none
     }
 }
