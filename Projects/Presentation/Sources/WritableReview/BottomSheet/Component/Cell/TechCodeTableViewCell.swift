@@ -8,10 +8,10 @@ import RxCocoa
 
 final class TechCodeStackViewCell: BaseView {
     public var code: CodeEntity?
-    public var techCheckBoxDidTap: ((CodeEntity?) -> Void)?
+    public var techCheckBoxDidTap: ((CodeEntity?, Bool) -> Void)?
     public var isCheck: Bool = false {
         didSet {
-            techCheckBoxDidTap?(code)
+            techCheckBoxDidTap?(code, isCheck)
             techCheckBox.isCheck = isCheck
         }
     }

@@ -33,7 +33,7 @@ public class TechCodeStackView: UIStackView {
             let techCodeStackViewCell = TechCodeStackViewCell()
             techCodeStackViewCell.adapt(model: data)
 
-            techCodeStackViewCell.techCheckBoxDidTap = { [weak self] code in
+            techCodeStackViewCell.techCheckBoxDidTap = { [weak self] code, isCheck in
                 guard let self = self else { return }
 
                 if let selectedCell = self.selectedCell, selectedCell != techCodeStackViewCell {
@@ -41,7 +41,11 @@ public class TechCodeStackView: UIStackView {
                 }
 
                 self.selectedCell = techCodeStackViewCell
-                self.techDidTap?(code ?? CodeEntity(code: 0, keyword: ""))
+                if isCheck {
+                    self.techDidTap?(code ?? CodeEntity(code: 0, keyword: ""))
+                } else {
+                    self.techDidTap?(CodeEntity(code: 0, keyword: ""))
+                }
                 self.techCodeView.area.accept(data.keyword)
             }
             self.addArrangedSubview(techCodeStackViewCell)

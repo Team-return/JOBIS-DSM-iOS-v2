@@ -64,6 +64,16 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     public override func configureViewController() {
         self.techCodeView.searchTextField.delegate = self
         techCodeView.isHidden = true
+        appendTechCode.asObservable()
+            .bind { techCode in
+                if techCode.keyword != "" {
+                    self.techCodeView.addReviewButton.isEnabled = true
+                } else {
+                    self.techCodeView.addReviewButton.isEnabled = false
+                }
+            }
+            .disposed(by: disposeBag)
+
         addReviewView.nextButtonDidTap.asObservable()
             .subscribe(onNext: {
                 self.viewIsHidden.toggle()
