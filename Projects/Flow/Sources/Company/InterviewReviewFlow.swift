@@ -34,4 +34,3 @@ private extension InterviewReviewDetailFlow {
         ))
     }
 }
-//rootViewController.dismissBottomSheet()
