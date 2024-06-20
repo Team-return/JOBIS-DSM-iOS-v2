@@ -22,7 +22,7 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewWillAppear: PublishRelay<Void>
-        let addReviewButtonDidTap: PublishRelay<Void>
+        let addQuestionButtonDidTap: PublishRelay<Void>
         let writableReviewButtonDidTap: PublishRelay<Void>
     }
 
@@ -31,7 +31,7 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     }
 
     public func transform(_ input: Input) -> Output {
-        input.addReviewButtonDidTap.asObservable()
+        input.addQuestionButtonDidTap.asObservable()
             .map {
                 WritableReviewStep.addReviewIsRequired
             }

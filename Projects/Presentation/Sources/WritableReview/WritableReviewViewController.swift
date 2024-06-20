@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
-    private let addReviewButtonDidTap = PublishRelay<Void>()
+    private let addQuestionButtonDidTap = PublishRelay<Void>()
     private let writableReviewButtonDidTap = PublishRelay<Void>()
 
     private let scrollView = UIScrollView().then {
@@ -42,7 +42,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         )
     }
     private let questionListDetailStackView = QuestionListDetailStackView()
-    private let addReviewButton = JobisButton(style: .sub).then {
+    private let addQuestionButton = JobisButton(style: .sub).then {
         $0.setText("질문 추가하기")
     }
     private var writableReviewButton = JobisButton(style: .main).then {
@@ -56,7 +56,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         [
             emptyQuestionListView,
             questionListDetailStackView,
-            addReviewButton
+            addQuestionButton
         ].forEach { mainStackView.addArrangedSubview($0) }
 
         [
@@ -107,7 +107,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
     public override func bind() {
         let input = WritableReviewViewModel.Input(
             viewWillAppear: self.viewWillAppearPublisher,
-            addReviewButtonDidTap: addReviewButtonDidTap,
+            addQuestionButtonDidTap: addQuestionButtonDidTap,
             writableReviewButtonDidTap: writableReviewButtonDidTap
         )
 
@@ -133,9 +133,9 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
             })
             .disposed(by: disposeBag)
 
-        addReviewButton.rx.tap.asObservable()
+        addQuestionButton.rx.tap.asObservable()
             .subscribe(onNext: {
-                self.addReviewButtonDidTap.accept(())
+                self.addQuestionButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
 
