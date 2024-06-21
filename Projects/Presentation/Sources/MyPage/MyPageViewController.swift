@@ -17,7 +17,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //    private let editButton = UIButton(type: .system).then {
 //        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
 //    }
-//    private let reviewNavigateStackView = ReviewNavigateStackView()
+    private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = AccountSectionView()
 //    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
@@ -30,7 +30,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         [
             studentInfoView,
 //            editButton,
-//            reviewNavigateStackView,
+            reviewNavigateStackView,
             helpSectionView,
             accountSectionView
 //            bugSectionView
@@ -58,13 +58,14 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //            $0.trailing.equalToSuperview().offset(-28)
 //        }
 
-//        reviewNavigateStackView.snp.updateConstraints {
-//            $0.leading.trailing.equalToSuperview().inset(24)
-//            $0.top.equalTo(studentInfoView.snp.bottom)
-//        }
+        reviewNavigateStackView.snp.updateConstraints {
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.top.equalTo(studentInfoView.snp.bottom)
+        }
 
         helpSectionView.snp.makeConstraints {
-            $0.top.equalTo(studentInfoView.snp.bottom)
+            $0.top.equalTo(reviewNavigateStackView.snp.bottom)
+//            $0.top.equalTo(studentInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
 
@@ -82,7 +83,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
-//            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
@@ -107,10 +108,10 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                 )
             }).disposed(by: disposeBag)
 
-//        output.writableReviewList
-//            .bind(onNext: { [weak self] in
-//                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
-//            }).disposed(by: disposeBag)
+        output.writableReviewList
+            .bind(onNext: { [weak self] in
+                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
+            }).disposed(by: disposeBag)
     }
 
     public override func configureViewController() {

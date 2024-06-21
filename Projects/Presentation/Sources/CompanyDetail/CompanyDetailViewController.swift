@@ -9,6 +9,7 @@ import DesignSystem
 
 public class CompanyDetailViewController: BaseViewController<CompanyDetailViewModel> {
     private let companyDetailProfileView = CompanyDetailProfileView()
+    public var isTabNavigation: Bool = true
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -118,7 +119,14 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     public override func bind() {
         let input = CompanyDetailViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
-            recruitmentButtonDidTap: recruitmentButton.rx.tap.asSignal()
+            recruitmentButtonDidTap: recruitmentButton.rx.tap.asSignal(),
+            interviewReviewTableViewDidTap: interviewReviewTableView.rx
+                .modelSelected(ReviewEntity.self)
+                .asObservable()
+                .map { ($0.reviewID, $0.writer) }
+                .do(onNext: { _ in
+                    self.isTabNavigation = false
+                })
         )
 
         let output = viewModel.transform(input)

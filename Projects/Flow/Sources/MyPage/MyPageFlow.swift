@@ -25,6 +25,9 @@ public final class MyPageFlow: Flow {
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
 
+        case let .writableReviewIsRequired(id):
+            return navigateToWritableReview(id)
+
         case .noticeIsRequired:
             return navigateToNotice()
 
@@ -46,6 +49,23 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: myPageViewController,
             withNextStepper: myPageViewController.viewModel
+        ))
+    }
+
+    func navigateToWritableReview(_ id: Int) -> FlowContributors {
+        let writableReviewFlow = WritableReviewFlow(container: container)
+
+        Flows.use(writableReviewFlow, when: .created) { (root) in
+            let view = root as? WritableReviewViewController
+            view?.viewModel.companyID = id
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: writableReviewFlow,
+            withNextStepper: OneStepper(withSingleStep: WritableReviewStep.writableReviewIsRequired)
         ))
     }
 

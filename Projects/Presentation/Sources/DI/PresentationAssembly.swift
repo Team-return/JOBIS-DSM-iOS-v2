@@ -148,6 +148,22 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
+        container.register(WritableReviewViewModel.self) { resolver in
+            WritableReviewViewModel(
+                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
+            )
+        }
+
+        container.register(WritableReviewViewController.self) { resolver in
+            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+        }
+
+        container.register(AddReviewViewModel.self) { resolver in
+            AddReviewViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
@@ -194,6 +210,15 @@ public final class PresentationAssembly: Assembly {
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
         }
 
+        container.register(InterviewReviewDetailViewModel.self) { resolver in
+            InterviewReviewDetailViewModel(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+            )
+        }
+        container.register(InterviewReviewDetailViewController.self) { resolver in
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
+        }
+
         container.register(RecruitmentDetailViewModel.self) { resolver in
             RecruitmentDetailViewModel(
                 fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
@@ -225,13 +250,13 @@ public final class PresentationAssembly: Assembly {
             CompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
-        container.register(RecruitmentSearchViewController.self) { resolver in
-            RecruitmentSearchViewController(
-                resolver.resolve(RecruitmentSearchViewModel.self)!
+        container.register(SearchRecruitmentViewController.self) { resolver in
+            SearchRecruitmentViewController(
+                resolver.resolve(SearchRecruitmentViewModel.self)!
             )
         }
-        container.register(RecruitmentSearchViewModel.self) { resolver in
-            RecruitmentSearchViewModel(
+        container.register(SearchRecruitmentViewModel.self) { resolver in
+            SearchRecruitmentViewModel(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
@@ -252,8 +277,20 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(RecruitmentFilterViewController.self) { resolver in
+            RecruitmentFilterViewController(
+                resolver.resolve(RecruitmentFilterViewModel.self)!
+            )
+        }
+        container.register(RecruitmentFilterViewModel.self) { resolver in
+            RecruitmentFilterViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
         }
+
     }
 }
