@@ -148,6 +148,22 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
+        container.register(WritableReviewViewModel.self) { resolver in
+            WritableReviewViewModel(
+                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
+            )
+        }
+
+        container.register(WritableReviewViewController.self) { resolver in
+            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+        }
+
+        container.register(AddReviewViewModel.self) { resolver in
+            AddReviewViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
@@ -192,6 +208,15 @@ public final class PresentationAssembly: Assembly {
         }
         container.register(CompanyDetailViewController.self) { resolver in
             CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
+        }
+
+        container.register(InterviewReviewDetailViewModel.self) { resolver in
+            InterviewReviewDetailViewModel(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+            )
+        }
+        container.register(InterviewReviewDetailViewController.self) { resolver in
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
         }
 
         container.register(RecruitmentDetailViewModel.self) { resolver in

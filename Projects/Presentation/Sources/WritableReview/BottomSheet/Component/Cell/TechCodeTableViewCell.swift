@@ -6,15 +6,16 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class TechStackViewCell: BaseView {
+final class TechCodeStackViewCell: BaseView {
     public var code: CodeEntity?
-    public var techCheckBoxDidTap: ((CodeEntity?) -> Void)?
+    public var techCheckBoxDidTap: ((CodeEntity?, Bool) -> Void)?
     public var isCheck: Bool = false {
         didSet {
-            techCheckBoxDidTap?(code)
+            techCheckBoxDidTap?(code, isCheck)
             techCheckBox.isCheck = isCheck
         }
     }
+
     private let backStackView = UIStackView().then {
         $0.spacing = 8
         $0.axis = .horizontal
@@ -22,7 +23,9 @@ final class TechStackViewCell: BaseView {
         $0.layoutMargins = .init(top: 12, left: 24, bottom: 12, right: 24)
     }
     private let techCheckBox = JobisCheckBox()
-    private let techLabel = UILabel()
+    private let techLabel = UILabel().then {
+        $0.text = "-"
+    }
     private var disposeBag = DisposeBag()
 
     override func addView() {

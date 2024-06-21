@@ -2,7 +2,7 @@ import UIKit
 import DesignSystem
 
 final class ReviewNavigateView: BaseView {
-    var reviewID = 0
+    var companyID = 0
     private let reviewImageView = UIImageView().then {
         $0.image = .jobisIcon(.door)
     }

@@ -1,11 +1,11 @@
 import Foundation
 
 public struct WritableReviewCompanyEntity: Equatable, Hashable {
-    public let reviewID: Int
+    public let companyID: Int
     public let name: String
 
-    public init(reviewID: Int, name: String) {
-        self.reviewID = reviewID
+    public init(companyID: Int, name: String) {
+        self.companyID = companyID
         self.name = name
     }
 }
