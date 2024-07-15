@@ -5,7 +5,6 @@ import Swinject
 import RxFlow
 import Core
 
-
 public final class EasterEggFlow: Flow {
     public let container: Container
     private let rootViewController: RxFlowViewController

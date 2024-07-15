@@ -25,9 +25,9 @@ public final class MyPageFlow: Flow {
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
 
-<<<<<<<< HEAD:Projects/Flow/Sources/MyPage/MyPageFlow.swift
         case .noticeIsRequired:
             return navigateToNotice()
+
         case .bugReportIsRequired:
             return navigateToBugReport()
 
@@ -37,7 +37,7 @@ public final class MyPageFlow: Flow {
     }
 }
 
-private extension MyPageFlow {
+extension MyPageFlow {
     func navigateToMyPage() -> FlowContributors {
         let myPageViewController = container.resolve(MyPageViewController.self)!
 
@@ -52,32 +52,33 @@ private extension MyPageFlow {
         ))
     }
 
-<<<<<<<< HEAD:Projects/Flow/Sources/MyPage/MyPageFlow.swift
     func navigateToNotice() -> FlowContributors {
         let noticeFlow = NoticeFlow(container: container)
 
         Flows.use(noticeFlow, when: .created) { root in
             self.rootViewController.pushViewController(
                 root, animated: true
-========
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: noticeFlow,
+            withNextStepper: OneStepper(withSingleStep: NoticeStep.noticeIsRequired)
+        ))
+    }
+
     func navigateToBugReport() -> FlowContributors {
         let bugReportFlow = BugReportFlow(container: container)
 
         Flows.use(bugReportFlow, when: .created) { bug in
             self.rootViewController.pushViewController(
                 bug, animated: true
->>>>>>>> d2cce6d (🧩 :: BugReport 추가):Projects/Flow/Sources/Tabs/MyPage/MyPageFlow.swift
             )
         }
 
         return .one(flowContributor: .contribute(
-<<<<<<<< HEAD:Projects/Flow/Sources/MyPage/MyPageFlow.swift
-            withNextPresentable: noticeFlow,
-            withNextStepper: OneStepper(withSingleStep: NoticeStep.noticeIsRequired)
-========
             withNextPresentable: bugReportFlow,
             withNextStepper: OneStepper(withSingleStep: BugReportStep.bugReportIsRequired)
->>>>>>>> d2cce6d (🧩 :: BugReport 추가):Projects/Flow/Sources/Tabs/MyPage/MyPageFlow.swift
         ))
     }
 
