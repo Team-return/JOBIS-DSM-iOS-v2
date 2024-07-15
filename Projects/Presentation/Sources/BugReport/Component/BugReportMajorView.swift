@@ -9,6 +9,7 @@ import Kingfisher
 import DesignSystem
 
 class BugReportMajorView: BaseView {
+    public let majorViewDidTap = PublishRelay<Void>()
     private let disposeBag = DisposeBag()
     private let titleLabel = JobisMenuLabel(text: "버그 제보 분야")
     private let majorView = UIView().then {
@@ -60,7 +61,7 @@ class BugReportMajorView: BaseView {
     override func configureView() {
         majorView.rx.tapGesture()
             .bind { _ in
-                print("Sdf")
+                self.majorViewDidTap.accept(())
             }
             .disposed(by: disposeBag)
     }

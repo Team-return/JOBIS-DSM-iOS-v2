@@ -19,7 +19,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //    }
 //    private let reviewNavigateStackView = ReviewNavigateStackView()
     private let accountSectionView = AccountSectionView()
-//    private let bugSectionView = BugSectionView()
+    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
     private let logoutPublisher = PublishRelay<Void>()
     private let withdrawalPublisher = PublishRelay<Void>()
@@ -32,8 +32,8 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //            editButton,
 //            reviewNavigateStackView,
             helpSectionView,
-            accountSectionView
-//            bugSectionView
+            accountSectionView,
+            bugSectionView
         ].forEach { self.contentView.addSubview($0) }
     }
 
@@ -45,7 +45,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(accountSectionView).offset(60)
+            $0.bottom.equalTo(bugSectionView).offset(60)
         }
 
         studentInfoView.snp.makeConstraints {
@@ -73,18 +73,25 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
 
-//        bugSectionView.snp.makeConstraints {
-//            $0.top.equalTo(accountSectionView.snp.bottom)
-//            $0.leading.trailing.equalToSuperview()
-//        }
+        bugSectionView.snp.makeConstraints {
+            $0.top.equalTo(accountSectionView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
     }
 
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
+<<<<<<< Updated upstream
 //            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+=======
+<<<<<<< Updated upstream
+            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
-            bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug)
+            bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
             withdrawalPublisher: withdrawalPublisher

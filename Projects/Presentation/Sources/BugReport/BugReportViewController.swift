@@ -41,9 +41,15 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
         }
     }
 
-    public override func configureViewController() {
+    public override func bind() {
+        let input = BugReportViewModel.Input(
+            majorViewDidTap: self.bugReportMajorView.majorViewDidTap
+        )
 
+        let output = viewModel.transform(input)
     }
+
+    public override func configureViewController() {}
 
     public override func configureNavigation() {
         setLargeTitle(title: "버그 제보하기")

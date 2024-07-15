@@ -7,6 +7,7 @@ import Domain
 
 public final class MyPageViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
+    private let disposeBag = DisposeBag()
     private let fetchPresignedURLUseCase: FetchPresignedURLUseCase
     private let uploadImageToS3UseCase: UploadImageToS3UseCase
     private let changeProfileImageUseCase: ChangeProfileImageUseCase
@@ -29,8 +30,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
         self.logoutUseCase = logoutUseCase
     }
-
-    private let disposeBag = DisposeBag()
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
@@ -94,7 +93,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        input.bugReportSectionDidTap
+        input.bugReportSectionDidTap.asObservable()
             .map { _ in MyPageStep.bugReportIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)

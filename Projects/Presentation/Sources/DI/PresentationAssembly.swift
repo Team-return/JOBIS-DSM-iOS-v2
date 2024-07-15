@@ -270,6 +270,15 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(MajorBottomSheetViewController.self) { resolver in
+            MajorBottomSheetViewController(
+                resolver.resolve(MajorBottomSheetViewModel.self)!
+            )
+        }
+        container.register(MajorBottomSheetViewModel.self) { resolver in
+            MajorBottomSheetViewModel()
+        }
+
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
         }
