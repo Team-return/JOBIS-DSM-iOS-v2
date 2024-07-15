@@ -82,14 +82,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
-<<<<<<< Updated upstream
 //            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-=======
-<<<<<<< Updated upstream
-            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
