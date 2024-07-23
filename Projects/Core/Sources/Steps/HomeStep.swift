@@ -17,4 +17,6 @@ public enum HomeStep: Step {
         companyName: String,
         companyImageURL: String
     )
+    case recruitmentDetailIsRequired(id: Int)
+    case none
 }
