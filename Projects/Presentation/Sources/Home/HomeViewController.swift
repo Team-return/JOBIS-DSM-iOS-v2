@@ -113,7 +113,11 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             navigateToEasterEggDidTap: navigateToEasterEggDidTap,
             navigateToCompanyButtonDidTap: findCompanysCard.rx.tap.asSignal(),
             rejectButtonDidTap: rejectButtonDidTap,
-            reApplyButtonDidTap: reApplyButtonDidTap
+            reApplyButtonDidTap: reApplyButtonDidTap,
+            applicationStatusTableViewDidTap: applicationStatusTableView.rx
+                .modelSelected(ApplicationEntity.self)
+                .asObservable()
+                .map { ($0.recruitmentID, $0.applicationStatus) }
         )
 
         titleImageView.rx.tapGesture().when(.recognized).asObservable()
