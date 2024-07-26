@@ -36,6 +36,12 @@ public final class HomeFlow: Flow {
 
         case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageURL):
             return navigateToReApply(recruitmentID, applicationID, companyName, companyImageURL)
+
+        case let .recruitmentDetailIsRequired(id):
+            return navigateToRecruitmentDetail(id)
+
+        case .none:
+            return .none
         }
     }
 }
@@ -154,6 +160,34 @@ private extension HomeFlow {
                     imageURL: companyImageUrl
                 )
             )
+        ))
+    }
+
+    func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            view?.viewModel.recruitmentID = recruitmentID
+            view?.isPopViewController = { id, bookmark in
+                let popView = self.rootViewController.topViewController as? RecruitmentViewController
+                var oldData = popView?.viewModel.recruitmentData.value
+                oldData?.enumerated().forEach {
+                    if $0.element.recruitID == id {
+                        oldData![$0.offset].bookmarked = bookmark
+                    }
+                }
+                popView?.viewModel.recruitmentData.accept(oldData!)
+                popView?.isTabNavigation = false
+            }
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 }

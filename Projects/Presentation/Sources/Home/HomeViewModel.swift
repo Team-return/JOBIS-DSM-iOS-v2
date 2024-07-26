@@ -32,6 +32,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let navigateToCompanyButtonDidTap: Signal<Void>
         let rejectButtonDidTap: PublishRelay<ApplicationEntity>
         let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
+        let applicationStatusTableViewDidTap: Observable<(Int, ApplicationStatusType)>
     }
 
     public struct Output {
@@ -121,6 +122,17 @@ public final class HomeViewModel: BaseViewModel, Stepper {
                     companyName: $0.company,
                     companyImageURL: $0.companyLogoUrl
                 )
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.applicationStatusTableViewDidTap.asObservable()
+            .map { id, status in
+                if status == .pass || status == .fieldTrain {
+                    return HomeStep.recruitmentDetailIsRequired(id: id)
+                } else {
+                    return HomeStep.none
+                }
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
