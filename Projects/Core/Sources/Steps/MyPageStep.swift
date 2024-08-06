@@ -6,4 +6,5 @@ public enum MyPageStep: Step {
     case noticeIsRequired
     case confirmIsRequired
     case bugReportIsRequired
+    case bugReportListIsRequired
 }
