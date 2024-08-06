@@ -36,6 +36,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 //        let reviewNavigate: PublishRelay<Int>
         let helpSectionDidTap: Observable<IndexPath>
         let bugReportSectionDidTap: Observable<IndexPath>
+//        let bugReportListSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
         let withdrawalPublisher: PublishRelay<Void>
@@ -97,6 +98,11 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .map { _ in MyPageStep.bugReportIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
+//        input.bugReportListSectionDidTap.asObservable()
+//            .map { _ in MyPageStep.bugReportListIsRequired }
+//            .bind(to: steps)
+//            .disposed(by: disposeBag)
 
         return Output(
             studentInfo: studentInfo,

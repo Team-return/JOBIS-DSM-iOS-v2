@@ -85,6 +85,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
+//            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
             withdrawalPublisher: withdrawalPublisher

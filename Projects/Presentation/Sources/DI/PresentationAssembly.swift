@@ -66,9 +66,20 @@ public final class PresentationAssembly: Assembly {
         container.register(BugReportViewController.self) { resolver in
             BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
         }
-        container.register(BugReportViewModel.self) { _ in
-            BugReportViewModel()
+        container.register(BugReportViewModel.self) { resolver in
+            BugReportViewModel(
+                reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
+            )
         }
+
+//        container.register(BugReportListViewController.self) { resolver in
+//            BugReportListViewController(resolver.resolve(BugReportListViewModel.self)!)
+//        }
+//        container.register(BugReportListViewModel.self) { resolver in
+//            BugReportListViewModel(
+//                fetchBugListUseCase: resolver.resolve(FetchBugListUseCase.self)!
+//            )
+//        }
 
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
