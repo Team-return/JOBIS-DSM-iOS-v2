@@ -9,6 +9,7 @@ import DesignSystem
 class MajorTypeStackView: UIStackView {
     public var techDidTap: ((String) -> Void)?
     private let disposeBag = DisposeBag()
+//    public lazy var majorTypeStackViewCell = MajorTypeStackViewCell()
 
     init() {
         super.init(frame: .zero)
@@ -28,12 +29,13 @@ class MajorTypeStackView: UIStackView {
 
         majorList.forEach { data in
             let majorTypeStackViewCell = MajorTypeStackViewCell()
+
             majorTypeStackViewCell.snp.makeConstraints {
                 $0.height.equalTo(48)
             }
 
             majorTypeStackViewCell.adapt(majorType: data)
-
+//            self.techDidTap?(data)
 //            techStackViewCell.techCheckBoxDidTap = {
 //                self.techDidTap?("\($0 ?? 0)")
 //            }

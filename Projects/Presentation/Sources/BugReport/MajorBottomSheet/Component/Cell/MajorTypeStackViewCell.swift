@@ -7,21 +7,11 @@ import RxSwift
 import RxCocoa
 
 final class MajorTypeStackViewCell: BaseView {
-    public var majorTypeButtonDidTap: (() -> String)?
-    private var majorName = ""
-//    public var isCheck: Bool = false {
-//        didSet {
-//            techCheckBoxDidTap?(code)
-//            techCheckBox.isCheck = isCheck
-//        }
-//    }
-//    private let backStackView = UIStackView().then {
-//        $0.spacing = 8
-//        $0.axis = .horizontal
-//        $0.isLayoutMarginsRelativeArrangement = true
-//        $0.layoutMargins = .init(top: 12, left: 24, bottom: 12, right: 24)
-//    }
-    private let majorTypeButton = UIButton().then {
+//    public var dismiss: ((String) -> Void)?
+    public var majorTypeButtonDidTap = PublishRelay<String?>()
+    public var majorName = ""
+
+    public let majorTypeButton = UIButton().then {
         $0.setJobisText(
             "-",
             font: .body,
@@ -34,11 +24,6 @@ final class MajorTypeStackViewCell: BaseView {
         [
             majorTypeButton
         ].forEach(self.addSubview(_:))
-//        self.addSubview(backStackView)
-//        [
-//            techCheckBox,
-//            techLabel
-//        ].forEach(self.backStackView.addArrangedSubview(_:))
     }
 
     override func setLayout() {
@@ -50,7 +35,12 @@ final class MajorTypeStackViewCell: BaseView {
     override func configureView() {
         majorTypeButton.rx.tap.asObservable()
             .subscribe(onNext: {
+//                self.dismiss?(
+//                    self.majorName
+//                )
                 print("MajorTypeStackViewCell!")
+                print(self.majorName)
+                self.majorTypeButtonDidTap.accept(self.majorName)
             })
             .disposed(by: disposeBag)
     }

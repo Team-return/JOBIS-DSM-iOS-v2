@@ -16,7 +16,7 @@ class BugReportMajorView: BaseView {
         $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
     }
-    private let majorLabel = UILabel().then {
+    public var majorLabel = UILabel().then {
         $0.setJobisText("전체", font: .subHeadLine, color: .GrayScale.gray90)
     }
     private let arrowImageView = UIImageView().then {
