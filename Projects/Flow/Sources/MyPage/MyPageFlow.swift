@@ -33,6 +33,10 @@ public final class MyPageFlow: Flow {
 
         case .confirmIsRequired:
             return navigateToConfirmPassword()
+
+        case .bugReportListIsRequired:
+            return .none
+//            return navigateToBugReportList()
         }
     }
 }
@@ -96,4 +100,19 @@ extension MyPageFlow {
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
         ))
     }
+
+//    func navigateToBugReportList() -> FlowContributors {
+//        let bugReportListFlow = BugReportListFlow(container: container)
+//
+//        Flows.use(bugReportListFlow, when: .created) { root in
+//            self.rootViewController.pushViewController(
+//                root, animated: true
+//            )
+//        }
+//
+//        return .one(flowContributor: .contribute(
+//            withNextPresentable: bugReportListFlow,
+//            withNextStepper: OneStepper(withSingleStep: BugReportListStep.bugReportListIsRequired)
+//        ))
+//    }
 }
