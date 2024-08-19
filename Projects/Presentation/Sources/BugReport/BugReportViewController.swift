@@ -55,6 +55,9 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
         $0.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         $0.textColor = .GrayScale.gray60
     }
+    private let emptyImageView = UIImageView().then {
+        $0.image = UIImage.jobisIcon(.addPhoto)
+    }
     private let bugReportButton = JobisButton(style: .main).then {
         $0.setText("내용을 전부 입력해주세요")
         $0.isEnabled = false
@@ -71,6 +74,7 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             emptyImageButton
         ].forEach(self.view.addSubview(_:))
         [
+            emptyImageView,
             emptyLabel
         ].forEach(emptyImageButton.addSubview(_:))
     }
@@ -114,8 +118,15 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             $0.leading.trailing.equalToSuperview().inset(24)
         }
 
+        emptyImageView.snp.makeConstraints {
+            $0.height.width.equalTo(36)
+            $0.top.equalToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
+        }
+
         emptyLabel.snp.makeConstraints {
-            $0.centerY.centerX.equalToSuperview()
+            $0.top.equalTo(emptyImageView.snp.bottom).offset(4)
+            $0.centerX.equalToSuperview()
         }
     }
 

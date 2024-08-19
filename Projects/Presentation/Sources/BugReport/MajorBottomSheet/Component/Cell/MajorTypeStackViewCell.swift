@@ -27,7 +27,8 @@ final class MajorTypeStackViewCell: BaseView {
 
     override func setLayout() {
         majorTypeButton.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(24)
         }
     }
 

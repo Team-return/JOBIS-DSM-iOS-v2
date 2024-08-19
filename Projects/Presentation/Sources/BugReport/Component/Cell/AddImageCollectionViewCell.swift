@@ -9,13 +9,12 @@ import RxCocoa
 final class AddImageCollectionViewCell: BaseCollectionViewCell<Any> {
     static let identifier = "AddImageCollectionViewCell"
     private let bugImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "photo")
-        $0.tintColor = .GrayScale.gray60
+        $0.image = UIImage.jobisIcon(.addPhoto)
     }
     private let addImageLabel = UILabel().then {
         $0.setJobisText(
             "이미지 추가",
-            font: .body,
+            font: .subBody,
             color: .GrayScale.gray60
         )
     }
