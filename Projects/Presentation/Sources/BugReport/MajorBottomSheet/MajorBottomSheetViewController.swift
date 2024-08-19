@@ -10,8 +10,8 @@ import DesignSystem
 public final class MajorBottomSheetViewController: BaseBottomSheetViewController<MajorBottomSheetViewModel> {
     private let list: [String] = ["iOS", "Android", "Server", "Web", "전체"]
     public var dismiss: ((String) -> Void)?
-    private var majorType: String = ""
-//    private let majorTypeStackView = MajorTypeStackView()
+    private let majorTypeStackViewDidTap = PublishRelay<Void>()
+
     private let majorSelectMenuLabel = JobisMenuLabel(text: "분야 선택")
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView().then {
@@ -51,33 +51,24 @@ public final class MajorBottomSheetViewController: BaseBottomSheetViewController
 
     public override func bind() {
         let input = MajorBottomSheetViewModel.Input(
-
+            majorTypeStackViewDidTap: self.majorTypeStackViewDidTap
         )
 
         let output = viewModel.transform(input)
     }
 
     public override func configureViewController() {
-//        majorTypeStackView.majorTypeStackViewCell.majorTypeButton.rx.tap.asObservable()
-//            .subscribe(onNext: {
-//                print("안녕하세요~ ")
-//            })
-//            .disposed(by: disposeBag)
+        majorTypeStackView.majorDidTap.asObservable()
+            .subscribe(onNext: {
+                self.viewModel.majorType.accept($0)
 
-//        majorTypeStackViewCell.majorTypeButton.rx.tap.asObservable()
-//            .subscribe(onNext: {
-//                print("==========================")
-//                print(self.majorTypeStackViewCell.majorName)
-//                print("==========================")
-//            })
-//            .disposed(by: disposeBag)
+                self.dismiss?(
+                    self.viewModel.majorType.value
+                )
 
-//            .subscribe(onNext: { [weak self] data in// 여기서 pop 시켜주면서 앞선 뷰로 정보 넘겨주기!
-//                print("++++++++++++++++++++++++++++++++")
-//                print("majorTypeButtonDidTapString:: ~~~ ", data)
-//                print("++++++++++++++++++++++++++++++++")
-//            })
-//            .disposed(by: disposeBag)
+                self.majorTypeStackViewDidTap.accept(())
+            })
+            .disposed(by: disposeBag)
 
         viewDidLoadPublisher.asObservable()
             .bind {

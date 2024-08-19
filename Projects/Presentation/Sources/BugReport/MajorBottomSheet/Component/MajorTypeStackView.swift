@@ -4,12 +4,12 @@ import SnapKit
 import Then
 import RxGesture
 import RxSwift
+import RxCocoa
 import DesignSystem
 
 class MajorTypeStackView: UIStackView {
-    public var techDidTap: ((String) -> Void)?
+    public var majorDidTap = PublishRelay<String>()
     private let disposeBag = DisposeBag()
-//    public lazy var majorTypeStackViewCell = MajorTypeStackViewCell()
 
     init() {
         super.init(frame: .zero)
@@ -35,10 +35,9 @@ class MajorTypeStackView: UIStackView {
             }
 
             majorTypeStackViewCell.adapt(majorType: data)
-//            self.techDidTap?(data)
-//            techStackViewCell.techCheckBoxDidTap = {
-//                self.techDidTap?("\($0 ?? 0)")
-//            }
+            majorTypeStackViewCell.dismiss = {
+                self.majorDidTap.accept($0)
+            }
             self.addArrangedSubview(majorTypeStackViewCell)
         }
     }

@@ -8,7 +8,7 @@ import Domain
 public final class BugReportViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-    public var majorType: String = "전체"
+    public var majorType = BehaviorRelay<String>(value: "전체")
 
     private let reportBugUseCase: ReportBugUseCase
 
@@ -26,7 +26,7 @@ public final class BugReportViewModel: BaseViewModel, Stepper {
     }
 
     public struct Output {
-        let majorType: String
+        let majorType: BehaviorRelay<String>
         let bugReportButtonIsEnable: PublishRelay<Bool>
     }
 
@@ -43,7 +43,7 @@ public final class BugReportViewModel: BaseViewModel, Stepper {
                 self.reportBugUseCase.execute(req: .init(
                     title: title,
                     content: content,
-                    developmentArea: DevelopmentType(rawValue: self.majorType) ?? .all,
+                    developmentArea: DevelopmentType(rawValue: self.majorType.value.uppercased()) ?? .all,
                     attachmentUrls: images
                 ))
             }

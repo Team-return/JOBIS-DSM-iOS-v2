@@ -7,8 +7,7 @@ import RxSwift
 import RxCocoa
 
 final class MajorTypeStackViewCell: BaseView {
-//    public var dismiss: ((String) -> Void)?
-    public var majorTypeButtonDidTap = PublishRelay<String?>()
+    public var dismiss: ((String) -> Void)?
     public var majorName = ""
 
     public let majorTypeButton = UIButton().then {
@@ -35,12 +34,9 @@ final class MajorTypeStackViewCell: BaseView {
     override func configureView() {
         majorTypeButton.rx.tap.asObservable()
             .subscribe(onNext: {
-//                self.dismiss?(
-//                    self.majorName
-//                )
-                print("MajorTypeStackViewCell!")
-                print(self.majorName)
-                self.majorTypeButtonDidTap.accept(self.majorName)
+                self.dismiss?(
+                    self.majorName
+                )
             })
             .disposed(by: disposeBag)
     }
