@@ -16,8 +16,5 @@ mise install tuist@3.23.1
 
 tuist version
 
-make reset
-
-make generate
-#tuist fetch
-#TUIST_CI=1 tuist generate
+tuist fetch
+TUIST_CI=1 tuist generate
