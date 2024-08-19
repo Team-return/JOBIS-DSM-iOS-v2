@@ -37,6 +37,11 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             BugImageCollectionViewCell.self,
             forCellWithReuseIdentifier: BugImageCollectionViewCell.identifier
         )
+        $0.register(
+            AddImageCollectionViewCell.self,
+            forCellWithReuseIdentifier: AddImageCollectionViewCell.identifier
+        )
+        $0.showsHorizontalScrollIndicator = false
     }
     private let emptyImageButton = UIButton().then {
         $0.isHidden = true
@@ -130,7 +135,11 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             }
             .disposed(by: disposeBag)
 
-        self.bugReportMajorView.majorLabel.text = output.majorType
+        output.majorType.asObservable()
+            .subscribe(onNext: {
+                self.bugReportMajorView.majorLabel.text = $0
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
@@ -196,22 +205,38 @@ extension BugReportViewController: PHPickerViewControllerDelegate {
 
 extension BugReportViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.imageList.count
+        if self.imageList.isEmpty {
+            return self.imageList.count
+        } else {
+            return self.imageList.count + 1
+        }
     }
 
     public func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: BugImageCollectionViewCell.identifier,
-            for: indexPath
-        ) as? BugImageCollectionViewCell
+        if indexPath.item == imageList.count {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: AddImageCollectionViewCell.identifier,
+                for: indexPath) as? AddImageCollectionViewCell
 
-        let image = self.imageList[indexPath.row]
-        cell?.bugImageView.image = image.bugReportResize(to: CGSize(width: 92, height: 92))
+            cell?.layer.cornerRadius = 8
+            cell?.layer.borderWidth = 1
+            cell?.layer.borderColor = UIColor.GrayScale.gray40.cgColor
 
-        return cell!
+            return cell!
+        } else {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: BugImageCollectionViewCell.identifier,
+                for: indexPath
+            ) as? BugImageCollectionViewCell
+
+            let image = self.imageList[indexPath.row].bugReportResize(to: CGSize(width: 92, height: 92))
+            cell?.bugImageView.image = image
+
+            return cell!
+        }
     }
 
     public func collectionView(
@@ -220,5 +245,16 @@ extension BugReportViewController: UICollectionViewDelegate, UICollectionViewDat
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         return CGSize(width: 92, height: 92)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == imageList.count {
+            var configuration = PHPickerConfiguration()
+            configuration.selectionLimit = 0
+            configuration.filter = .any(of: [.images, .videos])
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+        }
     }
 }
