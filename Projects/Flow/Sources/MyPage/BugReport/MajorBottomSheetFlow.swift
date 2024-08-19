@@ -25,6 +25,9 @@ public final class MajorBottomSheetFlow: Flow {
         switch step {
         case .majorBottomSheetIsRequired:
             return navigateToMajorBottomSheet()
+
+        case .dismissToBugReport:
+            return dismissToBugReport()
         }
     }
 }
@@ -37,18 +40,8 @@ private extension MajorBottomSheetFlow {
         ))
     }
 
-//    func navigateToReApply(
-//        _ recruitmentID: Int,
-//        _ applicationID: Int,
-//        _ companyName: String,
-//        _ companyImageUrl: String
-//    ) -> FlowContributors {
-//        rootViewController.dismissBottomSheet()
-//        return .end(forwardToParentFlowWithStep: HomeStep.reApplyIsRequired(
-//            recruitmentID: recruitmentID,
-//            applicationID: applicationID,
-//            companyName: companyName,
-//            companyImageURL: companyImageUrl
-//        ))
-//    }
+    func dismissToBugReport() -> FlowContributors {
+        self.rootViewController.dismissBottomSheet()
+        return .none
+    }
 }

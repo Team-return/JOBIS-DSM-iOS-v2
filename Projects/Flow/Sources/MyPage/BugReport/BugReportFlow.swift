@@ -39,18 +39,22 @@ private extension BugReportFlow {
 
     func navigateToMajorBottomSheet() -> FlowContributors {
         let majorBottomSheetFlow = MajorBottomSheetFlow(container: container)
-
-        Flows.use(majorBottomSheetFlow, when: .created) { (root) in
+        Flows.use(majorBottomSheetFlow, when: .created) { root in
             let view = root as? MajorBottomSheetViewController
+            view?.dismiss = { majorType in
+                self.rootViewController.viewModel.majorType.accept(majorType)
+            }
             self.rootViewController.present(
                 root,
                 animated: false
             )
         }
-
+        
         return .one(flowContributor: .contribute(
             withNextPresentable: majorBottomSheetFlow,
-            withNextStepper: OneStepper(withSingleStep: MajorBottomSheetStep.majorBottomSheetIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: MajorBottomSheetStep.majorBottomSheetIsRequired
+            )
         ))
     }
 }
