@@ -35,7 +35,7 @@ public final class JobisTextView: UIView {
         title: String,
         placeholder: String
     ) {
-        self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
+        self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray60)
         self.placeholderLabel.setJobisText(placeholder, font: .body, color: .GrayScale.gray60)
         self.textView.rx.text.orEmpty.asObservable()
             .map { $0.isEmpty }
