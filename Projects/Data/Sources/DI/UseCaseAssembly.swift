@@ -228,5 +228,15 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
+        container.register(SubscribeNotificationUseCase.self) { resolver in
+            SubscribeNotificationUseCase(
+                notificationsRepository: resolver.resolve(NotificationsRepository.self)!
+            )
+        }
+        container.register(SubscribeAllNotificationUseCase.self) { resolver in
+            SubscribeAllNotificationUseCase(
+                notificationsRepository: resolver.resolve(NotificationsRepository.self)!
+            )
+        }
     }
 }

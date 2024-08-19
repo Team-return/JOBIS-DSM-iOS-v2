@@ -17,4 +17,12 @@ struct NotificationsRepositoryImpl: NotificationsRepository {
     func patchReadNotification(id: Int) -> Completable {
         remoteNotificationsDataSource.patchReadNotification(id: id)
     }
+
+    func subscriptNotification(token: String, notificationType: NotificationType) -> Completable {
+        remoteNotificationsDataSource.subscriptNotification(token: token, notificationType: notificationType)
+    }
+    
+    func subscriptAllNotification(token: String) -> Completable {
+        remoteNotificationsDataSource.subscriptAllNotification(token: token)
+    }
 }

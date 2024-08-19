@@ -5,6 +5,8 @@ import Domain
 public enum NotificationsAPI {
     case fetchNotificationList
     case patchReadNotification(id: Int)
+    case subscriptNotification(token: String, notificationType: NotificationType)
+    case subscriptAllNotification(token: String)
 }
 
 extension NotificationsAPI: JobisAPI {
@@ -21,6 +23,12 @@ extension NotificationsAPI: JobisAPI {
 
         case let .patchReadNotification(id):
             return "/\(id)"
+
+        case .subscriptNotification:
+            return "/topic"
+
+        case .subscriptAllNotification:
+            return ""
         }
     }
 
@@ -31,6 +39,9 @@ extension NotificationsAPI: JobisAPI {
 
         case .patchReadNotification:
             return .patch
+
+        case .subscriptNotification, .subscriptAllNotification:
+            return .post
         }
     }
 
@@ -42,6 +53,24 @@ extension NotificationsAPI: JobisAPI {
 //                  // TODO: 추후 읽음와 안읽음 분기처리 필요
                     ["is_new": ""],
                 encoding: URLEncoding.queryString)
+
+        case let .subscriptNotification(token, notificationType):
+            return .requestParameters(
+                parameters: [
+                    "token": token,
+                    "topic": notificationType.rawValue
+                ],
+                encoding: URLEncoding.queryString
+            )
+
+        case let .subscriptAllNotification(token):
+            return .requestParameters(
+                parameters: [
+                    "token": token
+                ],
+                encoding: URLEncoding.queryString
+            )
+
         default:
             return .requestPlain
         }
