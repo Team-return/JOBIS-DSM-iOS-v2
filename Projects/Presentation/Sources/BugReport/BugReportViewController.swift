@@ -173,6 +173,7 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
 
     public override func configureNavigation() {
         setLargeTitle(title: "버그 제보하기")
+        self.hideTabbar()
     }
 }
 
