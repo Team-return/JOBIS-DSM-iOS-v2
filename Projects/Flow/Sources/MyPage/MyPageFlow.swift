@@ -28,6 +28,9 @@ public final class MyPageFlow: Flow {
         case let .writableReviewIsRequired(id):
             return navigateToWritableReview(id)
 
+        case .notificationSettingIsRequired:
+            return navigateToNotification()
+
         case .noticeIsRequired:
             return navigateToNotice()
 
@@ -66,6 +69,21 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: writableReviewFlow,
             withNextStepper: OneStepper(withSingleStep: WritableReviewStep.writableReviewIsRequired)
+        ))
+    }
+
+    func navigateToNotification() -> FlowContributors {
+        let notificationSettingFlow = NotificationSettingFlow(container: container)
+
+        Flows.use(notificationSettingFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: notificationSettingFlow,
+            withNextStepper: OneStepper(withSingleStep: NotificationSettingStep.notificationSettingIsRequired)
         ))
     }
 
