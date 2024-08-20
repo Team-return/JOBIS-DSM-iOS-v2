@@ -164,6 +164,14 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(NotificationSettingViewModel.self) { resolver in
+            NotificationSettingViewModel()
+        }
+
+        container.register(NotificationSettingViewController.self) { resolver in
+            NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
