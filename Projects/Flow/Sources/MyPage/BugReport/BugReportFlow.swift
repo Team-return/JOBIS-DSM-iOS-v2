@@ -49,7 +49,7 @@ private extension BugReportFlow {
                 animated: false
             )
         }
-        
+
         return .one(flowContributor: .contribute(
             withNextPresentable: majorBottomSheetFlow,
             withNextStepper: OneStepper(

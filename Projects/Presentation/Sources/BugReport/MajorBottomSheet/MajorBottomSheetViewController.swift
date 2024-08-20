@@ -54,7 +54,7 @@ public final class MajorBottomSheetViewController: BaseBottomSheetViewController
             majorTypeStackViewDidTap: self.majorTypeStackViewDidTap
         )
 
-        let output = viewModel.transform(input)
+        _ = viewModel.transform(input)
     }
 
     public override func configureViewController() {

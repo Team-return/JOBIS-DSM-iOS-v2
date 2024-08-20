@@ -21,8 +21,9 @@ public final class BugReportViewModel: BaseViewModel, Stepper {
     public struct Input {
         let title: Driver<String>
         let content: Driver<String>
+        let bugReportImageList: BehaviorRelay<[String]>
         let majorViewDidTap: PublishRelay<Void>
-        let bugReportButtonDidTap: PublishRelay<(String, String, [String])>
+        let bugReportButtonDidTap: PublishRelay<Void>
     }
 
     public struct Output {
@@ -32,6 +33,7 @@ public final class BugReportViewModel: BaseViewModel, Stepper {
 
     public func transform(_ input: Input) -> Output {
         let bugReportButtonIsEnable = PublishRelay<Bool>()
+        let info = Driver.combineLatest(input.title, input.content)
 
         input.majorViewDidTap.asObservable()
             .map { _ in BugReportStep.majorBottomSheetIsRequired }
@@ -39,12 +41,13 @@ public final class BugReportViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.bugReportButtonDidTap.asObservable()
-            .flatMap { title, content, images in
+            .withLatestFrom(info)
+            .flatMap { title, content in
                 self.reportBugUseCase.execute(req: .init(
                     title: title,
                     content: content,
                     developmentArea: DevelopmentType(rawValue: self.majorType.value.uppercased()) ?? .all,
-                    attachmentUrls: images
+                    attachmentUrls: input.bugReportImageList.value
                 ))
             }
             .subscribe()

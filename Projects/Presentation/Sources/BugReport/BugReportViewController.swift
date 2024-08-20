@@ -9,7 +9,8 @@ import DesignSystem
 import PhotosUI
 
 public final class BugReportViewController: BaseViewController<BugReportViewModel> {
-    private let bugReportButtonDidTap = PublishRelay<(String, String, [String])>()
+    private let bugReportButtonDidTap = PublishRelay<Void>()
+    private let bugReportImageList = BehaviorRelay<[String]>(value: [])
     var imageStringList: [String] = []
     var imageList: [UIImage] = []
     var titleBool: Bool = false
@@ -156,6 +157,7 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
         let input = BugReportViewModel.Input(
             title: bugReportTitleTextField.textField.rx.text.orEmpty.asDriver(),
             content: bugReportContentTextView.textView.rx.text.orEmpty.asDriver(),
+            bugReportImageList: bugReportImageList,
             majorViewDidTap: self.bugReportMajorView.majorViewDidTap,
             bugReportButtonDidTap: self.bugReportButtonDidTap
         )
@@ -193,11 +195,8 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
 
         bugReportButton.rx.tap.asObservable()
             .subscribe(onNext: {
-                self.bugReportButtonDidTap.accept((
-                    self.bugReportTitleTextField.textField.text ?? "",
-                    self.bugReportContentTextView.textView.text ?? "",
-                    self.imageStringList
-                ))
+                self.bugReportImageList.accept(self.imageStringList)
+                self.bugReportButtonDidTap.accept(())
                 self.showJobisToast(text: "버그제보가 완료되었습니다.", inset: 70)
                 self.navigationController?.popViewController(animated: true)
             })
@@ -218,7 +217,7 @@ extension BugReportViewController: PHPickerViewControllerDelegate {
             for result in results {
                 let itemProvider = result.itemProvider
                 if itemProvider.canLoadObject(ofClass: UIImage.self) {
-                    itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+                    itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, _ ) in
                         if let uiImage = image as? UIImage {
                             self?.imageList.append(uiImage)
                             self?.imageStringList.append(uiImage.toURLString())

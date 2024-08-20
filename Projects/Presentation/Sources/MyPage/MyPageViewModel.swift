@@ -50,7 +50,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let writableReviewList = BehaviorRelay<[WritableReviewCompanyEntity]>(value: [])
-        let changedImageURL = PublishRelay<String>()
 
         input.viewAppear.asObservable()
             .flatMap { self.fetchStudentInfoUseCase.execute() }
