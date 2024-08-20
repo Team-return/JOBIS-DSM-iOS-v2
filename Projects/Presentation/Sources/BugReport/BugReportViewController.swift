@@ -62,17 +62,27 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
         $0.setText("내용을 전부 입력해주세요")
         $0.isEnabled = false
     }
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+    private let contentView = UIView()
 
     public override func addView() {
+        [
+            scrollView,
+            bugReportButton
+        ].forEach(self.view.addSubview(_:))
+        scrollView.addSubview(contentView)
+
         [
             bugReportMajorView,
             bugReportTitleTextField,
             bugReportContentTextView,
             attachImageMenuLabel,
-            bugReportButton,
             bugImageCollectionView,
             emptyImageButton
-        ].forEach(self.view.addSubview(_:))
+        ].forEach(contentView.addSubview(_:))
+
         [
             emptyImageView,
             emptyLabel
@@ -80,8 +90,20 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
     }
 
     public override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(bugReportButton.snp.top)
+        }
+
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalToSuperview()
+            $0.bottom.equalTo(bugImageCollectionView.snp.bottom).offset(20)
+        }
+
         bugReportMajorView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
 
