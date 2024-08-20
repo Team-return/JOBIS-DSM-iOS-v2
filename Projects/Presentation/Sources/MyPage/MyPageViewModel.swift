@@ -35,6 +35,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let reviewNavigate: PublishRelay<Int>
+        let notificationSettingSectionDidTap: Observable<IndexPath>
         let helpSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
@@ -63,6 +64,11 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
         input.reviewNavigate.asObservable()
             .map { MyPageStep.writableReviewIsRequired($0) }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.notificationSettingSectionDidTap.asObservable()
+            .map { _ in MyPageStep.notificationSettingIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

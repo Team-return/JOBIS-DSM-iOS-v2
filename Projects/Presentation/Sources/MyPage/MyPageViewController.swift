@@ -18,6 +18,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
 //    }
     private let reviewNavigateStackView = ReviewNavigateStackView()
+    private let notificationSettingSectionView = NotificationSettingSectionView()
     private let accountSectionView = AccountSectionView()
 //    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
@@ -31,6 +32,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             studentInfoView,
 //            editButton,
             reviewNavigateStackView,
+            notificationSettingSectionView,
             helpSectionView,
             accountSectionView
 //            bugSectionView
@@ -63,8 +65,14 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(studentInfoView.snp.bottom)
         }
 
-        helpSectionView.snp.makeConstraints {
+        notificationSettingSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)
+//            $0.top.equalTo(studentInfoView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        helpSectionView.snp.makeConstraints {
+            $0.top.equalTo(notificationSettingSectionView.snp.bottom)
 //            $0.top.equalTo(studentInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
@@ -84,6 +92,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type: .notificationSetting),
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
