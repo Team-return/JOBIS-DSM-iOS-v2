@@ -8,10 +8,7 @@ import DesignSystem
 
 public final class NotificationSectionView: BaseView {
     public var disposeBag = DisposeBag()
-<<<<<<< Updated upstream
-=======
     public let switchButtonIsToggle = PublishRelay<Bool>()
->>>>>>> Stashed changes
 
     private let notificationTitleLabel = UILabel().then {
         $0.setJobisText(
@@ -50,17 +47,10 @@ public final class NotificationSectionView: BaseView {
                 self.notificationSwitchButton.isOn.toggle()
                 if self.notificationSwitchButton.isOn {
                     self.notificationSwitchButton.thumbTintColor = .white
-<<<<<<< Updated upstream
-                    print("온!!")
-                } else {
-                    self.notificationSwitchButton.thumbTintColor = nil
-                    print("오프!!")
-=======
                     self.switchButtonIsToggle.accept(true)
                 } else {
                     self.notificationSwitchButton.thumbTintColor = nil
                     self.switchButtonIsToggle.accept(false)
->>>>>>> Stashed changes
                 }
             })
             .disposed(by: disposeBag)

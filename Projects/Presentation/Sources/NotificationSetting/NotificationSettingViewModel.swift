@@ -4,37 +4,13 @@ import RxCocoa
 import RxFlow
 import Core
 import Domain
-<<<<<<< Updated upstream
-=======
 import FirebaseMessaging
->>>>>>> Stashed changes
 
 public final class NotificationSettingViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let subscribeNotificationUseCase: SubscribeNotificationUseCase
     private let subscribeAllNotificationUseCase: SubscribeAllNotificationUseCase
-<<<<<<< Updated upstream
-
-    init(
-        subscribeNotificationUseCase: SubscribeNotificationUseCase,
-        subscribeAllNotificationUseCase: SubscribeAllNotificationUseCase
-    ) {
-        self.subscribeNotificationUseCase = subscribeNotificationUseCase
-        self.subscribeAllNotificationUseCase = subscribeAllNotificationUseCase
-    }
-
-    public struct Input {
-
-    }
-
-    public struct Output {
-
-    }
-
-    public func transform(_ input: Input) -> Output {
-        
-=======
     private let unsubscribeNotificationUseCase: UnsubscribeNotificationUseCase
     private let unsubscribeAllNotificationUseCase: UnsubscribeAllNotificationUseCase
 
@@ -122,7 +98,6 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
             .subscribe()
             .disposed(by: disposeBag)
 
->>>>>>> Stashed changes
         return Output()
     }
 }

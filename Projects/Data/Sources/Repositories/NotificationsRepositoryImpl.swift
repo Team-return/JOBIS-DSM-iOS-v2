@@ -17,21 +17,10 @@ struct NotificationsRepositoryImpl: NotificationsRepository {
     func patchReadNotification(id: Int) -> Completable {
         remoteNotificationsDataSource.patchReadNotification(id: id)
     }
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
 
     func subscriptNotification(token: String, notificationType: NotificationType) -> Completable {
         remoteNotificationsDataSource.subscriptNotification(token: token, notificationType: notificationType)
     }
-<<<<<<< Updated upstream
-    
-    func subscriptAllNotification(token: String) -> Completable {
-        remoteNotificationsDataSource.subscriptAllNotification(token: token)
-    }
-=======
 
     func subscriptAllNotification(token: String) -> Completable {
         remoteNotificationsDataSource.subscriptAllNotification(token: token)
@@ -44,6 +33,4 @@ struct NotificationsRepositoryImpl: NotificationsRepository {
     func unsubscriptAllNotification(token: String) -> Completable {
         remoteNotificationsDataSource.unsubscriptAllNotification(token: token)
     }
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 }

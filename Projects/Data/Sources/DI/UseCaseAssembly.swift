@@ -228,11 +228,6 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
         container.register(SubscribeNotificationUseCase.self) { resolver in
             SubscribeNotificationUseCase(
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
@@ -243,8 +238,6 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
-<<<<<<< Updated upstream
-=======
         container.register(UnsubscribeNotificationUseCase.self) { resolver in
             UnsubscribeNotificationUseCase(
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
@@ -255,7 +248,5 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     }
 }

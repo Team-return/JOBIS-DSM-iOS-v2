@@ -148,11 +148,6 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
         container.register(WritableReviewViewModel.self) { resolver in
             WritableReviewViewModel(
                 postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
@@ -170,26 +165,18 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(NotificationSettingViewModel.self) { resolver in
-<<<<<<< Updated upstream
-            NotificationSettingViewModel()
-=======
             NotificationSettingViewModel(
                 subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
                 subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
                 unsubscribeNotificationUseCase: resolver.resolve(UnsubscribeNotificationUseCase.self)!,
                 unsubscribeAllNotificationUseCase: resolver.resolve(UnsubscribeAllNotificationUseCase.self)!
             )
->>>>>>> Stashed changes
         }
 
         container.register(NotificationSettingViewController.self) { resolver in
             NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
         }
 
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
