@@ -34,7 +34,10 @@ public final class NotificationSettingViewController: BaseViewController<Notific
 
     public override func addView() {
         [
+<<<<<<< Updated upstream
 //            noticeSwitchButton
+=======
+>>>>>>> Stashed changes
             titleLabel,
             allNotificationSwitchView,
             lineView,
@@ -89,6 +92,7 @@ public final class NotificationSettingViewController: BaseViewController<Notific
 
     public override func bind() {
         let input = NotificationSettingViewModel.Input(
+<<<<<<< Updated upstream
             
         )
         let ouput = viewModel.transform(input)
@@ -104,6 +108,19 @@ public final class NotificationSettingViewController: BaseViewController<Notific
 
     public override func configureNavigation() {
 //        self.setLargeTitle(title: "알림 설정")
+=======
+            allSwitchButtonIsTrue: allNotificationSwitchView.switchButtonIsToggle,
+            noticeSwitchButtonIsTrue: noticeSwitchView.switchButtonIsToggle,
+            applicationSwitchButtonIsTrue: applicationSwitchView.switchButtonIsToggle,
+            recruitmentSwitchButtonIsTrue: recruitmentSwitchView.switchButtonIsToggle
+        )
+        let _ = viewModel.transform(input)
+    }
+
+    public override func configureViewController() { }
+
+    public override func configureNavigation() {
+>>>>>>> Stashed changes
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.hideTabbar()
     }
