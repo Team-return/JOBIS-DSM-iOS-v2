@@ -74,6 +74,7 @@ public final class ConfirmPasswordViewController: BaseViewController<ConfirmPass
     }
 
     public override func configureNavigation() {
-        self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.setSmallTitle(title: "")
+        self.navigationItem.largeTitleDisplayMode = .never
     }
 }
