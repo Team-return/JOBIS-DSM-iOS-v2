@@ -46,8 +46,6 @@ public final class NotificationSectionView: BaseView {
         }
     }
 
-    public override func configureView() {}
-
     func setTitleLabel(text: String) {
         self.notificationTitleLabel.text = text
     }

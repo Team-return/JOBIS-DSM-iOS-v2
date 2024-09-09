@@ -61,28 +61,16 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
                 for state in $0 {
                     if state.topic == .notice {
                         subscribeNoticeState.accept(state)
-                        if state.isSubscribed {
-                            noticeState.accept(true)
-                        } else {
-                            noticeState.accept(false)
-                        }
+                        noticeState.accept(state.isSubscribed)
                     } else if state.topic == .application {
                         subscribeApplicationState.accept(state)
-                        if state.isSubscribed {
-                            applicationState.accept(true)
-                        } else {
-                            applicationState.accept(false)
-                        }
+                        applicationState.accept(state.isSubscribed)
                     } else if state.topic == .recruitment {
                         subscribeRecruitmentState.accept(state)
-                        if state.isSubscribed {
-                            recruitmentState.accept(true)
-                        } else {
-                            recruitmentState.accept(false)
-                        }
+                        recruitmentState.accept(state.isSubscribed)
                     }
 
-                    if noticeState.value && applicationState.value && recruitmentState.value {
+                    if noticeState.value || applicationState.value || recruitmentState.value {
                         allSubscribeState.accept(true)
                     } else {
                         allSubscribeState.accept(false)
