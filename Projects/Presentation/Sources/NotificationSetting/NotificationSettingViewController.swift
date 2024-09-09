@@ -7,6 +7,12 @@ import Core
 import DesignSystem
 
 public final class NotificationSettingViewController: BaseViewController<NotificationSettingViewModel> {
+    private lazy var switchViewArray = [
+        noticeSwitchView,
+        applicationSwitchView,
+        recruitmentSwitchView
+    ]
+
     private let titleLabel = UILabel().then {
         $0.setJobisText(
             "알림 설정",
@@ -88,25 +94,82 @@ public final class NotificationSettingViewController: BaseViewController<Notific
 
     public override func bind() {
         let input = NotificationSettingViewModel.Input(
-            allSwitchButtonIsTrue: allNotificationSwitchView.switchButtonIsToggle,
-            noticeSwitchButtonIsTrue: noticeSwitchView.switchButtonIsToggle,
-            applicationSwitchButtonIsTrue: applicationSwitchView.switchButtonIsToggle,
-            recruitmentSwitchButtonIsTrue: recruitmentSwitchView.switchButtonIsToggle
+            viewAppear: self.viewWillAppearPublisher
+            , allSwitchButtonDidTap: allNotificationSwitchView.clickSwitchButton,
+            noticeSwitchButtonDidTap: noticeSwitchView.clickSwitchButton,
+            applicationSwitchButtonDidTap: applicationSwitchView.clickSwitchButton,
+            recruitmentSwitchButtonDidTap: recruitmentSwitchView.clickSwitchButton
         )
 
-        let _ = viewModel.transform(input)
+        let output = viewModel.transform(input)
+
+        output.subscribeNoticeState.asObservable()
+            .bind(onNext: {
+                self.noticeSwitchView.setup(isOn: $0.isSubscribed)
+            })
+            .disposed(by: disposeBag)
+
+        output.subscribeApplicationState.asObservable()
+            .bind(onNext: {
+                self.applicationSwitchView.setup(isOn: $0.isSubscribed)
+            })
+            .disposed(by: disposeBag)
+
+        output.subscribeRecruitmentState.asObservable()
+            .bind(onNext: {
+                self.recruitmentSwitchView.setup(isOn: $0.isSubscribed)
+            })
+            .disposed(by: disposeBag)
+
+        output.allSubscribeState.asObservable()
+            .bind(onNext: {
+                self.allNotificationSwitchView.setup(isOn: $0)
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-//        viewWillDisappearPublisher.asObservable()
-//            .bind {
-//                self.setSmallTitle(title: "")
-//            }
-//            .disposed(by: disposeBag)
+        allNotificationSwitchView.clickSwitchButton
+            .asObservable()
+            .bind(onNext: { [weak self] isOn in
+                self?.switchViewArray.forEach {
+                    $0.setup(isOn: isOn)
+                }
+            }).disposed(by: disposeBag)
+
+        noticeSwitchView.clickSwitchButton
+            .asObservable()
+            .bind(onNext: { [weak self] _ in
+                self?.toggleButton()
+            }).disposed(by: disposeBag)
+
+        applicationSwitchView.clickSwitchButton
+            .asObservable()
+            .bind(onNext: { [weak self] _ in
+                self?.toggleButton()
+            }).disposed(by: disposeBag)
+
+        recruitmentSwitchView.clickSwitchButton
+            .asObservable()
+            .bind(onNext: { [weak self] _ in
+                self?.toggleButton()
+            }).disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.hideTabbar()
+    }
+
+    private func toggleButton() {
+        if (
+            noticeSwitchView.switchIsOn &&
+            applicationSwitchView.switchIsOn &&
+            recruitmentSwitchView.switchIsOn
+        ) == true {
+            self.allNotificationSwitchView.setup(isOn: true)
+        } else {
+            self.allNotificationSwitchView.setup(isOn: false)
+        }
     }
 }

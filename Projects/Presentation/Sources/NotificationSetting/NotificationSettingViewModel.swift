@@ -11,93 +11,132 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     private let subscribeNotificationUseCase: SubscribeNotificationUseCase
     private let subscribeAllNotificationUseCase: SubscribeAllNotificationUseCase
-    private let unsubscribeNotificationUseCase: UnsubscribeNotificationUseCase
-    private let unsubscribeAllNotificationUseCase: UnsubscribeAllNotificationUseCase
+    private let fetchSubscribeStateUseCase: FetchSubscribeStateUseCase
 
     init(
         subscribeNotificationUseCase: SubscribeNotificationUseCase,
         subscribeAllNotificationUseCase: SubscribeAllNotificationUseCase,
-        unsubscribeNotificationUseCase: UnsubscribeNotificationUseCase,
-        unsubscribeAllNotificationUseCase: UnsubscribeAllNotificationUseCase
+        fetchSubscribeStateUseCase: FetchSubscribeStateUseCase
     ) {
         self.subscribeNotificationUseCase = subscribeNotificationUseCase
         self.subscribeAllNotificationUseCase = subscribeAllNotificationUseCase
-        self.unsubscribeNotificationUseCase = unsubscribeNotificationUseCase
-        self.unsubscribeAllNotificationUseCase = unsubscribeAllNotificationUseCase
+        self.fetchSubscribeStateUseCase = fetchSubscribeStateUseCase
     }
 
     public struct Input {
-        let allSwitchButtonIsTrue: PublishRelay<Bool>
-        let noticeSwitchButtonIsTrue: PublishRelay<Bool>
-        let applicationSwitchButtonIsTrue: PublishRelay<Bool>
-        let recruitmentSwitchButtonIsTrue: PublishRelay<Bool>
+        let viewAppear: PublishRelay<Void>
+        let allSwitchButtonDidTap: ControlProperty<Bool>
+        let noticeSwitchButtonDidTap: ControlProperty<Bool>
+        let applicationSwitchButtonDidTap: ControlProperty<Bool>
+        let recruitmentSwitchButtonDidTap: ControlProperty<Bool>
     }
 
-    public struct Output { }
+    public struct Output {
+        let subscribeNoticeState: PublishRelay<SubscribeStateEntity>
+        let subscribeApplicationState: PublishRelay<SubscribeStateEntity>
+        let subscribeRecruitmentState: PublishRelay<SubscribeStateEntity>
+        let allSubscribeState: PublishRelay<Bool>
+    }
 
     public func transform(_ input: Input) -> Output {
-        input.allSwitchButtonIsTrue.asObservable()
+        let subscribeStateList = PublishRelay<[SubscribeStateEntity]>()
+        let subscribeNoticeState = PublishRelay<SubscribeStateEntity>()
+        let subscribeApplicationState = PublishRelay<SubscribeStateEntity>()
+        let subscribeRecruitmentState = PublishRelay<SubscribeStateEntity>()
+
+        let noticeState = BehaviorRelay<Bool>(value: false)
+        let applicationState = BehaviorRelay<Bool>(value: false)
+        let recruitmentState = BehaviorRelay<Bool>(value: false)
+        let allSubscribeState = PublishRelay<Bool>()
+
+        input.viewAppear.asObservable()
             .flatMap {
-                if $0 {
-                    return self.subscribeAllNotificationUseCase.execute(token: Messaging.messaging().fcmToken ?? "")
-                } else {
-                    return self.unsubscribeAllNotificationUseCase.execute(token: Messaging.messaging().fcmToken ?? "")
+                self.fetchSubscribeStateUseCase.execute()
+            }
+            .bind(to: subscribeStateList)
+            .disposed(by: disposeBag)
+
+        subscribeStateList.asObservable()
+            .subscribe(onNext: {
+                for state in $0 {
+                    if state.topic == .notice {
+                        subscribeNoticeState.accept(state)
+                        if state.isSubscribed {
+                            noticeState.accept(true)
+                        } else {
+                            noticeState.accept(false)
+                        }
+                    } else if state.topic == .application {
+                        subscribeApplicationState.accept(state)
+                        if state.isSubscribed {
+                            applicationState.accept(true)
+                        } else {
+                            applicationState.accept(false)
+                        }
+                    } else if state.topic == .recruitment {
+                        subscribeRecruitmentState.accept(state)
+                        if state.isSubscribed {
+                            recruitmentState.accept(true)
+                        } else {
+                            recruitmentState.accept(false)
+                        }
+                    }
+
+                    if noticeState.value && applicationState.value && recruitmentState.value {
+                        allSubscribeState.accept(true)
+                    } else {
+                        allSubscribeState.accept(false)
+                    }
                 }
+            })
+            .disposed(by: disposeBag)
+
+        input.allSwitchButtonDidTap.asObservable()
+            .skip(1)
+            .flatMap { _ in
+                self.subscribeAllNotificationUseCase.execute()
             }
             .subscribe()
             .disposed(by: disposeBag)
 
-        input.noticeSwitchButtonIsTrue.asObservable()
-            .flatMap {
-                if $0 {
-                    return self.subscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .notice
-                    )
-                } else {
-                    return self.unsubscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .notice
-                    )
-                }
+        input.noticeSwitchButtonDidTap.asObservable()
+            .skip(1)
+            .flatMap { _ in
+                self.subscribeNotificationUseCase.execute(
+                    token: Messaging.messaging().fcmToken ?? "",
+                    notificationType: .notice
+                )
             }
             .subscribe()
             .disposed(by: disposeBag)
 
-        input.applicationSwitchButtonIsTrue.asObservable()
-            .flatMap {
-                if $0 {
-                    return self.subscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .application
-                    )
-                } else {
-                    return self.unsubscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .application
-                    )
-                }
+        input.applicationSwitchButtonDidTap.asObservable()
+            .skip(1)
+            .flatMap { _ in
+                self.subscribeNotificationUseCase.execute(
+                    token: Messaging.messaging().fcmToken ?? "",
+                    notificationType: .application
+                )
             }
             .subscribe()
             .disposed(by: disposeBag)
 
-        input.recruitmentSwitchButtonIsTrue.asObservable()
-            .flatMap {
-                if $0 {
-                    return self.subscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .recruitment
-                    )
-                } else {
-                    return self.unsubscribeNotificationUseCase.execute(
-                        token: Messaging.messaging().fcmToken ?? "",
-                        notificationType: .recruitment
-                    )
-                }
+        input.recruitmentSwitchButtonDidTap.asObservable()
+            .skip(1)
+            .flatMap { _ in
+                self.subscribeNotificationUseCase.execute(
+                    token: Messaging.messaging().fcmToken ?? "",
+                    notificationType: .recruitment
+                )
             }
             .subscribe()
             .disposed(by: disposeBag)
 
-        return Output()
+        return Output(
+            subscribeNoticeState: subscribeNoticeState,
+            subscribeApplicationState: subscribeApplicationState,
+            subscribeRecruitmentState: subscribeRecruitmentState,
+            allSubscribeState: allSubscribeState
+        )
     }
 }

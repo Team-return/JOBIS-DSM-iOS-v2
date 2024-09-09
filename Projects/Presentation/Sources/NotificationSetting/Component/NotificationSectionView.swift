@@ -8,7 +8,12 @@ import DesignSystem
 
 public final class NotificationSectionView: BaseView {
     public var disposeBag = DisposeBag()
-    public let switchButtonIsToggle = PublishRelay<Bool>()
+    public var switchIsOn: Bool {
+            return notificationSwitchButton.isOn
+    }
+    public var clickSwitchButton: ControlProperty<Bool> {
+        return notificationSwitchButton.rx.isOn
+    }
 
     private let notificationTitleLabel = UILabel().then {
         $0.setJobisText(
@@ -17,7 +22,7 @@ public final class NotificationSectionView: BaseView {
             color: .GrayScale.gray70
         )
     }
-    private lazy var notificationSwitchButton = UISwitch().then {
+    public lazy var notificationSwitchButton = UISwitch().then {
         $0.onTintColor = .Primary.blue30
         $0.thumbTintColor = .GrayScale.gray50
     }
@@ -41,22 +46,16 @@ public final class NotificationSectionView: BaseView {
         }
     }
 
-    public override func configureView() {
-        self.notificationSwitchButton.rx.tapGesture()
-            .subscribe(onNext: { _ in
-                self.notificationSwitchButton.isOn.toggle()
-                if self.notificationSwitchButton.isOn {
-                    self.notificationSwitchButton.thumbTintColor = .white
-                    self.switchButtonIsToggle.accept(true)
-                } else {
-                    self.notificationSwitchButton.thumbTintColor = nil
-                    self.switchButtonIsToggle.accept(false)
-                }
-            })
-            .disposed(by: disposeBag)
-    }
+    public override func configureView() {}
 
     func setTitleLabel(text: String) {
         self.notificationTitleLabel.text = text
+    }
+
+    public func setup(
+        isOn: Bool
+    ) {
+        self.notificationSwitchButton.setOn(isOn, animated: true)
+        self.notificationSwitchButton.thumbTintColor = .white
     }
 }

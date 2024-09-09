@@ -168,8 +168,7 @@ public final class PresentationAssembly: Assembly {
             NotificationSettingViewModel(
                 subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
                 subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
-                unsubscribeNotificationUseCase: resolver.resolve(UnsubscribeNotificationUseCase.self)!,
-                unsubscribeAllNotificationUseCase: resolver.resolve(UnsubscribeAllNotificationUseCase.self)!
+                fetchSubscribeStateUseCase: resolver.resolve(FetchSubscribeStateUseCase.self)!
             )
         }
 
