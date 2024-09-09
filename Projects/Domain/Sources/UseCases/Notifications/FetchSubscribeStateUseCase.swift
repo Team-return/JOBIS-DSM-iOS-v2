@@ -1,13 +1,13 @@
 import RxSwift
 
-public struct UnsubscribeAllNotificationUseCase {
+public struct FetchSubscribeStateUseCase {
     private let notificationsRepository: NotificationsRepository
 
     public init(notificationsRepository: NotificationsRepository) {
         self.notificationsRepository = notificationsRepository
     }
 
-    public func execute(token: String) -> Completable {
-        notificationsRepository.unsubscriptAllNotification(token: token)
+    public func execute() -> Single<[SubscribeStateEntity]> {
+        notificationsRepository.fetchSubscribeState()
     }
 }

@@ -5,10 +5,9 @@ import Domain
 public enum NotificationsAPI {
     case fetchNotificationList
     case patchReadNotification(id: Int)
-    case subscriptNotification(token: String, notificationType: NotificationType)
-    case subscriptAllNotification(token: String)
-    case unsubscriptNotification(token: String, notificationType: NotificationType)
-    case unsubscriptAllNotification(token: String)
+    case subscribeNotification(token: String, notificationType: NotificationType)
+    case subscribeAllNotification
+    case fetchSubscribeState
 }
 
 extension NotificationsAPI: JobisAPI {
@@ -26,33 +25,27 @@ extension NotificationsAPI: JobisAPI {
         case let .patchReadNotification(id):
             return "/\(id)"
 
-        case .subscriptNotification:
+        case .subscribeNotification:
             return "/topic"
 
-        case .subscriptAllNotification:
-            return ""
+        case .subscribeAllNotification:
+            return "/topics"
 
-        case .unsubscriptNotification:
+        case .fetchSubscribeState:
             return "/topic"
-
-        case .unsubscriptAllNotification:
-            return ""
         }
     }
 
     public var method: Method {
         switch self {
-        case .fetchNotificationList:
+        case .fetchNotificationList, .fetchSubscribeState:
             return .get
 
         case .patchReadNotification:
             return .patch
 
-        case .subscriptNotification, .subscriptAllNotification:
-            return .post
-
-        case .unsubscriptNotification, .unsubscriptAllNotification:
-            return .delete
+        case .subscribeNotification, .subscribeAllNotification:
+            return .patch
         }
     }
 
@@ -65,36 +58,11 @@ extension NotificationsAPI: JobisAPI {
                     ["is_new": ""],
                 encoding: URLEncoding.queryString)
 
-        case let .subscriptNotification(token, notificationType):
+        case let .subscribeNotification(token, notificationType):
             return .requestParameters(
                 parameters: [
                     "token": token,
                     "topic": notificationType.rawValue
-                ],
-                encoding: URLEncoding.queryString
-            )
-
-        case let .subscriptAllNotification(token):
-            return .requestParameters(
-                parameters: [
-                    "token": token
-                ],
-                encoding: URLEncoding.queryString
-            )
-
-        case let .unsubscriptNotification(token, notificationType):
-            return .requestParameters(
-                parameters: [
-                    "token": token,
-                    "topic": notificationType.rawValue
-                ],
-                encoding: URLEncoding.queryString
-            )
-
-        case let .unsubscriptAllNotification(token):
-            return .requestParameters(
-                parameters: [
-                    "token": token
                 ],
                 encoding: URLEncoding.queryString
             )

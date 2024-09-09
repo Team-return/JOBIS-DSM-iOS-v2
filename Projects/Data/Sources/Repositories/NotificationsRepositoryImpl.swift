@@ -18,19 +18,15 @@ struct NotificationsRepositoryImpl: NotificationsRepository {
         remoteNotificationsDataSource.patchReadNotification(id: id)
     }
 
-    func subscriptNotification(token: String, notificationType: NotificationType) -> Completable {
-        remoteNotificationsDataSource.subscriptNotification(token: token, notificationType: notificationType)
+    func subscribeNotification(token: String, notificationType: NotificationType) -> Completable {
+        remoteNotificationsDataSource.subscribeNotification(token: token, notificationType: notificationType)
     }
 
-    func subscriptAllNotification(token: String) -> Completable {
-        remoteNotificationsDataSource.subscriptAllNotification(token: token)
+    func subscribeAllNotification() -> Completable {
+        remoteNotificationsDataSource.subscribeAllNotification()
     }
 
-    func unsubscriptNotification(token: String, notificationType: NotificationType) -> Completable {
-        remoteNotificationsDataSource.unsubscriptNotification(token: token, notificationType: notificationType)
-    }
-
-    func unsubscriptAllNotification(token: String) -> Completable {
-        remoteNotificationsDataSource.unsubscriptAllNotification(token: token)
+    func fetchSubscribeState() -> Single<[SubscribeStateEntity]> {
+        remoteNotificationsDataSource.fetchSubscribeState()
     }
 }

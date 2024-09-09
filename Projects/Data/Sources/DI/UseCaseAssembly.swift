@@ -238,13 +238,8 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
-        container.register(UnsubscribeNotificationUseCase.self) { resolver in
-            UnsubscribeNotificationUseCase(
-                notificationsRepository: resolver.resolve(NotificationsRepository.self)!
-            )
-        }
-        container.register(UnsubscribeAllNotificationUseCase.self) { resolver in
-            UnsubscribeAllNotificationUseCase(
+        container.register(FetchSubscribeStateUseCase.self) { resolver in
+            FetchSubscribeStateUseCase(
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }

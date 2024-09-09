@@ -8,6 +8,6 @@ public struct SubscribeNotificationUseCase {
     }
 
     public func execute(token: String, notificationType: NotificationType) -> Completable {
-        notificationsRepository.subscriptNotification(token: token, notificationType: notificationType)
+        notificationsRepository.subscribeNotification(token: token, notificationType: notificationType)
     }
 }

@@ -7,7 +7,7 @@ public struct SubscribeAllNotificationUseCase {
         self.notificationsRepository = notificationsRepository
     }
 
-    public func execute(token: String) -> Completable {
-        notificationsRepository.subscriptAllNotification(token: token)
+    public func execute() -> Completable {
+        notificationsRepository.subscribeAllNotification()
     }
 }
