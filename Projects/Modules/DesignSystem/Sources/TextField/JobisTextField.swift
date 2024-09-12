@@ -67,11 +67,17 @@ public final class JobisTextField: UIView {
         descriptionType: DescriptionType? = nil,
         textFieldType: TextFieldType = .none
     ) {
-        self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
-        self.textField.placeholder = placeholder
+        self.titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray60)
         if let descriptionType { self.setDescription(descriptionType) }
         self.textFieldRightView.textFieldRightType = textFieldType
         self.setSecureTextField(textFieldType)
+        self.textField.attributedPlaceholder = .init(
+            string: placeholder,
+            attributes: [
+                .font: UIFont.jobisFont(.body),
+                .foregroundColor: UIColor.GrayScale.gray60
+            ]
+        )
     }
 
     public func setDescription(_ type: DescriptionType) {

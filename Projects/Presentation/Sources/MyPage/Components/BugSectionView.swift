@@ -13,8 +13,8 @@ final class BugSectionView: BaseView {
     private let bugSectionView = SectionView(
         menuText: "버그제보",
         items: [
-            ("버그 제보하기", .jobisIcon(.bugReport)),
-            ("버그 제보함", .jobisIcon(.bugBox))
+            ("버그 제보하기", .jobisIcon(.bugReport))
+//            ("버그 제보함", .jobisIcon(.bugBox))
         ]
     )
 

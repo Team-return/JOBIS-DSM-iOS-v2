@@ -63,6 +63,24 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(BugReportViewController.self) { resolver in
+            BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
+        }
+        container.register(BugReportViewModel.self) { resolver in
+            BugReportViewModel(
+                reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
+            )
+        }
+
+//        container.register(BugReportListViewController.self) { resolver in
+//            BugReportListViewController(resolver.resolve(BugReportListViewModel.self)!)
+//        }
+//        container.register(BugReportListViewModel.self) { resolver in
+//            BugReportListViewModel(
+//                fetchBugListUseCase: resolver.resolve(FetchBugListUseCase.self)!
+//            )
+//        }
+
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
                 reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
@@ -286,6 +304,15 @@ public final class PresentationAssembly: Assembly {
             RecruitmentFilterViewModel(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
+        }
+
+        container.register(MajorBottomSheetViewController.self) { resolver in
+            MajorBottomSheetViewController(
+                resolver.resolve(MajorBottomSheetViewModel.self)!
+            )
+        }
+        container.register(MajorBottomSheetViewModel.self) { resolver in
+            MajorBottomSheetViewModel()
         }
 
         container.register(EasterEggViewController.self) { resolver in

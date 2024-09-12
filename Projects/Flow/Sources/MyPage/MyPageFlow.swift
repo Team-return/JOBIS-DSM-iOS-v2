@@ -31,13 +31,20 @@ public final class MyPageFlow: Flow {
         case .noticeIsRequired:
             return navigateToNotice()
 
+        case .bugReportIsRequired:
+            return navigateToBugReport()
+
         case .confirmIsRequired:
             return navigateToConfirmPassword()
+
+        case .bugReportListIsRequired:
+            return .none
+//            return navigateToBugReportList()
         }
     }
 }
 
-private extension MyPageFlow {
+extension MyPageFlow {
     func navigateToMyPage() -> FlowContributors {
         let myPageViewController = container.resolve(MyPageViewController.self)!
 
@@ -84,6 +91,21 @@ private extension MyPageFlow {
         ))
     }
 
+    func navigateToBugReport() -> FlowContributors {
+        let bugReportFlow = BugReportFlow(container: container)
+
+        Flows.use(bugReportFlow, when: .created) { bug in
+            self.rootViewController.pushViewController(
+                bug, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: bugReportFlow,
+            withNextStepper: OneStepper(withSingleStep: BugReportStep.bugReportIsRequired)
+        ))
+    }
+
     func navigateToConfirmPassword() -> FlowContributors {
         let confirmPasswordFlow = ConfirmPasswordFlow(container: container)
 
@@ -98,4 +120,19 @@ private extension MyPageFlow {
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
         ))
     }
+
+//    func navigateToBugReportList() -> FlowContributors {
+//        let bugReportListFlow = BugReportListFlow(container: container)
+//
+//        Flows.use(bugReportListFlow, when: .created) { root in
+//            self.rootViewController.pushViewController(
+//                root, animated: true
+//            )
+//        }
+//
+//        return .one(flowContributor: .contribute(
+//            withNextPresentable: bugReportListFlow,
+//            withNextStepper: OneStepper(withSingleStep: BugReportListStep.bugReportListIsRequired)
+//        ))
+//    }
 }
