@@ -182,6 +182,18 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(NotificationSettingViewModel.self) { resolver in
+            NotificationSettingViewModel(
+                subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
+                subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
+                fetchSubscribeStateUseCase: resolver.resolve(FetchSubscribeStateUseCase.self)!
+            )
+        }
+
+        container.register(NotificationSettingViewController.self) { resolver in
+            NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
+        }
+
         container.register(NoticeViewModel.self) { resolver in
             NoticeViewModel(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!

@@ -22,6 +22,7 @@ public enum JobisIcon {
     case searchIcon
     case filterIcon
     case profile
+    case bellOnPrimary
     case bell
     case officeBuilding
     case snowman
@@ -88,6 +89,9 @@ public enum JobisIcon {
 
         case .profile:
             return dsIcons.profile.image
+
+        case .bellOnPrimary:
+            return dsIcons.bellOnPrimary.image
 
         case .bell:
             return dsIcons.bell.image
