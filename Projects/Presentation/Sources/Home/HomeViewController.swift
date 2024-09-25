@@ -112,6 +112,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
             navigateToEasterEggDidTap: navigateToEasterEggDidTap,
             navigateToCompanyButtonDidTap: findCompanysCard.rx.tap.asSignal(),
+            navigateToWinterInternButtonDidTap: findWinterRecruitmentsCard.rx.tap.asSignal(),
             rejectButtonDidTap: rejectButtonDidTap,
             reApplyButtonDidTap: reApplyButtonDidTap,
             applicationStatusTableViewDidTap: applicationStatusTableView.rx
@@ -196,11 +197,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             .bind {
                 self.showTabbar()
             }.disposed(by: disposeBag)
-
-        findWinterRecruitmentsCard.rx.tap.subscribe(onNext: {
-            print("findWinterRecruitment!!")
-        })
-        .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
