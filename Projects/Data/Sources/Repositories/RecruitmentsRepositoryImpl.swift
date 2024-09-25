@@ -13,8 +13,17 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
     }
 
     func fetchRecruitmentList(
-        page: Int, jobCode: String?, techCode: [String]?, name: String?
+        page: Int,
+        jobCode: String?,
+        techCode: [String]?,
+        name: String?, winterIntern: Bool?
     ) -> Single<[RecruitmentEntity]> {
-        remoteRecruitmentsDataSource.fetchRecruitmentList(page: page, jobCode: jobCode, techCode: techCode, name: name)
+        remoteRecruitmentsDataSource.fetchRecruitmentList(
+            page: page,
+            jobCode: jobCode,
+            techCode: techCode,
+            name: name,
+            winterIntern: winterIntern
+        )
     }
 }
