@@ -327,6 +327,18 @@ public final class PresentationAssembly: Assembly {
             MajorBottomSheetViewModel()
         }
 
+        container.register(WinterInternViewController.self) { resolver in
+            WinterInternViewController(
+                resolver.resolve(WinterInternVieModel.self)!
+            )
+        }
+        container.register(WinterInternVieModel.self) { resolver in
+            WinterInternVieModel(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
         }
