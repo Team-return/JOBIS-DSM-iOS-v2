@@ -28,16 +28,26 @@ public final class MyPageFlow: Flow {
         case let .writableReviewIsRequired(id):
             return navigateToWritableReview(id)
 
+        case .notificationSettingIsRequired:
+            return navigateToNotification()
+
         case .noticeIsRequired:
             return navigateToNotice()
 
+        case .bugReportIsRequired:
+            return navigateToBugReport()
+
         case .confirmIsRequired:
             return navigateToConfirmPassword()
+
+        case .bugReportListIsRequired:
+            return .none
+//            return navigateToBugReportList()
         }
     }
 }
 
-private extension MyPageFlow {
+extension MyPageFlow {
     func navigateToMyPage() -> FlowContributors {
         let myPageViewController = container.resolve(MyPageViewController.self)!
 
@@ -69,6 +79,21 @@ private extension MyPageFlow {
         ))
     }
 
+    func navigateToNotification() -> FlowContributors {
+        let notificationSettingFlow = NotificationSettingFlow(container: container)
+
+        Flows.use(notificationSettingFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: notificationSettingFlow,
+            withNextStepper: OneStepper(withSingleStep: NotificationSettingStep.notificationSettingIsRequired)
+        ))
+    }
+
     func navigateToNotice() -> FlowContributors {
         let noticeFlow = NoticeFlow(container: container)
 
@@ -81,6 +106,21 @@ private extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: noticeFlow,
             withNextStepper: OneStepper(withSingleStep: NoticeStep.noticeIsRequired)
+        ))
+    }
+
+    func navigateToBugReport() -> FlowContributors {
+        let bugReportFlow = BugReportFlow(container: container)
+
+        Flows.use(bugReportFlow, when: .created) { bug in
+            self.rootViewController.pushViewController(
+                bug, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: bugReportFlow,
+            withNextStepper: OneStepper(withSingleStep: BugReportStep.bugReportIsRequired)
         ))
     }
 
@@ -98,4 +138,19 @@ private extension MyPageFlow {
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
         ))
     }
+
+//    func navigateToBugReportList() -> FlowContributors {
+//        let bugReportListFlow = BugReportListFlow(container: container)
+//
+//        Flows.use(bugReportListFlow, when: .created) { root in
+//            self.rootViewController.pushViewController(
+//                root, animated: true
+//            )
+//        }
+//
+//        return .one(flowContributor: .contribute(
+//            withNextPresentable: bugReportListFlow,
+//            withNextStepper: OneStepper(withSingleStep: BugReportListStep.bugReportListIsRequired)
+//        ))
+//    }
 }

@@ -30,6 +30,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let navigateToAlarmButtonDidTap: Signal<Void>
         let navigateToEasterEggDidTap: PublishRelay<Void>
         let navigateToCompanyButtonDidTap: Signal<Void>
+        let navigateToWinterInternButtonDidTap: Signal<Void>
         let rejectButtonDidTap: PublishRelay<ApplicationEntity>
         let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
         let applicationStatusTableViewDidTap: Observable<(Int, ApplicationStatusType)>
@@ -85,6 +86,11 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
         input.navigateToCompanyButtonDidTap.asObservable()
             .map { _ in HomeStep.companyIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.navigateToWinterInternButtonDidTap.asObservable()
+            .map { _ in HomeStep.winterInternIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

@@ -4,7 +4,7 @@ import Domain
 protocol RemoteRecruitmentsDataSource {
     func fetchRecruitmentDetail(id: Int) -> Single<RecruitmentDetailEntity>
     func fetchRecruitmentList(
-        page: Int, jobCode: String?, techCode: [String]?, name: String?
+        page: Int, jobCode: String?, techCode: [String]?, name: String?, winterIntern: Bool?
     ) -> Single<[RecruitmentEntity]>
 }
 
@@ -16,10 +16,20 @@ final class RemoteRecruitmentsDataSourceImpl: RemoteBaseDataSource<RecruitmentsA
     }
 
     func fetchRecruitmentList(
-        page: Int, jobCode: String?, techCode: [String]?, name: String?
+        page: Int,
+        jobCode: String?,
+        techCode: [String]?,
+        name: String?,
+        winterIntern: Bool?
     ) -> Single<[RecruitmentEntity]> {
-        request(.fetchRecruitmentList(page: page, jobCode: jobCode, techCode: techCode, name: name))
-            .map(RecruitmentListResponseDTO.self)
-            .map { $0.toDomain() }
+        request(.fetchRecruitmentList(
+            page: page,
+            jobCode: jobCode,
+            techCode: techCode,
+            name: name,
+            winterIntern: winterIntern
+        ))
+        .map(RecruitmentListResponseDTO.self)
+        .map { $0.toDomain() }
     }
 }

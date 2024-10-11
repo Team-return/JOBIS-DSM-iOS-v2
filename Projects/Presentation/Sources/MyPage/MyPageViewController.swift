@@ -18,8 +18,9 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 //        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
 //    }
     private let reviewNavigateStackView = ReviewNavigateStackView()
+    private let notificationSettingSectionView = NotificationSettingSectionView()
     private let accountSectionView = AccountSectionView()
-//    private let bugSectionView = BugSectionView()
+    private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
     private let logoutPublisher = PublishRelay<Void>()
     private let withdrawalPublisher = PublishRelay<Void>()
@@ -31,9 +32,10 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             studentInfoView,
 //            editButton,
             reviewNavigateStackView,
+            notificationSettingSectionView,
             helpSectionView,
-            accountSectionView
-//            bugSectionView
+            accountSectionView,
+            bugSectionView
         ].forEach { self.contentView.addSubview($0) }
     }
 
@@ -45,7 +47,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(accountSectionView).offset(60)
+            $0.bottom.equalTo(bugSectionView).offset(60)
         }
 
         studentInfoView.snp.makeConstraints {
@@ -63,8 +65,14 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.top.equalTo(studentInfoView.snp.bottom)
         }
 
-        helpSectionView.snp.makeConstraints {
+        notificationSettingSectionView.snp.makeConstraints {
             $0.top.equalTo(reviewNavigateStackView.snp.bottom)
+//            $0.top.equalTo(studentInfoView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        helpSectionView.snp.makeConstraints {
+            $0.top.equalTo(notificationSettingSectionView.snp.bottom)
 //            $0.top.equalTo(studentInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
@@ -74,17 +82,20 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
 
-//        bugSectionView.snp.makeConstraints {
-//            $0.top.equalTo(accountSectionView.snp.bottom)
-//            $0.leading.trailing.equalToSuperview()
-//        }
+        bugSectionView.snp.makeConstraints {
+            $0.top.equalTo(accountSectionView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
     }
 
     public override func bind() {
         let input = MyPageViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
+            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type: .notificationSetting),
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
+            bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
+//            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
             withdrawalPublisher: withdrawalPublisher
