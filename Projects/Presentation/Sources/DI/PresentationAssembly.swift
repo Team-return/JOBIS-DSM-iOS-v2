@@ -63,6 +63,24 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(BugReportViewController.self) { resolver in
+            BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
+        }
+        container.register(BugReportViewModel.self) { resolver in
+            BugReportViewModel(
+                reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
+            )
+        }
+
+//        container.register(BugReportListViewController.self) { resolver in
+//            BugReportListViewController(resolver.resolve(BugReportListViewModel.self)!)
+//        }
+//        container.register(BugReportListViewModel.self) { resolver in
+//            BugReportListViewModel(
+//                fetchBugListUseCase: resolver.resolve(FetchBugListUseCase.self)!
+//            )
+//        }
+
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
                 reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
@@ -162,6 +180,18 @@ public final class PresentationAssembly: Assembly {
             AddReviewViewModel(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
+        }
+
+        container.register(NotificationSettingViewModel.self) { resolver in
+            NotificationSettingViewModel(
+                subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
+                subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
+                fetchSubscribeStateUseCase: resolver.resolve(FetchSubscribeStateUseCase.self)!
+            )
+        }
+
+        container.register(NotificationSettingViewController.self) { resolver in
+            NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
         }
 
         container.register(NoticeViewModel.self) { resolver in
@@ -285,6 +315,27 @@ public final class PresentationAssembly: Assembly {
         container.register(RecruitmentFilterViewModel.self) { resolver in
             RecruitmentFilterViewModel(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
+        container.register(MajorBottomSheetViewController.self) { resolver in
+            MajorBottomSheetViewController(
+                resolver.resolve(MajorBottomSheetViewModel.self)!
+            )
+        }
+        container.register(MajorBottomSheetViewModel.self) { resolver in
+            MajorBottomSheetViewModel()
+        }
+
+        container.register(WinterInternViewController.self) { resolver in
+            WinterInternViewController(
+                resolver.resolve(WinterInternVieModel.self)!
+            )
+        }
+        container.register(WinterInternVieModel.self) { resolver in
+            WinterInternVieModel(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
 

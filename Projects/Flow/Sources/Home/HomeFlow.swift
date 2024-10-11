@@ -28,6 +28,9 @@ public final class HomeFlow: Flow {
         case .companyIsRequired:
             return navigateToCompany()
 
+        case .winterInternIsRequired:
+            return navigateToWinterIntern()
+
         case .easterEggIsRequired:
             return navigateToEasterEgg()
 
@@ -104,6 +107,23 @@ private extension HomeFlow {
             withNextPresentable: companyFlow,
             withNextStepper: OneStepper(
                 withSingleStep: CompanyStep.companyIsRequired
+            )
+        ))
+    }
+
+    func navigateToWinterIntern() -> FlowContributors {
+        let winterInternFlow = WinterInternFlow(container: container)
+        Flows.use(winterInternFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: winterInternFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: RecruitmentStep.recruitmentIsRequired
             )
         ))
     }
