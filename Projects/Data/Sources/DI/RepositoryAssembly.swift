@@ -93,5 +93,11 @@ public final class RepositoryAssembly: Assembly {
                 remoteNotificationsDataSource: resolver.resolve(RemoteNotificationsDataSource.self)!
             )
         }
+
+        container.register(WinterInternRepository.self) { resolver in
+            WinterInternRepositoryImpl(
+                remoteWinterInternDataSource: resolver.resolve(RemoteWinterInternDataSource.self)!
+            )
+        }
     }
 }

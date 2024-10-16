@@ -243,5 +243,12 @@ public final class UseCaseAssembly: Assembly {
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
             )
         }
+
+        // WinterIntern
+        container.register(FetchWinterInternSeasonUseCase.self) { resolver in
+            FetchWinterInternSeasonUseCase(
+                winterInternRepository: resolver.resolve(WinterInternRepository.self)!
+            )
+        }
     }
 }

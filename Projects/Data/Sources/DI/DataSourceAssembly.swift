@@ -73,5 +73,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(RemoteNotificationsDataSource.self) { resolver in
             RemoteNotificationsDataSourceImpl(keychain: self.keychain(resolver))
         }
+
+        container.register(RemoteWinterInternDataSource.self) { resolver in
+            RemoteWinterInternDataSourceImpl(keychain: self.keychain(resolver))
+        }
     }
 }
