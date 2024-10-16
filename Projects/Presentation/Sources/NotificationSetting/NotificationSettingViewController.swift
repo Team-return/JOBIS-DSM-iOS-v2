@@ -10,7 +10,8 @@ public final class NotificationSettingViewController: BaseViewController<Notific
     private lazy var switchViewArray = [
         noticeSwitchView,
         applicationSwitchView,
-        recruitmentSwitchView
+        recruitmentSwitchView,
+        winterInternSwitchView
     ]
 
     private let titleLabel = UILabel().then {
@@ -37,6 +38,15 @@ public final class NotificationSettingViewController: BaseViewController<Notific
     private let recruitmentSwitchView = NotificationSectionView().then {
         $0.setTitleLabel(text: "모집의뢰서 알림")
     }
+//    private let interestedSwitchView = NotificationSectionView().then {
+//        $0.setTitleLabel(text: "")
+//    }
+    private let winterInternSwitchView = NotificationSectionView().then {
+        $0.setTitleLabel(text: "겨울인턴 알림")
+    }
+    private lazy var switchViewStackView = UIStackView(arrangedSubviews: switchViewArray).then {
+        $0.axis = .vertical
+    }
 
     public override func addView() {
         [
@@ -44,9 +54,7 @@ public final class NotificationSettingViewController: BaseViewController<Notific
             allNotificationSwitchView,
             lineView,
             detailMenuLabel,
-            noticeSwitchView,
-            applicationSwitchView,
-            recruitmentSwitchView
+            switchViewStackView
         ].forEach(self.view.addSubview(_:))
     }
 
@@ -73,32 +81,21 @@ public final class NotificationSettingViewController: BaseViewController<Notific
             $0.leading.trailing.equalToSuperview()
         }
 
-        noticeSwitchView.snp.makeConstraints {
-            $0.height.equalTo(64)
+        switchViewStackView.snp.makeConstraints {
             $0.top.equalTo(detailMenuLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        applicationSwitchView.snp.makeConstraints {
-            $0.height.equalTo(64)
-            $0.top.equalTo(noticeSwitchView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-        }
-
-        recruitmentSwitchView.snp.makeConstraints {
-            $0.height.equalTo(64)
-            $0.top.equalTo(applicationSwitchView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
     }
 
     public override func bind() {
         let input = NotificationSettingViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher
-            , allSwitchButtonDidTap: allNotificationSwitchView.clickSwitchButton,
+            viewAppear: self.viewWillAppearPublisher,
+            allSwitchButtonDidTap: allNotificationSwitchView.clickSwitchButton,
             noticeSwitchButtonDidTap: noticeSwitchView.clickSwitchButton,
             applicationSwitchButtonDidTap: applicationSwitchView.clickSwitchButton,
-            recruitmentSwitchButtonDidTap: recruitmentSwitchView.clickSwitchButton
+            recruitmentSwitchButtonDidTap: recruitmentSwitchView.clickSwitchButton,
+//            interestSwitchButtonDidTap: interestedSwitchView.clickSwitchButton,
+            winterInternSwitchButtonDidTap: winterInternSwitchView.clickSwitchButton
         )
 
         let output = viewModel.transform(input)
@@ -118,6 +115,18 @@ public final class NotificationSettingViewController: BaseViewController<Notific
         output.subscribeRecruitmentState.asObservable()
             .bind(onNext: {
                 self.recruitmentSwitchView.setup(isOn: $0.isSubscribed)
+            })
+            .disposed(by: disposeBag)
+
+//        output.subscribeInteresteState.asObservable()
+//            .bind(onNext: {
+//                self.interestedSwitchView.setup(isOn: $0.isSubscribed)
+//            })
+//            .disposed(by: disposeBag)
+
+        output.subscribeWinterInternState.asObservable()
+            .bind(onNext: {
+                self.winterInternSwitchView.setup(isOn: $0.isSubscribed)
             })
             .disposed(by: disposeBag)
 
@@ -154,6 +163,18 @@ public final class NotificationSettingViewController: BaseViewController<Notific
             .bind(onNext: { [weak self] _ in
                 self?.toggleButton()
             }).disposed(by: disposeBag)
+
+//        interestedSwitchView.clickSwitchButton
+//            .asObservable()
+//            .bind(onNext: { [weak self] _ in
+//                self?.toggleButton()
+//            }).disposed(by: disposeBag)
+
+        winterInternSwitchView.clickSwitchButton
+            .asObservable()
+            .bind(onNext: { [weak self] _ in
+                self?.toggleButton()
+            }).disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
@@ -163,9 +184,10 @@ public final class NotificationSettingViewController: BaseViewController<Notific
 
     private func toggleButton() {
         if (
-            noticeSwitchView.switchIsOn ||
-            applicationSwitchView.switchIsOn ||
-            recruitmentSwitchView.switchIsOn
+            noticeSwitchView.switchIsOn &&
+            applicationSwitchView.switchIsOn &&
+            recruitmentSwitchView.switchIsOn &&
+            winterInternSwitchView.switchIsOn
         ) == true {
             self.allNotificationSwitchView.setup(isOn: true)
         } else {
