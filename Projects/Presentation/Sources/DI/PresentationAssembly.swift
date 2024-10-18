@@ -340,6 +340,18 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(WinterInternDetailViewController.self) { resolver in
+            WinterInternDetailViewController(
+                resolver.resolve(WinterInternDetailViewModel.self)!
+            )
+        }
+        container.register(WinterInternDetailViewModel.self) { resolver in
+            WinterInternDetailViewModel(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()
         }

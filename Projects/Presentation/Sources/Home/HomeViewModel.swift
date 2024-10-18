@@ -11,17 +11,20 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
     private let fetchBannerListUseCase: FetchBannerListUseCase
+    private let fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
 
     private var touchedPopcatCount = 0
 
     init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchApplicationUseCase: FetchApplicationUseCase,
-        fetchBannerListUseCase: FetchBannerListUseCase
+        fetchBannerListUseCase: FetchBannerListUseCase,
+        fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchApplicationUseCase = fetchApplicationUseCase
         self.fetchBannerListUseCase = fetchBannerListUseCase
+        self.fetchWinterInternUseCase = fetchWinterInternUseCase
     }
 
     public struct Input {
@@ -40,12 +43,14 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let studentInfo: PublishRelay<StudentInfoEntity>
         let applicationList: PublishRelay<[ApplicationEntity]>
         let bannerList: BehaviorRelay<[FetchBannerEntity]>
+        let isWinterInternSeason: BehaviorRelay<Bool>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let applicationList = PublishRelay<[ApplicationEntity]>()
         let bannerList = BehaviorRelay<[FetchBannerEntity]>(value: [])
+        let isWinterInternSeason = BehaviorRelay<Bool>(value: true)
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
@@ -108,6 +113,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .bind(to: applicationList)
             .disposed(by: disposeBag)
 
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchWinterInternUseCase.execute()
+            }
+            .bind(to: isWinterInternSeason)
+            .disposed(by: disposeBag)
+
         input.rejectButtonDidTap.asObservable()
             .map {
                 HomeStep.rejectReasonIsRequired(
@@ -146,7 +158,8 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         return Output(
             studentInfo: studentInfo,
             applicationList: applicationList,
-            bannerList: bannerList
+            bannerList: bannerList,
+            isWinterInternSeason: isWinterInternSeason
         )
     }
 }
