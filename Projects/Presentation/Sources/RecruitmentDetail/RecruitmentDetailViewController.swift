@@ -158,19 +158,22 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             .disposed(by: disposeBag)
 
         output.isApplicable.asObservable()
-            .bind {
-                self.applyButton.isEnabled = false
-                self.applyButton.setText("이미 지원한 기업이에요")
+            .bind { [weak self] isApplicable in
+                if UserDefaults.standard.string(forKey: "user_grade") != "3" {
+                    self?.applyButton.isEnabled = false
+                    self?.applyButton.setText("3학년만 지원할 수 있어요")
+                } else {
+                    isApplicable ?
+                    self?.applyButton.setText("지원하기") :
+                    self?.applyButton.setText("이미 지원한 기업이에요")
+
+                    self?.applyButton.isEnabled = isApplicable
+                }
             }
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        if UserDefaults.standard.string(forKey: "user_grade")! != "3" {
-            applyButton.isEnabled = false
-            applyButton.setText("3학년만 지원할 수 있어요")
-        }
-
         companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDeatil
 
         self.viewWillAppearPublisher.asObservable()
