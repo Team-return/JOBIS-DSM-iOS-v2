@@ -44,10 +44,10 @@ private extension WinterInternFlow {
     }
 
     func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = WinterInternDetailFlow(container: container)
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
-            let view = root as? RecruitmentDetailViewController
+            let view = root as? WinterInternDetailViewController
             view?.viewModel.recruitmentID = recruitmentID
             view?.isPopViewController = { id, bookmark in
                 let popView = self.rootViewController

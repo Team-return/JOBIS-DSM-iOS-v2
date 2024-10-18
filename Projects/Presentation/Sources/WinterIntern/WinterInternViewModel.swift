@@ -95,7 +95,7 @@ public final class WinterInternVieModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
-        
+
         input.searchButtonDidTap.asObservable()
             .map {
                 RecruitmentStep.searchRecruitmentIsRequired
