@@ -30,11 +30,11 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
         $0.axis = .vertical
     }
     private let recruitmentPeriodLabel = RecruitmentDetailLabel(title: "모집기간")
-    private let militaryServiceLabel = RecruitmentDetailLabel(title: "병역특례 여부")
+    private let militaryServiceLabel = RecruitmentDetailLabel(title: "산업 기능 요원 근무 가능 여부")
     private let fieldTypeDetailStackView = FieldTypeDetailStackView()
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
-    private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "채용절차")
-    private let requiredGradeLabel = RecruitmentDetailLabel(title: "필수 성적")
+    private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "선발 절차")
+    private let requiredGradeLabel = RecruitmentDetailLabel(title: "기타 자격 요건")
     private let workingHoursLabel = RecruitmentDetailLabel(title: "근무시간")
 //    private let awardedMoneyLabel = RecruitmentDetailLabel(title: "실습 수당")
 //    private let permanentEmployeeLabel = RecruitmentDetailLabel(title: "정규직 전환 시")
