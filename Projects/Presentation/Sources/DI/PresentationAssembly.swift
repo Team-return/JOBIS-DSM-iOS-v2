@@ -60,7 +60,8 @@ public final class PresentationAssembly: Assembly {
                 changeProfileImageUseCase: resolver.resolve(ChangeProfileImageUseCase.self)!,
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchWritableReviewListUseCase: resolver.resolve(FetchWritableReviewListUseCase.self)!,
-                logoutUseCase: resolver.resolve(LogoutUseCase.self)!
+                logoutUseCase: resolver.resolve(LogoutUseCase.self)!,
+                deleteDeviceTokenUseCase: resolver.resolve(DeleteDeviceTokenUseCase.self)!
             )
         }
 
@@ -84,7 +85,8 @@ public final class PresentationAssembly: Assembly {
 
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
-                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
+                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!,
+                fetchServerStatusUseCase: resolver.resolve(FetchServerStatusUseCase.self)!
             )
         }
         container.register(OnboardingViewController.self) { resolver in

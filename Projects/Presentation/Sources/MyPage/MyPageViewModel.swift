@@ -14,6 +14,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchWritableReviewListUseCase: FetchWritableReviewListUseCase
     private let logoutUseCase: LogoutUseCase
+    private let deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase
 
     init(
         fetchPresignedURLUseCase: FetchPresignedURLUseCase,
@@ -21,7 +22,8 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         changeProfileImageUseCase: ChangeProfileImageUseCase,
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchWritableReviewListUseCase: FetchWritableReviewListUseCase,
-        logoutUseCase: LogoutUseCase
+        logoutUseCase: LogoutUseCase,
+        deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase
     ) {
         self.fetchPresignedURLUseCase = fetchPresignedURLUseCase
         self.uploadImageToS3UseCase = uploadImageToS3UseCase
@@ -29,6 +31,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchWritableReviewListUseCase = fetchWritableReviewListUseCase
         self.logoutUseCase = logoutUseCase
+        self.deleteDeviceTokenUseCase = deleteDeviceTokenUseCase
     }
 
     public struct Input {
@@ -85,6 +88,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         input.logoutPublisher
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
+                self.deleteDeviceTokenUseCase.execute()
             })
             .map { _ in MyPageStep.tabsIsRequired }
             .bind(to: steps)
@@ -93,6 +97,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         input.withdrawalPublisher
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
+                self.deleteDeviceTokenUseCase.execute()
             })
             .map { _ in MyPageStep.tabsIsRequired }
             .bind(to: steps)
