@@ -168,16 +168,28 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
 
-        output.bannerList
-            .filter { !$0.isEmpty }
-            .do(onNext: {
-                self.bannerView.setPageControl(count: $0.count)
+        let totalPassBannerModel = output.totalPassStudentInfo.value
+
+        let combinedBanners = output.bannerList
+            .map { banners in
+                return [totalPassBannerModel] + banners
+            }
+
+        combinedBanners
+            .do(onNext: { banners in
+                self.bannerView.setPageControl(count: banners.count)
             })
             .bind(to: bannerView.collectionView.rx.items(
                 cellIdentifier: BannerCollectionViewCell.identifier,
                 cellType: BannerCollectionViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
+            )) { index, element, cell in
+                if index == 0 {
+                    cell.totalPassAdapt(model: output.totalPassStudentInfo.value)
+                } else {
+                    if let fetchBanner = element as? FetchBannerEntity {
+                        cell.adapt(model: fetchBanner)
+                    }
+                }
             }
             .disposed(by: disposeBag)
     }

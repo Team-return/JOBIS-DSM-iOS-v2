@@ -14,7 +14,8 @@ public final class PresentationAssembly: Assembly {
             HomeViewModel(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
-                fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!
+                fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
         }
 

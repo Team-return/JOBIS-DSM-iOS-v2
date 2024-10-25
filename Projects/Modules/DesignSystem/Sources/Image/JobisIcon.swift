@@ -43,6 +43,7 @@ public enum JobisIcon {
     case link
     case close
     case addPhoto
+    case fileImage
 
     func uiImage() -> UIImage {
         let dsIcons = DesignSystemAsset.Icons.self
@@ -152,6 +153,9 @@ public enum JobisIcon {
 
         case .addPhoto:
             return dsIcons.addPhoto.image
+
+        case .fileImage:
+            return dsIcons.fileImage.image
         }
     }
 }
