@@ -38,9 +38,14 @@ private extension RecruitmentFilterFlow {
     }
 
     func popToRecruitment(jobCode: String, techCode: [String]?) -> FlowContributors {
-        let popView = self.rootViewController.navigationController?.viewControllers.first as? RecruitmentViewController
-        popView?.viewModel.jobCode = jobCode
-        popView?.viewModel.techCode = techCode
+        let recruitmentPopView = self.rootViewController.navigationController?.viewControllers.first as? RecruitmentViewController
+        let winterInternPopView = self.rootViewController.navigationController?.viewControllers.first(where: { $0 is WinterInternViewController}) as? WinterInternViewController
+
+        recruitmentPopView?.viewModel.jobCode = jobCode
+        recruitmentPopView?.viewModel.techCode = techCode
+        winterInternPopView?.viewModel.jobCode = jobCode
+        winterInternPopView?.viewModel.techCode = techCode
+
         self.rootViewController.navigationController?.popViewController(animated: true)
 
         return .none
