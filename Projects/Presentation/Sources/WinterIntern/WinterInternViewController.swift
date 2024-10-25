@@ -49,7 +49,7 @@ public final class WinterInternViewController: BaseViewController<WinterInternVi
 
     public override func bind() {
         let input = WinterInternVieModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
+            viewAppear: self.viewWillAppearPublisher,
             bookMarkButtonDidTap: bookmarkButtonDidClicked,
             pageChange: recruitmentTableView.rx.willDisplayCell
                 .filter {

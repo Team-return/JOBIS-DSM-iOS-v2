@@ -11,6 +11,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
     private let fetchBannerListUseCase: FetchBannerListUseCase
+    private let fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
     private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
 
     private var touchedPopcatCount = 0
@@ -19,11 +20,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchApplicationUseCase: FetchApplicationUseCase,
         fetchBannerListUseCase: FetchBannerListUseCase,
+        fetchWinterInternUseCase: FetchWinterInternSeasonUseCase,
         fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchApplicationUseCase = fetchApplicationUseCase
         self.fetchBannerListUseCase = fetchBannerListUseCase
+        self.fetchWinterInternUseCase = fetchWinterInternUseCase
         self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
     }
 
@@ -43,6 +46,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let studentInfo: PublishRelay<StudentInfoEntity>
         let applicationList: PublishRelay<[ApplicationEntity]>
         let bannerList: BehaviorRelay<[FetchBannerEntity]>
+        let isWinterInternSeason: BehaviorRelay<Bool>
         let totalPassStudentInfo: BehaviorRelay<TotalPassStudentEntity>
     }
 
@@ -50,6 +54,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let applicationList = PublishRelay<[ApplicationEntity]>()
         let bannerList = BehaviorRelay<[FetchBannerEntity]>(value: [])
+        let isWinterInternSeason = BehaviorRelay<Bool>(value: true)
         let totalPassStudentInfo = BehaviorRelay<TotalPassStudentEntity>(value: TotalPassStudentEntity.init(
             totalStudentCount: 0,
             passedCount: 0,
@@ -124,6 +129,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             .bind(to: applicationList)
             .disposed(by: disposeBag)
 
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchWinterInternUseCase.execute()
+            }
+            .bind(to: isWinterInternSeason)
+            .disposed(by: disposeBag)
+
         input.rejectButtonDidTap.asObservable()
             .map {
                 HomeStep.rejectReasonIsRequired(
@@ -163,6 +175,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             studentInfo: studentInfo,
             applicationList: applicationList,
             bannerList: bannerList,
+            isWinterInternSeason: isWinterInternSeason,
             totalPassStudentInfo: totalPassStudentInfo
         )
     }

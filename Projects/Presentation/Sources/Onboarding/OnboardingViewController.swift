@@ -88,6 +88,16 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
                     }
                 )
             }).disposed(by: disposeBag)
+
+        output.serverStatus.asObservable()
+            .subscribe(onNext: {_ in
+                AlertBuilder(viewController: self)
+                    .setTitle("현재 JOBIS 서버가 점검중이에요")
+                    .setMessage("더욱 원활한 서비스 이용을 위해\n노력중이니 조금만 기다려주세요!")
+                    .addActionConfirm("확인")
+                    .setAlertType(.positive)
+                    .show()
+            }).disposed(by: disposeBag)
     }
 
     private func setNavigateButton() {
