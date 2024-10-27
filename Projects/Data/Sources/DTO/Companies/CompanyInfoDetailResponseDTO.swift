@@ -7,9 +7,9 @@ struct CompanyInfoDetailResponseDTO: Decodable {
     let companyProfileURL: String
     let companyIntroduce: String
     let mainZipCode, mainAddress, mainAddressDetail: String
-    let subZipCode, subAddress, subAddressDetail: String?
-    let managerName, managerPhoneNo: String
-    let subManagerName, subManagerPhoneNo, fax: String?
+//    let subZipCode, subAddress, subAddressDetail: String?
+    let managerName: String
+//    let subManagerName, subManagerPhoneNo, fax: String?
     let email, representativeName, representativePhoneNo, foundedAt: String
     let workerNumber: Int
     let take: Double
@@ -26,14 +26,14 @@ struct CompanyInfoDetailResponseDTO: Decodable {
         case mainZipCode = "main_zip_code"
         case mainAddress = "main_address"
         case mainAddressDetail = "main_address_detail"
-        case subZipCode = "sub_zip_code"
-        case subAddress = "sub_address"
-        case subAddressDetail = "sub_address_detail"
+//        case subZipCode = "sub_zip_code"
+//        case subAddress = "sub_address"
+//        case subAddressDetail = "sub_address_detail"
         case managerName = "manager_name"
-        case managerPhoneNo = "manager_phone_no"
-        case subManagerName = "sub_manager_name"
-        case subManagerPhoneNo = "sub_manager_phone_no"
-        case fax, email
+//        case managerPhoneNo = "manager_phone_no"
+//        case subManagerName = "sub_manager_name"
+//        case subManagerPhoneNo = "sub_manager_phone_no"
+        case email
         case representativeName = "representative_name"
         case representativePhoneNo = "representative_phone_no"
         case foundedAt = "founded_at"
@@ -56,14 +56,8 @@ extension CompanyInfoDetailResponseDTO {
             mainZipCode: mainZipCode,
             mainAddress: mainAddress,
             mainAddressDetail: mainAddressDetail,
-            subZipCode: subZipCode ?? "없음",
-            subAddress: subAddress ?? "없음",
-            subAddressDetail: subAddressDetail ?? "없음",
             managerName: managerName,
-            managerPhoneNo: managerPhoneNo,
-            subManagerName: subManagerName ?? "없음",
-            subManagerPhoneNo: subManagerPhoneNo ?? "없음",
-            fax: fax ?? "없음",
+//            managerPhoneNo: managerPhoneNo,
             email: email,
             representativeName: representativeName,
             representativePhoneNo: representativePhoneNo,

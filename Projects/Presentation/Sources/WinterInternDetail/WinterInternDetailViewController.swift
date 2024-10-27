@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
+public class WinterInternDetailViewController: BaseViewController<WinterInternDetailViewModel> {
     public var isPopViewController: ((Int, Bool) -> Void)?
     private var isBookmarked = false {
         didSet {
@@ -118,7 +118,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
     }
 
     public override func bind() {
-        let input = RecruitmentDetailViewModel.Input(
+        let input = WinterInternDetailViewModel.Input(
             viewDidLoad: self.viewDidLoadPublisher,
             companyDetailButtonDidClicked: companyProfileView.companyDetailButton.rx.tap.asSignal(),
             bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
@@ -159,9 +159,9 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
 
         output.isApplicable.asObservable()
             .bind { [weak self] isApplicable in
-                if UserDefaults.standard.string(forKey: "user_grade") != "3" {
+                if UserDefaults.standard.string(forKey: "user_grade") != "2" {
                     self?.applyButton.isEnabled = false
-                    self?.applyButton.setText("3학년만 지원할 수 있어요")
+                    self?.applyButton.setText("지원하기")
                 } else {
                     isApplicable ?
                     self?.applyButton.setText("지원하기") :

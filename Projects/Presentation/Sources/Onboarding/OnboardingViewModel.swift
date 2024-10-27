@@ -8,10 +8,16 @@ import Utility
 public final class OnboardingViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-    private let reissueTokenUaseCase: ReissueTokenUaseCase
 
-    init(reissueTokenUaseCase: ReissueTokenUaseCase) {
+    private let reissueTokenUaseCase: ReissueTokenUaseCase
+    private let fetchServerStatusUseCase: FetchServerStatusUseCase
+
+    init(
+        reissueTokenUaseCase: ReissueTokenUaseCase,
+        fetchServerStatusUseCase: FetchServerStatusUseCase
+    ) {
         self.reissueTokenUaseCase = reissueTokenUaseCase
+        self.fetchServerStatusUseCase = fetchServerStatusUseCase
     }
 
     public struct Input {
@@ -23,11 +29,13 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
     public struct Output {
         let animate: PublishRelay<Void>
         let showNavigationButton: PublishRelay<Void>
+        let serverStatus: PublishRelay<Void>
     }
 
     public func transform(_ input: Input) -> Output {
         let animate = PublishRelay<Void>()
         let showNavigationButton = PublishRelay<Void>()
+        let serverStatus = PublishRelay<Void>()
 
         input.navigateToSigninDidTap.asObservable()
             .avoidDuplication
@@ -55,9 +63,22 @@ public final class OnboardingViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                return fetchServerStatusUseCase.execute()
+                    .catch {
+                        serverStatus.accept(())
+                        print($0.localizedDescription)
+                        return .never()
+                    }
+            }
+            .subscribe()
+            .disposed(by: disposeBag)
+
         return Output(
             animate: animate,
-            showNavigationButton: showNavigationButton
+            showNavigationButton: showNavigationButton,
+            serverStatus: serverStatus
         )
     }
 }

@@ -14,7 +14,9 @@ public final class PresentationAssembly: Assembly {
             HomeViewModel(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
-                fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!
+                fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
+                fetchWinterInternUseCase: resolver.resolve(FetchWinterInternSeasonUseCase.self)!,
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
         }
 
@@ -59,7 +61,8 @@ public final class PresentationAssembly: Assembly {
                 changeProfileImageUseCase: resolver.resolve(ChangeProfileImageUseCase.self)!,
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchWritableReviewListUseCase: resolver.resolve(FetchWritableReviewListUseCase.self)!,
-                logoutUseCase: resolver.resolve(LogoutUseCase.self)!
+                logoutUseCase: resolver.resolve(LogoutUseCase.self)!,
+                deleteDeviceTokenUseCase: resolver.resolve(DeleteDeviceTokenUseCase.self)!
             )
         }
 
@@ -83,7 +86,8 @@ public final class PresentationAssembly: Assembly {
 
         container.register(OnboardingViewModel.self) { resolver in
             OnboardingViewModel(
-                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!
+                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!,
+                fetchServerStatusUseCase: resolver.resolve(FetchServerStatusUseCase.self)!
             )
         }
         container.register(OnboardingViewController.self) { resolver in
@@ -335,6 +339,18 @@ public final class PresentationAssembly: Assembly {
         container.register(WinterInternVieModel.self) { resolver in
             WinterInternVieModel(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
+        container.register(WinterInternDetailViewController.self) { resolver in
+            WinterInternDetailViewController(
+                resolver.resolve(WinterInternDetailViewModel.self)!
+            )
+        }
+        container.register(WinterInternDetailViewModel.self) { resolver in
+            WinterInternDetailViewModel(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }

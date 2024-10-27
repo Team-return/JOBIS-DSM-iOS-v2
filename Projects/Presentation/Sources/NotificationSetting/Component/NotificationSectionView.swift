@@ -9,7 +9,7 @@ import DesignSystem
 public final class NotificationSectionView: BaseView {
     public var disposeBag = DisposeBag()
     public var switchIsOn: Bool {
-            return notificationSwitchButton.isOn
+        return notificationSwitchButton.isOn
     }
     public var clickSwitchButton: ControlProperty<Bool> {
         return notificationSwitchButton.rx.isOn
@@ -35,6 +35,10 @@ public final class NotificationSectionView: BaseView {
     }
 
     public override func setLayout() {
+        self.snp.makeConstraints {
+            $0.height.equalTo(64)
+        }
+
         notificationTitleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(24)

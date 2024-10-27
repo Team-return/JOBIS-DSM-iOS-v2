@@ -22,14 +22,10 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
     private let startedDayLabel = CompanyDetailLabel(menuText: "설립일")
     private let workersNumbersLabel = CompanyDetailLabel(menuText: "근로자 수")
     private let annualSalesLabel = CompanyDetailLabel(menuText: "연매출")
-    private let headAddressLabel = CompanyDetailLabel(menuText: "주소(본사)")
-    private let chainAddressLabel = CompanyDetailLabel(menuText: "주소(지점)")
-    private let firstManagerLabel = CompanyDetailLabel(menuText: "담당자1")
-    private let firstPhoneNumberLabel = CompanyDetailLabel(menuText: "전화번호1")
-    private let secondManagerLabel = CompanyDetailLabel(menuText: "담당자2")
-    private let secondPhoneNumberLabel = CompanyDetailLabel(menuText: "전화번호2")
+    private let headAddressLabel = CompanyDetailLabel(menuText: "주소")
+    private let firstManagerLabel = CompanyDetailLabel(menuText: "담당자")
+    private let firstPhoneNumberLabel = CompanyDetailLabel(menuText: "대표 번호")
     private let emailLabel = CompanyDetailLabel(menuText: "이메일")
-    private let faxLabel = CompanyDetailLabel(menuText: "팩스")
     private let interviewReviewMenuLabel = JobisMenuLabel(text: "면접 후기")
     private let interviewReviewTableView = UITableView().then {
         $0.register(
@@ -60,13 +56,9 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             workersNumbersLabel,
             annualSalesLabel,
             headAddressLabel,
-            chainAddressLabel,
             firstManagerLabel,
             firstPhoneNumberLabel,
-            secondManagerLabel,
-            secondPhoneNumberLabel,
-            emailLabel,
-            faxLabel
+            emailLabel
         ].forEach(mainStackView.addArrangedSubview(_:))
 
         [
@@ -143,13 +135,9 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
                 self?.workersNumbersLabel.setContent(contentText: $0.workerNumber)
                 self?.annualSalesLabel.setContent(contentText: $0.take)
                 self?.headAddressLabel.setContent(contentText: $0.mainAddress)
-                self?.chainAddressLabel.setContent(contentText: $0.subAddress ?? "-")
                 self?.firstManagerLabel.setContent(contentText: $0.managerName)
-                self?.firstPhoneNumberLabel.setContent(contentText: $0.managerPhoneNo)
-                self?.secondManagerLabel.setContent(contentText: $0.subManagerName ?? "-")
-                self?.secondPhoneNumberLabel.setContent(contentText: $0.subManagerPhoneNo ?? "-")
+                self?.firstPhoneNumberLabel.setContent(contentText: $0.representativePhoneNo)
                 self?.emailLabel.setContent(contentText: $0.email)
-                self?.faxLabel.setContent(contentText: $0.fax ?? "-")
                 self?.viewModel.recruitmentID = $0.recruitmentID
                 self?.recruitmentButton.isHidden = $0.recruitmentID == nil
             })

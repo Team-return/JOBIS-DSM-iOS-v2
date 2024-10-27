@@ -11,17 +11,23 @@ public final class HomeViewModel: BaseViewModel, Stepper {
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
     private let fetchBannerListUseCase: FetchBannerListUseCase
+    private let fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
+    private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
 
     private var touchedPopcatCount = 0
 
     init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchApplicationUseCase: FetchApplicationUseCase,
-        fetchBannerListUseCase: FetchBannerListUseCase
+        fetchBannerListUseCase: FetchBannerListUseCase,
+        fetchWinterInternUseCase: FetchWinterInternSeasonUseCase,
+        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
     ) {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchApplicationUseCase = fetchApplicationUseCase
         self.fetchBannerListUseCase = fetchBannerListUseCase
+        self.fetchWinterInternUseCase = fetchWinterInternUseCase
+        self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
     }
 
     public struct Input {
@@ -40,12 +46,20 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let studentInfo: PublishRelay<StudentInfoEntity>
         let applicationList: PublishRelay<[ApplicationEntity]>
         let bannerList: BehaviorRelay<[FetchBannerEntity]>
+        let isWinterInternSeason: BehaviorRelay<Bool>
+        let totalPassStudentInfo: BehaviorRelay<TotalPassStudentEntity>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let applicationList = PublishRelay<[ApplicationEntity]>()
         let bannerList = BehaviorRelay<[FetchBannerEntity]>(value: [])
+        let isWinterInternSeason = BehaviorRelay<Bool>(value: true)
+        let totalPassStudentInfo = BehaviorRelay<TotalPassStudentEntity>(value: TotalPassStudentEntity.init(
+            totalStudentCount: 0,
+            passedCount: 0,
+            approvedCount: 0
+        ))
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
@@ -96,6 +110,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
+                fetchTotalPassStudentUseCase.execute()
+            }
+            .bind(to: totalPassStudentInfo)
+            .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
                 fetchBannerListUseCase.execute()
             }
             .bind(to: bannerList)
@@ -106,6 +127,13 @@ public final class HomeViewModel: BaseViewModel, Stepper {
                 fetchApplicationUseCase.execute()
             }
             .bind(to: applicationList)
+            .disposed(by: disposeBag)
+
+        input.viewAppear.asObservable()
+            .flatMap { [self] in
+                fetchWinterInternUseCase.execute()
+            }
+            .bind(to: isWinterInternSeason)
             .disposed(by: disposeBag)
 
         input.rejectButtonDidTap.asObservable()
@@ -146,7 +174,9 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         return Output(
             studentInfo: studentInfo,
             applicationList: applicationList,
-            bannerList: bannerList
+            bannerList: bannerList,
+            isWinterInternSeason: isWinterInternSeason,
+            totalPassStudentInfo: totalPassStudentInfo
         )
     }
 }

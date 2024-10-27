@@ -8,7 +8,6 @@ import Domain
 import DesignSystem
 
 public final class HomeViewController: BaseViewController<HomeViewModel> {
-    private let isWinterSeason = BehaviorRelay(value: true)
     private let rejectButtonDidTap = PublishRelay<ApplicationEntity>()
     private let reApplyButtonDidTap = PublishRelay<ApplicationEntity>()
     private let navigateToAlarmButton = UIButton().then {
@@ -168,31 +167,41 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
 
-        output.bannerList
-            .filter { !$0.isEmpty }
-            .do(onNext: {
-                self.bannerView.setPageControl(count: $0.count)
+        let totalPassBannerModel = output.totalPassStudentInfo.value
+
+        let combinedBanners = output.bannerList
+            .map { banners in
+                return [totalPassBannerModel] + banners
+            }
+
+        combinedBanners
+            .do(onNext: { banners in
+                self.bannerView.setPageControl(count: banners.count)
             })
             .bind(to: bannerView.collectionView.rx.items(
                 cellIdentifier: BannerCollectionViewCell.identifier,
                 cellType: BannerCollectionViewCell.self
-            )) { _, element, cell in
-                cell.adapt(model: element)
+            )) { index, element, cell in
+                if index == 0 {
+                    cell.totalPassAdapt(model: output.totalPassStudentInfo.value)
+                } else {
+                    if let fetchBanner = element as? FetchBannerEntity {
+                        cell.adapt(model: fetchBanner)
+                    }
+                }
             }
             .disposed(by: disposeBag)
-    }
 
-    public override func configureViewController() {
-        checkWinterSeason()
-
-        isWinterSeason.asObservable()
+        output.isWinterInternSeason
             .bind { [weak self] in
                 self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
                 self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
                 self?.findWinterRecruitmentsCard.isHidden = !$0
             }
             .disposed(by: disposeBag)
+    }
 
+    public override func configureViewController() {
         viewWillAppearPublisher
             .bind {
                 self.showTabbar()
@@ -202,18 +211,6 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     public override func configureNavigation() {
         self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
         self.navigationItem.leftBarButtonItem = .init(customView: titleImageView)
-    }
-
-    private func checkWinterSeason() {
-        let now = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M"
-        dateFormatter.timeZone = NSTimeZone(name: "ko_KR") as? TimeZone
-        if "12" == dateFormatter.string(from: now) {
-            isWinterSeason.accept(true)
-        } else {
-            isWinterSeason.accept(false)
-        }
     }
 }
 

@@ -5,12 +5,7 @@ import RxFlow
 import Core
 import Domain
 
-public enum RecruitmentDetailPreviousViewType {
-    case companyDeatil
-    case recruitmentList
-}
-
-public final class RecruitmentDetailViewModel: BaseViewModel, Stepper {
+public final class WinterInternDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var recruitmentID: Int?
     public var companyId: Int?
