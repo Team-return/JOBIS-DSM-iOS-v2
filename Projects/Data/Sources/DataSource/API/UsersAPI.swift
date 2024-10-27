@@ -4,6 +4,7 @@ import AppNetwork
 
 enum UsersAPI {
     case signin(SigninRequestQuery)
+    case deleteDeviceToken
 }
 
 extension UsersAPI: JobisAPI {
@@ -17,6 +18,8 @@ extension UsersAPI: JobisAPI {
         switch self {
         case .signin:
             return "/login"
+        case .deleteDeviceToken:
+            return "/device-token"
         }
     }
 
@@ -24,6 +27,8 @@ extension UsersAPI: JobisAPI {
         switch self {
         case .signin:
             return .post
+        case .deleteDeviceToken:
+            return .patch
         }
     }
 
@@ -31,11 +36,15 @@ extension UsersAPI: JobisAPI {
         switch self {
         case let .signin(req):
             return .requestJSONEncodable(req)
+        default:
+            return .requestPlain
         }
     }
 
     var jwtTokenType: JwtTokenType {
         switch self {
+        case .deleteDeviceToken:
+            return .accessToken
         default:
             return .none
         }
@@ -50,6 +59,8 @@ extension UsersAPI: JobisAPI {
                 404: .notFoundEmail,
                 500: .internalServerError
             ]
+        default:
+            return nil
         }
     }
 }

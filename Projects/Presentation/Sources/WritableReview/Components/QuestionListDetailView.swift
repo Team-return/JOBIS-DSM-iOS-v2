@@ -131,7 +131,7 @@ final class QuestionListDetailView: BaseView {
         }
 
         interviewReviewArrowImageView.snp.makeConstraints {
-            $0.width.equalTo(24)
+            $0.width.height.equalTo(24)
         }
 
         [

@@ -34,6 +34,12 @@ public final class UseCaseAssembly: Assembly {
                 usersRepository: resolver.resolve(UsersRepository.self)!
             )
         }
+        container.register(DeleteDeviceTokenUseCase.self) { resolver in
+            DeleteDeviceTokenUseCase(
+                usersRepository: resolver.resolve(UsersRepository.self)!
+            )
+        }
+
 
         // Students
         container.register(ChangePasswordUseCase.self) { reslover in
@@ -241,6 +247,20 @@ public final class UseCaseAssembly: Assembly {
         container.register(FetchSubscribeStateUseCase.self) { resolver in
             FetchSubscribeStateUseCase(
                 notificationsRepository: resolver.resolve(NotificationsRepository.self)!
+            )
+        }
+
+        // WinterIntern
+        container.register(FetchWinterInternSeasonUseCase.self) { resolver in
+            FetchWinterInternSeasonUseCase(
+                winterInternRepository: resolver.resolve(WinterInternRepository.self)!
+            )
+        }
+
+        // System
+        container.register(FetchServerStatusUseCase.self) { resolver in
+            FetchServerStatusUseCase(
+                systemRepository: resolver.resolve(SystemRepository.self)!
             )
         }
     }

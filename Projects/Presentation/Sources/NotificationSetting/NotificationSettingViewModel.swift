@@ -29,12 +29,16 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
         let noticeSwitchButtonDidTap: ControlProperty<Bool>
         let applicationSwitchButtonDidTap: ControlProperty<Bool>
         let recruitmentSwitchButtonDidTap: ControlProperty<Bool>
+//        let interestSwitchButtonDidTap: ControlProperty<Bool>
+        let winterInternSwitchButtonDidTap: ControlProperty<Bool>
     }
 
     public struct Output {
         let subscribeNoticeState: PublishRelay<SubscribeStateEntity>
         let subscribeApplicationState: PublishRelay<SubscribeStateEntity>
         let subscribeRecruitmentState: PublishRelay<SubscribeStateEntity>
+//        let subscribeInteresteState: PublishRelay<SubscribeStateEntity>
+        let subscribeWinterInternState: PublishRelay<SubscribeStateEntity>
         let allSubscribeState: PublishRelay<Bool>
     }
 
@@ -43,10 +47,14 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
         let subscribeNoticeState = PublishRelay<SubscribeStateEntity>()
         let subscribeApplicationState = PublishRelay<SubscribeStateEntity>()
         let subscribeRecruitmentState = PublishRelay<SubscribeStateEntity>()
+//        let subscribeInteresteState = PublishRelay<SubscribeStateEntity>()
+        let subscribeWinterInternState = PublishRelay<SubscribeStateEntity>()
 
         let noticeState = BehaviorRelay<Bool>(value: false)
         let applicationState = BehaviorRelay<Bool>(value: false)
         let recruitmentState = BehaviorRelay<Bool>(value: false)
+//        let interesteState = BehaviorRelay<Bool>(value: false)
+        let winterInternState = BehaviorRelay<Bool>(value: false)
         let allSubscribeState = PublishRelay<Bool>()
 
         input.viewAppear.asObservable()
@@ -68,9 +76,20 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
                     } else if state.topic == .recruitment {
                         subscribeRecruitmentState.accept(state)
                         recruitmentState.accept(state.isSubscribed)
+//                    } else if state.topic == .interestRecruitment {
+//                        subscribeInteresteState.accept(state)
+//                        interesteState.accept(state.isSubscribed)
+                    } else if state.topic == .winterIntern {
+                        subscribeWinterInternState.accept(state)
+                        winterInternState.accept(state.isSubscribed)
                     }
 
-                    if noticeState.value || applicationState.value || recruitmentState.value {
+                    if (
+                        noticeState.value &&
+                        applicationState.value &&
+                        recruitmentState.value &&
+                        winterInternState.value
+                    ) == true {
                         allSubscribeState.accept(true)
                     } else {
                         allSubscribeState.accept(false)
@@ -120,10 +139,23 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
             .subscribe()
             .disposed(by: disposeBag)
 
+        input.winterInternSwitchButtonDidTap.asObservable()
+            .skip(1)
+            .flatMap { _ in
+                self.subscribeNotificationUseCase.execute(
+                    token: Messaging.messaging().fcmToken ?? "",
+                    notificationType: .application
+                )
+            }
+            .subscribe()
+            .disposed(by: disposeBag)
+
         return Output(
             subscribeNoticeState: subscribeNoticeState,
             subscribeApplicationState: subscribeApplicationState,
             subscribeRecruitmentState: subscribeRecruitmentState,
+//            subscribeInteresteState: subscribeInteresteState,
+            subscribeWinterInternState: subscribeWinterInternState,
             allSubscribeState: allSubscribeState
         )
     }

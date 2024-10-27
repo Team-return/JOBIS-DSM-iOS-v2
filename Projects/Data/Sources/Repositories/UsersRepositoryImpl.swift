@@ -20,4 +20,8 @@ struct UsersRepositoryImpl: UsersRepository {
     func logout() {
         localUsersDataSource.clearTokens()
     }
+
+    func deleteDeviceToken() -> Completable {
+        remoteUsersDataSource.deleteDeviceToken()
+    }
 }

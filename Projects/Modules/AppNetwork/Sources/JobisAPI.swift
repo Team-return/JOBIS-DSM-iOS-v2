@@ -44,6 +44,7 @@ public enum JobisDomain: String {
     case banners
     case notices
     case notifications
+    case winterIntern = "winter-intern"
 }
 
 extension JobisDomain {
