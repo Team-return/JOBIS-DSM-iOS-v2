@@ -7,7 +7,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     let companyProfileURL: String
     let companyName: String
     let areas: [AreaResponseDTO]
-    let requiredGrade: Int?
+    let requiredGrade: String?
     let workingHours: String
     let requiredLicenses: [String]?
     let hiringProgress: [InterviewType]
@@ -27,7 +27,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
         companyProfileURL: String,
         companyName: String,
         areas: [AreaResponseDTO],
-        requiredGrade: Int?,
+        requiredGrade: String?,
         workingHours: String,
         requiredLicenses: [String]?,
         hiringProgress: [InterviewType],
@@ -69,11 +69,12 @@ struct RecruitmentDetailResponseDTO: Decodable {
         case companyProfileURL = "company_profile_url"
         case companyName = "company_name"
         case areas
-        case requiredGrade = "required_grade"
+        case requiredGrade = "additional_qualifications"
         case requiredLicenses = "required_licenses"
         case hiringProgress = "hiring_progress"
         case trainPay = "train_pay"
-        case pay, benefits, military
+        case pay, benefits
+        case military = "military_support"
         case submitDocument = "submit_document"
         case workingHours = "working_hours"
         case startDate = "start_date"
@@ -88,7 +89,7 @@ extension RecruitmentDetailResponseDTO {
     func toDomain() -> RecruitmentDetailEntity {
         var unwrappedRequiredGrade: String? {
             guard let requiredGrade else { return nil }
-            return String(requiredGrade) + "% 이내"
+            return requiredGrade + "% 이내"
         }
         var recruitmentPeriod: String {
             guard let startDate, let endDate else { return "상시 모집" }

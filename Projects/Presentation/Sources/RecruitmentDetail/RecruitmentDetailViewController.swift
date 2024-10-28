@@ -30,7 +30,7 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         $0.axis = .vertical
     }
     private let recruitmentPeriodLabel = RecruitmentDetailLabel(title: "모집기간")
-    private let militaryServiceLabel = RecruitmentDetailLabel(title: "산업 기능 요원 근무 가능 여부")
+    private let militaryServiceLabel = RecruitmentDetailLabel(title: "산업 기능 요원 근무 여부")
     private let fieldTypeDetailStackView = FieldTypeDetailStackView()
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "선발 절차")
