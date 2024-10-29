@@ -30,7 +30,6 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
         $0.axis = .vertical
     }
     private let recruitmentPeriodLabel = RecruitmentDetailLabel(title: "모집기간")
-    private let militaryServiceLabel = RecruitmentDetailLabel(title: "산업 기능 요원 근무 여부")
     private let fieldTypeDetailStackView = FieldTypeDetailStackView()
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "선발 절차")
@@ -63,7 +62,6 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
 
         [
             recruitmentPeriodLabel,
-            militaryServiceLabel,
             fieldTypeDetailStackView,
             certificateLabel,
             recruitmentProcessLabel,
@@ -137,7 +135,6 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
                     companyName: $0.companyName
                 )
                 recruitmentPeriodLabel.setSubTitle($0.period)
-                militaryServiceLabel.setSubTitle("병역특례 \($0.military ? "가능" : "불가능")")
                 certificateLabel.setSubTitle($0.requiredLicenses)
                 recruitmentProcessLabel.setSubTitle($0.hiringProgress)
                 requiredGradeLabel.setSubTitle($0.requiredGrade)
