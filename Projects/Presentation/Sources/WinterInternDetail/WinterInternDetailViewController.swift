@@ -62,7 +62,6 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
 
         [
             recruitmentPeriodLabel,
-            militaryServiceLabel,
             fieldTypeDetailStackView,
             certificateLabel,
             recruitmentProcessLabel,
