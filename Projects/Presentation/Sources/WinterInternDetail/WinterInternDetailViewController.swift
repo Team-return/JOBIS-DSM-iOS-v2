@@ -31,15 +31,16 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
     }
     private let recruitmentPeriodLabel = RecruitmentDetailLabel(title: "모집기간")
     private let fieldTypeDetailStackView = FieldTypeDetailStackView()
+    private let preferentrialTreatmentLabel = RecruitmentDetailLabel(title: "우대사항")
+    private let useSkillsLabel = RecruitmentDetailLabel(title: "사용 기술")
     private let certificateLabel = RecruitmentDetailLabel(title: "자격증")
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "선발 절차")
     private let requiredGradeLabel = RecruitmentDetailLabel(title: "기타 자격 요건")
     private let workingHoursLabel = RecruitmentDetailLabel(title: "근무시간")
-//    private let awardedMoneyLabel = RecruitmentDetailLabel(title: "실습 수당")
-//    private let permanentEmployeeLabel = RecruitmentDetailLabel(title: "정규직 전환 시")
     private let benefitsWelfareLabel = RecruitmentDetailLabel(title: "복리후생")
     private let needThingsLabel = RecruitmentDetailLabel(title: "제출 서류")
     private let otherMattersLabel = RecruitmentDetailLabel(title: "기타 사항")
+    private let hireConvertibleLabel = RecruitmentDetailLabel(title: "현장실습 연계 계획")
     private var applyButton = JobisButton(style: .main).then {
         $0.setText("지원하기")
     }
@@ -63,15 +64,16 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
         [
             recruitmentPeriodLabel,
             fieldTypeDetailStackView,
+            preferentrialTreatmentLabel,
+            useSkillsLabel,
             certificateLabel,
             recruitmentProcessLabel,
             requiredGradeLabel,
             workingHoursLabel,
-//            awardedMoneyLabel,
-//            permanentEmployeeLabel,
             benefitsWelfareLabel,
             needThingsLabel,
-            otherMattersLabel
+            otherMattersLabel,
+            hireConvertibleLabel
         ].forEach(mainStackView.addArrangedSubview(_:))
 
         [
@@ -137,19 +139,22 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
                 recruitmentPeriodLabel.setSubTitle($0.period)
                 certificateLabel.setSubTitle($0.requiredLicenses)
                 recruitmentProcessLabel.setSubTitle($0.hiringProgress)
-                requiredGradeLabel.setSubTitle($0.requiredGrade)
+                requiredGradeLabel.setSubTitle($0.additionalQualifications)
                 workingHoursLabel.setSubTitle($0.workingHours)
-//                awardedMoneyLabel.setSubTitle("\($0.trainPay) 만원/월")
-//                permanentEmployeeLabel.setSubTitle("\($0.pay ?? "0") 만원/년")
                 benefitsWelfareLabel.setSubTitle($0.benefits)
                 needThingsLabel.setSubTitle($0.submitDocument)
                 otherMattersLabel.setSubTitle($0.etc)
+                hireConvertibleLabel.setSubTitle("\($0.hireConvertible ?? false ? "있음" : "없음")")
                 isBookmarked = $0.bookmarked
                 viewModel.isApplicable = $0.isApplicable
             }.disposed(by: disposeBag)
 
         output.areaListEntity.asObservable()
             .bind {
+                $0.forEach { data in
+                    self.preferentrialTreatmentLabel.setSubTitle(data.preferentialTreatment)
+                    self.useSkillsLabel.setSubTitle(data.tech.joined(separator: ","))
+                }
                 self.fieldTypeDetailStackView.setFieldType($0)
             }
             .disposed(by: disposeBag)

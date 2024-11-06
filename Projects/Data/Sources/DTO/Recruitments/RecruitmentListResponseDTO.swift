@@ -8,8 +8,8 @@ struct RecruitmentResponseDTO: Codable {
     let recruitID: Int
     let companyName: String
     let companyProfileURL: String
-    let trainPay: Int
-    let militarySupport: Bool
+    let trainPay: Int?
+    let militarySupport: Bool?
     let hiringJobs: String
     let bookmarked: Bool
 
@@ -31,8 +31,8 @@ extension RecruitmentListResponseDTO {
                 recruitID: $0.recruitID,
                 companyName: $0.companyName,
                 companyProfileURL: $0.companyProfileURL,
-                trainPay: $0.trainPay,
-                militarySupport: $0.militarySupport,
+                trainPay: $0.trainPay ?? 0,
+                militarySupport: $0.militarySupport ?? false,
                 hiringJobs: $0.hiringJobs,
                 bookmarked: $0.bookmarked
             )
