@@ -7,16 +7,17 @@ struct CompanyInfoDetailResponseDTO: Decodable {
     let companyProfileURL: String
     let companyIntroduce: String
     let mainZipCode, mainAddress, mainAddressDetail: String
-//    let subZipCode, subAddress, subAddressDetail: String?
     let managerName: String
-//    let subManagerName, subManagerPhoneNo, fax: String?
-    let email, representativeName, representativePhoneNo, foundedAt: String
+    let managerPhoneNo: String
+    let email, representativeName , foundedAt: String
+    let representativePhoneNo: String?
     let workerNumber: Int
     let take: Double
     let recruitmentID: Int?
     let attachments: [String]
     let serviceName: String
     let businessArea: String
+    let headquarter: Bool
 
     enum CodingKeys: String, CodingKey {
         case businessNumber = "business_number"
@@ -26,13 +27,8 @@ struct CompanyInfoDetailResponseDTO: Decodable {
         case mainZipCode = "main_zip_code"
         case mainAddress = "main_address"
         case mainAddressDetail = "main_address_detail"
-//        case subZipCode = "sub_zip_code"
-//        case subAddress = "sub_address"
-//        case subAddressDetail = "sub_address_detail"
         case managerName = "manager_name"
-//        case managerPhoneNo = "manager_phone_no"
-//        case subManagerName = "sub_manager_name"
-//        case subManagerPhoneNo = "sub_manager_phone_no"
+        case managerPhoneNo = "manager_phone_no"
         case email
         case representativeName = "representative_name"
         case representativePhoneNo = "representative_phone_no"
@@ -43,6 +39,7 @@ struct CompanyInfoDetailResponseDTO: Decodable {
         case attachments
         case serviceName = "service_name"
         case businessArea = "business_area"
+        case headquarter
     }
 }
 
@@ -57,7 +54,7 @@ extension CompanyInfoDetailResponseDTO {
             mainAddress: mainAddress,
             mainAddressDetail: mainAddressDetail,
             managerName: managerName,
-//            managerPhoneNo: managerPhoneNo,
+            managerPhoneNo: managerPhoneNo,
             email: email,
             representativeName: representativeName,
             representativePhoneNo: representativePhoneNo,
@@ -67,7 +64,8 @@ extension CompanyInfoDetailResponseDTO {
             recruitmentID: recruitmentID,
             attachments: attachments,
             serviceName: serviceName,
-            businessArea: businessArea
+            businessArea: businessArea,
+            headquarter: headquarter
         )
     }
 }
