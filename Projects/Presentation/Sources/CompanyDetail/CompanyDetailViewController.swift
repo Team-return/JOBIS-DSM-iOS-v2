@@ -19,13 +19,12 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         $0.axis = .vertical
     }
     private let bossLabel = CompanyDetailLabel(menuText: "대표자")
+    private let serviceNameLabel = CompanyDetailLabel(menuText: "서비스 이름")
     private let startedDayLabel = CompanyDetailLabel(menuText: "설립일")
     private let workersNumbersLabel = CompanyDetailLabel(menuText: "근로자 수")
     private let annualSalesLabel = CompanyDetailLabel(menuText: "연매출")
     private let headAddressLabel = CompanyDetailLabel(menuText: "주소")
-    private let firstManagerLabel = CompanyDetailLabel(menuText: "담당자")
-    private let firstPhoneNumberLabel = CompanyDetailLabel(menuText: "대표 번호")
-    private let emailLabel = CompanyDetailLabel(menuText: "이메일")
+    private let businessAreaLabel = CompanyDetailLabel(menuText: "사업 분야")
     private let interviewReviewMenuLabel = JobisMenuLabel(text: "면접 후기")
     private let interviewReviewTableView = UITableView().then {
         $0.register(
@@ -52,13 +51,12 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
 
         [
             bossLabel,
+            serviceNameLabel,
             startedDayLabel,
             workersNumbersLabel,
             annualSalesLabel,
             headAddressLabel,
-            firstManagerLabel,
-            firstPhoneNumberLabel,
-            emailLabel
+            businessAreaLabel
         ].forEach(mainStackView.addArrangedSubview(_:))
 
         [
@@ -131,13 +129,12 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
                     companyContent: $0.companyIntroduce
                 )
                 self?.bossLabel.setContent(contentText: $0.representativeName)
+                self?.serviceNameLabel.setContent(contentText: $0.serviceName)
                 self?.startedDayLabel.setContent(contentText: $0.foundedAt)
                 self?.workersNumbersLabel.setContent(contentText: $0.workerNumber)
                 self?.annualSalesLabel.setContent(contentText: $0.take)
                 self?.headAddressLabel.setContent(contentText: $0.mainAddress)
-                self?.firstManagerLabel.setContent(contentText: $0.managerName)
-                self?.firstPhoneNumberLabel.setContent(contentText: $0.representativePhoneNo)
-                self?.emailLabel.setContent(contentText: $0.email)
+                self?.businessAreaLabel.setContent(contentText: $0.businessArea)
                 self?.viewModel.recruitmentID = $0.recruitmentID
                 self?.recruitmentButton.isHidden = $0.recruitmentID == nil
             })

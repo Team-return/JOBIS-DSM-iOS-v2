@@ -82,23 +82,6 @@ final class FieldTypeDetailView: BaseView {
         $0.numberOfLines = 0
         $0.isHidden = true
     }
-    private let preferElemnetMenuLabel = UILabel().then {
-        $0.setJobisText(
-            "우대사항",
-            font: .description,
-            color: .GrayScale.gray60
-        )
-        $0.isHidden = true
-    }
-    private let preferElemnetLabel = UILabel().then {
-        $0.setJobisText(
-            "-",
-            font: .body,
-            color: .GrayScale.gray80
-        )
-        $0.numberOfLines = 0
-        $0.isHidden = true
-    }
 
     override func addView() {
         self.addSubview(backStackView)
@@ -117,9 +100,7 @@ final class FieldTypeDetailView: BaseView {
             majorTaskMenuLabel,
             majorTaskLabel,
             useSkillsMenuLabel,
-            useSkillsLabel,
-            preferElemnetMenuLabel,
-            preferElemnetLabel
+            useSkillsLabel
         ].forEach(self.detailView.addArrangedSubview(_:))
     }
 
@@ -140,14 +121,12 @@ final class FieldTypeDetailView: BaseView {
 
         [
             majorTaskMenuLabel,
-            useSkillsMenuLabel,
-            preferElemnetMenuLabel
+            useSkillsMenuLabel
         ].forEach { detailView.setCustomSpacing(4, after: $0) }
 
         [
             majorTaskLabel,
-            useSkillsLabel,
-            preferElemnetLabel
+            useSkillsLabel
         ].forEach { detailView.setCustomSpacing(16, after: $0)}
 
         backStackView.snp.makeConstraints {
@@ -161,8 +140,6 @@ final class FieldTypeDetailView: BaseView {
         majorTaskLabel.text = model.majorTask == "" ? "-" : model.majorTask
         useSkillsLabel.text = model.tech.joined(separator: ", ") == "" ? "-"
         : model.tech.joined(separator: ", ")
-        preferElemnetLabel.text = model.preferentialTreatment == "" ? "-"
-        : model.preferentialTreatment ?? "-"
         self.rx.tapGesture()
             .when(.recognized)
             .bind { _ in

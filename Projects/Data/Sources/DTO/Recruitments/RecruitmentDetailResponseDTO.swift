@@ -7,19 +7,22 @@ struct RecruitmentDetailResponseDTO: Decodable {
     let companyProfileURL: String
     let companyName: String
     let areas: [AreaResponseDTO]
-    let requiredGrade: String?
+    let additionalQualifications: String?
     let workingHours: String
     let requiredLicenses: [String]?
     let hiringProgress: [InterviewType]
-    let trainPay: Int
+    let trainPay: Int?
     let pay: String?
     let benefits: String?
-    let military: Bool
+    let military: Bool?
     let submitDocument: String
     let startDate, endDate: String?
     let etc: String?
     let isApplicable: Bool
+    let winterIntern: Bool?
+    let hireConvertible: Bool?
     let bookmarked: Bool
+    let integrationPlan: Bool?
 
     init(
         recruitmentID: Int,
@@ -27,27 +30,30 @@ struct RecruitmentDetailResponseDTO: Decodable {
         companyProfileURL: String,
         companyName: String,
         areas: [AreaResponseDTO],
-        requiredGrade: String?,
+        additionalQualifications: String?,
         workingHours: String,
         requiredLicenses: [String]?,
         hiringProgress: [InterviewType],
         trainPay: Int,
         pay: String?,
         benefits: String?,
-        military: Bool,
+        military: Bool?,
         submitDocument: String,
         startDate: String?,
         endDate: String?,
         etc: String?,
         isApplicable: Bool,
-        bookmarked: Bool
+        winterIntern: Bool?,
+        hireConvertible: Bool?,
+        bookmarked: Bool,
+        integrationPlan: Bool?
     ) {
         self.recruitmentID = recruitmentID
         self.companyID = companyID
         self.companyProfileURL = companyProfileURL
         self.companyName = companyName
         self.areas = areas
-        self.requiredGrade = requiredGrade
+        self.additionalQualifications = additionalQualifications
         self.workingHours = workingHours
         self.requiredLicenses = requiredLicenses
         self.hiringProgress = hiringProgress
@@ -60,7 +66,10 @@ struct RecruitmentDetailResponseDTO: Decodable {
         self.endDate = endDate
         self.etc = etc
         self.isApplicable = isApplicable
+        self.winterIntern = winterIntern
+        self.hireConvertible = hireConvertible
         self.bookmarked = bookmarked
+        self.integrationPlan = integrationPlan
     }
 
     enum CodingKeys: String, CodingKey {
@@ -69,7 +78,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
         case companyProfileURL = "company_profile_url"
         case companyName = "company_name"
         case areas
-        case requiredGrade = "additional_qualifications"
+        case additionalQualifications = "additional_qualifications"
         case requiredLicenses = "required_licenses"
         case hiringProgress = "hiring_progress"
         case trainPay = "train_pay"
@@ -81,16 +90,15 @@ struct RecruitmentDetailResponseDTO: Decodable {
         case endDate = "end_date"
         case etc
         case isApplicable = "is_applicable"
+        case winterIntern = "winter_intern"
+        case hireConvertible = "hire_convertible"
         case bookmarked
+        case integrationPlan = "integration_plan"
     }
 }
 
 extension RecruitmentDetailResponseDTO {
     func toDomain() -> RecruitmentDetailEntity {
-        var unwrappedRequiredGrade: String? {
-            guard let requiredGrade else { return nil }
-            return requiredGrade + "% 이내"
-        }
         var recruitmentPeriod: String {
             guard let startDate, let endDate else { return "상시 모집" }
             return "\(startDate) ~ \(endDate)"
@@ -102,13 +110,13 @@ extension RecruitmentDetailResponseDTO {
             companyProfileURL: companyProfileURL,
             companyName: companyName,
             areas: areas.map { $0.toDomain() },
-            requiredGrade: unwrappedRequiredGrade,
+            additionalQualifications: additionalQualifications,
             workingHours: workingHours,
             requiredLicenses: requiredLicenses?.joined(separator: ", "),
             hiringProgress: hiringProgress.enumerated().map { (index, value) in
                 "\(index + 1). \(value.localizedString())"
             }.joined(separator: "\n"),
-            trainPay: String(trainPay),
+            trainPay: String(trainPay ?? 0),
             pay: pay,
             benefits: benefits,
             military: military,
@@ -116,7 +124,10 @@ extension RecruitmentDetailResponseDTO {
             period: recruitmentPeriod,
             etc: etc ?? "없음",
             isApplicable: isApplicable,
-            bookmarked: bookmarked
+            winterIntern: winterIntern,
+            hireConvertible: hireConvertible,
+            bookmarked: bookmarked,
+            integrationPlan: integrationPlan
         )
     }
 }
