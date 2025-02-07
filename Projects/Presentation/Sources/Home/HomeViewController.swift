@@ -45,6 +45,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private var findCompanysCard = CareerNavigationCard()
     private var findWinterRecruitmentsCard = CareerNavigationCard()
     private var navigateToEasterEggDidTap = PublishRelay<Void>()
+    private let employStatusButtonTap = PublishRelay<Void>()
+    private var cellDisposeBag = DisposeBag()
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
@@ -117,7 +119,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             applicationStatusTableViewDidTap: applicationStatusTableView.rx
                 .modelSelected(ApplicationEntity.self)
                 .asObservable()
-                .map { ($0.recruitmentID, $0.applicationStatus) }
+                .map { ($0.recruitmentID, $0.applicationStatus) },
+            employStatusButtonDidTap: employStatusButtonTap.asSignal()
         )
 
         titleImageView.rx.tapGesture().when(.recognized).asObservable()
@@ -175,17 +178,27 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
 
         combinedBanners
+            .do(onNext: { [weak self] _ in
+                self?.cellDisposeBag = DisposeBag()
+            })
             .do(onNext: { banners in
                 self.bannerView.setPageControl(count: banners.count)
             })
             .bind(to: bannerView.collectionView.rx.items(
                 cellIdentifier: BannerCollectionViewCell.identifier,
                 cellType: BannerCollectionViewCell.self
-            )) { index, element, cell in
-                if index == 0 {
+            )) { [weak self] index, element, cell in
+                guard let self = self else { return }
+
+                if index == 0, let cell = cell as? BannerCollectionViewCell {
                     cell.totalPassAdapt(model: output.totalPassStudentInfo.value)
+                    cell.employStatusButton.rx.tap
+                        .map { _ in () }
+                        .bind(to: self.employStatusButtonTap)
+                        .disposed(by: self.cellDisposeBag)
                 } else {
-                    if let fetchBanner = element as? FetchBannerEntity {
+                    if let fetchBanner = element as? FetchBannerEntity,
+                       let cell = cell as? BannerCollectionViewCell {
                         cell.adapt(model: fetchBanner)
                     }
                 }
