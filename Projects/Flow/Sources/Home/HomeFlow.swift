@@ -43,6 +43,8 @@ public final class HomeFlow: Flow {
         case let .recruitmentDetailIsRequired(id):
             return navigateToRecruitmentDetail(id)
 
+        case .employStatusIsRequired:
+            return  navigateToEmployStatus()
         case .none:
             return .none
         }
@@ -208,6 +210,21 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
             withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+        ))
+    }
+
+    func navigateToEmployStatus() -> FlowContributors {
+        let employStatusFlow = EmployStatusFlow(container: container)
+
+        Flows.use(employStatusFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: employStatusFlow,
+            withNextStepper: OneStepper(withSingleStep: EmployStatusStep.emplyStatusIsRequired)
         ))
     }
 }
