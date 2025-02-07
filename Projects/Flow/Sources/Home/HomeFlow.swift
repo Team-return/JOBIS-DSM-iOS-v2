@@ -224,7 +224,7 @@ private extension HomeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: employStatusFlow,
-            withNextStepper: OneStepper(withSingleStep: EmployStatusStep.emplyStatusIsRequired)
+            withNextStepper: OneStepper(withSingleStep: EmployStatusStep.employStatusIsRequired)
         ))
     }
 }

@@ -20,7 +20,7 @@ public final class EmployStatusFlow: Flow {
         guard let step = step as? EmployStatusStep else { return .none }
 
         switch step {
-        case .emplyStatusIsRequired:
+        case .employStatusIsRequired:
             return navigateToEmployStatus()
         }
     }
