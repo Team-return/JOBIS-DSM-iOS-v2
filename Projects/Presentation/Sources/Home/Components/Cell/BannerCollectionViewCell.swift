@@ -28,26 +28,8 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
             color: .Primary.blue20
         )
     }
-    private let prePassCountTitleLabel = UILabel().then {
-        $0.setJobisText(
-            "현재",
-            font: .subHeadLine,
-            color: .GrayScale.gray60
-        )
-    }
-    private let sufPassCountTitleLabel = UILabel().then {
-        $0.setJobisText(
-            "명이 취업했어요",
-            font: .subHeadLine,
-            color: .GrayScale.gray60
-        )
-    }
-    private let passCountLabel = UILabel().then {
-        $0.setJobisText(
-            " - ",
-            font: .subHeadLine,
-            color: .GrayScale.gray70
-        )
+    public let employStatusButton = JobisButton(style: .main).then {
+        $0.setText("현황 보러 가기")
     }
     private let fileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -60,9 +42,7 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
             imageView,
             passTitleLabel,
             passLabel,
-            prePassCountTitleLabel,
-            sufPassCountTitleLabel,
-            passCountLabel,
+            employStatusButton,
             fileImageView
         ].forEach(contentView.addSubview(_:))
     }
@@ -83,18 +63,11 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
             $0.leading.equalToSuperview().inset(24)
         }
 
-        prePassCountTitleLabel.snp.makeConstraints {
-            $0.bottom.leading.equalToSuperview().inset(24)
-        }
-
-        passCountLabel.snp.makeConstraints {
-            $0.top.equalTo(prePassCountTitleLabel.snp.top)
-            $0.leading.equalTo(prePassCountTitleLabel.snp.trailing).offset(4)
-        }
-
-        sufPassCountTitleLabel.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(24)
-            $0.leading.equalTo(passCountLabel.snp.trailing).offset(4)
+        employStatusButton.snp.makeConstraints {
+            $0.top.equalTo(passLabel.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.width.equalTo(151)
+            $0.height.equalTo(40)
         }
 
         fileImageView.snp.makeConstraints {
@@ -121,12 +94,6 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
             "\(passText)%",
             font: .headLine,
             color: .Primary.blue20
-        )
-
-        passCountLabel.setJobisText(
-            "\(model.passedCount)/\(model.totalStudentCount)",
-            font: .subHeadLine,
-            color: .GrayScale.gray70
         )
     }
 }
