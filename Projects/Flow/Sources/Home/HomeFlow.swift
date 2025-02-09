@@ -44,7 +44,7 @@ public final class HomeFlow: Flow {
             return navigateToRecruitmentDetail(id)
 
         case .employStatusIsRequired:
-            return  navigateToEmployStatus()
+            return navigateToEmployStatus()
         case .none:
             return .none
         }
