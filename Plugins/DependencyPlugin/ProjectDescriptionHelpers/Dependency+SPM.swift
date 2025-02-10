@@ -19,6 +19,7 @@ public extension TargetDependency.SPM {
     static let ReactorKit = TargetDependency.external(name: "ReactorKit")
     static let RxGesture = TargetDependency.external(name: "RxGesture")
     static let FCM = TargetDependency.package(product: "FirebaseMessaging")
+    static let Charts = TargetDependency.package(product: "Charts")
 }
 
 public extension Package {
