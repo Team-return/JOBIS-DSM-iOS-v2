@@ -53,7 +53,7 @@ let dependencies = Dependencies(
                 requirement: .upToNextMajor(from: "10.3.0")
             ),
             .remote(
-                url: "https://github.com/ChartsOrg/Charts.git",
+                url: "https://github.com/danielgindi/Charts.git",
                 requirement: .upToNextMajor(from: "5.1.0")
             )
 
