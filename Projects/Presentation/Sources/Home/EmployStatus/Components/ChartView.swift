@@ -15,7 +15,7 @@ final class ChartView: BaseView {
         $0.holeRadiusPercent = 0.6
         $0.legend.enabled = false
         let entries = [
-            PieChartDataEntry(value: 0, label: ""),
+            PieChartDataEntry(value: 100, label: ""),
             PieChartDataEntry(value: 0, label: "")
         ]
 
