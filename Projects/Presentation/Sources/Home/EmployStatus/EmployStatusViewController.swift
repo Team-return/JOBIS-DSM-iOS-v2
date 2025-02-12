@@ -18,8 +18,9 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
     }
     public override func setLayout() {
         chartView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.height.width.equalTo(100)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(264)
         }
     }
     public override func configureNavigation() {
