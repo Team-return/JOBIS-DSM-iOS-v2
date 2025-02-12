@@ -43,6 +43,8 @@ final class ChartView: BaseView {
     private let totalStatsValueLabel = UILabel().then {
         $0.setJobisText("\(0)/\(0)명", font: .description, color: .Primary.blue20)
     }
+    private var completedLegend = UIView()
+    private var incompleteLegend = UIView()
     private let legendView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 4
@@ -63,6 +65,8 @@ final class ChartView: BaseView {
             totalStatsValueLabel
         ].forEach { chartContainerView.addSubview($0) }
         employPieChartView.addSubview(employPercentageLabel)
+        legendView.addArrangedSubview(completedLegend)
+        legendView.addArrangedSubview(incompleteLegend)
     }
     override func setLayout() {
         chartContainerView.snp.makeConstraints {
@@ -119,16 +123,10 @@ final class ChartView: BaseView {
         layer.shadowRadius = 12
         layer.shadowOpacity = 1
         clipsToBounds = false
-        setupLegend()
+        completedLegend = createLegendItem(color: .Primary.blue20, textColor: .Primary.blue20, text: "취업완료")
+        incompleteLegend = createLegendItem(color: .Sub.skyBlue10, textColor: .GrayScale.gray60, text: "취업 전")
     }
 
-    private func setupLegend() {
-        let completedLegend = createLegendItem(color: .Primary.blue20, textColor: .Primary.blue20, text: "취업완료")
-        let incompleteLegend = createLegendItem(color: .Sub.skyBlue10, textColor: .GrayScale.gray60, text: "취업 전")
-
-        legendView.addArrangedSubview(completedLegend)
-        legendView.addArrangedSubview(incompleteLegend)
-    }
     private func createLegendItem(color: UIColor, textColor: UIColor, text: String) -> UIView {
         let containerView = UIView()
 
