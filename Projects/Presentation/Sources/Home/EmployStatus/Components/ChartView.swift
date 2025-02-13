@@ -43,8 +43,12 @@ final class ChartView: BaseView {
     private let totalStatsValueLabel = UILabel().then {
         $0.setJobisText("\(0)/\(0)명", font: .description, color: .Primary.blue20)
     }
-    private var completedLegend = UIView()
-    private var incompleteLegend = UIView()
+    private let completedLegend = LegendView().then {
+        $0.setup(color: .Primary.blue20, textColor: .Primary.blue20, text: "취업완료")
+    }
+    private let incompleteLegend = LegendView().then {
+        $0.setup(color: .Sub.skyBlue10, textColor: .GrayScale.gray60, text: "취업 전")
+    }
     private let legendView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 4
@@ -110,6 +114,8 @@ final class ChartView: BaseView {
         legendView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(20)
             $0.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(28)
+            $0.width.equalTo(47)
         }
     }
     override func configureView() {
@@ -123,38 +129,5 @@ final class ChartView: BaseView {
         layer.shadowRadius = 12
         layer.shadowOpacity = 1
         clipsToBounds = false
-        completedLegend = createLegendItem(color: .Primary.blue20, textColor: .Primary.blue20, text: "취업완료")
-        incompleteLegend = createLegendItem(color: .Sub.skyBlue10, textColor: .GrayScale.gray60, text: "취업 전")
-    }
-
-    private func createLegendItem(color: UIColor, textColor: UIColor, text: String) -> UIView {
-        let containerView = UIView()
-
-        let colorView = UIView()
-        colorView.backgroundColor = color
-        colorView.layer.cornerRadius = 3
-
-        let label = UILabel()
-        label.setJobisText(text, font: .subcaption, color: textColor)
-
-        containerView.addSubview(colorView)
-        containerView.addSubview(label)
-
-        containerView.snp.makeConstraints {
-            $0.height.equalTo(12)
-            $0.width.equalTo(47)
-        }
-        colorView.snp.makeConstraints {
-            $0.leading.equalToSuperview()
-            $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(6)
-        }
-
-        label.snp.makeConstraints {
-            $0.leading.equalTo(colorView.snp.trailing).offset(6)
-            $0.centerY.equalToSuperview()
-        }
-
-        return containerView
     }
 }
