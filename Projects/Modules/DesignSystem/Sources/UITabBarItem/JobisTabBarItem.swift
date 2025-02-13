@@ -35,7 +35,7 @@ public class JobisTabBarItem: UITabBarItem {
         self.title = title
         self.image = image
         self.tag = tag
-        self.setTitleTextAttributes([.font: UIFont.jobisFont(.cation)], for: .normal)
+        self.setTitleTextAttributes([.font: UIFont.jobisFont(.caption)], for: .normal)
     }
 
     required init?(coder: NSCoder) {
