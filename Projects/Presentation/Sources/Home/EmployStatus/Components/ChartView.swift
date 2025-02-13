@@ -69,8 +69,10 @@ final class ChartView: BaseView {
             totalStatsValueLabel
         ].forEach { chartContainerView.addSubview($0) }
         employPieChartView.addSubview(employPercentageLabel)
-        legendView.addArrangedSubview(completedLegend)
-        legendView.addArrangedSubview(incompleteLegend)
+        [
+            completedLegend,
+            incompleteLegend
+        ].forEach { legendView.addArrangedSubview($0) }
     }
     override func setLayout() {
         chartContainerView.snp.makeConstraints {
