@@ -89,7 +89,7 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
     func totalPassAdapt(model: TotalPassStudentEntity) {
         totalPassSetLayout()
         let employmentRate = Double(model.passedCount) / Double(model.totalStudentCount) * 100.0
-        let passText = String(format: "%.1f", employmentRate)
+        let passText = String(format: "%.0f", employmentRate)
         passLabel.setJobisText(
             "\(passText)%",
             font: .headLine,
