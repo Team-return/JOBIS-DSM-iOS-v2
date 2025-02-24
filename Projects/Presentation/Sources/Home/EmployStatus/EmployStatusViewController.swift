@@ -18,8 +18,9 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
         [
             chartView,
             classEmploymentLabel
-        ].forEach { self.view.addSubview($0) }
+        ].forEach { view.addSubview($0) }
     }
+
     public override func setLayout() {
         chartView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(12)
@@ -31,14 +32,26 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
             $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
-    public override func configureNavigation() {
-        setSmallTitle(title: "취업 현황")
-    }
-    public override func configureViewController() {
-        self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: {
-                self.hideTabbar()
+
+    public override func bind() {
+        let input = EmployStatusViewModel.Input(
+            viewWillAppear: viewWillAppearPublisher
+        )
+        let output = viewModel.transform(input)
+        output.totalPassStudentInfo
+            .asObservable()
+            .bind(onNext: { [weak self] info in
+                self?.chartView.setChartData(model: info)
             })
             .disposed(by: disposeBag)
+        viewWillAppearPublisher
+            .bind { [weak self] _ in
+                self?.hideTabbar()
+            }
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureNavigation() {
+        setSmallTitle(title: "취업 현황")
     }
 }
