@@ -60,18 +60,22 @@ final class ChartView: BaseView {
             employLabel,
             legendView
         ].forEach { self.addSubview($0) }
+
         [
             employPieChartView,
             stickView,
             totalStatsLabel,
             totalStatsValueLabel
         ].forEach { chartContainerView.addSubview($0) }
+
         employPieChartView.addSubview(employPercentageLabel)
+
         [
             completedLegend,
             incompleteLegend
         ].forEach { legendView.addArrangedSubview($0) }
     }
+
     override func setLayout() {
         chartContainerView.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -146,7 +150,11 @@ final class ChartView: BaseView {
         let data = PieChartData(dataSet: dataSet)
         employPieChartView.data = data
         let rateText = String(format: "%.0f", employmentRate)
-        employPercentageLabel.setJobisText("\(rateText)%", font: .boldBody, color: .Primary.blue20)
+        employPercentageLabel.setJobisText(
+            "\(rateText)%",
+            font: .boldBody,
+            color: .Primary.blue20
+        )
         totalStatsValueLabel.setJobisText(
             "\(passedCount)/\(totalCount)명",
             font: .description,
