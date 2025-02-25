@@ -40,9 +40,9 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
         let output = viewModel.transform(input)
         output.totalPassStudentInfo
             .asObservable()
-            .bind(onNext: { [weak self] info in
+            .bind { [weak self] info in
                 self?.chartView.setChartData(model: info)
-            })
+            }
             .disposed(by: disposeBag)
         viewWillAppearPublisher
             .bind { [weak self] _ in
