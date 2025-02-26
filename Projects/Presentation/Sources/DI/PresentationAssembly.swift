@@ -365,7 +365,9 @@ public final class PresentationAssembly: Assembly {
             )
         }
         container.register(EmployStatusViewModel.self) { resolver in
-            EmployStatusViewModel()
+            EmployStatusViewModel(
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+            )
         }
     }
 }

@@ -6,12 +6,40 @@ import Core
 import Domain
 
 public final class EmployStatusViewModel: BaseViewModel, Stepper {
+    public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-    public var steps = PublishRelay<Step>()
-    public init() {}
-    public struct Input {}
-    public struct Output {}
+    private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+
+    public init(
+        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+    ) {
+        self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
+    }
+
+    public struct Input {
+        let viewWillAppear: PublishRelay<Void>
+    }
+
+    public struct Output {
+        let totalPassStudentInfo: BehaviorRelay<TotalPassStudentEntity>
+    }
+
     public func transform(_ input: Input) -> Output {
-        return Output()
+        let totalPassStudentInfo = BehaviorRelay<TotalPassStudentEntity>(value: TotalPassStudentEntity(
+            totalStudentCount: 0,
+            passedCount: 0,
+            approvedCount: 0
+        ))
+
+        input.viewWillAppear
+            .flatMap { [self] in
+                fetchTotalPassStudentUseCase.execute()
+            }
+            .bind(to: totalPassStudentInfo)
+            .disposed(by: disposeBag)
+
+        return Output(
+            totalPassStudentInfo: totalPassStudentInfo
+        )
     }
 }

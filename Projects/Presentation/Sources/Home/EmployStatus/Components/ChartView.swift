@@ -15,8 +15,8 @@ final class ChartView: BaseView {
         $0.holeRadiusPercent = 0.6
         $0.legend.enabled = false
         let entries = [
-            PieChartDataEntry(value: 100, label: ""),
-            PieChartDataEntry(value: 0, label: "")
+            PieChartDataEntry(value: 50, label: ""),
+            PieChartDataEntry(value: 50, label: "")
         ]
 
         let dataSet = PieChartDataSet(entries: entries)
@@ -28,7 +28,7 @@ final class ChartView: BaseView {
         $0.data = data
     }
     private let employPercentageLabel = UILabel().then {
-        $0.setJobisText("\(0)%", font: .boldBody, color: .Primary.blue20)
+        $0.setJobisText("0%", font: .boldBody, color: .Primary.blue20)
     }
     private let employLabel = UILabel().then {
         $0.setJobisText("취업 현황", font: .subBody, color: .Sub.skyBlue30)
@@ -41,7 +41,7 @@ final class ChartView: BaseView {
         $0.setJobisText("전체 통계", font: .description, color: .Sub.skyBlue30)
     }
     private let totalStatsValueLabel = UILabel().then {
-        $0.setJobisText("\(0)/\(0)명", font: .description, color: .Primary.blue20)
+        $0.setJobisText("0/0명", font: .description, color: .Primary.blue20)
     }
     private let completedLegend = LegendView().then {
         $0.setup(color: .Primary.blue20, textColor: .Primary.blue20, text: "취업완료")
@@ -58,22 +58,24 @@ final class ChartView: BaseView {
         [
             chartContainerView,
             employLabel,
-            legendView,
-            totalStatsLabel,
-            totalStatsValueLabel
+            legendView
         ].forEach { self.addSubview($0) }
+
         [
             employPieChartView,
             stickView,
             totalStatsLabel,
             totalStatsValueLabel
         ].forEach { chartContainerView.addSubview($0) }
+
         employPieChartView.addSubview(employPercentageLabel)
+
         [
             completedLegend,
             incompleteLegend
         ].forEach { legendView.addArrangedSubview($0) }
     }
+
     override func setLayout() {
         chartContainerView.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -131,5 +133,37 @@ final class ChartView: BaseView {
         layer.shadowRadius = 12
         layer.shadowOpacity = 1
         clipsToBounds = false
+    }
+    func setChartData(model: TotalPassStudentEntity) {
+        let totalCount = model.totalStudentCount
+        let passedCount = model.passedCount
+        let employmentRate = Double(passedCount) / Double(totalCount) * 100.0
+        let remainingRate = 100.0 - employmentRate
+
+        let entries = [
+            PieChartDataEntry(value: remainingRate, label: ""),
+            PieChartDataEntry(value: employmentRate, label: "")
+        ]
+
+        let dataSet = PieChartDataSet(entries: entries)
+        dataSet.colors = [.Sub.skyBlue10, .Primary.blue20]
+        dataSet.drawValuesEnabled = false
+        dataSet.selectionShift = 0
+
+        let data = PieChartData(dataSet: dataSet)
+        employPieChartView.data = data
+
+        let rateText = String(format: "%.0f", employmentRate)
+        employPercentageLabel.setJobisText(
+            "\(rateText)%",
+            font: .boldBody,
+            color: .Primary.blue20
+        )
+
+        totalStatsValueLabel.setJobisText(
+            "\(passedCount)/\(totalCount)명",
+            font: .description,
+            color: .Primary.blue20
+        )
     }
 }
