@@ -139,22 +139,27 @@ final class ChartView: BaseView {
         let passedCount = model.passedCount
         let employmentRate = Double(passedCount) / Double(totalCount) * 100.0
         let remainingRate = 100.0 - employmentRate
+
         let entries = [
             PieChartDataEntry(value: remainingRate, label: ""),
             PieChartDataEntry(value: employmentRate, label: "")
         ]
+
         let dataSet = PieChartDataSet(entries: entries)
         dataSet.colors = [.Sub.skyBlue10, .Primary.blue20]
         dataSet.drawValuesEnabled = false
         dataSet.selectionShift = 0
+
         let data = PieChartData(dataSet: dataSet)
         employPieChartView.data = data
+
         let rateText = String(format: "%.0f", employmentRate)
         employPercentageLabel.setJobisText(
             "\(rateText)%",
             font: .boldBody,
             color: .Primary.blue20
         )
+
         totalStatsValueLabel.setJobisText(
             "\(passedCount)/\(totalCount)명",
             font: .description,
