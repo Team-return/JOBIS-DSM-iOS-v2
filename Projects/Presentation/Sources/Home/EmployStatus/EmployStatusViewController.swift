@@ -69,11 +69,11 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
         }
         classRow1.snp.makeConstraints {
             $0.top.equalTo(classEmploymentLabel.snp.bottom).offset(7)
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(24)
         }
         classRow2.snp.makeConstraints {
             $0.top.equalTo(classRow1.snp.bottom).offset(16)
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().offset(-20)
         }
     }

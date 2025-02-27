@@ -43,7 +43,6 @@ final class ClassButton: BaseView {
     override func setLayout() {
         self.snp.makeConstraints {
             $0.height.equalTo(180)
-            $0.width.equalTo(164)
         }
 
         circleView.snp.makeConstraints {
