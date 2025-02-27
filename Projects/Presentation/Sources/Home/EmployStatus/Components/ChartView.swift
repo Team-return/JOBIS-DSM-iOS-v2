@@ -13,6 +13,7 @@ final class ChartView: BaseView {
         $0.rotationEnabled = false
         $0.highlightPerTapEnabled = false
         $0.holeRadiusPercent = 0.6
+        $0.holeColor = .clear
         $0.legend.enabled = false
         let entries = [
             PieChartDataEntry(value: 50, label: ""),
@@ -31,7 +32,7 @@ final class ChartView: BaseView {
         $0.setJobisText("0%", font: .boldBody, color: .Primary.blue20)
     }
     private let employLabel = UILabel().then {
-        $0.setJobisText("취업 현황", font: .subBody, color: .Sub.skyBlue30)
+        $0.setJobisText("취업 현황", font: .subBody, color: .Primary.blue20)
     }
     private let stickView = UIView().then {
         $0.backgroundColor = .GrayScale.gray40
