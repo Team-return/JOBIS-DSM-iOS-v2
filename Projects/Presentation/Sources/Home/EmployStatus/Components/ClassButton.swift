@@ -10,7 +10,7 @@ final class ClassButton: BaseView {
         $0.layer.cornerRadius = 40
         $0.backgroundColor = .GrayScale.gray10
     }
-    private let imageLabel = UILabel().then {
+    private let iconLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 40, weight: UIFont.Weight.bold)
     }
     private let classLabel = UILabel().then {
@@ -23,9 +23,9 @@ final class ClassButton: BaseView {
         $0.clipsToBounds = true
     }
 
-    init(iconLabel: String, classNumber: Int) {
+    init(icon: String, classNumber: Int) {
         super.init()
-        imageLabel.text = iconLabel
+        iconLabel.text = icon
         classLabel.text = "\(classNumber)반"
     }
     required init?(coder: NSCoder) {
@@ -37,7 +37,7 @@ final class ClassButton: BaseView {
             circleView,
             classLabel
         ].forEach { self.addSubview($0) }
-        circleView.addSubview(imageLabel)
+        circleView.addSubview(iconLabel)
     }
 
     override func setLayout() {
@@ -52,7 +52,7 @@ final class ClassButton: BaseView {
             $0.height.width.equalTo(80)
         }
 
-        imageLabel.snp.makeConstraints {
+        iconLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
 
