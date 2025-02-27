@@ -45,14 +45,17 @@ final class ClassButton: BaseView {
             $0.height.equalTo(180)
             $0.width.equalTo(164)
         }
+
         circleView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().inset(30)
             $0.height.width.equalTo(80)
         }
+
         imageLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+
         classLabel.snp.makeConstraints {
             $0.leading.bottom.equalToSuperview().inset(16)
             $0.height.equalTo(34)
