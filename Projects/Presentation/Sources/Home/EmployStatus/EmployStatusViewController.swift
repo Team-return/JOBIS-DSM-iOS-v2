@@ -17,20 +17,24 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
     private let classEmploymentLabel = UILabel().then {
         $0.setJobisText("반별 취업 현황 확인하기", font: .largeBody, color: .GrayScale.gray60)
     }
-    private let classButton1 = ClassButton(iconLabel: "💻", classNumber: 1)
-    private let classButton2 = ClassButton(iconLabel: "💻", classNumber: 2)
-    private let classButton3 = ClassButton(iconLabel: "🔧", classNumber: 3)
-    private let classButton4 = ClassButton(iconLabel: "🤖", classNumber: 4)
+    private let classButton1 = ClassButton(icon: "💻", classNumber: 1)
+    private let classButton2 = ClassButton(icon: "💻", classNumber: 2)
+    private let classButton3 = ClassButton(icon: "🔧", classNumber: 3)
+    private let classButton4 = ClassButton(icon: "🤖", classNumber: 4)
     private lazy var classRow1 = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
         $0.distribution = .fillEqually
+        $0.addArrangedSubview(classButton1)
+        $0.addArrangedSubview(classButton2)
     }
 
     private lazy var classRow2 = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
         $0.distribution = .fillEqually
+        $0.addArrangedSubview(classButton3)
+        $0.addArrangedSubview(classButton4)
     }
 
     public override func addView() {
@@ -42,14 +46,6 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
             classRow1,
             classRow2
         ].forEach { contentView.addSubview($0) }
-        [
-            classButton1,
-            classButton2
-        ].forEach { classRow1.addArrangedSubview($0) }
-        [
-            classButton3,
-            classButton4
-        ].forEach { classRow2.addArrangedSubview($0) }
     }
 
     public override func setLayout() {
