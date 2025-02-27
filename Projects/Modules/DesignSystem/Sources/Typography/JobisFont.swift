@@ -21,7 +21,7 @@ extension JobisFontStyle {
         case .subBody, .description, .boldBody:
             return 20
 
-        case .caption:
+        case .caption, .boldcaption:
             return 16
 
         case .subcaption:
@@ -61,6 +61,9 @@ extension JobisFontStyle {
         case .caption:
             return pretendard.medium.font(size: 12)
 
+        case .boldcaption:
+            return pretendard.bold.font(size: 12)
+
         case .subcaption:
             return pretendard.medium.font(size: 10)
         }
@@ -85,7 +88,7 @@ extension JobisFontStyle {
         case .subBody, .description:
             return 14
 
-        case .caption:
+        case .caption, .boldcaption:
             return 12
 
         case .subcaption:
