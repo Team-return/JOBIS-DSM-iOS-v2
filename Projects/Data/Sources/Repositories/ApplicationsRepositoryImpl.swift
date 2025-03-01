@@ -31,4 +31,8 @@ struct ApplicationsRepositoryImpl: ApplicationsRepository {
     func fetchRejectionReason(id: Int) -> Single<String> {
         remoteApplicationsDataSource.fetchRejectionReason(id: id)
     }
+
+    func fetchEmploymentStatus() -> Single<[ApplicationEntity]> {
+        remoteApplicationsDataSource.fetchEmploymentStatus()
+    }
 }
