@@ -3,9 +3,8 @@ import Domain
 import SnapKit
 import Then
 import DesignSystem
-import RxSwift
 
-final class ClassButton: BaseView {
+final class ClassButton: UIButton {
     private let circleView = UIView().then {
         $0.layer.cornerRadius = 40
         $0.backgroundColor = .GrayScale.gray10
@@ -24,15 +23,23 @@ final class ClassButton: BaseView {
     }
 
     init(icon: String, classNumber: Int) {
-        super.init()
+        super.init(frame: .zero)
         iconLabel.text = icon
         classLabel.text = "\(classNumber)반"
+        setupUI()
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func addView() {
+    private func setupUI() {
+        addSubviews()
+        setLayout()
+        configureView()
+    }
+
+    private func addSubviews() {
         [
             circleView,
             classLabel
@@ -40,7 +47,7 @@ final class ClassButton: BaseView {
         circleView.addSubview(iconLabel)
     }
 
-    override func setLayout() {
+    private func setLayout() {
         self.snp.makeConstraints {
             $0.height.equalTo(180)
         }
@@ -62,8 +69,11 @@ final class ClassButton: BaseView {
         }
     }
 
-    override func configureView() {
+    private func configureView() {
         self.backgroundColor = .GrayScale.gray30
         self.layer.cornerRadius = 8
+
+        circleView.isUserInteractionEnabled = false
+        iconLabel.isUserInteractionEnabled = false
     }
 }
