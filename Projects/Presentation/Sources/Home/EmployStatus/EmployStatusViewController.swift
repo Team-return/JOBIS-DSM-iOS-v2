@@ -9,6 +9,7 @@ import DesignSystem
 import Charts
 
 public final class EmployStatusViewController: BaseViewController<EmployStatusViewModel> {
+    private let classButtonTapped = PublishRelay<Int>()
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -80,7 +81,8 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
 
     public override func bind() {
         let input = EmployStatusViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher
+            viewWillAppear: viewWillAppearPublisher,
+            classButtonTapped: classButtonTapped.asObservable()
         )
         let output = viewModel.transform(input)
         output.totalPassStudentInfo
@@ -89,6 +91,19 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
                 self?.chartView.setChartData(model: info)
             }
             .disposed(by: disposeBag)
+
+        [
+            (classButton1, 1),
+            (classButton2, 2),
+            (classButton3, 3),
+            (classButton4, 4)
+        ].forEach { button, classNumber in
+            button.rx.tap
+                .map { classNumber }
+                .bind(to: classButtonTapped)
+                .disposed(by: disposeBag)
+        }
+
         viewWillAppearPublisher
             .bind { [weak self] _ in
                 self?.hideTabbar()
