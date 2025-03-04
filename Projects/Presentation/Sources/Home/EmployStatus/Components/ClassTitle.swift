@@ -1,6 +1,6 @@
 import Foundation
 
-enum ClassTitle: Int {
+enum ClassCategory: Int {
     case softwareDev1 = 1
     case softwareDev2
     case embedded
