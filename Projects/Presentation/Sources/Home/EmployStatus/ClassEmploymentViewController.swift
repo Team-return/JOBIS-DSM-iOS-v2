@@ -98,7 +98,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     }
 
     private func getClassTitle(for classNumber: Int) -> String {
-        return ClassTitle(rawValue: classNumber)?.title ?? "\(classNumber)반"
+        return ClassCategory(rawValue: classNumber)?.title ?? "\(classNumber)반"
     }
 
     public override func configureNavigation() {
