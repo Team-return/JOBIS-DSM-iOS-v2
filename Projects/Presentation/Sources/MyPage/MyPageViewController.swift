@@ -23,7 +23,6 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
     private let logoutPublisher = PublishRelay<Void>()
-    private let withdrawalPublisher = PublishRelay<Void>()
 
     public override func addView() {
         self.view.addSubview(scrollView)
