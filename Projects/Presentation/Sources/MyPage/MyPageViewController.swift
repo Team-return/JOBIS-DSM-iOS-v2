@@ -138,7 +138,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                     .setTitle("JOBIS에서 로그아웃 하시겠어요?")
                     .setMessage("JOBIS에서 로그아웃 하면,\n로그인 할 때 까지 사용하지 못해요")
                     .addActionConfirm("로그아웃") {
-                        self.withdrawalPublisher.accept(())
+                        self.logoutPublisher.accept(())
                     }
                     .show()
             })
