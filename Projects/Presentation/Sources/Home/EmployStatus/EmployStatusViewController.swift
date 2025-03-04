@@ -93,16 +93,18 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
             .disposed(by: disposeBag)
 
         [
-            (classButton1, 1),
-            (classButton2, 2),
-            (classButton3, 3),
-            (classButton4, 4)
-        ].forEach { button, classNumber in
-            button.rx.tap
-                .map { classNumber }
-                .bind(to: classButtonTapped)
-                .disposed(by: disposeBag)
-        }
+            classButton1,
+            classButton2,
+            classButton3,
+            classButton4
+        ]
+            .enumerated()
+            .forEach { classNumber, button in
+                button.rx.tap
+                    .map { classNumber + 1 }
+                    .bind(to: classButtonTapped)
+                    .disposed(by: disposeBag)
+            }
 
         viewWillAppearPublisher
             .bind { [weak self] _ in
