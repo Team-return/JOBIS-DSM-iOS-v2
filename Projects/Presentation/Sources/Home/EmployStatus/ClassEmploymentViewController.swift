@@ -97,11 +97,8 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
             .disposed(by: disposeBag)
     }
 
-    private func getClassTitle(for classNumber: Int) -> String {
-        return ClassCategory(rawValue: classNumber)?.title ?? "\(classNumber)반"
-    }
-
     public override func configureNavigation() {
-        setSmallTitle(title: getClassTitle(for: classNumber))
-    }
+           let title = ClassCategory(rawValue: classNumber)?.title
+           setSmallTitle(title: title ?? "\(classNumber)반")
+       }
 }
