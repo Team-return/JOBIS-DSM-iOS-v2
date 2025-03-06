@@ -43,6 +43,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 //        let bugReportListSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
+        let withdrawalPublisher: PublishRelay<Void>
     }
 
     public struct Output {
@@ -85,6 +86,15 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.logoutPublisher
+            .do(onNext: { _ in
+                self.logoutUseCase.execute()
+                self.deleteDeviceTokenUseCase.execute()
+            })
+            .map { _ in MyPageStep.tabsIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.withdrawalPublisher
             .do(onNext: { _ in
                 self.logoutUseCase.execute()
                 self.deleteDeviceTokenUseCase.execute()
