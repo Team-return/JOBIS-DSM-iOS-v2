@@ -39,7 +39,7 @@ public final class ClassEmploymentViewModel: BaseViewModel, Stepper {
                     companyLogoUrl: "",
                     attachments: [],
                     applicationStatus: .approved,
-                    classId: self.classNumber,
+                    classID: self.classNumber,
                     employmentRateResponseList: [],
                     totalStudents: 0,
                     passedStudents: 0

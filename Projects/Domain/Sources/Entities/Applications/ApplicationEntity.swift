@@ -5,7 +5,7 @@ public struct ApplicationEntity: Equatable {
     public let company, companyLogoUrl: String
     public let attachments: [AttachmentsEntity]
     public let applicationStatus: ApplicationStatusType
-    public let classId: Int?
+    public let classID: Int?
     public let employmentRateResponseList: [EmploymentCompany]?
     public let totalStudents, passedStudents: Int?
 
@@ -16,7 +16,7 @@ public struct ApplicationEntity: Equatable {
         companyLogoUrl: String,
         attachments: [AttachmentsEntity],
         applicationStatus: ApplicationStatusType,
-        classId: Int? = nil,
+        classID: Int? = nil,
         employmentRateResponseList: [EmploymentCompany]? = nil,
         totalStudents: Int? = nil,
         passedStudents: Int? = nil
@@ -27,7 +27,7 @@ public struct ApplicationEntity: Equatable {
         self.companyLogoUrl = companyLogoUrl
         self.attachments = attachments
         self.applicationStatus = applicationStatus
-        self.classId = classId
+        self.classID = classID
         self.employmentRateResponseList = employmentRateResponseList
         self.totalStudents = totalStudents
         self.passedStudents = passedStudents
@@ -36,15 +36,15 @@ public struct ApplicationEntity: Equatable {
 
 public struct EmploymentCompany: Equatable {
     public let id: Int
-    public let companyName, logoUrl: String
+    public let companyName, logoURL: String
 
     public init(
         id: Int,
         companyName: String,
-        logoUrl: String
+        logoURL: String
     ) {
         self.id = id
         self.companyName = companyName
-        self.logoUrl = logoUrl
+        self.logoURL = logoURL
     }
 }

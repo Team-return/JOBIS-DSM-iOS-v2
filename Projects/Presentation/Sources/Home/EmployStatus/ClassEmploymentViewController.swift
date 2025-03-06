@@ -83,7 +83,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     private func updateCompanyList(_ info: ApplicationEntity) {
         let companies = info.employmentRateResponseList ?? []
         let allCompanies = companies + Array(
-            repeating: EmploymentCompany(id: 0, companyName: "", logoUrl: ""),
+            repeating: EmploymentCompany(id: 0, companyName: "", logoURL: ""),
             count: max(0, 16 - companies.count)
         )
 
