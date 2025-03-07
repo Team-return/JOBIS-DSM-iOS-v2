@@ -23,8 +23,8 @@ public final class EmployStatusFlow: Flow {
         case .employStatusIsRequired:
             return navigateToEmployStatus()
 
-        case .classEmploymentIsRequired(let classNumber):
-            return navigateToClassEmployment(classNumber: classNumber)
+        case let .classEmploymentIsRequired(classNumber):
+            return navigateToClassEmployment(classNumber)
         }
     }
 }
@@ -37,7 +37,7 @@ private extension EmployStatusFlow {
         ))
     }
     
-    func navigateToClassEmployment(classNumber: Int) -> FlowContributors {
+    func navigateToClassEmployment(_ classNumber: Int) -> FlowContributors {
         let viewController = container.resolve(ClassEmploymentViewController.self, argument: classNumber)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
         
