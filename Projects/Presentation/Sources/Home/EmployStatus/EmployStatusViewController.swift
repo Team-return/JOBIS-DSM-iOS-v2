@@ -18,24 +18,24 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
     private let classEmploymentLabel = UILabel().then {
         $0.setJobisText("반별 취업 현황 확인하기", font: .largeBody, color: .GrayScale.gray60)
     }
-    private let classButton1 = ClassButton(icon: "💻", classNumber: 1)
-    private let classButton2 = ClassButton(icon: "💻", classNumber: 2)
-    private let classButton3 = ClassButton(icon: "🔧", classNumber: 3)
-    private let classButton4 = ClassButton(icon: "🤖", classNumber: 4)
+    private let softwareDev1Button = ClassButton(icon: "💻", classNumber: 1)
+    private let softwareDev2Button = ClassButton(icon: "💻", classNumber: 2)
+    private let embeddedDevButton = ClassButton(icon: "🔧", classNumber: 3)
+    private let aiDevButton = ClassButton(icon: "🤖", classNumber: 4)
     private lazy var classRow1 = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
         $0.distribution = .fillEqually
-        $0.addArrangedSubview(classButton1)
-        $0.addArrangedSubview(classButton2)
+        $0.addArrangedSubview(softwareDev1Button)
+        $0.addArrangedSubview(softwareDev2Button)
     }
 
     private lazy var classRow2 = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
         $0.distribution = .fillEqually
-        $0.addArrangedSubview(classButton3)
-        $0.addArrangedSubview(classButton4)
+        $0.addArrangedSubview(embeddedDevButton)
+        $0.addArrangedSubview(aiDevButton)
     }
 
     public override func addView() {
@@ -93,10 +93,10 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
             .disposed(by: disposeBag)
 
         [
-            classButton1,
-            classButton2,
-            classButton3,
-            classButton4
+            softwareDev1Button,
+            softwareDev2Button,
+            embeddedDevButton,
+            aiDevButton
         ]
             .enumerated()
             .forEach { classNumber, button in
