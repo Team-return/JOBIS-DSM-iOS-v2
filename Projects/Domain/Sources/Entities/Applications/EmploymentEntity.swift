@@ -1,10 +1,10 @@
 import Foundation
 
 public struct EmploymentEntity: Equatable {
-    public let classID: Int?
-    public let employmentRateResponseList: [EmploymentCompany]?
-    public let totalStudents: Int?
-    public let passedStudents: Int?
+    public let classID: Int
+    public let employmentRateResponseList: [EmploymentCompany]
+    public let totalStudents: Int
+    public let passedStudents: Int
 
     public static let empty = EmploymentEntity(
         classID: 0,
@@ -14,10 +14,10 @@ public struct EmploymentEntity: Equatable {
     )
 
     public init(
-        classID: Int? = nil,
-        employmentRateResponseList: [EmploymentCompany]? = nil,
-        totalStudents: Int? = nil,
-        passedStudents: Int? = nil
+        classID: Int,
+        employmentRateResponseList: [EmploymentCompany],
+        totalStudents: Int,
+        passedStudents: Int
     ) {
         self.classID = classID
         self.employmentRateResponseList = employmentRateResponseList
