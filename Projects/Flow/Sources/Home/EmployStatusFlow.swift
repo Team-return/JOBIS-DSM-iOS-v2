@@ -36,11 +36,11 @@ private extension EmployStatusFlow {
             withNextStepper: rootViewController.viewModel
         ))
     }
-    
+
     func navigateToClassEmployment(_ classNumber: Int) -> FlowContributors {
         let viewController = container.resolve(ClassEmploymentViewController.self, argument: classNumber)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
-        
+
         guard let stepper = viewController.viewModel as? Stepper else {
             return .none
         }

@@ -10,7 +10,7 @@ public protocol RemoteApplicationsDataSource {
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
     func fetchRejectionReason(id: Int) -> Single<String>
-    func fetchEmploymentStatus() -> Single<[ApplicationEntity]>
+    func fetchEmploymentStatus() -> Single<[EmploymentEntity]>
 }
 
 final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsAPI>, RemoteApplicationsDataSource {
@@ -46,7 +46,7 @@ final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsA
             .map(FetchRejectionReasonResponseDTO.self)
             .map { $0.rejectionReason }
     }
-    func fetchEmploymentStatus() -> Single<[ApplicationEntity]> {
+    func fetchEmploymentStatus() -> Single<[EmploymentEntity]> {
         request(.fetchEmploymentStatus)
             .map(ClassEmploymentListResponseDTO.self)
             .map { $0.toDomain() }
