@@ -54,26 +54,28 @@ public struct EmploymentCompanyResponseDTO: Decodable {
 }
 
 extension ClassEmploymentListResponseDTO {
-    func toDomain() -> [ApplicationEntity] {
-        classes.map {
-            ApplicationEntity(
-                applicationID: 0,
-                recruitmentID: 0,
-                company: "",
-                companyLogoUrl: "",
-                attachments: [],
-                applicationStatus: .approved,
-                classID: $0.classID,
-                employmentRateResponseList: $0.employmentRateResponseList.map { company in
-                    EmploymentCompany(
-                        id: company.id,
-                        companyName: company.companyName,
-                        logoURL: company.logoURL
-                    )
-                },
-                totalStudents: $0.totalStudents,
-                passedStudents: $0.passedStudents
-            )
-        }
+    func toDomain() -> [EmploymentEntity] {
+        classes.map { $0.toDomain() }
+    }
+}
+
+extension ClassEmploymentResponseDTO {
+    func toDomain() -> EmploymentEntity {
+        EmploymentEntity(
+            classID: classID,
+            employmentRateResponseList: employmentRateResponseList.map { $0.toDomain() },
+            totalStudents: totalStudents,
+            passedStudents: passedStudents
+        )
+    }
+}
+
+extension EmploymentCompanyResponseDTO {
+    func toDomain() -> EmploymentCompany {
+        EmploymentCompany(
+            id: id,
+            companyName: companyName,
+            logoURL: logoURL
+        )
     }
 }
