@@ -19,33 +19,28 @@ public final class ClassEmploymentViewModel: BaseViewModel, Stepper {
     }
 
     public struct Input {
-        let viewWillAppear: Observable<Void>
+        let viewAppear: PublishRelay<Void>
     }
 
     public struct Output {
-        let classInfo: Observable<ApplicationEntity>
+        let classInfo: Driver<EmploymentEntity>
     }
 
     public func transform(_ input: Input) -> Output {
-        let classInfo = input.viewWillAppear
-            .flatMapLatest { [fetchEmploymentStatusUseCase] in
+        let classInfo = input.viewAppear
+            .flatMapLatest { [fetchEmploymentStatusUseCase, classNumber] in
                 fetchEmploymentStatusUseCase.execute()
+                    .asObservable()
+                    .map { employments in
+                        employments.first { $0.classID == classNumber } ??
+                        EmploymentEntity.empty.with(classID: classNumber)
+                    }
+                    .catchAndReturn(.empty)
             }
-            .map { applications in
-                applications.first { $0.classId == self.classNumber } ?? ApplicationEntity(
-                    applicationID: 0,
-                    recruitmentID: 0,
-                    company: "",
-                    companyLogoUrl: "",
-                    attachments: [],
-                    applicationStatus: .approved,
-                    classID: self.classNumber,
-                    employmentRateResponseList: [],
-                    totalStudents: 0,
-                    passedStudents: 0
-                )
-            }
-            .share(replay: 1)
-        return Output(classInfo: classInfo)
+            .asDriver(onErrorJustReturn: .empty)
+
+        return Output(
+            classInfo: classInfo
+        )
     }
 }

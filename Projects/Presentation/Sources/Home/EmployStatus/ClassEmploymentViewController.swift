@@ -53,42 +53,40 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
 
     public override func bind() {
         let input = ClassEmploymentViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher.asObservable()
+            viewAppear: viewWillAppearPublisher
         )
 
         let output = viewModel.transform(input)
 
         output.classInfo
-            .subscribe(onNext: { [weak self] info in
+            .drive(onNext: { [weak self] info in
                 self?.updateUI(with: info)
             })
             .disposed(by: disposeBag)
     }
 
-    private func updateUI(with info: ApplicationEntity) {
+    private func updateUI(with info: EmploymentEntity) {
         updateTotalStats(info)
         updateCompanyList(info)
     }
 
-    private func updateTotalStats(_ info: ApplicationEntity) {
-        let totalStudents = info.totalStudents ?? 0
-        let passedStudents = info.passedStudents ?? 0
+    private func updateTotalStats(_ info: EmploymentEntity) {
         totalStatsValueLabel.setJobisText(
-            "\(passedStudents)/\(totalStudents)",
+            "\(info.passedStudents)/\(info.totalStudents)",
             font: .body,
             color: .Primary.blue20
         )
     }
 
-    private func updateCompanyList(_ info: ApplicationEntity) {
-        let companies = info.employmentRateResponseList ?? []
-        let allCompanies = companies + Array(
-            repeating: EmploymentCompany(id: 0, companyName: "", logoURL: ""),
-            count: max(0, 16 - companies.count)
+    private func updateCompanyList(_ info: EmploymentEntity) {
+        let allCompanies = info.employmentRateResponseList + Array(
+            repeating: EmploymentCompany.empty,
+            count: max(0, 16 - info.employmentRateResponseList.count)
         )
 
         Observable.just(allCompanies)
-            .bind(to: companyCollectionView.rx.items(
+            .asDriver(onErrorJustReturn: [])
+            .drive(companyCollectionView.rx.items(
                 cellIdentifier: ClassCollectionViewCell.identifier,
                 cellType: ClassCollectionViewCell.self
             )) { _, company, cell in
@@ -98,7 +96,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     }
 
     public override func configureNavigation() {
-           let title = ClassCategory(rawValue: classNumber)?.title
-           setSmallTitle(title: title ?? "\(classNumber)반")
-       }
+        let title = ClassCategory(rawValue: classNumber)?.title
+        setSmallTitle(title: title ?? "\(classNumber)반")
+    }
 }
