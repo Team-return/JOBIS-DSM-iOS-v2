@@ -47,9 +47,13 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
         }
     }
 
-    override func adapt(model: EmploymentCompany) {
-        companyImageView.setJobisImage(urlString: model.logoURL)
-    }
+    override func adapt(model: EmploymentCompany?) {
+          if let company = model {
+              companyImageView.setJobisImage(urlString: company.logoURL)
+          } else {
+              companyImageView.image = nil
+          }
+      }
     override func prepareForReuse() {
         super.prepareForReuse()
         companyImageView.image = nil

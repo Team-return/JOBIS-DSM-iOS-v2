@@ -79,9 +79,10 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     }
 
     private func updateCompanyList(_ info: EmploymentEntity) {
-        let allCompanies = info.employmentRateResponseList + Array(
-            repeating: EmploymentCompany.empty,
-            count: max(0, 16 - info.employmentRateResponseList.count)
+        let companies = info.employmentRateResponseList
+        let allCompanies: [EmploymentCompany?] = companies + Array(
+            repeating: nil,
+            count: max(0, 16 - companies.count)
         )
 
         Observable.just(allCompanies)
