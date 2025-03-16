@@ -25,9 +25,9 @@
         <td align="center" valign="top" width="150px"><a href="https://github.com/HongSJae"><img src="https://avatars.githubusercontent.com/HongSJae" width="100px;" alt="HongSJae"/><br/><sub><b>HongSJae</b></sub></a><br/></td>
         <td align="center" valign="top" width="150px"><a href="https://github.com/juyeong525"><img src="https://avatars.githubusercontent.com/juyeong525" width="100px;" alt="juyeong525"/><br/><sub><b>juyeong525</b></sub></a><br/></td>
         <td align="center" valign="top" width="150px"><a href="https://github.com/ray3238"><img src="https://avatars.githubusercontent.com/ray3238" width="100px;" alt="ray3238"/><br/><sub><b>ray3238</b></sub></a><br/></td>
-        <td align="center" valign="top" width="150px"><a href="https://github.com/cyj513"><img src="https://avatars.githubusercontent.com/cyj513" width="100px;" alt="cyj513"/><br/><sub><b>ray3238</b></sub></a><br/></td>
-        <td align="center" valign="top" width="150px"><a href="https://github.com/circle0802"><img src="https://avatars.githubusercontent.com/circle0802" width="100px;" alt="circle0802"/><br/><sub><b>ray3238</b></sub></a><br/></td>
-        <td align="center" valign="top" width="150px"><a href="https://github.com/leejh08"><img src="https://avatars.githubusercontent.com/leejh08" width="100px;" alt="leejh08"/><br/><sub><b>ray3238</b></sub></a><br/></td>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/cyj513"><img src="https://avatars.githubusercontent.com/cyj513" width="100px;" alt="cyj513"/><br/><sub><b>cyj513</b></sub></a><br/></td>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/circle0802"><img src="https://avatars.githubusercontent.com/circle0802" width="100px;" alt="circle0802"/><br/><sub><b>circle0802</b></sub></a><br/></td>
+        <td align="center" valign="top" width="150px"><a href="https://github.com/leejh08"><img src="https://avatars.githubusercontent.com/leejh08" width="100px;" alt="leejh08"/><br/><sub><b>leejh08</b></sub></a><br/></td>
     </tr>
   </tbody>
 </table>
