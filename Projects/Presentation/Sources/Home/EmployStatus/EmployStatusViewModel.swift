@@ -18,6 +18,7 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewWillAppear: PublishRelay<Void>
+        let classButtonTapped: Observable<Int>
     }
 
     public struct Output {
@@ -36,6 +37,11 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
                 fetchTotalPassStudentUseCase.execute()
             }
             .bind(to: totalPassStudentInfo)
+            .disposed(by: disposeBag)
+
+        input.classButtonTapped
+            .map { EmployStatusStep.classEmploymentIsRequired(classNumber: $0) }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         return Output(

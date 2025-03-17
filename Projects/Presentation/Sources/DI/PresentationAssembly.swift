@@ -369,5 +369,18 @@ public final class PresentationAssembly: Assembly {
                 fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
         }
+        container.register(ClassEmploymentViewController.self) { (resolver, classNumber: Int) in
+            ClassEmploymentViewController(
+                viewModel: resolver.resolve(ClassEmploymentViewModel.self, argument: classNumber)!,
+                classNumber: classNumber
+            )
+        }
+        
+        container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int) in
+            ClassEmploymentViewModel(
+                fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
+                classNumber: classNumber
+            )
+        }
     }
 }

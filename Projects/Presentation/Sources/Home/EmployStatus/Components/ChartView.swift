@@ -125,10 +125,8 @@ final class ChartView: BaseView {
     }
     override func configureView() {
         super.configureView()
-        backgroundColor = .GrayScale.gray10
+        backgroundColor = .GrayScale.gray30
         layer.cornerRadius = 6
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.GrayScale.gray30.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 3)
         layer.shadowColor = UIColor(red: 112/255, green: 144/255, blue: 176/255, alpha: 0.12).cgColor
         layer.shadowRadius = 12
