@@ -102,7 +102,7 @@ public final class ApplyViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         Observable.combineLatest(documents, urls)
-            .map { !($0.0.isEmpty && $0.1.isEmpty) }
+            .map { !$0.0.isEmpty && !$0.1.isEmpty }
             .bind(to: applyButtonEnabled)
             .disposed(by: disposeBag)
 
