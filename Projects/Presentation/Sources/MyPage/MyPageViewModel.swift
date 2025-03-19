@@ -37,23 +37,27 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let reviewNavigate: PublishRelay<Int>
+        let selectedImage: PublishRelay<UploadFileModel>
         let notificationSettingSectionDidTap: Observable<IndexPath>
         let helpSectionDidTap: Observable<IndexPath>
         let bugReportSectionDidTap: Observable<IndexPath>
-//        let bugReportListSectionDidTap: Observable<IndexPath>
+        //        let bugReportListSectionDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
         let withdrawalPublisher: PublishRelay<Void>
+        let changedImageURL: PublishRelay<String>
     }
 
     public struct Output {
         let studentInfo: PublishRelay<StudentInfoEntity>
         let writableReviewList: BehaviorRelay<[WritableReviewCompanyEntity]>
+        let changedImageURL: PublishRelay<String>
     }
 
     public func transform(_ input: Input) -> Output {
         let studentInfo = PublishRelay<StudentInfoEntity>()
         let writableReviewList = BehaviorRelay<[WritableReviewCompanyEntity]>(value: [])
+        let changedImageURL = PublishRelay<String>()
 
         input.viewAppear.asObservable()
             .flatMap { self.fetchStudentInfoUseCase.execute() }
@@ -68,6 +72,29 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         input.reviewNavigate.asObservable()
             .map { MyPageStep.writableReviewIsRequired($0) }
             .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.selectedImage.asObservable()
+            .flatMapLatest { file in
+                self.fetchPresignedURLUseCase.execute(
+                    req: .init(files: [.init(fileName: file.fileName)])
+                )
+                .asObservable()
+                .map { ($0.first, file.file) }
+            }
+            .flatMapLatest { url, data in
+                self.uploadImageToS3UseCase.execute(
+                    presignedURL: url?.presignedUrl ?? "",
+                    data: data
+                )
+                .asObservable()
+                .flatMapLatest { _ in
+                    self.changeProfileImageUseCase.execute(url: url?.filePath ?? "")
+                        .asObservable()
+                }
+            }
+            .map { $0 }
+            .bind(to: changedImageURL)
             .disposed(by: disposeBag)
 
         input.notificationSettingSectionDidTap.asObservable()
@@ -108,14 +135,15 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-//        input.bugReportListSectionDidTap.asObservable()
-//            .map { _ in MyPageStep.bugReportListIsRequired }
-//            .bind(to: steps)
-//            .disposed(by: disposeBag)
+        //        input.bugReportListSectionDidTap.asObservable()
+        //            .map { _ in MyPageStep.bugReportListIsRequired }
+        //            .bind(to: steps)
+        //            .disposed(by: disposeBag)
 
         return Output(
             studentInfo: studentInfo,
-            writableReviewList: writableReviewList
+            writableReviewList: writableReviewList,
+            changedImageURL: changedImageURL
         )
     }
 }
