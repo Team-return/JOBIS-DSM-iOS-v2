@@ -75,7 +75,6 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         input.selectedImage
-            .asObservable()
             .flatMapLatest { [weak self] file -> Observable<String?> in
                 guard let self = self else { return .empty() }
 
