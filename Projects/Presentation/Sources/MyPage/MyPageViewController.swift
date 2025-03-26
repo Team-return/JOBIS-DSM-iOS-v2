@@ -191,6 +191,7 @@ extension MyPageViewController: UIImagePickerControllerDelegate {
      ) {
          if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
              guard let imageData = image.pngData() else { return }
+             self.studentInfoView.updateProfileImage(image: image)
              self.selectedImage.accept(.init(file: imageData, fileName: "profile.png"))
              dismiss(animated: true, completion: nil)
          }
