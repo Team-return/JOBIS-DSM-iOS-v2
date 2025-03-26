@@ -164,6 +164,12 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                     .show()
             })
             .disposed(by: disposeBag)
+
+        self.editButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.openLibrary()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {

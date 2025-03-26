@@ -74,26 +74,31 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        input.selectedImage.asObservable()
-            .flatMapLatest { file in
-                self.fetchPresignedURLUseCase.execute(
+        input.selectedImage
+            .asObservable()
+            .flatMapLatest { [weak self] file -> Observable<String?> in
+                guard let self = self else { return .empty() }
+
+                return self.fetchPresignedURLUseCase.execute(
                     req: .init(files: [.init(fileName: file.fileName)])
                 )
                 .asObservable()
-                .map { ($0.first, file.file) }
-            }
-            .flatMapLatest { url, data in
-                self.uploadImageToS3UseCase.execute(
-                    presignedURL: url?.presignedUrl ?? "",
-                    data: data
-                )
-                .asObservable()
-                .flatMapLatest { _ in
-                    self.changeProfileImageUseCase.execute(url: url?.filePath ?? "")
-                        .asObservable()
+                .flatMap { presignedURLs -> Observable<String?> in
+                    guard let url = presignedURLs.first else { return .empty() }
+
+                    return Observable.zip(
+                        self.uploadImageToS3UseCase.execute(
+                            presignedURL: url.presignedUrl,
+                            data: file.file
+                        )
+                        .asObservable(),
+                        self.changeProfileImageUseCase.execute(url: url.filePath)
+                            .asObservable()
+                    )
+                    .map { _ in "" }
                 }
             }
-            .map { $0 }
+            .map { _ in "" }
             .bind(to: changedImageURL)
             .disposed(by: disposeBag)
 
