@@ -93,10 +93,11 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 
     public override func bind() {
         let input = MyPageViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
+            viewAppear: viewWillAppearPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
             selectedImage: selectedImage,
-            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type: .notificationSetting),
+            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type:
+                    .notificationSetting),
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
 //            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
