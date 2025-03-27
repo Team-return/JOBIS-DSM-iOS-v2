@@ -152,7 +152,7 @@ final class ChartView: BaseView {
         let data = PieChartData(dataSet: dataSet)
         employPieChartView.data = data
 
-        let rateText = String(format: "%.0f", employmentRate)
+        let rateText = String(format: "%.1f", employmentRate)
         employPercentageLabel.setJobisText(
             "\(rateText)%",
             font: .boldBody,

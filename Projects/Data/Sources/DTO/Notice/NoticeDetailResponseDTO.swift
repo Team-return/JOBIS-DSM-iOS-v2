@@ -6,7 +6,7 @@ struct NoticeDetailResponseDTO: Decodable {
     let title: String
     let content: String
     let createdAt: String
-    let attachments: [AttachmentsResponseDTO]
+    let attachments: [AttachmentsResponseDTO]?
 
     enum CodingKeys: String, CodingKey {
         case title
@@ -23,7 +23,8 @@ extension NoticeDetailResponseDTO {
             title: title,
             content: content,
             createdAt: noticeDate.toStringFormat("yyyy-MM-dd"),
-            attachments: attachments.map { $0.toDomain() }
+            attachments: attachments?
+                .compactMap { $0.toDomain() } ?? []
         )
     }
 }
