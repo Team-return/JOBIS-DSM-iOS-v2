@@ -65,3 +65,8 @@ public final class StudentInfoView: UIView {
         }
     }
 }
+extension StudentInfoView {
+    public func updateProfileImage(image: UIImage) {
+        profileImageView.image = image
+    }
+}
