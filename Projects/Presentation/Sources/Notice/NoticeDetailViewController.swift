@@ -25,14 +25,14 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
-    private let attachmentLabel = UILabel().then {
-        $0.setJobisText(
-            "첨부파일",
-            font: .largeBody,
-            color: .GrayScale.gray60
-        )
-        $0.isHidden = true
-    }
+//    private let attachmentLabel = UILabel().then {
+//        $0.setJobisText(
+//            "첨부파일",
+//            font: .largeBody,
+//            color: .GrayScale.gray60
+//        )
+//        $0.isHidden = true
+//    }
 
     public override func addView() {
         view.addSubview(scrollView)
@@ -40,8 +40,8 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         [
             noticeTitleLabel,
             noticeDateLabel,
-            noticeContentLabel,
-            attachmentLabel
+            noticeContentLabel
+//            attachmentLabel
         ].forEach(contentView.addSubview(_:))
     }
 
@@ -70,10 +70,10 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             $0.left.right.equalToSuperview().inset(24)
         }
 
-        attachmentLabel.snp.makeConstraints {
-            $0.top.equalTo(noticeContentLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(24)
-        }
+//        attachmentLabel.snp.makeConstraints {
+//            $0.top.equalTo(noticeContentLabel.snp.bottom).offset(16)
+//            $0.leading.equalToSuperview().inset(24)
+//        }
     }
 
     public override func bind() {
@@ -92,7 +92,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
                     color: .GrayScale.gray60
                 )
                 self?.noticeContentLabel.text = $0.content
-                self?.attachmentLabel.isHidden = $0.attachments.isEmpty
+//                self?.attachmentLabel.isHidden = $0.attachments.isEmpty
             }
             .disposed(by: disposeBag)
     }
