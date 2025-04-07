@@ -7,7 +7,7 @@ struct RecruitmentListResponseDTO: Decodable {
 struct RecruitmentResponseDTO: Codable {
     let recruitID: Int
     let companyName: String
-    let companyProfileURL: String
+    let companyProfileURL: String?
     let trainPay: Int?
     let militarySupport: Bool?
     let hiringJobs: String
@@ -30,7 +30,7 @@ extension RecruitmentListResponseDTO {
             RecruitmentEntity(
                 recruitID: $0.recruitID,
                 companyName: $0.companyName,
-                companyProfileURL: $0.companyProfileURL,
+                companyProfileURL: $0.companyProfileURL ?? "",
                 trainPay: $0.trainPay ?? 0,
                 militarySupport: $0.militarySupport ?? false,
                 hiringJobs: $0.hiringJobs,

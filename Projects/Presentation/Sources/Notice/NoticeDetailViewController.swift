@@ -25,6 +25,15 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
+//    private let attachmentLabel = UILabel().then {
+//        $0.setJobisText(
+//            "첨부파일",
+//            font: .largeBody,
+//            color: .GrayScale.gray60
+//        )
+//        $0.isHidden = true
+//    }
+
     public override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -32,6 +41,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             noticeTitleLabel,
             noticeDateLabel,
             noticeContentLabel
+//            attachmentLabel
         ].forEach(contentView.addSubview(_:))
     }
 
@@ -59,6 +69,11 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             $0.top.equalTo(noticeDateLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
+
+//        attachmentLabel.snp.makeConstraints {
+//            $0.top.equalTo(noticeContentLabel.snp.bottom).offset(16)
+//            $0.leading.equalToSuperview().inset(24)
+//        }
     }
 
     public override func bind() {
@@ -68,16 +83,17 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
 
         let output = viewModel.transform(input)
 
-        output.noticeDetailInfo.asObservable()
-            .bind(onNext: { [self] in
-                noticeTitleLabel.text = $0.title
-                noticeDateLabel.setJobisText(
+        output.noticeDetailInfo
+            .bind { [weak self] in
+                self?.noticeTitleLabel.text = $0.title
+                self?.noticeDateLabel.setJobisText(
                     $0.createdAt,
                     font: .description,
                     color: .GrayScale.gray60
                 )
-                noticeContentLabel.text = $0.content
-            })
+                self?.noticeContentLabel.text = $0.content
+//                self?.attachmentLabel.isHidden = $0.attachments.isEmpty
+            }
             .disposed(by: disposeBag)
     }
 
