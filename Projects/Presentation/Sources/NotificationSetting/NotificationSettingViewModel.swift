@@ -144,7 +144,7 @@ public final class NotificationSettingViewModel: BaseViewModel, Stepper {
             .flatMap { _ in
                 self.subscribeNotificationUseCase.execute(
                     token: Messaging.messaging().fcmToken ?? "",
-                    notificationType: .application
+                    notificationType: .winterIntern
                 )
             }
             .subscribe()
