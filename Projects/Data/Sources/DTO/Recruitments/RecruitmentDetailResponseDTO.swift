@@ -4,7 +4,7 @@ import Domain
 struct RecruitmentDetailResponseDTO: Decodable {
     let recruitmentID: Int
     let companyID: Int
-    let companyProfileURL: String
+    let companyProfileURL: String?
     let companyName: String
     let areas: [AreaResponseDTO]
     let additionalQualifications: String?
@@ -27,7 +27,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     init(
         recruitmentID: Int,
         companyID: Int,
-        companyProfileURL: String,
+        companyProfileURL: String?,
         companyName: String,
         areas: [AreaResponseDTO],
         additionalQualifications: String?,
@@ -50,7 +50,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     ) {
         self.recruitmentID = recruitmentID
         self.companyID = companyID
-        self.companyProfileURL = companyProfileURL
+        self.companyProfileURL = companyProfileURL ?? ""
         self.companyName = companyName
         self.areas = areas
         self.additionalQualifications = additionalQualifications
@@ -107,7 +107,7 @@ extension RecruitmentDetailResponseDTO {
         return RecruitmentDetailEntity(
             recruitmentID: recruitmentID,
             companyID: companyID,
-            companyProfileURL: companyProfileURL,
+            companyProfileURL: companyProfileURL ?? "",
             companyName: companyName,
             areas: areas.map { $0.toDomain() },
             additionalQualifications: additionalQualifications,

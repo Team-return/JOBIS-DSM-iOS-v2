@@ -143,6 +143,11 @@ public final class UseCaseAssembly: Assembly {
                 applicationsRepository: resolver.resolve(ApplicationsRepository.self)!
             )
         }
+        container.register(FetchEmploymentStatusUseCase.self) { resolver in
+            FetchEmploymentStatusUseCase(
+                applicationsRepository: resolver.resolve(ApplicationsRepository.self)!
+            )
+        }
 
         // Bugs
         container.register(ReportBugUseCase.self) { resolver in

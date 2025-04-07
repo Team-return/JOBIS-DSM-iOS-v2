@@ -9,6 +9,7 @@ enum ApplicationsAPI {
     case fetchApplication
     case fetchTotalPassStudent
     case fetchRejectionReason(id: Int)
+    case fetchEmploymentStatus
 }
 
 extension ApplicationsAPI: JobisAPI {
@@ -37,6 +38,9 @@ extension ApplicationsAPI: JobisAPI {
 
         case let .fetchRejectionReason(id):
             return "/rejection/\(id)"
+
+        case .fetchEmploymentStatus:
+            return "/employment"
         }
     }
 
@@ -51,7 +55,7 @@ extension ApplicationsAPI: JobisAPI {
         case .cancelApply:
             return .delete
 
-        case .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason:
+        case .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason, .fetchEmploymentStatus:
             return .get
         }
     }
@@ -64,7 +68,7 @@ extension ApplicationsAPI: JobisAPI {
         case let .reApplyCompany(_, req):
             return .requestJSONEncodable(req)
 
-        case .cancelApply, .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason:
+        case .cancelApply, .fetchApplication, .fetchTotalPassStudent, .fetchRejectionReason, .fetchEmploymentStatus:
             return .requestPlain
         }
     }
@@ -104,6 +108,9 @@ extension ApplicationsAPI: JobisAPI {
             return [:]
 
         case .fetchRejectionReason:
+            return [:]
+
+        case .fetchEmploymentStatus:
             return [:]
         }
     }

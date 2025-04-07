@@ -40,6 +40,7 @@ public final class HomeViewModel: BaseViewModel, Stepper {
         let rejectButtonDidTap: PublishRelay<ApplicationEntity>
         let reApplyButtonDidTap: PublishRelay<ApplicationEntity>
         let applicationStatusTableViewDidTap: Observable<(Int, ApplicationStatusType)>
+        let employStatusButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -170,6 +171,11 @@ public final class HomeViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
+        input.employStatusButtonDidTap.asObservable()
+              .map { HomeStep.employStatusIsRequired }
+              .bind(to: steps)
+              .disposed(by: disposeBag)
 
         return Output(
             studentInfo: studentInfo,

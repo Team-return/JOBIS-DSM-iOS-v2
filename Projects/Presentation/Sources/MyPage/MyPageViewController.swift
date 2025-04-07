@@ -14,23 +14,26 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     }
     private let contentView = UIView()
     private let studentInfoView = StudentInfoView()
-//    private let editButton = UIButton(type: .system).then {
-//        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
-//    }
+    private let editButton = UIButton(type: .system).then {
+        $0.setJobisText("수정", font: .subHeadLine, color: .Primary.blue20)
+    }
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let notificationSettingSectionView = NotificationSettingSectionView()
     private let accountSectionView = AccountSectionView()
     private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
+    private let selectedImage = PublishRelay<UploadFileModel>()
+    private let picker = UIImagePickerController()
     private let logoutPublisher = PublishRelay<Void>()
     private let withdrawalPublisher = PublishRelay<Void>()
+    private let changedImageURL = PublishRelay<String>()
 
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         [
             studentInfoView,
-//            editButton,
+            editButton,
             reviewNavigateStackView,
             notificationSettingSectionView,
             helpSectionView,
@@ -55,10 +58,10 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
             $0.leading.trailing.equalToSuperview()
         }
 
-//        editButton.snp.makeConstraints {
-//            $0.centerY.equalTo(studentInfoView)
-//            $0.trailing.equalToSuperview().offset(-28)
-//        }
+        editButton.snp.makeConstraints {
+            $0.centerY.equalTo(studentInfoView)
+            $0.trailing.equalToSuperview().offset(-28)
+        }
 
         reviewNavigateStackView.snp.updateConstraints {
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -90,15 +93,18 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 
     public override func bind() {
         let input = MyPageViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
+            viewAppear: viewWillAppearPublisher,
             reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type: .notificationSetting),
+            selectedImage: selectedImage,
+            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type:
+                    .notificationSetting),
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
 //            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,
-            withdrawalPublisher: withdrawalPublisher
+            withdrawalPublisher: withdrawalPublisher,
+            changedImageURL: changedImageURL
         )
 
         input.changePasswordSectionDidTap.asObservable()
@@ -126,6 +132,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     }
 
     public override func configureViewController() {
+        self.picker.delegate = self
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
                 self?.showTabbar()
@@ -157,9 +164,36 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                     .show()
             })
             .disposed(by: disposeBag)
+
+        self.editButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.openLibrary()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         self.setLargeTitle(title: "마이페이지")
     }
 }
+
+extension MyPageViewController: UIImagePickerControllerDelegate {
+     func openLibrary() {
+         picker.sourceType = .photoLibrary
+         present(picker, animated: true, completion: nil)
+     }
+ }
+
+ extension MyPageViewController: UINavigationControllerDelegate {
+     public func imagePickerController(
+         _ picker: UIImagePickerController,
+         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+     ) {
+         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+             guard let imageData = image.pngData() else { return }
+             self.studentInfoView.updateProfileImage(image: image)
+             self.selectedImage.accept(.init(file: imageData, fileName: "profile.png"))
+             dismiss(animated: true, completion: nil)
+         }
+     }
+ }

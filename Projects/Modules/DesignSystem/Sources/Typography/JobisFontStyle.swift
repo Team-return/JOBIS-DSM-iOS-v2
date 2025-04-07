@@ -6,6 +6,10 @@ public enum JobisFontStyle {
     case subHeadLine
     case body
     case subBody
+    case boldBody
+    case largeBody
     case description
-    case cation
+    case caption
+    case boldcaption
+    case subcaption
 }
