@@ -21,6 +21,7 @@ let project = Project.makeModule(
         .SPM.KeychainSwift,
         .SPM.ReactorKit,
         .SPM.RxGesture,
-        .SPM.FCM
+        .SPM.FCM,
+        .SPM.DGCharts
     ]
 )

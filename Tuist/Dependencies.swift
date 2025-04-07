@@ -51,6 +51,10 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/firebase/firebase-ios-sdk.git",
                 requirement: .upToNextMajor(from: "10.3.0")
+            ),
+            .remote(
+                url: "https://github.com/danielgindi/Charts.git",
+                requirement: .upToNextMajor(from: "5.1.0")
             )
 
         ],

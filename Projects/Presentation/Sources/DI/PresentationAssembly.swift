@@ -359,5 +359,28 @@ public final class PresentationAssembly: Assembly {
             EasterEggViewController()
         }
 
+        container.register(EmployStatusViewController.self) { resolver in
+            EmployStatusViewController(
+                resolver.resolve(EmployStatusViewModel.self)!
+            )
+        }
+        container.register(EmployStatusViewModel.self) { resolver in
+            EmployStatusViewModel(
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+            )
+        }
+        container.register(ClassEmploymentViewController.self) { (resolver, classNumber: Int) in
+            ClassEmploymentViewController(
+                viewModel: resolver.resolve(ClassEmploymentViewModel.self, argument: classNumber)!,
+                classNumber: classNumber
+            )
+        }
+        
+        container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int) in
+            ClassEmploymentViewModel(
+                fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
+                classNumber: classNumber
+            )
+        }
     }
 }

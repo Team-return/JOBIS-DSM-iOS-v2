@@ -15,14 +15,17 @@ extension JobisFontStyle {
         case .headLine:
             return 28
 
-        case .subHeadLine, .body:
+        case .subHeadLine, .body, .largeBody:
             return 24
 
-        case .subBody, .description:
+        case .subBody, .description, .boldBody:
             return 20
 
-        case .cation:
+        case .caption, .boldcaption:
             return 16
+
+        case .subcaption:
+            return 14
         }
     }
 
@@ -46,11 +49,23 @@ extension JobisFontStyle {
         case .subBody:
             return pretendard.semiBold.font(size: 14)
 
+        case .boldBody:
+            return pretendard.bold.font(size: 16)
+
+        case .largeBody:
+                return pretendard.medium.font(size: 20)
+
         case .description:
             return pretendard.medium.font(size: 14)
 
-        case .cation:
+        case .caption:
             return pretendard.medium.font(size: 12)
+
+        case .boldcaption:
+            return pretendard.bold.font(size: 12)
+
+        case .subcaption:
+            return pretendard.medium.font(size: 10)
         }
     }
 
@@ -64,14 +79,20 @@ extension JobisFontStyle {
         case .headLine:
             return 18
 
-        case .subHeadLine, .body:
+        case .largeBody:
+            return 20
+
+        case .subHeadLine, .body, .boldBody:
             return 16
 
         case .subBody, .description:
             return 14
 
-        case .cation:
+        case .caption, .boldcaption:
             return 12
+
+        case .subcaption:
+            return 10
         }
     }
 }
