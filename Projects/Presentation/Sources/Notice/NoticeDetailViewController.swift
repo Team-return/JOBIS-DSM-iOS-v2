@@ -14,6 +14,8 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
     private let contentView = UIView()
     private let noticeTitleLabel = UILabel().then {
         $0.setJobisText("공지사항 불러오는 중.....", font: .headLine, color: .GrayScale.gray80)
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
     }
     private var noticeDateLabel = UILabel()
     private let noticeContentLabel = UILabel().then {
@@ -58,6 +60,7 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
 
         noticeTitleLabel.snp.makeConstraints {
             $0.top.left.equalToSuperview().inset(24)
+            $0.right.equalToSuperview().inset(24)
         }
 
         noticeDateLabel.snp.makeConstraints {
