@@ -21,11 +21,12 @@ struct NoticeResponseDTO: Decodable {
 extension NoticeListResponseDTO {
     func toDomain() -> [NoticeEntity] {
         notices.map {
-            let noticeDate = $0.createdAt.toDateFormat("yyyy-MM-dd")
+            let date = $0.createdAt.toJobisDate()
+
             return NoticeEntity(
                 companyId: $0.id,
                 title: $0.title,
-                createdAt: noticeDate.toStringFormat("yyyy-MM-dd")
+                createdAt: date.toStringFormat("yyyy-MM-dd")
             )
         }
     }
