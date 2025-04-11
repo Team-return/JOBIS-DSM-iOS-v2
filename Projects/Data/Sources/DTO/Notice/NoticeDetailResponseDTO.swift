@@ -18,7 +18,8 @@ struct NoticeDetailResponseDTO: Decodable {
 
 extension NoticeDetailResponseDTO {
     func toDomain() -> NoticeDetailEntity {
-        let noticeDate = createdAt.toDateFormat("yyyy-MM-dd")
+        let noticeDate = createdAt.toJobisDate()
+
         return NoticeDetailEntity(
             title: title,
             content: content,
