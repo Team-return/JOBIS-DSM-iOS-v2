@@ -9,7 +9,7 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
     static let identifier = "ClassCollectionViewCell"
     private let backView = UIView().then {
         $0.layer.cornerRadius = 6
-        $0.backgroundColor = .GrayScale.gray10
+        $0.backgroundColor = .GrayScale.gray0
         $0.layer.shadowColor = UIColor(red: 112/255, green: 144/255, blue: 176/255, alpha: 0.12).cgColor
         $0.layer.shadowOpacity = 1
         $0.layer.shadowRadius = 16
