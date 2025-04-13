@@ -12,7 +12,7 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
         $0.backgroundColor = .GrayScale.gray0
         $0.layer.shadowColor = UIColor(red: 112/255, green: 144/255, blue: 176/255, alpha: 0.12).cgColor
         $0.layer.shadowOpacity = 1
-        $0.layer.shadowRadius = 16
+        $0.layer.shadowRadius = 8
         $0.layer.shadowOffset = CGSize(width: 0, height: 3)
         $0.layer.borderWidth = 0.6
         $0.layer.borderColor = UIColor.GrayScale.gray40.cgColor
@@ -43,7 +43,7 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
         }
         companyImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(55)
+            $0.edges.equalToSuperview().inset(5)
         }
     }
 
