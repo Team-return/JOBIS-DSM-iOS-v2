@@ -375,12 +375,22 @@ public final class PresentationAssembly: Assembly {
                 classNumber: classNumber
             )
         }
-        
+
         container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int) in
             ClassEmploymentViewModel(
                 fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
                 classNumber: classNumber
             )
+        }
+
+        container.register(InterestFieldViewController.self) { resolver in
+            InterestFieldViewController(
+                resolver.resolve(InterestFieldViewModel.self)!
+            )
+        }
+
+        container.register(InterestFieldViewModel.self) { resolver in
+            InterestFieldViewModel()
         }
     }
 }
