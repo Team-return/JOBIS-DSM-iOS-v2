@@ -8,6 +8,7 @@ import Core
 import DesignSystem
 import UserNotifications
 import Firebase
+import Pulse
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // 파이어베이스 설정
         FirebaseApp.configure()
+        URLSessionProxyDelegate.enableAutomaticRegistration()
 
         // 앱 실행 시 사용자에게 알림 허용 권한을 받음
         UNUserNotificationCenter.current().delegate = self
