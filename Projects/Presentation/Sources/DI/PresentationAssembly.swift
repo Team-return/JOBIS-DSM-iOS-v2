@@ -390,7 +390,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(InterestFieldViewModel.self) { resolver in
-            InterestFieldViewModel()
+            InterestFieldViewModel(
+                fetchInterestsUseCase: resolver.resolve(InterestsUseCase.self)!
+            )
         }
     }
 }
