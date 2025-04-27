@@ -2,14 +2,26 @@ import UIKit
 import SnapKit
 import Then
 import DesignSystem
+import SwiftUI
+import Pulse
+import PulseUI
 
 public class BaseTabBarController: UITabBarController,
                                    SetLayoutable,
                                    AddViewable {
+    
+    private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let consoleButtonSize: CGRect = CGRect(x: 0, y: 0, width: 100, height: 40)
+
     private let stroke = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
     }
-    private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+
+    private lazy var consoleButton = UIButton(frame: consoleButtonSize).then {
+        $0.setJobisText("Console", font: .body, color: .GrayScale.gray10)
+        $0.backgroundColor = .GrayScale.gray70
+        $0.layer.cornerRadius = consoleButtonSize.height / 2
+    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +32,21 @@ public class BaseTabBarController: UITabBarController,
 
         addView()
         setLayout()
+
+        #if DEV
+        setConsoleButton()
+        #endif
+    }
+
+    private func setConsoleButton() {
+        self.view.addSubview(consoleButton)
+        consoleButton.addTarget(self, action: #selector(touchConsoleButton), for: .touchUpInside)
+        consoleButton.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(panAction)))
+
+        consoleButton.center = CGPoint(
+            x: UIScreen.main.bounds.width - 70,
+            y: UIScreen.main.bounds.height - 100
+        )
     }
 
     public func addView() {
@@ -36,6 +63,26 @@ public class BaseTabBarController: UITabBarController,
 
     public override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         self.impactFeedbackGenerator.impactOccurred()
+    }
+
+    @objc func panAction(recognizer: UIPanGestureRecognizer) {
+        
+        let transition = recognizer.translation(in: consoleButton)
+
+        if recognizer.state != .ended {
+            let changedX = consoleButton.center.x + transition.x
+            let changedY = consoleButton.center.y + transition.y
+            consoleButton.center = CGPoint(x: changedX, y: changedY)
+            recognizer.setTranslation(CGPoint.zero, in: consoleButton)
+        }
+    }
+
+    @objc func touchConsoleButton() {
+        let view = NavigationView {
+            ConsoleView()
+        }
+
+        self.present(UIHostingController(rootView: view), animated: true)
     }
 }
 

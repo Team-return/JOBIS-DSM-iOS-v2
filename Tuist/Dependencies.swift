@@ -55,8 +55,11 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/danielgindi/Charts.git",
                 requirement: .upToNextMajor(from: "5.1.0")
+            ),
+            .remote(
+                url: "https://github.com/kean/Pulse.git",
+                requirement: .upToNextMajor(from: "4.2.0")
             )
-
         ],
         baseSettings: .settings(
             configurations: [

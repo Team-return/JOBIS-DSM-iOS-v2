@@ -22,6 +22,8 @@ let project = Project.makeModule(
         .SPM.ReactorKit,
         .SPM.RxGesture,
         .SPM.FCM,
-        .SPM.DGCharts
+        .SPM.DGCharts,
+        .SPM.Pulse,
+        .SPM.PulseUI
     ]
 )
