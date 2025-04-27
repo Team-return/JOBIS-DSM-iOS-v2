@@ -58,7 +58,7 @@ public final class RepositoryAssembly: Assembly {
                 remoteRecruitmentsDataSource: resolver.resolve(RemoteRecruitmentsDataSource.self)!
             )
         }
-
+        
         container.register(CodesRepository.self) { resolver in
             CodesRepositoryImpl(
                 remoteCodesDataSource: resolver.resolve(RemoteCodesDataSource.self)!
@@ -103,6 +103,12 @@ public final class RepositoryAssembly: Assembly {
         container.register(SystemRepository.self) { resolver in
             SystemRepositoryImpl(
                 remoteSystemDataSource: resolver.resolve(RemoteSystemDataSource.self)!
+            )
+        }
+
+        container.register(InterestsRepository.self) { resolver in
+            InterestsRepositoryImpl(
+                remoteInterestsDataSource: resolver.resolve(RemoteInterestsDataSource.self)!
             )
         }
     }

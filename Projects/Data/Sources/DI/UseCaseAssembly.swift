@@ -268,5 +268,12 @@ public final class UseCaseAssembly: Assembly {
                 systemRepository: resolver.resolve(SystemRepository.self)!
             )
         }
+
+        // Interests
+        container.register(InterestsUseCase.self) { resolver in
+            InterestsUseCase(
+                interestsRepository: resolver.resolve(InterestsRepository.self)!
+            )
+        }
     }
 }
