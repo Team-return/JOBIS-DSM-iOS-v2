@@ -394,5 +394,15 @@ public final class PresentationAssembly: Assembly {
                 fetchInterestsUseCase: resolver.resolve(InterestsUseCase.self)!
             )
         }
+
+        container.register(InterestFieldCheckViewController.self) { resolver in
+            InterestFieldCheckViewController(
+                resolver.resolve(InterestFieldCheckViewModel.self)!
+            )
+        }
+
+        container.register(InterestFieldCheckViewModel.self) { resolver in
+            InterestFieldCheckViewModel()
+        }
     }
 }
