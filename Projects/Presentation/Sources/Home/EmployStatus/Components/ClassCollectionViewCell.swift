@@ -24,6 +24,8 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
         $0.clipsToBounds = true
     }
 
+    private let companyNameLabel = UILabel()
+
     override func configureView() {
         contentView.backgroundColor = .clear
         backgroundColor = .clear
@@ -32,7 +34,10 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
     }
 
     public override func addView() {
-        contentView.addSubview(backView)
+        [
+            backView,
+            companyNameLabel
+        ].forEach { contentView.addSubview($0) }
         backView.addSubview(companyImageView)
     }
 
@@ -45,15 +50,25 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
             $0.center.equalToSuperview()
             $0.edges.equalToSuperview().inset(5)
         }
+        companyNameLabel.snp.makeConstraints {
+            $0.top.equalTo(backView.snp.bottom).offset(8)
+            $0.width.equalTo(80)
+        }
     }
 
     override func adapt(model: EmploymentCompany?) {
-          if let company = model {
-              companyImageView.setJobisImage(urlString: company.logoURL)
-          } else {
-              companyImageView.image = nil
-          }
-      }
+        if let company = model {
+            companyImageView.setJobisImage(urlString: company.logoURL)
+
+            companyNameLabel.setJobisText(company.companyName, font: .caption, color: .GrayScale.gray60)
+            companyNameLabel.textAlignment = .center
+            companyNameLabel.adjustsFontSizeToFitWidth = true
+            companyNameLabel.minimumScaleFactor = 0.1
+        } else {
+            companyImageView.image = nil
+            companyNameLabel.text = ""
+        }
+    }
     override func prepareForReuse() {
         super.prepareForReuse()
         companyImageView.image = nil
