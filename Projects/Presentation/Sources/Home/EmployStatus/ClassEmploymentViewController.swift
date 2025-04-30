@@ -43,7 +43,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
         companyCollectionView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(36)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(UIScreen.main.bounds.width * 1.2)
+            $0.height.equalTo(UIScreen.main.bounds.width * 1.3)
         }
         totalStatsValueLabel.snp.makeConstraints {
             $0.top.equalTo(companyCollectionView.snp.bottom).offset(24)
