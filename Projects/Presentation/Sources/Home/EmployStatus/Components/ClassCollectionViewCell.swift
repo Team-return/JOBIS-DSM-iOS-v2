@@ -24,12 +24,7 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
         $0.clipsToBounds = true
     }
 
-    private let companyNameLabel = UILabel().then {
-        $0.setJobisText("(주)자비스", font: .caption, color: .GrayScale.gray60)
-        $0.textAlignment = .center
-        $0.adjustsFontSizeToFitWidth = true
-        $0.minimumScaleFactor = 0.1
-    }
+    private let companyNameLabel = UILabel()
 
     override func configureView() {
         contentView.backgroundColor = .clear
@@ -64,8 +59,14 @@ final class ClassCollectionViewCell: BaseCollectionViewCell<EmploymentCompany> {
     override func adapt(model: EmploymentCompany?) {
         if let company = model {
             companyImageView.setJobisImage(urlString: company.logoURL)
+
+            companyNameLabel.setJobisText(company.companyName, font: .caption, color: .GrayScale.gray60)
+            companyNameLabel.textAlignment = .center
+            companyNameLabel.adjustsFontSizeToFitWidth = true
+            companyNameLabel.minimumScaleFactor = 0.1
         } else {
             companyImageView.image = nil
+            companyNameLabel.text = ""
         }
     }
     override func prepareForReuse() {
