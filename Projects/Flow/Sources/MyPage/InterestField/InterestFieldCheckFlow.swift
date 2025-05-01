@@ -21,19 +21,34 @@ public final class InterestFieldCheckFlow: Flow {
         guard let step = step as? InterestFieldStep else { return .none }
 
         switch step {
+        case .interestFieldIsRequired:
+            return navigateToInterestField()
+
         case .interestFieldCheckIsRequired:
             return navigateToInterestFieldCheck()
-        default:
-            return .none
         }
     }
 }
 
 private extension InterestFieldCheckFlow {
-    func navigateToInterestFieldCheck() -> FlowContributors {
+    func navigateToInterestField() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToInterestFieldCheck() -> FlowContributors {
+        let interestFieldCheckViewController = container.resolve(InterestFieldCheckViewController.self)!
+
+        rootViewController.navigationController?.pushViewController(
+            interestFieldCheckViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interestFieldCheckViewController,
+            withNextStepper: interestFieldCheckViewController.viewModel
         ))
     }
 }
