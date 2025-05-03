@@ -22,7 +22,8 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<InterestsEntity> {
         $0.textAlignment = .center
         $0.font = UIFont.jobisFont(.body)
         $0.numberOfLines = 1
-        $0.lineBreakMode = .byTruncatingTail
+        $0.adjustsFontSizeToFitWidth = true
+        $0.minimumScaleFactor = 0.8
         $0.setContentHuggingPriority(.required, for: .horizontal)
         $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
@@ -33,14 +34,16 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<InterestsEntity> {
 
     override func setLayout() {
         majorLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.bottom.equalToSuperview().inset(6)
+            $0.center.equalToSuperview()
+            $0.leading.greaterThanOrEqualToSuperview().offset(16)
+            $0.trailing.lessThanOrEqualToSuperview().offset(-16)
         }
     }
 
     override func configureView() {
         self.backgroundColor = .GrayScale.gray30
-        self.layer.cornerRadius = 20
+        self.layer.cornerRadius = 18
         self.layer.masksToBounds = true
     }
 
