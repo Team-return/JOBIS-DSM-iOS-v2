@@ -1,6 +1,6 @@
 import RxSwift
 
-public struct InterestsUseCase {
+public struct FetchInterestsUseCase {
     private let interestsRepository: any InterestsRepository
 
     public init(interestsRepository: any InterestsRepository) {
