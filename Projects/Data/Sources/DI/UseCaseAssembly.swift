@@ -270,8 +270,14 @@ public final class UseCaseAssembly: Assembly {
         }
 
         // Interests
-        container.register(InterestsUseCase.self) { resolver in
-            InterestsUseCase(
+        container.register(FetchInterestsUseCase.self) { resolver in
+            FetchInterestsUseCase(
+                interestsRepository: resolver.resolve(InterestsRepository.self)!
+            )
+        }
+
+        container.register(ChangeInterestsUseCase.self) { resolver in
+            ChangeInterestsUseCase(
                 interestsRepository: resolver.resolve(InterestsRepository.self)!
             )
         }
