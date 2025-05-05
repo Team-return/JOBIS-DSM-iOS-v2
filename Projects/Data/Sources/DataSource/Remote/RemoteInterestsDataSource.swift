@@ -5,6 +5,7 @@ import Domain
 
 public protocol RemoteInterestsDataSource {
     func fetchInterests() -> Single<[InterestsEntity]>
+    func updateInterests(interestsIDs: [Int]) -> Completable
 }
 
 final class RemoteInterestsDataSourceImpl: RemoteBaseDataSource<InterestsAPI>, RemoteInterestsDataSource {
@@ -12,5 +13,10 @@ final class RemoteInterestsDataSourceImpl: RemoteBaseDataSource<InterestsAPI>, R
         request(.fetchInterests)
             .map([InterestResponseDTO].self)
             .map { $0.toDomain() }
+    }
+
+    func updateInterests(interestsIDs: [Int]) -> Completable {
+        request(.updateInterests(interestsIDs: interestsIDs))
+            .asCompletable()
     }
 }

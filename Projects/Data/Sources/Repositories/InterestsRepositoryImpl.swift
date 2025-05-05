@@ -11,4 +11,8 @@ struct InterestsRepositoryImpl: InterestsRepository {
     func fetchInterests() -> Single<[InterestsEntity]> {
         remoteInterestsDataSource.fetchInterests()
     }
+
+    func updateInterests(interestsIDs: [Int]) -> Completable {
+        remoteInterestsDataSource.updateInterests(interestsIDs: interestsIDs)
+    }
 }
