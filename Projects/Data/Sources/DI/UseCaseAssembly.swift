@@ -40,7 +40,6 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
-
         // Students
         container.register(ChangePasswordUseCase.self) { reslover in
             ChangePasswordUseCase(
