@@ -11,7 +11,7 @@ public protocol RemoteInterestsDataSource {
 final class RemoteInterestsDataSourceImpl: RemoteBaseDataSource<InterestsAPI>, RemoteInterestsDataSource {
     func fetchInterests() -> Single<[InterestsEntity]> {
         request(.fetchInterests)
-            .map([InterestResponseDTO].self)
+            .map(InterestsResponseDTO.self)
             .map { $0.toDomain() }
     }
 

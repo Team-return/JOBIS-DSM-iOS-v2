@@ -1,23 +1,21 @@
 import Foundation
 import Domain
 
-public struct InterestResponseDTO: Decodable {
-    public let id: Int
-    public let studentID: Int
-    public let code: Int
-    public let keyword: String
-    
-    public init(
-        id: Int,
-        studentID: Int,
-        code: Int,
-        keyword: String
-    ) {
-        self.id = id
-        self.studentID = studentID
-        self.code = code
-        self.keyword = keyword
+struct InterestsResponseDTO: Decodable {
+    let studentName: String
+    let interests: [InterestResponseDTO]
+
+    enum CodingKeys: String, CodingKey {
+        case studentName = "student_name"
+        case interests
     }
+}
+
+struct InterestResponseDTO: Decodable {
+    let id: Int
+    let studentID: Int
+    let code: Int
+    let keyword: String
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -27,10 +25,11 @@ public struct InterestResponseDTO: Decodable {
     }
 }
 
-extension Array where Element == InterestResponseDTO {
+extension InterestsResponseDTO {
     func toDomain() -> [InterestsEntity] {
-        self.map {
+        return interests.map {
             InterestsEntity(
+                studentName: studentName,
                 interestID: $0.id,
                 studentID: $0.studentID,
                 code: $0.code,
