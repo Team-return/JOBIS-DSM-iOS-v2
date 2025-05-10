@@ -42,6 +42,7 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
         bind()
         configureViewController()
         configureNavigation()
+        setupKeyboardDismissGesture()
 
         self.viewDidLoadPublisher.accept(())
     }
@@ -69,6 +70,12 @@ public class BaseViewController<ViewModel: BaseViewModel>: UIViewController,
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         self.view.endEditing(true)
+    }
+
+    private func setupKeyboardDismissGesture() {
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
     }
 
     public func addView() {}
