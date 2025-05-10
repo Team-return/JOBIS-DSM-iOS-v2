@@ -92,68 +92,68 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
     }
 
     public override func setLayout() {
-            scrollView.snp.makeConstraints {
-                $0.top.equalToSuperview()
-                $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-                $0.bottom.equalTo(bugReportButton.snp.top)
-            }
-
-            contentView.snp.makeConstraints {
-                $0.edges.equalTo(scrollView.contentLayoutGuide)
-                $0.width.equalToSuperview()
-                $0.bottom.equalTo(bugImageCollectionView.snp.bottom).offset(20)
-            }
-
-            bugReportMajorView.snp.makeConstraints {
-                $0.top.equalToSuperview()
-                $0.leading.trailing.equalToSuperview()
-            }
-
-            bugReportTitleTextField.snp.makeConstraints {
-                $0.top.equalTo(bugReportMajorView.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-            }
-
-            bugReportContentTextView.snp.makeConstraints {
-                $0.top.equalTo(bugReportTitleTextField.snp.bottom)
-                $0.leading.trailing.equalToSuperview()
-            }
-
-            attachImageMenuLabel.snp.makeConstraints {
-                $0.top.equalTo(bugReportContentTextView.snp.bottom).offset(12)
-                $0.leading.equalToSuperview()
-            }
-
-            bugImageCollectionView.snp.makeConstraints {
-                $0.height.equalTo(100)
-                $0.top.equalTo(attachImageMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview().inset(20)
-                $0.bottom.equalToSuperview().offset(-20)
-            }
-
-            bugReportButton.snp.makeConstraints {
-                $0.height.equalTo(48)
-                $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
-                $0.leading.trailing.equalToSuperview().inset(24)
-            }
-
-            emptyImageButton.snp.makeConstraints {
-                $0.height.equalTo(100)
-                $0.top.equalTo(attachImageMenuLabel.snp.bottom)
-                $0.leading.trailing.equalToSuperview().inset(24)
-            }
-
-            emptyImageView.snp.makeConstraints {
-                $0.height.width.equalTo(36)
-                $0.top.equalToSuperview().inset(16)
-                $0.centerX.equalToSuperview()
-            }
-
-            emptyLabel.snp.makeConstraints {
-                $0.top.equalTo(emptyImageView.snp.bottom).offset(4)
-                $0.centerX.equalToSuperview()
-            }
+        scrollView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(bugReportButton.snp.top)
         }
+
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalToSuperview()
+            $0.bottom.equalTo(bugImageCollectionView.snp.bottom).offset(20)
+        }
+
+        bugReportMajorView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        bugReportTitleTextField.snp.makeConstraints {
+            $0.top.equalTo(bugReportMajorView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        bugReportContentTextView.snp.makeConstraints {
+            $0.top.equalTo(bugReportTitleTextField.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        attachImageMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(bugReportContentTextView.snp.bottom).offset(12)
+            $0.leading.equalToSuperview()
+        }
+
+        bugImageCollectionView.snp.makeConstraints {
+            $0.height.equalTo(100)
+            $0.top.equalTo(attachImageMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().offset(-20)
+        }
+
+        bugReportButton.snp.makeConstraints {
+            $0.height.equalTo(48)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+
+        emptyImageButton.snp.makeConstraints {
+            $0.height.equalTo(100)
+            $0.top.equalTo(attachImageMenuLabel.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+
+        emptyImageView.snp.makeConstraints {
+            $0.height.width.equalTo(36)
+            $0.top.equalToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
+        }
+
+        emptyLabel.snp.makeConstraints {
+            $0.top.equalTo(emptyImageView.snp.bottom).offset(4)
+            $0.centerX.equalToSuperview()
+        }
+    }
 
     public override func bind() {
         let input = BugReportViewModel.Input(
