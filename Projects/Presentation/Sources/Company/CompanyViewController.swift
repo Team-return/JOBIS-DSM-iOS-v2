@@ -7,7 +7,9 @@ import Then
 import Core
 import DesignSystem
 
-public class CompanyViewController: BaseViewController<CompanyViewModel> {
+public final class CompanyViewController: BaseViewController<CompanyViewModel> {
+    private var viewWillappearWithTap: (() -> Void)?
+    private var isTabNavigation: Bool = true
     private let searchButtonDidTap = PublishRelay<Void>()
     private let companyTableView = UITableView().then {
         $0.register(
@@ -36,7 +38,7 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
 
     public override func bind() {
         let input = CompanyViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
+            viewAppear: self.viewDidLoadPublisher,
             pageChange: companyTableView.rx.willDisplayCell
                 .filter {
                     $0.indexPath.row == self.companyTableView.numberOfRows(
@@ -44,7 +46,10 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
                     ) - 1
                 },
             companyTableViewCellDidTap: companyTableView.rx.modelSelected(CompanyEntity.self)
-                .map { $0.companyID },
+                .map { $0.companyID }
+                .do(onNext: { _ in
+                    self.isTabNavigation = false
+                }),
             searchButtonDidTap: searchButtonDidTap
         )
 
@@ -63,12 +68,17 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
     }
 
     public override func configureViewController() {
-        viewWillAppearPublisher
+        viewWillAppearPublisher.asObservable()
             .bind {
                 self.hideTabbar()
+                self.setSmallTitle(title: "기업 탐색")
+                if self.isTabNavigation {
+                    self.viewWillappearWithTap?()
+                }
+                self.isTabNavigation = true
             }
             .disposed(by: disposeBag)
-
+        
         searchButton.rx.tap
             .subscribe(onNext: { _ in
                 self.searchButtonDidTap.accept(())
@@ -77,7 +87,6 @@ public class CompanyViewController: BaseViewController<CompanyViewModel> {
     }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "기업 탐색")
         self.navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: searchButton)
