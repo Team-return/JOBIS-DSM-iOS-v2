@@ -36,7 +36,7 @@ extension RecruitmentsAPI: JobisAPI {
         case let .fetchRecruitmentList(page, jobCode, techCode, name, winterIntern):
             return .requestParameters(parameters: [
                 "page": page,
-                "job_code": jobCode ?? "",
+                "job_code": jobCode ?? " ",
                 "tech_code": techCode?.joined(separator: ",") ?? "",
                 "name": name ?? "",
                 "winter_intern": winterIntern ?? false
