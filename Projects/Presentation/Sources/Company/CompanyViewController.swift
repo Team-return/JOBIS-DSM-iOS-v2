@@ -8,7 +8,7 @@ import Core
 import DesignSystem
 
 public final class CompanyViewController: BaseViewController<CompanyViewModel> {
-    private var viewWillappearWithTap: (() -> Void)?
+    private var viewWillAppearWithTap: (() -> Void)?
     private var isTabNavigation: Bool = true
     private let searchButtonDidTap = PublishRelay<Void>()
     private let companyTableView = UITableView().then {
@@ -73,12 +73,12 @@ public final class CompanyViewController: BaseViewController<CompanyViewModel> {
                 self.hideTabbar()
                 self.setSmallTitle(title: "기업 탐색")
                 if self.isTabNavigation {
-                    self.viewWillappearWithTap?()
+                    self.viewWillAppearWithTap?()
                 }
                 self.isTabNavigation = true
             }
             .disposed(by: disposeBag)
-        
+
         searchButton.rx.tap
             .subscribe(onNext: { _ in
                 self.searchButtonDidTap.accept(())
