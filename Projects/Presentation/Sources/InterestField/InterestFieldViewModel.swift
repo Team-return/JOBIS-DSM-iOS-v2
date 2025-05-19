@@ -8,39 +8,39 @@ import Domain
 public final class InterestFieldViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-    private let fetchInterestsUseCase: FetchInterestsUseCase
+    private let fetchCodeListUseCase: FetchCodeListUseCase
     private let changeInterestsUseCase: ChangeInterestsUseCase
     private let isLoading = PublishRelay<Bool>()
 
     init(
-        fetchInterestsUseCase: FetchInterestsUseCase,
+        fetchCodeListUseCase: FetchCodeListUseCase,
         changeInterestsUseCase: ChangeInterestsUseCase
     ) {
-        self.fetchInterestsUseCase = fetchInterestsUseCase
+        self.fetchCodeListUseCase = fetchCodeListUseCase
         self.changeInterestsUseCase = changeInterestsUseCase
     }
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
         let selectButtonDidTap: Signal<Void>
-        let selectedInterests: Observable<[InterestsEntity]>
+        let selectedInterests: Observable<[CodeEntity]>
     }
 
     public struct Output {
-        let availableInterests: BehaviorRelay<[InterestsEntity]>
-        let userSavedInterests: PublishRelay<[InterestsEntity]>
-        let selectedInterests: Driver<[InterestsEntity]>
+        let availableInterests: BehaviorRelay<[CodeEntity]>
+        let selectedInterests: Driver<[CodeEntity]>
         let isLoading: Driver<Bool>
     }
 
     public func transform(_ input: Input) -> Output {
-        let fixedInterests = createFixedInterestsList()
-        let availableInterests = BehaviorRelay<[InterestsEntity]>(value: fixedInterests)
-        let userSavedInterests = PublishRelay<[InterestsEntity]>()
+        let availableInterests = BehaviorRelay<[CodeEntity]>(value: [])
 
         input.viewAppear.asObservable()
-            .flatMap { self.fetchInterestsUseCase.execute() }
-            .bind(to: userSavedInterests)
+            .flatMap { [weak self] _ -> Single<[CodeEntity]> in
+                guard let self = self else { return .just([]) }
+                return self.fetchCodeListUseCase.execute(keyword: nil, type: .job, parentCode: nil)
+            }
+            .bind(to: availableInterests)
             .disposed(by: disposeBag)
 
         let selectedInterests = input.selectedInterests
@@ -51,9 +51,19 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
             .emit(onNext: { [weak self] interests in
                 guard let self = self else { return }
                 print("선택된 관심분야: \(interests.map { $0.keyword })")
-
                 self.isLoading.accept(true)
-                self.changeInterestsUseCase.execute(interests: interests)
+
+                let interestsEntities = interests.map { codeEntity in
+                    InterestsEntity(
+                        studentName: "",
+                        interestID: 0,
+                        studentID: 0,
+                        code: codeEntity.code,
+                        keyword: codeEntity.keyword
+                    )
+                }
+
+                self.changeInterestsUseCase.execute(interests: interestsEntities)
                     .subscribe(
                         onCompleted: { [weak self] in
                             self?.isLoading.accept(false)
@@ -70,34 +80,8 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
 
         return Output(
             availableInterests: availableInterests,
-            userSavedInterests: userSavedInterests,
             selectedInterests: selectedInterests,
             isLoading: isLoading.asDriver(onErrorJustReturn: false)
         )
-    }
-
-    private func createFixedInterestsList() -> [InterestsEntity] {
-        let interestData: [(keyword: String, code: Int)] = [
-            ("백엔드", 1),
-            ("프론트엔드", 2),
-            ("풀스택", 3),
-            ("Android", 4),
-            ("iOS", 5),
-            ("임베디드", 6),
-            ("보안", 7)
-        ]
-
-        var fixedInterests: [InterestsEntity] = []
-        for (index, data) in interestData.enumerated() {
-            let interest = InterestsEntity(
-                studentName: "",
-                interestID: index + 1,
-                studentID: 0,
-                code: data.code,
-                keyword: data.keyword
-            )
-            fixedInterests.append(interest)
-        }
-        return fixedInterests
     }
 }
