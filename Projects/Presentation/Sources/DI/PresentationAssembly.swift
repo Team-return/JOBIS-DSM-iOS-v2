@@ -391,7 +391,7 @@ public final class PresentationAssembly: Assembly {
 
         container.register(InterestFieldViewModel.self) { resolver in
             InterestFieldViewModel(
-                fetchInterestsUseCase: resolver.resolve(FetchInterestsUseCase.self)!,
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
                 changeInterestsUseCase: resolver.resolve(ChangeInterestsUseCase.self)!
             )
         }
