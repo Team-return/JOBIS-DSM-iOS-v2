@@ -3,7 +3,6 @@ import Domain
 import AppNetwork
 
 enum InterestsAPI {
-    case fetchInterests
     case updateInterests(interestsIDs: [Int])
 }
 
@@ -16,8 +15,6 @@ extension InterestsAPI: JobisAPI {
 
     var urlPath: String {
         switch self {
-        case .fetchInterests:
-            return ""
         case .updateInterests:
             return ""
         }
@@ -25,8 +22,6 @@ extension InterestsAPI: JobisAPI {
 
     var method: Method {
         switch self {
-        case .fetchInterests:
-            return .get
         case .updateInterests:
             return .patch
         }
@@ -34,8 +29,6 @@ extension InterestsAPI: JobisAPI {
 
     var task: Task {
         switch self {
-        case .fetchInterests:
-            return .requestPlain
         case .updateInterests(let interestsIDs):
             return .requestParameters(
                 parameters: [
@@ -48,7 +41,7 @@ extension InterestsAPI: JobisAPI {
 
     var jwtTokenType: JwtTokenType {
         switch self {
-        case .fetchInterests, .updateInterests:
+        case .updateInterests:
             return .accessToken
         }
     }

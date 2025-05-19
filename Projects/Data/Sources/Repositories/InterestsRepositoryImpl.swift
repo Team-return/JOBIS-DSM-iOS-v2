@@ -8,10 +8,6 @@ struct InterestsRepositoryImpl: InterestsRepository {
         self.remoteInterestsDataSource = remoteInterestsDataSource
     }
 
-    func fetchInterests() -> Single<[InterestsEntity]> {
-        remoteInterestsDataSource.fetchInterests()
-    }
-
     func updateInterests(interestsIDs: [Int]) -> Completable {
         remoteInterestsDataSource.updateInterests(interestsIDs: interestsIDs)
     }
