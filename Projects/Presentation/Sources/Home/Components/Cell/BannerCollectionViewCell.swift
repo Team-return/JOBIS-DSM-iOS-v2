@@ -64,8 +64,8 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
         }
 
         employStatusButton.snp.makeConstraints {
-            $0.top.equalTo(passLabel.snp.bottom).offset(24)
             $0.leading.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(18)
             $0.width.equalTo(151)
             $0.height.equalTo(40)
         }
