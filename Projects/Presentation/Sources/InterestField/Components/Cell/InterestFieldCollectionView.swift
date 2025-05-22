@@ -7,10 +7,10 @@ import Domain
 
 final class InterestFieldCollectionView: UICollectionView {
     private var selectedIndexes: Set<IndexPath> = []
-    private var interests: [InterestsEntity] = []
-    private let selectedInterestsRelay = BehaviorRelay<[InterestsEntity]>(value: [])
+    private var interests: [CodeEntity] = []
+    private let selectedInterestsRelay = BehaviorRelay<[CodeEntity]>(value: [])
 
-    var selectedInterests: Observable<[InterestsEntity]> {
+    var selectedInterests: Observable<[CodeEntity]> {
         return selectedInterestsRelay.asObservable()
     }
 
@@ -33,21 +33,8 @@ final class InterestFieldCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func updateInterests(_ newInterests: [InterestsEntity]) {
+    func updateInterests(_ newInterests: [CodeEntity]) {
         interests = newInterests
-        reloadData()
-        selectedInterestsRelay.accept(getSelectedInterests())
-    }
-
-    func preSelectInterests(_ savedInterests: [InterestsEntity]) {
-        selectedIndexes.removeAll()
-
-        for (index, interest) in interests.enumerated() {
-            if savedInterests.contains(where: { $0.keyword == interest.keyword }) {
-                selectedIndexes.insert(IndexPath(item: index, section: 0))
-            }
-        }
-
         reloadData()
         selectedInterestsRelay.accept(getSelectedInterests())
     }
@@ -62,8 +49,9 @@ extension InterestFieldCollectionView: UICollectionViewDataSource {
         guard let cell = dequeueReusableCell(withReuseIdentifier: MajorCollectionViewCell.identifier, for: indexPath) as? MajorCollectionViewCell else {
             return UICollectionViewCell()
         }
-        let model = interests[indexPath.item]
-        cell.adapt(model: model)
+
+        let codeEntity = interests[indexPath.item]
+        cell.adapt(model: codeEntity)
         cell.isCheck = selectedIndexes.contains(indexPath)
         return cell
     }
@@ -71,14 +59,14 @@ extension InterestFieldCollectionView: UICollectionViewDataSource {
 
 extension InterestFieldCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let text = interests[indexPath.item].keyword ?? ""
+        let text = interests[indexPath.item].keyword
         let font = UIFont.jobisFont(.body)
         let padding: CGFloat = 32
         let height: CGFloat = 40
         let textWidth = (text as NSString).size(withAttributes: [.font: font]).width
         let maxWidth = frame.width - 32
         let width = min(textWidth + padding, maxWidth)
-        
+
         let cellWidth = ceil(width / 8) * 8
         return CGSize(width: cellWidth, height: height)
     }
@@ -109,7 +97,7 @@ extension InterestFieldCollectionView: UICollectionViewDelegate {
 }
 
 private extension InterestFieldCollectionView {
-    func getSelectedInterests() -> [InterestsEntity] {
+    func getSelectedInterests() -> [CodeEntity] {
         return selectedIndexes.map { interests[$0.item] }
     }
 }
