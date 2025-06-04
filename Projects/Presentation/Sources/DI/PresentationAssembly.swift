@@ -375,7 +375,7 @@ public final class PresentationAssembly: Assembly {
                 classNumber: classNumber
             )
         }
-
+        
         container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int) in
             ClassEmploymentViewModel(
                 fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
@@ -392,7 +392,8 @@ public final class PresentationAssembly: Assembly {
         container.register(InterestFieldViewModel.self) { resolver in
             InterestFieldViewModel(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
-                changeInterestsUseCase: resolver.resolve(ChangeInterestsUseCase.self)!
+                changeInterestsUseCase: resolver.resolve(ChangeInterestsUseCase.self)!,
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
             )
         }
 
@@ -403,7 +404,9 @@ public final class PresentationAssembly: Assembly {
         }
 
         container.register(InterestFieldCheckViewModel.self) { resolver in
-            InterestFieldCheckViewModel()
+            InterestFieldCheckViewModel(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
         }
     }
 }
