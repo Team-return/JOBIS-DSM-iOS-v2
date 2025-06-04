@@ -50,7 +50,18 @@ final class InterestCheckView: BaseView {
         checkExplainLabel.snp.makeConstraints {
             $0.top.equalTo(checkLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview()
         }
     }
+
+    func setStudentName(_ name: String) {
+           checkLabel.setJobisText(
+               "\(name)님의 \n관심사를 확인했어요!",
+               font: .smallBody,
+               color: .GrayScale.gray90
+           )
+        checkLabel.numberOfLines = 0
+        checkLabel.textAlignment = .center
+       }
 
 }
