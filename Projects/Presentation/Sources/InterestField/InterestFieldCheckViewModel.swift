@@ -9,16 +9,32 @@ public final class InterestFieldCheckViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
 
-    public init() {
+    private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let studentNameRelay = BehaviorRelay<String>(value: "")
+
+    public init(fetchStudentInfoUseCase: FetchStudentInfoUseCase) {
+        self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
     }
 
     public struct Input {
+        let viewWillAppear: Observable<Void>
     }
 
     public struct Output {
+        let studentName: Driver<String>
     }
 
     public func transform(_ input: Input) -> Output {
-        return Output()
+        input.viewWillAppear
+            .flatMapLatest { [unowned self] in
+                self.fetchStudentInfoUseCase.execute().asObservable()
+            }
+            .map { $0.studentName }
+            .bind(to: studentNameRelay)
+            .disposed(by: disposeBag)
+
+        return Output(
+            studentName: studentNameRelay.asDriver()
+        )
     }
 }

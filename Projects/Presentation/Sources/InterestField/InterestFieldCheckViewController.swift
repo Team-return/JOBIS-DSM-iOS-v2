@@ -18,13 +18,29 @@ public final class InterestFieldCheckViewController: BaseViewController<Interest
 
     public override func setLayout() {
         interestView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(222)
-            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.centerX.centerY.equalToSuperview()
+            $0.leading.trailing.lessThanOrEqualToSuperview().inset(24)
         }
     }
 
     public override func configureNavigation() {
-        setSmallTitle(title: "관심사 설정")
+        setSmallTitle(title: "관심 분야 선택")
         self.navigationItem.largeTitleDisplayMode = .never
+    }
+
+    public override func bind() {
+        super.bind()
+
+        let input = InterestFieldCheckViewModel.Input(
+            viewWillAppear: viewWillAppearPublisher.asObservable()
+        )
+
+        let output = viewModel.transform(input)
+
+        output.studentName
+            .drive(onNext: { [weak self] name in
+                self?.interestView.setStudentName(name)
+            })
+            .disposed(by: disposeBag)
     }
 }
