@@ -3,8 +3,10 @@ import Domain
 import DesignSystem
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
-final class MajorCollectionViewCell: BaseCollectionViewCell<InterestsEntity> {
+final class MajorCollectionViewCell: BaseCollectionViewCell<CodeEntity> {
     static let identifier = "MajorCollectionViewCell"
 
     public var isCheck: Bool = false {
@@ -18,15 +20,8 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<InterestsEntity> {
         }
     }
 
-    private let majorLabel = UILabel().then {
-        $0.textAlignment = .center
-        $0.font = UIFont.jobisFont(.body)
-        $0.numberOfLines = 1
-        $0.adjustsFontSizeToFitWidth = true
-        $0.minimumScaleFactor = 0.8
-        $0.setContentHuggingPriority(.required, for: .horizontal)
-        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
-    }
+    private var disposeBag = DisposeBag()
+    private let majorLabel = UILabel()
 
     override func addView() {
         self.contentView.addSubview(majorLabel)
@@ -34,25 +29,47 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<InterestsEntity> {
 
     override func setLayout() {
         majorLabel.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(6)
-            $0.center.equalToSuperview()
-            $0.leading.greaterThanOrEqualToSuperview().offset(16)
-            $0.trailing.lessThanOrEqualToSuperview().offset(-16)
+            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(31)
         }
     }
 
     override func configureView() {
         self.backgroundColor = .GrayScale.gray30
-        self.layer.cornerRadius = 18
+        self.layer.cornerRadius = 15.5
         self.layer.masksToBounds = true
+        majorLabel.textAlignment = .center
+        majorLabel.font = UIFont.jobisFont(.body)
+        majorLabel.numberOfLines = 1
+        majorLabel.lineBreakMode = .byClipping
+        majorLabel.adjustsFontSizeToFitWidth = false
     }
 
-    override func adapt(model: InterestsEntity) {
+    override func adapt(model: CodeEntity) {
         super.adapt(model: model)
-        majorLabel.setJobisText(
-            model.keyword,
-            font: .body,
-            color: .Primary.blue40
+        majorLabel.setJobisText(model.keyword, font: .body, color: .Primary.blue40)
+        invalidateIntrinsicContentSize()
+    }
+
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        let targetSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: 31)
+        let fittingSize = contentView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .fittingSizeLevel,
+            verticalFittingPriority: .required
         )
+
+        let minWidth: CGFloat = 60
+        let width = max(fittingSize.width, minWidth)
+
+        layoutAttributes.frame.size = CGSize(width: width, height: 31)
+        return layoutAttributes
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        let labelSize = majorLabel.intrinsicContentSize
+        let width = labelSize.width + 32
+        return CGSize(width: width, height: 31)
     }
 }

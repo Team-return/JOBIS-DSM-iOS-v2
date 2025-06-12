@@ -10,14 +10,18 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
     private let changeInterestsUseCase: ChangeInterestsUseCase
-    private let isLoading = PublishRelay<Bool>()
+    private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
+    private let studentNameRelay = BehaviorRelay<String>(value: "")
 
-    init(
+    public init(
         fetchCodeListUseCase: FetchCodeListUseCase,
-        changeInterestsUseCase: ChangeInterestsUseCase
+        changeInterestsUseCase: ChangeInterestsUseCase,
+        fetchStudentInfoUseCase: FetchStudentInfoUseCase
     ) {
         self.fetchCodeListUseCase = fetchCodeListUseCase
         self.changeInterestsUseCase = changeInterestsUseCase
+        self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
+        fetchStudentInfo()
     }
 
     public struct Input {
@@ -29,7 +33,7 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
     public struct Output {
         let availableInterests: BehaviorRelay<[CodeEntity]>
         let selectedInterests: Driver<[CodeEntity]>
-        let isLoading: Driver<Bool>
+        let studentName: Driver<String>
     }
 
     public func transform(_ input: Input) -> Output {
@@ -50,28 +54,15 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
             .withLatestFrom(selectedInterests)
             .emit(onNext: { [weak self] interests in
                 guard let self = self else { return }
-                print("선택된 관심분야: \(interests.map { $0.keyword })")
-                self.isLoading.accept(true)
 
-                let interestsEntities = interests.map { codeEntity in
-                    InterestsEntity(
-                        studentName: "",
-                        interestID: 0,
-                        studentID: 0,
-                        code: codeEntity.code,
-                        keyword: codeEntity.keyword
-                    )
-                }
+                let codeIDs = interests.map { $0.code }
 
-                self.changeInterestsUseCase.execute(interests: interestsEntities)
+                self.changeInterestsUseCase.execute(codeIDs: codeIDs)
                     .subscribe(
                         onCompleted: { [weak self] in
-                            self?.isLoading.accept(false)
                             self?.steps.accept(InterestFieldStep.interestFieldCheckIsRequired)
                         },
-                        onError: { [weak self] error in
-                            self?.isLoading.accept(false)
-                            print("관심분야 업데이트 실패: \(error.localizedDescription)")
+                        onError: { _ in
                         }
                     )
                     .disposed(by: self.disposeBag)
@@ -81,7 +72,19 @@ public final class InterestFieldViewModel: BaseViewModel, Stepper {
         return Output(
             availableInterests: availableInterests,
             selectedInterests: selectedInterests,
-            isLoading: isLoading.asDriver(onErrorJustReturn: false)
+            studentName: studentNameRelay.asDriver()
         )
+    }
+
+    private func fetchStudentInfo() {
+        fetchStudentInfoUseCase.execute()
+            .subscribe(
+                onSuccess: { [weak self] studentInfo in
+                    self?.studentNameRelay.accept(studentInfo.studentName)
+                },
+                onFailure: { _ in
+                }
+            )
+            .disposed(by: disposeBag)
     }
 }
