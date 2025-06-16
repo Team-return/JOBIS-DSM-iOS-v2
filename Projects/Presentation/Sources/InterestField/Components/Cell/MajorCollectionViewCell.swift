@@ -66,7 +66,7 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<CodeEntity> {
         layoutAttributes.frame.size = CGSize(width: width, height: 31)
         return layoutAttributes
     }
-    
+
     override var intrinsicContentSize: CGSize {
         let labelSize = majorLabel.intrinsicContentSize
         let width = labelSize.width + 32
