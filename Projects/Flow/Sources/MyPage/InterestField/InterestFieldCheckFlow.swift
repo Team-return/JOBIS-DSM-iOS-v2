@@ -18,7 +18,7 @@ public final class InterestFieldCheckFlow: Flow {
     }
 
     public func navigate(to step: Step) -> FlowContributors {
-        guard let step = step as? InterestFieldStep else { return .none }
+        guard let step = step as? InterestFieldCheckStep else { return .none }
 
         switch step {
         case .interestFieldIsRequired:
