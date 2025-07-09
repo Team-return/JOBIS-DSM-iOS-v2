@@ -26,6 +26,9 @@ public final class InterestFieldCheckFlow: Flow {
 
         case .interestFieldCheckIsRequired:
             return navigateToInterestFieldCheck()
+
+        case .popHomeFieldIsRequired:
+            return navigateToInterestField()
         }
     }
 }
@@ -51,4 +54,8 @@ private extension InterestFieldCheckFlow {
             withNextStepper: interestFieldCheckViewController.viewModel
         ))
     }
+
+//    func navigateToHomeField() -> FlowContributors {
+//        
+//    }
 }
