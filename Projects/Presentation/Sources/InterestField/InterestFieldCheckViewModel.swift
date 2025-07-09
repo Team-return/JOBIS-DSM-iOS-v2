@@ -18,6 +18,7 @@ public final class InterestFieldCheckViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewWillAppear: Observable<Void>
+//        let backButtonTap: Observable<Void>
     }
 
     public struct Output {
@@ -32,6 +33,11 @@ public final class InterestFieldCheckViewModel: BaseViewModel, Stepper {
             .map { $0.studentName }
             .bind(to: studentNameRelay)
             .disposed(by: disposeBag)
+
+//        input.backButtonTap
+//            .map { InterestFieldCheckStep.popHomeFieldIsRequired }
+//            .bind(to: steps)
+//            .disposed(by: disposeBag)
 
         return Output(
             studentName: studentNameRelay.asDriver()

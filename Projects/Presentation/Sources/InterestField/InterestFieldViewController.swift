@@ -11,7 +11,7 @@ public final class InterestFieldViewController: BaseViewController<InterestField
     private let selectedIndexesRelay = BehaviorRelay<Set<IndexPath>>(value: [])
     private let interestsRelay = BehaviorRelay<[CodeEntity]>(value: [])
     private let selectedInterestsRelay = BehaviorRelay<[CodeEntity]>(value: [])
-    
+
     private let interestFieldTitleLabel = UILabel().then {
         $0.setJobisText(
             "님의\n관심사를 선택해주세요",

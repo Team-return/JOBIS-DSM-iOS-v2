@@ -9,10 +9,15 @@ import Domain
 
 public final class InterestFieldCheckViewController: BaseViewController<InterestFieldCheckViewModel> {
     private let interestView = InterestCheckView()
+//    private let backButton = JobisButton(style: .main).then {
+//        $0.setText("홈으로 가기")
+//        $0.isEnabled = true
+//    }
 
     public override func addView() {
         [
             interestView
+//            backButton
         ].forEach(view.addSubview)
     }
 
@@ -21,6 +26,11 @@ public final class InterestFieldCheckViewController: BaseViewController<Interest
             $0.centerX.centerY.equalToSuperview()
             $0.leading.trailing.lessThanOrEqualToSuperview().inset(24)
         }
+//        backButton.snp.makeConstraints {
+//            $0.centerX.equalToSuperview()
+//            $0.leading.trailing.equalToSuperview().inset(24)
+//            $0.bottom.equalToSuperview().inset(24)
+//        }
     }
 
     public override func configureNavigation() {
@@ -33,6 +43,7 @@ public final class InterestFieldCheckViewController: BaseViewController<Interest
 
         let input = InterestFieldCheckViewModel.Input(
             viewWillAppear: viewWillAppearPublisher.asObservable()
+//            backButtonTap: backButton.rx.tap.asObservable()
         )
 
         let output = viewModel.transform(input)

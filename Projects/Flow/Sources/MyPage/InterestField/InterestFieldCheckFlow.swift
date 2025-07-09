@@ -18,7 +18,7 @@ public final class InterestFieldCheckFlow: Flow {
     }
 
     public func navigate(to step: Step) -> FlowContributors {
-        guard let step = step as? InterestFieldStep else { return .none }
+        guard let step = step as? InterestFieldCheckStep else { return .none }
 
         switch step {
         case .interestFieldIsRequired:
@@ -26,6 +26,9 @@ public final class InterestFieldCheckFlow: Flow {
 
         case .interestFieldCheckIsRequired:
             return navigateToInterestFieldCheck()
+
+        case .popHomeFieldIsRequired:
+            return navigateToInterestField()
         }
     }
 }
@@ -51,4 +54,8 @@ private extension InterestFieldCheckFlow {
             withNextStepper: interestFieldCheckViewController.viewModel
         ))
     }
+
+//    func navigateToHomeField() -> FlowContributors {
+//        
+//    }
 }
