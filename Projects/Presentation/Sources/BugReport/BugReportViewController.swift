@@ -65,6 +65,7 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
     }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
+        $0.alwaysBounceVertical = true
     }
     private let contentView = UIView()
 
@@ -127,6 +128,7 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             $0.height.equalTo(100)
             $0.top.equalTo(attachImageMenuLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().offset(-20)
         }
 
         bugReportButton.snp.makeConstraints {

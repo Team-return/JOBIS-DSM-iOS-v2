@@ -43,6 +43,9 @@ public final class MyPageFlow: Flow {
         case .bugReportListIsRequired:
             return .none
 //            return navigateToBugReportList()
+
+        case .interestFieldIsRequired:
+            return navigateToInterestField()
         }
     }
 }
@@ -139,6 +142,20 @@ extension MyPageFlow {
         ))
     }
 
+    func navigateToInterestField() -> FlowContributors {
+        let interestFieldFlow = InterestFieldFlow(container: container)
+
+        Flows.use(interestFieldFlow, when: .created) { root in
+                self.rootViewController.pushViewController(
+                    root, animated: true
+                )
+            }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interestFieldFlow,
+            withNextStepper: OneStepper(withSingleStep: InterestFieldStep.interestFieldIsRequired)
+        ))
+    }
 //    func navigateToBugReportList() -> FlowContributors {
 //        let bugReportListFlow = BugReportListFlow(container: container)
 //

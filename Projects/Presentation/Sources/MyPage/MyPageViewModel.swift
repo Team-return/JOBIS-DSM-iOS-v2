@@ -42,6 +42,7 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
         let helpSectionDidTap: Observable<IndexPath>
         let bugReportSectionDidTap: Observable<IndexPath>
         //        let bugReportListSectionDidTap: Observable<IndexPath>
+        let interestFieldDidTap: Observable<IndexPath>
         let changePasswordSectionDidTap: Observable<IndexPath>
         let logoutPublisher: PublishRelay<Void>
         let withdrawalPublisher: PublishRelay<Void>
@@ -108,6 +109,11 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
 
         input.helpSectionDidTap.asObservable()
             .map { _ in MyPageStep.noticeIsRequired }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.interestFieldDidTap.asObservable()
+            .map { _ in MyPageStep.interestFieldIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

@@ -40,7 +40,6 @@ public final class UseCaseAssembly: Assembly {
             )
         }
 
-
         // Students
         container.register(ChangePasswordUseCase.self) { reslover in
             ChangePasswordUseCase(
@@ -266,6 +265,13 @@ public final class UseCaseAssembly: Assembly {
         container.register(FetchServerStatusUseCase.self) { resolver in
             FetchServerStatusUseCase(
                 systemRepository: resolver.resolve(SystemRepository.self)!
+            )
+        }
+
+        // Interests
+        container.register(ChangeInterestsUseCase.self) { resolver in
+            ChangeInterestsUseCase(
+                interestsRepository: resolver.resolve(InterestsRepository.self)!
             )
         }
     }

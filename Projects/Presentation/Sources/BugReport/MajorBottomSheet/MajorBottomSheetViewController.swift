@@ -44,7 +44,7 @@ public final class MajorBottomSheetViewController: BaseBottomSheetViewController
         }
 
         contentStackView.snp.makeConstraints {
-            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.edges.equalTo(scrollView.safeAreaLayoutGuide)
             $0.width.equalToSuperview()
         }
     }

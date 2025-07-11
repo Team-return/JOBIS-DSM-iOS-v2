@@ -81,5 +81,9 @@ public final class DataSourceAssembly: Assembly {
         container.register(RemoteSystemDataSource.self) { resolver in
             RemoteSystemDataSourceImpl(keychain: self.keychain(resolver))
         }
+
+        container.register(RemoteInterestsDataSource.self) { resolver in
+            RemoteInterestsDataSourceImpl(keychain: self.keychain(resolver))
+        }
     }
 }

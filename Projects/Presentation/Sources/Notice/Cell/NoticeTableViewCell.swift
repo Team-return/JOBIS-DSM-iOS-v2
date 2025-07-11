@@ -41,6 +41,7 @@ final class NoticeTableViewCell: BaseTableViewCell<NoticeEntity> {
     override func setLayout() {
         noticeTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(16)
+            $0.right.equalTo(navigationArrowImageView.snp.left).offset(-16)
             $0.left.equalToSuperview().inset(24)
         }
         noticeDateLabel.snp.makeConstraints {
@@ -50,6 +51,7 @@ final class NoticeTableViewCell: BaseTableViewCell<NoticeEntity> {
         navigationArrowImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.right.equalToSuperview().inset(24)
+            $0.width.height.equalTo(24)
         }
     }
 

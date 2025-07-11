@@ -10,11 +10,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout PR branch (head)
+      uses: actions/checkout@v3
+      with:
+        ref: refs/pull/${{ github.event.pull_request.number }}/head
+
     - name: GitHub Action for SwiftLint
       uses: norio-nomura/action-swiftlint@master
       env:
@@ -25,9 +28,9 @@ jobs:
       uses: mshick/add-pr-comment@v1
       with:
         message: |
-         ## All File Checked ✅
-         | ✅     | Auto Pull Request SwiftLint Success!!!!     |
-         |---    |----------------------------------------------    |
+          ## All File Checked ✅
+          | ✅     | Auto Pull Request SwiftLint Success!!!!     |
+          |---    |----------------------------------------------    |
         repo-token: ${{ secrets.ACCESS_TOKEN }}
-        repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
-        allow-repeats: false # This is the default
+        repo-token-user-login: 'github-actions[bot]'
+        allow-repeats: false

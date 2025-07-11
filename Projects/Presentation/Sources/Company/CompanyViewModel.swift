@@ -39,6 +39,7 @@ public final class CompanyViewModel: BaseViewModel, Stepper {
             .bind(onNext: {
                 self.companyList.accept([])
                 self.companyList.accept(self.companyList.value + $0)
+                self.pageCount = 1
             })
             .disposed(by: disposeBag)
 
