@@ -105,5 +105,11 @@ public final class RepositoryAssembly: Assembly {
                 remoteSystemDataSource: resolver.resolve(RemoteSystemDataSource.self)!
             )
         }
+
+        container.register(InterestsRepository.self) { resolver in
+            InterestsRepositoryImpl(
+                remoteInterestsDataSource: resolver.resolve(RemoteInterestsDataSource.self)!
+            )
+        }
     }
 }

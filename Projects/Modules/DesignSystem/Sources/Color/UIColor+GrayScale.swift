@@ -5,6 +5,7 @@ public extension UIColor {
 }
 
 public extension UIColor.GrayScale {
+    static let gray0: UIColor = DesignSystemAsset.GrayScale.gray0.color
     static let gray10: UIColor = DesignSystemAsset.GrayScale.gray10.color
     static let gray20: UIColor = DesignSystemAsset.GrayScale.gray20.color
     static let gray30: UIColor = DesignSystemAsset.GrayScale.gray30.color

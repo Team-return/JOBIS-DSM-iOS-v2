@@ -100,6 +100,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
                     .notificationSetting),
             helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
             bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
+            interestFieldDidTap: accountSectionView.getSelectedItem(type: .interestField),
 //            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
             changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
             logoutPublisher: logoutPublisher,

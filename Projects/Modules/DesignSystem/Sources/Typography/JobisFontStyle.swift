@@ -8,6 +8,7 @@ public enum JobisFontStyle {
     case subBody
     case boldBody
     case largeBody
+    case smallBody
     case description
     case caption
     case boldcaption

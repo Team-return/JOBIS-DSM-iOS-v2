@@ -382,5 +382,31 @@ public final class PresentationAssembly: Assembly {
                 classNumber: classNumber
             )
         }
+
+        container.register(InterestFieldViewController.self) { resolver in
+            InterestFieldViewController(
+                resolver.resolve(InterestFieldViewModel.self)!
+            )
+        }
+
+        container.register(InterestFieldViewModel.self) { resolver in
+            InterestFieldViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
+                changeInterestsUseCase: resolver.resolve(ChangeInterestsUseCase.self)!,
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
+
+        container.register(InterestFieldCheckViewController.self) { resolver in
+            InterestFieldCheckViewController(
+                resolver.resolve(InterestFieldCheckViewModel.self)!
+            )
+        }
+
+        container.register(InterestFieldCheckViewModel.self) { resolver in
+            InterestFieldCheckViewModel(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
     }
 }

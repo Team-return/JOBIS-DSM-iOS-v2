@@ -16,7 +16,7 @@ final class ClassEmploymentCollectionViewLayout: UICollectionViewFlowLayout {
         let totalSpacing = (cellSpacing * 3) + (sectionInset * 2)
         let cellWidth = (UIScreen.main.bounds.width - totalSpacing) / 4
 
-        self.minimumLineSpacing = 32
+        self.minimumLineSpacing = 50
         self.minimumInteritemSpacing = cellSpacing
         self.itemSize = CGSize(width: cellWidth, height: cellWidth)
         self.sectionInset = UIEdgeInsets(top: 10, left: sectionInset, bottom: 0, right: sectionInset)
