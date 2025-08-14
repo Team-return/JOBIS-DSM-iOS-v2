@@ -8,7 +8,7 @@ import Domain
 public final class InterviewReviewDetailViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
-    public var reviewId: Int = 0
+    public var reviewId: String = ""
     public var writerName: String = ""
     let fetchReviewDetailUseCase: FetchReviewDetailUseCase
 
@@ -23,22 +23,22 @@ public final class InterviewReviewDetailViewModel: BaseViewModel, Stepper {
     }
 
     public struct Output {
-        let qnaListEntity: PublishRelay<[QnAEntity]>
+        let reviewDetailEntity: PublishRelay<ReviewDetailEntity>
         let writerName: String
     }
 
     public func transform(_ input: Input) -> Output {
-        let qnaListEntity = PublishRelay<[QnAEntity]>()
+        let reviewDetailEntity = PublishRelay<ReviewDetailEntity>()
 
         input.viewWillAppear.asObservable()
             .flatMap {
-                self.fetchReviewDetailUseCase.execute(id: self.reviewId)
+                self.fetchReviewDetailUseCase.execute(reviewID: self.reviewId)
             }
-            .bind(to: qnaListEntity)
+            .bind(to: reviewDetailEntity)
             .disposed(by: disposeBag)
 
         return Output(
-            qnaListEntity: qnaListEntity,
+            reviewDetailEntity: reviewDetailEntity,
             writerName: writerName
         )
     }

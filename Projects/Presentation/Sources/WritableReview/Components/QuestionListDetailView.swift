@@ -144,10 +144,10 @@ final class QuestionListDetailView: BaseView {
         }
     }
 
-    func configureView(model: QnaEntity) {
+    func configureView(model: QnAEntity) {  // QnaEntity에서 QnAEntity로 변경
         super.configureView()
         questionLabel.text = model.question
-        codeLabel.text = model.area
+        codeLabel.text = ""  // QnAEntity에는 area 필드가 없으므로 빈 문자열로 설정
         answerLabel.text = model.answer
         self.rx.tapGesture()
             .when(.recognized)

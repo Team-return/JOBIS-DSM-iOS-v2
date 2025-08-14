@@ -35,12 +35,12 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let companyDetailInfo: PublishRelay<CompanyInfoDetailEntity>
-        let reviewListInfo: PublishRelay<[ReviewEntity]>
+        let reviewListPageCount: PublishRelay<Int>
     }
 
     public func transform(_ input: Input) -> Output {
         let companyDetailInfo = PublishRelay<CompanyInfoDetailEntity>()
-        let reviewListInfo = PublishRelay<[ReviewEntity]>()
+        let reviewListPageCount = PublishRelay<Int>()
 
         input.viewAppear.asObservable()
             .flatMap {
@@ -51,9 +51,9 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
         input.viewAppear.asObservable()
             .flatMap {
-                self.fetchReviewListUseCase.execute(id: self.companyID ?? 0)
+                self.fetchReviewListUseCase.execute(companyID: self.companyID)
             }
-            .bind(to: reviewListInfo)
+            .bind(to: reviewListPageCount)
             .disposed(by: disposeBag)
 
         input.recruitmentButtonDidTap.asObservable()
@@ -71,9 +71,10 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+        
         return Output(
             companyDetailInfo: companyDetailInfo,
-            reviewListInfo: reviewListInfo
+            reviewListPageCount: reviewListPageCount
         )
     }
 }

@@ -13,7 +13,7 @@ public struct ReviewDetailResponseDTO: Decodable {
     public let qnAs: [QnAResponseDTO]
     public let question: String
     public let answer: String
-
+    
     public init(
         reviewID: Int,
         companyName: String,
@@ -39,7 +39,7 @@ public struct ReviewDetailResponseDTO: Decodable {
         self.question = question
         self.answer = answer
     }
-
+    
     enum CodingKeys: String, CodingKey {
         case reviewID = "review_id"
         case companyName = "company_name"
@@ -59,7 +59,7 @@ public struct QnAResponseDTO: Decodable {
     public let id: Int
     public let question: String
     public let answer: String
-
+    
     public init(id: Int, question: String, answer: String) {
         self.id = id
         self.question = question
