@@ -7,6 +7,7 @@ enum ReviewsAPI {
     case postReview(PostReviewRequestQuery)
     case fetchReviewListPageCount(ReviewListPageCountRequestQuery)
     case fetchReviewDetail(reviewID: String)
+    case fetchReviewList
 }
 
 extension ReviewsAPI: JobisAPI {
