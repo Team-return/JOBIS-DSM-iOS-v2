@@ -1,35 +1,58 @@
 import Foundation
 
 public struct PostReviewRequestQuery: Encodable {
+    public let interviewType: InterviewFormat
+    public let location: LocationType
     public let companyID: Int
-    public var qnaElements: [QnaElementRequestQuery]
+    public let jobCode: Int
+    public let interviewerCount: Int
+    public var qnas: [QnaRequestQuery]
+    public let question: String
+    public let answer: String
 
     public init(
+        interviewType: InterviewFormat,
+        location: LocationType,
         companyID: Int,
-        qnaElements: [QnaElementRequestQuery]
+        jobCode: Int,
+        interviewerCount: Int,
+        qnas: [QnaRequestQuery],
+        question: String,
+        answer: String
     ) {
+        self.interviewType = interviewType
+        self.location = location
         self.companyID = companyID
-        self.qnaElements = qnaElements
+        self.jobCode = jobCode
+        self.interviewerCount = interviewerCount
+        self.qnas = qnas
+        self.question = question
+        self.answer = answer
     }
 
     enum CodingKeys: String, CodingKey {
+        case interviewType = "interview_type"
+        case location
         case companyID = "company_id"
-        case qnaElements = "qna_elements"
+        case jobCode = "job_code"
+        case interviewerCount = "interviewer_count"
+        case qnas
+        case question
+        case answer
     }
 }
 
-public struct QnaElementRequestQuery: Encodable {
-    public var question, answer: String
-    public var codeID: Int
+public struct QnaRequestQuery: Encodable {
+    public let questionID: Int
+    public let answer: String
 
-    public init(question: String, answer: String, codeID: Int) {
-        self.question = question
+    public init(questionID: Int, answer: String) {
+        self.questionID = questionID
         self.answer = answer
-        self.codeID = codeID
     }
 
     enum CodingKeys: String, CodingKey {
-        case question, answer
-        case codeID = "code_id"
+        case questionID = "question_id"
+        case answer
     }
 }
