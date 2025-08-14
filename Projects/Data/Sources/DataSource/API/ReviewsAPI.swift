@@ -7,7 +7,7 @@ enum ReviewsAPI {
     case postReview(PostReviewRequestQuery)
     case fetchReviewListPageCount(ReviewListPageCountRequestQuery)
     case fetchReviewDetail(reviewID: String)
-    case fetchReviewList
+    case fetchReviewList(ReviewListRequestQuery)
 }
 
 extension ReviewsAPI: JobisAPI {
@@ -19,7 +19,7 @@ extension ReviewsAPI: JobisAPI {
 
     var urlPath: String {
         switch self {
-        case .postReview:
+        case .postReview, .fetchReviewList:
             return ""
         case .fetchReviewListPageCount:
             return "/count"
@@ -30,7 +30,7 @@ extension ReviewsAPI: JobisAPI {
 
     var method: Moya.Method {
         switch self {
-        case .fetchReviewListPageCount, .fetchReviewDetail:
+        case .fetchReviewListPageCount, .fetchReviewDetail, .fetchReviewList:
             return .get
         case .postReview:
             return .post
@@ -42,6 +42,8 @@ extension ReviewsAPI: JobisAPI {
         case let .postReview(req):
             return .requestJSONEncodable(req)
         case let .fetchReviewListPageCount(req):
+            return .requestParameters(parameters: req.toDictionary(), encoding: URLEncoding.queryString)
+        case let .fetchReviewList(req):
             return .requestParameters(parameters: req.toDictionary(), encoding: URLEncoding.queryString)
         case .fetchReviewDetail:
             return .requestPlain

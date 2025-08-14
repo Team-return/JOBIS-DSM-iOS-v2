@@ -17,11 +17,11 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public var type: CompanyDetailPreviousViewType = .recruitmentDetail
     private let disposeBag = DisposeBag()
     private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
-    private let fetchReviewListUseCase: FetchReviewListCountUseCase
+    private let fetchReviewListUseCase: FetchReviewListUseCase
 
     init(
         fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
-        fetchReviewListUseCase: FetchReviewListCountUseCase
+        fetchReviewListUseCase: FetchReviewListUseCase
     ) {
         self.fetchCompanyInfoDetailUseCase = fetchCompanyInfoDetailUseCase
         self.fetchReviewListUseCase = fetchReviewListUseCase
@@ -35,12 +35,12 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
     public struct Output {
         let companyDetailInfo: PublishRelay<CompanyInfoDetailEntity>
-        let reviewListPageCount: PublishRelay<Int>
+        let reviewListInfo: PublishRelay<[ReviewEntity]>
     }
 
     public func transform(_ input: Input) -> Output {
         let companyDetailInfo = PublishRelay<CompanyInfoDetailEntity>()
-        let reviewListPageCount = PublishRelay<Int>()
+        let reviewListInfo = PublishRelay<[ReviewEntity]>()
 
         input.viewAppear.asObservable()
             .flatMap {
@@ -53,7 +53,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             .flatMap {
                 self.fetchReviewListUseCase.execute(companyID: self.companyID)
             }
-            .bind(to: reviewListPageCount)
+            .bind(to: reviewListInfo)
             .disposed(by: disposeBag)
 
         input.recruitmentButtonDidTap.asObservable()
@@ -74,7 +74,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
         
         return Output(
             companyDetailInfo: companyDetailInfo,
-            reviewListPageCount: reviewListPageCount
+            reviewListInfo: reviewListInfo
         )
     }
 }

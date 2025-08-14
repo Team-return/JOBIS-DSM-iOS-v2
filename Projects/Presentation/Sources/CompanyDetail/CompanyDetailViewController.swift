@@ -140,6 +140,14 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
             })
             .disposed(by: disposeBag)
 
+        output.reviewListInfo.asObservable()
+            .bind(to: interviewReviewTableView.rx.items(
+                cellIdentifier: InterviewReviewTableViewCell.identifier,
+                cellType: InterviewReviewTableViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() { }
