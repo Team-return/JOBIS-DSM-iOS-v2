@@ -16,5 +16,9 @@ struct ReviewsRepositoryImpl: ReviewsRepository {
         remoteReviewsDataSource.fetchReviewListPageCount(req: req)
             .map { $0.totalPageCount }
     }
- 
+
+    func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailEntity> {
+        remoteReviewsDataSource.fetchReviewDetail(reviewID: reviewID)
+            .map { $0.toDomain() }
+    }
 }

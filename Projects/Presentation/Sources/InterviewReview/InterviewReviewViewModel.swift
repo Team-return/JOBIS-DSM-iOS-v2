@@ -23,12 +23,12 @@ public final class InterviewReviewDetailViewModel: BaseViewModel, Stepper {
     }
 
     public struct Output {
-        let qnaListEntity: PublishRelay<[QnaEntity]>
+        let qnaListEntity: PublishRelay<[QnAEntity]>
         let writerName: String
     }
 
     public func transform(_ input: Input) -> Output {
-        let qnaListEntity = PublishRelay<[QnaEntity]>()
+        let qnaListEntity = PublishRelay<[QnAEntity]>()
 
         input.viewWillAppear.asObservable()
             .flatMap {

@@ -1,10 +1,12 @@
 import Moya
 import Domain
 import AppNetwork
+import Foundation
 
 enum ReviewsAPI {
     case postReview(PostReviewRequestQuery)
-    case reviewListPageCount
+    case fetchReviewListPageCount(ReviewListPageCountRequestQuery)
+    case fetchReviewDetail(reviewID: String)
 }
 
 extension ReviewsAPI: JobisAPI {
@@ -18,14 +20,16 @@ extension ReviewsAPI: JobisAPI {
         switch self {
         case .postReview:
             return ""
-        case .reviewListPageCount:
+        case .fetchReviewListPageCount:
             return "/count"
+        case let .fetchReviewDetail(reviewID):
+            return "/\(reviewID)"
         }
     }
 
-    var method: Method {
+    var method: Moya.Method {
         switch self {
-        case .reviewListPageCount:
+        case .fetchReviewListPageCount, .fetchReviewDetail:
             return .get
         case .postReview:
             return .post
@@ -36,7 +40,9 @@ extension ReviewsAPI: JobisAPI {
         switch self {
         case let .postReview(req):
             return .requestJSONEncodable(req)
-        default:
+        case let .fetchReviewListPageCount(req):
+            return .requestParameters(parameters: req.toDictionary(), encoding: URLEncoding.queryString)
+        case .fetchReviewDetail:
             return .requestPlain
         }
     }
@@ -53,5 +59,15 @@ extension ReviewsAPI: JobisAPI {
         default:
             return [:]
         }
+    }
+}
+
+extension Encodable {
+    func toDictionary() -> [String: Any] {
+        guard let data = try? JSONEncoder().encode(self),
+              let dictionary = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+            return [:]
+        }
+        return dictionary.compactMapValues { $0 }
     }
 }

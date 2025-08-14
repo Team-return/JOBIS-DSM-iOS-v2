@@ -25,7 +25,7 @@ public final class QuestionListDetailStackView: BaseView {
         }
     }
 
-    func setFieldType(_ list: [QnaEntity]) {
+    func setFieldType(_ list: [QnAEntity]) {
         list.forEach { data in
             let attachmentView = QuestionListDetailView().then {
                 $0.configureView(model: data)

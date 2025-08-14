@@ -17,11 +17,11 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
     public var type: CompanyDetailPreviousViewType = .recruitmentDetail
     private let disposeBag = DisposeBag()
     private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
-    private let fetchReviewListUseCase: FetchReviewListUseCase
+    private let fetchReviewListUseCase: FetchReviewListCountUseCase
 
     init(
         fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
-        fetchReviewListUseCase: FetchReviewListUseCase
+        fetchReviewListUseCase: FetchReviewListCountUseCase
     ) {
         self.fetchCompanyInfoDetailUseCase = fetchCompanyInfoDetailUseCase
         self.fetchReviewListUseCase = fetchReviewListUseCase
