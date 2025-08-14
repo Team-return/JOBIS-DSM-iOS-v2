@@ -11,4 +11,10 @@ struct ReviewsRepositoryImpl: ReviewsRepository {
     func postReview(req: PostReviewRequestQuery) -> Completable {
         remoteReviewsDataSource.postReview(req: req)
     }
+
+    func fetchReviewListPageCount(req: Domain.ReviewListPageCountRequestQuery) -> RxSwift.Single<Int> {
+        remoteReviewsDataSource.fetchReviewListPageCount(req: req)
+            .map { $0.totalPageCount }
+    }
+ 
 }

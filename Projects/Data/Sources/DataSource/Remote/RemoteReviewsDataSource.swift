@@ -11,7 +11,7 @@ final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, Remot
         request(.postReview(req))
             .asCompletable()
     }
-    
+
     func fetchReviewListPageCount(req: ReviewListPageCountRequestQuery) -> Single<ReviewListPageCountResponseDTO> {
         request(.reviewListPageCount(req))
             .map(ReviewListPageCountResponseDTO.self)

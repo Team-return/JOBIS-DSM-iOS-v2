@@ -4,9 +4,9 @@ public struct FetchReviewListCountUseCase {
     public init(reviewsRepository: ReviewsRepository) {
         self.reviewsRepository = reviewsRepository
     }
-    
+
     private let reviewsRepository: ReviewsRepository
-    
+
     public func execute(
         location: LocationType? = nil,
         interviewType: InterviewFormat? = nil,
@@ -21,7 +21,7 @@ public struct FetchReviewListCountUseCase {
             year: year,
             jobCode: jobCode
         )
-        
+
         return reviewsRepository.fetchReviewListPageCount(req: request)
     }
 }
