@@ -3,9 +3,8 @@ import Domain
 import AppNetwork
 
 enum ReviewsAPI {
-    case fetchReviewDetail(id: Int)
-    case fetchReviewList(id: Int)
     case postReview(PostReviewRequestQuery)
+    case reviewListPageCount
 }
 
 extension ReviewsAPI: JobisAPI {
@@ -17,22 +16,17 @@ extension ReviewsAPI: JobisAPI {
 
     var urlPath: String {
         switch self {
-        case let .fetchReviewDetail(id):
-            return "/details/\(id)"
-
-        case let .fetchReviewList(id):
-            return "/\(id)"
-
         case .postReview:
             return ""
+        case .reviewListPageCount:
+            return "/count"
         }
     }
 
     var method: Method {
         switch self {
-        case .fetchReviewList, .fetchReviewDetail:
+        case .reviewListPageCount:
             return .get
-
         case .postReview:
             return .post
         }
