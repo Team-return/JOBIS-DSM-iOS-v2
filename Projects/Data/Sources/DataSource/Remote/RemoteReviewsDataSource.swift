@@ -11,6 +11,7 @@ public protocol RemoteReviewsDataSource {
 final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, RemoteReviewsDataSource {
     func postReview(req: PostReviewRequestQuery) -> Completable {
         request(.postReview(req))
+            .filterSuccessfulStatusCodes()
             .asCompletable()
     }
 
@@ -18,12 +19,12 @@ final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, Remot
         request(.fetchReviewListPageCount(req))
             .map(ReviewListPageCountResponseDTO.self)
     }
-    
+
     func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailResponseDTO> {
         request(.fetchReviewDetail(reviewID: reviewID))
             .map(ReviewDetailResponseDTO.self)
     }
-    
+
     func fetchReviewList(req: ReviewListRequestQuery) -> Single<ReviewListResponseDTO> {
         request(.fetchReviewList(req))
             .map(ReviewListResponseDTO.self)

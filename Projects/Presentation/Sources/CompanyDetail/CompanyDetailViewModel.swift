@@ -71,7 +71,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
-        
+
         return Output(
             companyDetailInfo: companyDetailInfo,
             reviewListInfo: reviewListInfo
