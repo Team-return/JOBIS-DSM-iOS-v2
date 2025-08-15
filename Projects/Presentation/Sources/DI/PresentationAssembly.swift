@@ -170,21 +170,21 @@ public final class PresentationAssembly: Assembly {
             RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
 
-        container.register(WritableReviewViewModel.self) { resolver in
-            WritableReviewViewModel(
-                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
-            )
-        }
-
-        container.register(WritableReviewViewController.self) { resolver in
-            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
-        }
-
-        container.register(AddReviewViewModel.self) { resolver in
-            AddReviewViewModel(
-                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
-            )
-        }
+//        container.register(WritableReviewViewModel.self) { resolver in
+//            WritableReviewViewModel(
+//                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
+//            )
+//        }
+//
+//        container.register(WritableReviewViewController.self) { resolver in
+//            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+//        }
+//
+//        container.register(AddReviewViewModel.self) { resolver in
+//            AddReviewViewModel(
+//                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+//            )
+//        }
 
         container.register(NotificationSettingViewModel.self) { resolver in
             NotificationSettingViewModel(

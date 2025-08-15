@@ -95,8 +95,13 @@ public final class UseCaseAssembly: Assembly {
         }
 
         // Reviews
-        container.register(FetchReviewListUseCase.self) { resolver in
-            FetchReviewListUseCase(
+        container.register(PostReviewUseCase.self) { resolver in
+            PostReviewUseCase(
+                reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
+        container.register(FetchReviewListCountUseCase.self) { resolver in
+            FetchReviewListCountUseCase(
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }
@@ -105,8 +110,8 @@ public final class UseCaseAssembly: Assembly {
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }
-        container.register(PostReviewUseCase.self) { resolver in
-            PostReviewUseCase(
+        container.register(FetchReviewListUseCase.self) { resolver in
+            FetchReviewListUseCase(
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }

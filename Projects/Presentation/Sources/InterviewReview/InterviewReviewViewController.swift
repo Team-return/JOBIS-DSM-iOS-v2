@@ -76,13 +76,12 @@ public final class InterviewReviewDetailViewController: BaseViewController<Inter
 
         let output = viewModel.transform(input)
 
-        output.qnaListEntity.asObservable()
-            .bind {
-                self.questionListDetailStackView.setFieldType($0)
+        output.reviewDetailEntity.asObservable()
+            .bind { [weak self] reviewDetail in
+                self?.pageTitleLabel.text = "\(reviewDetail.writer)님의 면접 후기"
+                self?.questionListDetailStackView.setFieldType(reviewDetail.qnAs)
             }
             .disposed(by: disposeBag)
-
-        self.pageTitleLabel.text = "\(output.writerName)님의 면접 후기"
     }
 
     public override func configureViewController() {

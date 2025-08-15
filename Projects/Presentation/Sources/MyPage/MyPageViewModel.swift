@@ -70,10 +70,10 @@ public final class MyPageViewModel: BaseViewModel, Stepper {
             .bind(to: writableReviewList)
             .disposed(by: disposeBag)
 
-        input.reviewNavigate.asObservable()
-            .map { MyPageStep.writableReviewIsRequired($0) }
-            .bind(to: steps)
-            .disposed(by: disposeBag)
+//        input.reviewNavigate.asObservable()
+//            .map { MyPageStep.writableReviewIsRequired($0) }
+//            .bind(to: steps)
+//            .disposed(by: disposeBag)
 
         input.selectedImage
             .flatMapLatest { [weak self] file -> Observable<String?> in

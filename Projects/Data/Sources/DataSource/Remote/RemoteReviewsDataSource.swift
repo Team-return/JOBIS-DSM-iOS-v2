@@ -1,27 +1,32 @@
 import RxSwift
 import Domain
 
-protocol RemoteReviewsDataSource {
-    func fetchReviewDetail(id: Int) -> Single<[QnaEntity]>
-    func fetchReviewList(id: Int) -> Single<[ReviewEntity]>
+public protocol RemoteReviewsDataSource {
     func postReview(req: PostReviewRequestQuery) -> Completable
+    func fetchReviewListPageCount(req: ReviewListPageCountRequestQuery) -> Single<ReviewListPageCountResponseDTO>
+    func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailResponseDTO>
+    func fetchReviewList(req: ReviewListRequestQuery) -> Single<ReviewListResponseDTO>
 }
 
 final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, RemoteReviewsDataSource {
-    func fetchReviewDetail(id: Int) -> Single<[QnaEntity]> {
-        request(.fetchReviewDetail(id: id))
-            .map(ReviewDetailResponseDTO.self)
-            .map { $0.toDomain()}
-    }
-
-    func fetchReviewList(id: Int) -> Single<[ReviewEntity]> {
-        request(.fetchReviewList(id: id))
-            .map(ReviewListResponseDTO.self)
-            .map { $0.toDomain() }
-    }
-
     func postReview(req: PostReviewRequestQuery) -> Completable {
         request(.postReview(req))
+            .filterSuccessfulStatusCodes()
             .asCompletable()
+    }
+
+    func fetchReviewListPageCount(req: ReviewListPageCountRequestQuery) -> Single<ReviewListPageCountResponseDTO> {
+        request(.fetchReviewListPageCount(req))
+            .map(ReviewListPageCountResponseDTO.self)
+    }
+
+    func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailResponseDTO> {
+        request(.fetchReviewDetail(reviewID: reviewID))
+            .map(ReviewDetailResponseDTO.self)
+    }
+
+    func fetchReviewList(req: ReviewListRequestQuery) -> Single<ReviewListResponseDTO> {
+        request(.fetchReviewList(req))
+            .map(ReviewListResponseDTO.self)
     }
 }

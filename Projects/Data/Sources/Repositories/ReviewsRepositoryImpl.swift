@@ -8,15 +8,22 @@ struct ReviewsRepositoryImpl: ReviewsRepository {
         self.remoteReviewsDataSource = remoteReviewsDataSource
     }
 
-    func fetchReviewDetail(id: Int) -> Single<[QnaEntity]> {
-        remoteReviewsDataSource.fetchReviewDetail(id: id)
-    }
-
-    func fetchReviewList(id: Int) -> Single<[ReviewEntity]> {
-        remoteReviewsDataSource.fetchReviewList(id: id)
-    }
-
     func postReview(req: PostReviewRequestQuery) -> Completable {
         remoteReviewsDataSource.postReview(req: req)
+    }
+
+    func fetchReviewListPageCount(req: Domain.ReviewListPageCountRequestQuery) -> RxSwift.Single<Int> {
+        remoteReviewsDataSource.fetchReviewListPageCount(req: req)
+            .map { $0.totalPageCount }
+    }
+
+    func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailEntity> {
+        remoteReviewsDataSource.fetchReviewDetail(reviewID: reviewID)
+            .map { $0.toDomain() }
+    }
+    
+    func fetchReviewList(req: ReviewListRequestQuery) -> Single<[ReviewEntity]> {
+        remoteReviewsDataSource.fetchReviewList(req: req)
+            .map { $0.toDomain() }
     }
 }

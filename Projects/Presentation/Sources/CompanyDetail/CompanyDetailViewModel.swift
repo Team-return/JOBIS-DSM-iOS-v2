@@ -51,7 +51,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
 
         input.viewAppear.asObservable()
             .flatMap {
-                self.fetchReviewListUseCase.execute(id: self.companyID ?? 0)
+                self.fetchReviewListUseCase.execute(companyID: self.companyID)
             }
             .bind(to: reviewListInfo)
             .disposed(by: disposeBag)
@@ -71,6 +71,7 @@ public final class CompanyDetailViewModel: BaseViewModel, Stepper {
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
+
         return Output(
             companyDetailInfo: companyDetailInfo,
             reviewListInfo: reviewListInfo

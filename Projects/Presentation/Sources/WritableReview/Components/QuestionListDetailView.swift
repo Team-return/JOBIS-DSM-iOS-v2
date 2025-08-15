@@ -144,10 +144,10 @@ final class QuestionListDetailView: BaseView {
         }
     }
 
-    func configureView(model: QnaEntity) {
+    func configureView(model: QnAEntity) {
         super.configureView()
         questionLabel.text = model.question
-        codeLabel.text = model.area
+        codeLabel.text = ""
         answerLabel.text = model.answer
         self.rx.tapGesture()
             .when(.recognized)
