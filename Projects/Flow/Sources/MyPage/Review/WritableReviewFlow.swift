@@ -24,8 +24,8 @@ public final class WritableReviewFlow: Flow {
         case .writableReviewIsRequired:
             return navigateToWritableReview()
 
-//        case .addReviewIsRequired:
-//            return navigateToAddReview()
+        case .addReviewIsRequired:
+            return navigateToAddReview()
 
         case .popToMyPage:
             return popToMyPage()
@@ -41,33 +41,33 @@ private extension WritableReviewFlow {
         ))
     }
 
-//    func navigateToAddReview() -> FlowContributors {
-//        let addReviewFlow = AddReviewFlow(container: container)
-//        Flows.use(addReviewFlow, when: .created) { root in
-//            let view = root as? AddReviewViewController
-//            view?.dismiss = { question, answer, techCode in
-//                self.rootViewController.viewModel.techCode = techCode.code
-//                self.rootViewController.viewModel.interviewReviewInfo.accept(
-//                    QnAEntity(
-//                        question: question,
-//                        answer: answer,
-//                        area: techCode.keyword
-//                    )
-//                )
-//            }
-//            self.rootViewController.present(
-//                root,
-//                animated: false
-//            )
-//        }
-//
-//        return .one(flowContributor: .contribute(
-//            withNextPresentable: addReviewFlow,
-//            withNextStepper: OneStepper(
-//                withSingleStep: AddReviewStep.addReviewIsRequired
-//            )
-//        ))
-//    }
+    func navigateToAddReview() -> FlowContributors {
+        let addReviewFlow = AddReviewFlow(container: container)
+        Flows.use(addReviewFlow, when: .created) { root in
+            let view = root as? AddReviewViewController
+            view?.dismiss = { question, answer, techCode in
+                self.rootViewController.viewModel.jobCode = techCode.code
+                self.rootViewController.viewModel.interviewReviewInfo.accept(
+                    QnAEntity(
+                        id: techCode.code,
+                        question: question,
+                        answer: answer
+                    )
+                )
+            }
+            self.rootViewController.present(
+                root,
+                animated: false
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: addReviewFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: AddReviewStep.addReviewIsRequired
+            )
+        ))
+    }
 
     func popToMyPage() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
