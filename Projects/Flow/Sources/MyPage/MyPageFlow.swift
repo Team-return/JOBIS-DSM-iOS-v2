@@ -25,8 +25,8 @@ public final class MyPageFlow: Flow {
         case .tabsIsRequired:
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
 
-//        case let .writableReviewIsRequired(id):
-//            return navigateToWritableReview
+        case let .writableReviewIsRequired(id):
+            return navigateToWritableReview()
 
         case .notificationSettingIsRequired:
             return navigateToNotification()
@@ -65,21 +65,21 @@ extension MyPageFlow {
         ))
     }
 
-//    func navigateToWritableReview -> FlowContributors {
-//        let writableReviewFlow = WritableReviewFlow(container: container)
-//
-//        Flows.use(writableReviewFlow, when: .created) { (root) in
-//            let view = root as? WritableReviewViewController
-//            self.rootViewController.pushViewController(
-//                view!, animated: true
-//            )
-//        }
-//
-//        return .one(flowContributor: .contribute(
-//            withNextPresentable: writableReviewFlow,
-//            withNextStepper: OneStepper(withSingleStep: WritableReviewStep.writableReviewIsRequired)
-//        ))
-//    }
+    func navigateToWritableReview() -> FlowContributors {
+        let writableReviewFlow = WritableReviewFlow(container: container)
+
+        Flows.use(writableReviewFlow, when: .created) { (root) in
+            let view = root as? WritableReviewViewController
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: writableReviewFlow,
+            withNextStepper: OneStepper(withSingleStep: WritableReviewStep.writableReviewIsRequired)
+        ))
+    }
 
     func navigateToNotification() -> FlowContributors {
         let notificationSettingFlow = NotificationSettingFlow(container: container)
