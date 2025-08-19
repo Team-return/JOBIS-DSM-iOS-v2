@@ -1,5 +1,5 @@
 import RxFlow
 
-public enum ReviewStep : Step {
+public enum ReviewStep: Step {
     case reviewIsRequired
 }
