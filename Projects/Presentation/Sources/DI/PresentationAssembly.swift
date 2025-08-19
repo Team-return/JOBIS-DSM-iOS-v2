@@ -41,6 +41,13 @@ public final class PresentationAssembly: Assembly {
             )
         }
 
+        container.register(ReviewViewController.self) { resolver in
+            ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
+        }
+        container.register(ReviewViewModel.self) { resolver in
+            ReviewViewModel()
+        }
+
         container.register(BookmarkViewController.self) { resolver in
             BookmarkViewController(resolver.resolve(BookmarkViewModel.self)!)
         }
