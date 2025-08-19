@@ -33,12 +33,18 @@ public final class PresentationAssembly: Assembly {
         container.register(RecruitmentViewController.self) { resolver in
             RecruitmentViewController(resolver.resolve(RecruitmentViewModel.self)!)
         }
-
         container.register(RecruitmentViewModel.self) { resolver in
             RecruitmentViewModel(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
+        }
+
+        container.register(ReviewViewController.self) { resolver in
+            ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
+        }
+        container.register(ReviewViewModel.self) { resolver in
+            ReviewViewModel()
         }
 
         container.register(BookmarkViewController.self) { resolver in
@@ -369,7 +375,7 @@ public final class PresentationAssembly: Assembly {
                 classNumber: classNumber
             )
         }
-        
+
         container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int) in
             ClassEmploymentViewModel(
                 fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,

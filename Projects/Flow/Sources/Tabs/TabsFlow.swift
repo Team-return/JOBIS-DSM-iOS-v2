@@ -33,18 +33,21 @@ private extension TabsFlow {
     private func navigateToTabs() -> FlowContributors {
         let homeFlow = HomeFlow(container: container)
         let recruitmentFlow = RecruitmentFlow(container: container)
+        let reviewFlow = ReviewFlow(container: container)
         let bookmarkFlow = BookmarkFlow(container: container)
         let myPageFlow = MyPageFlow(container: container)
 
         Flows.use(
             homeFlow,
             recruitmentFlow,
+            reviewFlow,
             bookmarkFlow,
             myPageFlow,
             when: .created
-        ) { [weak self] home, recruitment, bookmark, mypage in
+        ) { [weak self] home, recruitment, review, bookmark, mypage in
             home.tabBarItem = JobisTabBarItem(.home)
             recruitment.tabBarItem = JobisTabBarItem(.recruitment)
+            review.tabBarItem = JobisTabBarItem(.review)
             bookmark.tabBarItem = JobisTabBarItem(.bookmark)
             mypage.tabBarItem = JobisTabBarItem(.myPage)
 
@@ -52,6 +55,7 @@ private extension TabsFlow {
                 [
                     home,
                     recruitment,
+                    review,
                     bookmark,
                     mypage
                 ],
@@ -67,6 +71,10 @@ private extension TabsFlow {
             .contribute(
                 withNextPresentable: recruitmentFlow,
                 withNextStepper: OneStepper(withSingleStep: RecruitmentStep.recruitmentIsRequired)
+            ),
+            .contribute(
+                withNextPresentable: reviewFlow,
+                withNextStepper: OneStepper(withSingleStep: ReviewStep.reviewIsRequired)
             ),
             .contribute(
                 withNextPresentable: bookmarkFlow,
