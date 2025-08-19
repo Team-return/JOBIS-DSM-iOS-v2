@@ -3,12 +3,14 @@ import Foundation
 public enum ApplicationStatusType: String, Codable {
     case requested = "REQUESTED"
     case approved = "APPROVED"
+    case send = "SEND"
     case failed = "FAILED"
     case pass = "PASS"
     case rejected = "REJECTED"
     case fieldTrain = "FIELD_TRAIN"
-    case send = "SEND"
     case acceptance = "ACCEPTANCE"
+    case docFailed = "DOC_FAILED"
+    case processing = "PROCESSING"
 
     public func localizedString() -> String {
         switch self {
@@ -35,6 +37,12 @@ public enum ApplicationStatusType: String, Codable {
 
         case .acceptance:
             return "근로계약"
+
+        case .docFailed:
+            return "서류 탈락"
+
+        case .processing:
+            return "진행중"
         }
     }
 }
