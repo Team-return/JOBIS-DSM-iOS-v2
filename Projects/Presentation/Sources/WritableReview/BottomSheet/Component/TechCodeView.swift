@@ -13,7 +13,7 @@ public final class TechCodeView: BaseView {
 
     private let techCodeTitleLabel = UILabel().then {
         $0.setJobisText(
-            "기술 스택",
+            "지원 직무",
             font: .subBody,
             color: .GrayScale.gray60
         )
