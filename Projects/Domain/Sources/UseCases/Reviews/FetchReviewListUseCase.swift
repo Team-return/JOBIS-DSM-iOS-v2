@@ -14,7 +14,9 @@ public struct FetchReviewListUseCase {
         companyID: Int? = nil,
         keyword: String? = nil,
         year: Int? = nil,
-        jobCode: Int? = nil
+        jobCode: Int? = nil,
+        companyName: String? = nil,
+        writer: String? = nil
     ) -> Single<[ReviewEntity]> {
         let request = ReviewListRequestQuery(
             page: page,
@@ -23,7 +25,9 @@ public struct FetchReviewListUseCase {
             companyID: companyID,
             keyword: keyword,
             year: year,
-            jobCode: jobCode
+            jobCode: jobCode,
+            companyName: companyName,
+            writer: writer
         )
 
         return reviewsRepository.fetchReviewList(req: request)
