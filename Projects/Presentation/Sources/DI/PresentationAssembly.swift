@@ -3,6 +3,7 @@ import Swinject
 import Core
 import Domain
 
+// swiftlint:disable type_body_length
 public final class PresentationAssembly: Assembly {
     public init() {}
 
@@ -44,7 +45,9 @@ public final class PresentationAssembly: Assembly {
             ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
         }
         container.register(ReviewViewModel.self) { resolver in
-            ReviewViewModel()
+            ReviewViewModel(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
         }
 
         container.register(BookmarkViewController.self) { resolver in
@@ -410,3 +413,4 @@ public final class PresentationAssembly: Assembly {
         }
     }
 }
+// swiftlint:disable type_body_length

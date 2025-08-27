@@ -53,9 +53,11 @@ public extension ReviewItemResponseDTO {
     func toDomain() -> ReviewEntity {
         ReviewEntity(
             reviewID: reviewID,
+            companyName: companyName,
+            companyProfileURL: companyLogoURL,
             year: year,
             writer: writer,
-            date: ""
+            major: major
         )
     }
 }
