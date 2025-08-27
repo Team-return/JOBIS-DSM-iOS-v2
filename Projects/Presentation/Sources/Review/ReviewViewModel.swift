@@ -22,6 +22,8 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         var pageChange: Observable<WillDisplayCellEvent>
+        let searchButtonDidTap: Signal<Void>
+        let filterButtonDidTap: Signal<Void>
     }
     public struct Output {
         var reviewData = BehaviorRelay<[ReviewEntity]>(value: [])
@@ -41,6 +43,13 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
                 self.reviewData.accept(self.reviewData.value + $0)
                 self.pageCount = 1
             })
+            .disposed(by: disposeBag)
+
+        input.searchButtonDidTap.asObservable()
+            .map {
+                ReviewStep.searchReviewIsRequired
+            }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         return Output(reviewData: reviewData)

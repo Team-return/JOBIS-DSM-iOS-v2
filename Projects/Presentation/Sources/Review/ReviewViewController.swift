@@ -37,7 +37,9 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
                     $0.indexPath.row == self.reviewTableView.numberOfRows(
                         inSection: $0.indexPath.section
                     ) - 1
-                }
+                },
+            searchButtonDidTap: searchButton.rx.tap.asSignal(),
+            filterButtonDidTap: filterButton.rx.tap.asSignal()
         )
 
         let output = viewModel.transform(input)

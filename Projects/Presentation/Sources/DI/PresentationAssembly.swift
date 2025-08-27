@@ -308,6 +308,17 @@ public final class PresentationAssembly: Assembly {
             SearchCompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
+        container.register(SearchReviewViewController.self) { resolver in
+            SearchReviewViewController(
+                resolver.resolve(SearchReviewViewModel.self)!
+            )
+        }
+        container.register(SearchReviewViewModel.self) { resolver in
+            SearchReviewViewModel(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
+        }
+
         container.register(RejectReasonViewModel.self) { resolver in
             RejectReasonViewModel(
                 fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
