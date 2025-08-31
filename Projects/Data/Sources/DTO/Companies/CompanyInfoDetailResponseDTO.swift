@@ -9,7 +9,7 @@ struct CompanyInfoDetailResponseDTO: Decodable {
     let mainZipCode, mainAddress, mainAddressDetail: String
     let managerName: String
     let managerPhoneNo: String
-    let email, representativeName , foundedAt: String
+    let email, representativeName, foundedAt: String
     let representativePhoneNo: String?
     let workerNumber: Int
     let take: Double

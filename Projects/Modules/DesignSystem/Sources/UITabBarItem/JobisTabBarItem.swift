@@ -3,6 +3,7 @@ import UIKit
 public enum JobisTabBarType: Int {
     case home = 0
     case recruitment
+    case review
     case bookmark
     case myPage
 }
@@ -17,11 +18,14 @@ private extension JobisTabBarType {
         case .recruitment:
             return ("모집의뢰서", DesignSystemAsset.Icons.recruitmentTab.image, 1)
 
+        case .review:
+            return ("후기", DesignSystemAsset.Icons.reviewTab.image, 2)
+
         case .bookmark:
-            return ("북마크", DesignSystemAsset.Icons.bookmarkTab.image, 2)
+            return ("북마크", DesignSystemAsset.Icons.bookmarkTab.image, 3)
 
         case .myPage:
-            return ("마이페이지", DesignSystemAsset.Icons.mypageTab.image, 3)
+            return ("마이페이지", DesignSystemAsset.Icons.mypageTab.image, 4)
         }
     }
     // swiftlint: enable large_tuple

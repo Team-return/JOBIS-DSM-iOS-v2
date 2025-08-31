@@ -66,7 +66,7 @@ public class BaseTabBarController: UITabBarController,
     }
 
     @objc func panAction(recognizer: UIPanGestureRecognizer) {
-        
+
         let transition = recognizer.translation(in: consoleButton)
 
         if recognizer.state != .ended {
