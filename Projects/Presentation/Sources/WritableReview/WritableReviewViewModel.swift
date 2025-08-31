@@ -13,10 +13,7 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     public var interviewType: InterviewFormat = .individual
     public var location: LocationType = .seoul
     public var interviewerCount = 1
-    
     private let postReviewUseCase: PostReviewUseCase
-    
-    // MARK: - Reactive Properties
     public var interviewReviewInfo = PublishRelay<QnAEntity>()
     public var qnaInfoList = PublishRelay<[QnAEntity]>()
     public var interviewReviewInfoList = BehaviorRelay<[QnaRequestQuery]>(value: [])
@@ -39,15 +36,13 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     }
 
     public func transform(_ input: Input) -> Output {
-        // 질문 추가 버튼 탭 처리
         input.addQuestionButtonDidTap.asObservable()
             .map {
-                WritableReviewStep.popToMyPage
+                WritableReviewStep.addReviewIsRequired
             }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
-        // 새로운 QnA 추가 처리
         self.interviewReviewInfo.asObservable()
             .subscribe(onNext: { qnaEntity in
                 self.qnaInfoList.accept([qnaEntity])
@@ -62,7 +57,6 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             })
             .disposed(by: disposeBag)
 
-        // 후기 작성 완료 버튼 탭 처리
         input.writableReviewButtonDidTap.asObservable()
             .flatMap {
                 self.postReviewUseCase.execute(req: PostReviewRequestQuery(
@@ -72,24 +66,21 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
                     jobCode: self.jobCode,
                     interviewerCount: self.interviewerCount,
                     qnas: self.interviewReviewInfoList.value,
-                    question: "", // 필요에 따라 값 설정
-                    answer: ""    // 필요에 따라 값 설정
+                    question: "",
+                    answer: ""
                 ))
             }
             .subscribe(
                 onNext: { _ in
-                    // 성공 처리
                 },
                 onError: { error in
-                    // 에러 처리
                     print("Review post failed: \(error)")
                 }
             )
             .disposed(by: disposeBag)
 
-        // 완료 후 이전 페이지로 이동
         input.writableReviewButtonDidTap.asObservable()
-            .map { _ in WritableReviewStep.popToMyPage }
+            .map { _ in WritableReviewStep.addReviewIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

@@ -7,17 +7,17 @@ import Core
 import DesignSystem
 import Domain
 
-class AddReviewView: BaseView {
+class AreaReviewView: BaseView {
     private let disposeBag = DisposeBag()
     public let nextButtonDidTap = PublishRelay<Void>()
-    public let selectedFormat = BehaviorRelay<InterviewFormat?>(value: nil)
+    public let selectedLocation = BehaviorRelay<LocationType?>(value: nil)
 
-    private let interviewFormats: [InterviewFormat] = [.individual, .group, .other]
+    private let locationFormats: [LocationType] = [.daejeon, .seoul, .gyeonggi, .other]
     private var selectedIndexPath: IndexPath?
 
     private let addReviewTitleLabel = UILabel().then {
         $0.setJobisText(
-            "면접 구분",
+            "면접 지역",
             font: .headLine,
             color: .GrayScale.gray60
         )
@@ -63,7 +63,7 @@ class AddReviewView: BaseView {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(32)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(181)
+            $0.height.equalTo(240)
         }
 
         nextButton.snp.makeConstraints {
@@ -80,9 +80,9 @@ class AddReviewView: BaseView {
     }
 }
 
-extension AddReviewView: UICollectionViewDataSource {
+extension AreaReviewView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return interviewFormats.count
+        return locationFormats.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -93,15 +93,15 @@ extension AddReviewView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        let format = interviewFormats[indexPath.item]
-        cell.adapt(format: format)
+        let location = locationFormats[indexPath.item]
+        cell.adapt(location: location)
         cell.isCheck = selectedIndexPath == indexPath
 
         return cell
     }
 }
 
-extension AddReviewView: UICollectionViewDelegate {
+extension AreaReviewView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let previousIndexPath = selectedIndexPath {
             if let previousCell = collectionView.cellForItem(at: previousIndexPath) as? InterviewFormatCollectionViewCell {
@@ -114,16 +114,14 @@ extension AddReviewView: UICollectionViewDelegate {
             cell.isCheck = true
         }
 
-        let selectedFormat = interviewFormats[indexPath.item]
-        self.selectedFormat.accept(selectedFormat)
-
+        let selectedLocationValue = locationFormats[indexPath.item]
+        self.selectedLocation.accept(selectedLocationValue)
         nextButton.isEnabled = true
     }
 }
 
-extension AddReviewView: UICollectionViewDelegateFlowLayout {
+extension AreaReviewView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
         let collectionViewWidth = collectionView.bounds.width
         let cellWidth = collectionViewWidth > 0 ? collectionViewWidth : UIScreen.main.bounds.width - 48
         return CGSize(width: cellWidth, height: 51)
