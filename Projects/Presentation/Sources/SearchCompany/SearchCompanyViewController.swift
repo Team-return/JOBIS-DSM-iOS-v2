@@ -12,7 +12,7 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
         $0.setEmptyView(
-            title: "검색어와 관련 된 회사를 못찾았어요",
+            title: "검색어와 관련된 회사를 못찾았어요",
             subTitle: "제대로 입력했는지 다시 한번 확인해주세요"
         )
     }
