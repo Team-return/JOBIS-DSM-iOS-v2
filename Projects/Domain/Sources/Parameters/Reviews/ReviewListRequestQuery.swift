@@ -8,6 +8,8 @@ public struct ReviewListRequestQuery: Encodable {
     public let keyword: String?
     public let year: Int?
     public let jobCode: Int?
+    public let companyName: String?
+    public let writer: String?
 
     public init(
         page: Int? = nil,
@@ -16,7 +18,9 @@ public struct ReviewListRequestQuery: Encodable {
         companyID: Int? = nil,
         keyword: String? = nil,
         year: Int? = nil,
-        jobCode: Int? = nil
+        jobCode: Int? = nil,
+        companyName: String? = nil,
+        writer: String? = nil
     ) {
         self.page = page
         self.location = location
@@ -25,6 +29,8 @@ public struct ReviewListRequestQuery: Encodable {
         self.keyword = keyword
         self.year = year
         self.jobCode = jobCode
+        self.companyName = companyName
+        self.writer = writer
     }
 
     enum CodingKeys: String, CodingKey {
@@ -35,5 +41,7 @@ public struct ReviewListRequestQuery: Encodable {
         case keyword
         case year
         case jobCode = "job_code"
+        case companyName = "company_name"
+        case writer
     }
 }

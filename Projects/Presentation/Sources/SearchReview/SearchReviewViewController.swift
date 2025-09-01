@@ -7,12 +7,12 @@ import Then
 import Core
 import DesignSystem
 
-public final class SearchCompanyViewController: BaseViewController<SearchCompanyViewModel> {
+public final class SearchReviewViewController: BaseViewController<SearchReviewViewModel> {
     private let searchButtonDidTap = PublishRelay<String>()
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
         $0.setEmptyView(
-            title: "검색어와 관련된 회사를 못찾았어요",
+            title: "검색어와 관련된 면접 후기를 못찾았어요",
             subTitle: "제대로 입력했는지 다시 한번 확인해주세요"
         )
     }
@@ -34,8 +34,8 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
         $0.rowHeight = 72
         $0.separatorStyle = .none
         $0.register(
-            CompanyTableViewCell.self,
-            forCellReuseIdentifier: CompanyTableViewCell.identifier
+            ReviewTableViewCell.self,
+            forCellReuseIdentifier: ReviewTableViewCell.identifier
         )
         $0.showsVerticalScrollIndicator = false
     }
@@ -74,7 +74,7 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
     }
 
     public override func bind() {
-        let input = SearchCompanyViewModel.Input(
+        let input = SearchReviewViewModel.Input(
             viewAppear: self.viewWillAppearPublisher,
             pageChange: searchTableView.rx.willDisplayCell
                 .filter {
@@ -86,14 +86,14 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
 
         let output = viewModel.transform(input)
 
-        output.companyListInfo
+        output.reviewListInfo
             .skip(1)
             .do(onNext: {
                 self.emptySearchView.isHidden = !$0.isEmpty
             })
             .bind(to: searchTableView.rx.items(
-                cellIdentifier: CompanyTableViewCell.identifier,
-                cellType: CompanyTableViewCell.self
+                cellIdentifier: ReviewTableViewCell.identifier,
+                cellType: ReviewTableViewCell.self
             )) { _, element, cell in
                 cell.adapt(model: element)
             }
@@ -120,7 +120,7 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
     public override func configureNavigation() { }
 }
 
-extension SearchCompanyViewController: UITextFieldDelegate {
+extension SearchReviewViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let title = textField.text
         viewModel.searchText = title
