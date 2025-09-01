@@ -36,18 +36,14 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
     }
     private let emptyQuestionLabel = UILabel().then {
         $0.setJobisText(
-            "현재 입력 된 질문이 없어요",
+            "현재 입력 된 후기가 없어요",
             font: .subBody,
             color: .GrayScale.gray60
         )
     }
     private let questionListDetailStackView = QuestionListDetailStackView()
     private let addQuestionButton = JobisButton(style: .sub).then {
-        $0.setText("질문 추가하기")
-    }
-    private var writableReviewButton = JobisButton(style: .main).then {
-        $0.setText("후기를 작성해주세요")
-        $0.isEnabled = false
+        $0.setText("후기 추가하기")
     }
 
     public override func addView() {
@@ -61,8 +57,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
         [
             pageTitleLabel,
-            scrollView,
-            writableReviewButton
+            scrollView
         ].forEach { view.addSubview($0) }
         scrollView.addSubview(contentView)
         contentView.addSubview(mainStackView)
@@ -85,7 +80,7 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         scrollView.snp.makeConstraints {
             $0.top.equalTo(pageTitleLabel.snp.bottom).offset(20)
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(writableReviewButton.snp.top).inset(-12)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
         }
 
         contentView.snp.makeConstraints {
@@ -96,11 +91,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
         mainStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-        }
-
-        writableReviewButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
-            $0.leading.trailing.equalToSuperview().inset(24)
         }
     }
 
@@ -124,8 +114,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
                 self.emptyQuestionListView.isHidden = !$0.isEmpty
                 if !$0.isEmpty {
                     self.showJobisToast(text: "질문이 추가되었어요!", inset: 92)
-                    self.writableReviewButton.isEnabled = true
-                    self.writableReviewButton.setText("작성 완료")
                 }
             })
             .disposed(by: disposeBag)
@@ -141,12 +129,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         addQuestionButton.rx.tap.asObservable()
             .subscribe(onNext: {
                 self.addQuestionButtonDidTap.accept(())
-            })
-            .disposed(by: disposeBag)
-
-        writableReviewButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                self.writableReviewButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }
