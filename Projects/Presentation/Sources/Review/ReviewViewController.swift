@@ -29,6 +29,21 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
 
+    public override func addView() {
+        self.view.addSubview(reviewTableView)
+        reviewTableView.addSubview(listEmptyView)
+    }
+
+    public override func setLayout() {
+        reviewTableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        listEmptyView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(80)
+        }
+    }
+
     public override func bind() {
         let input = ReviewViewModel.Input(
             viewAppear: self.viewDidLoadPublisher,
@@ -59,24 +74,22 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
                 .disposed(by: disposeBag)
     }
 
-    public override func addView() {
-        self.view.addSubview(reviewTableView)
-        reviewTableView.addSubview(listEmptyView)
-    }
+    public override func configureViewController() {
+        viewWillAppearPublisher.asObservable()
+            .bind {
+                self.showTabbar()
+                self.setLargeTitle(title: "후기")
+            }
+            .disposed(by: disposeBag)
 
-    public override func setLayout() {
-        reviewTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        listEmptyView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(80)
-        }
+        viewWillDisappearPublisher.asObservable()
+            .bind {
+                self.setSmallTitle(title: "")
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
-        self.setLargeTitle(title: "후기")
-
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: searchButton),
             UIBarButtonItem(customView: filterButton)
