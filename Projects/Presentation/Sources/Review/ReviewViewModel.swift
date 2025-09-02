@@ -49,7 +49,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
         input.reviewTableViewDidTap.asObservable()
             .map {
                 ReviewStep.reviewDetailIsRequired(
-                    reviewId: $0
+                    reviewId: String($0)
                 )
             }
             .bind(to: steps)

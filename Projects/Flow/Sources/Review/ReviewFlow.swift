@@ -45,7 +45,7 @@ private extension ReviewFlow {
         ))
     }
 
-    func navigateToReviewDetail(_ reviewID: Int) -> FlowContributors {
+    func navigateToReviewDetail(_ reviewID: String) -> FlowContributors {
         let reviewDetailFlow = ReviewDetailFlow(container: container)
 
         Flows.use(reviewDetailFlow, when: .created) { (root) in

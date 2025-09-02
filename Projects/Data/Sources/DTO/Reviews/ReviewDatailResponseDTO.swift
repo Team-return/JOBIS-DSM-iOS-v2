@@ -7,8 +7,8 @@ public struct ReviewDetailResponseDTO: Decodable {
     public let writer: String
     public let year: Int
     public let major: String
-    public let type: String
-    public let location: String
+    public let type: InterviewFormat
+    public let location: LocationType
     public let interviewerCount: Int
     public let qnAs: [QnAResponseDTO]
     public let question: String
@@ -20,8 +20,8 @@ public struct ReviewDetailResponseDTO: Decodable {
         writer: String,
         year: Int,
         major: String,
-        type: String,
-        location: String,
+        type: InterviewFormat,
+        location: LocationType,
         interviewerCount: Int,
         qnAs: [QnAResponseDTO],
         question: String,
@@ -75,8 +75,8 @@ public extension ReviewDetailResponseDTO {
             writer: writer,
             year: year,
             major: major,
-            type: type,
-            location: location,
+            type: InterviewFormat(rawValue: type.rawValue)!,
+            location: LocationType(rawValue: location.rawValue)!,
             interviewerCount: interviewerCount,
             qnAs: qnAs.map { $0.toDomain() },
             question: question,
