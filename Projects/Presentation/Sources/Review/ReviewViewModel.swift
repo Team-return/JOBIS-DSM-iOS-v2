@@ -22,6 +22,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewAppear: PublishRelay<Void>
         var pageChange: Observable<WillDisplayCellEvent>
+        let reviewTableViewDidTap: Observable<Int>
         let searchButtonDidTap: Signal<Void>
         let filterButtonDidTap: Signal<Void>
     }
@@ -43,6 +44,15 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
                 self.reviewData.accept(self.reviewData.value + $0)
                 self.pageCount = 1
             })
+            .disposed(by: disposeBag)
+
+        input.reviewTableViewDidTap.asObservable()
+            .map {
+                ReviewStep.reviewDetailIsRequired(
+                    reviewId: $0
+                )
+            }
+            .bind(to: steps)
             .disposed(by: disposeBag)
 
         input.searchButtonDidTap.asObservable()
