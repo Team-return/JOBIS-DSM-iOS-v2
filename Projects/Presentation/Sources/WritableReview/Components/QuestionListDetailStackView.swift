@@ -26,11 +26,16 @@ public final class QuestionListDetailStackView: BaseView {
     }
 
     func setFieldType(_ list: [QnAEntity]) {
+        backStackView.arrangedSubviews.forEach { view in
+            backStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
         list.forEach { data in
             let attachmentView = QuestionListDetailView().then {
                 $0.configureView(model: data)
             }
-            self.backStackView.addArrangedSubview(attachmentView)
+            backStackView.addArrangedSubview(attachmentView)
         }
     }
 }
