@@ -103,6 +103,16 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
 
+        // Review Filter
+        container.register(ReviewFilterViewController.self) { resolver in
+            ReviewFilterViewController(
+                resolver.resolve(ReviewFilterViewModel.self)!
+            )
+        }
+        container.register(ReviewFilterViewModel.self) { resolver in
+            ReviewFilterViewModel()
+        }
+
         // Apply
         container.register(ApplyViewModel.self) { resolver in
             ApplyViewModel(
