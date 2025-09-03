@@ -7,7 +7,7 @@ public struct ReviewListRequestQuery: Encodable {
     public let companyID: Int?
     public let keyword: String?
     public let year: Int?
-    public let jobCode: Int?
+    public let jobCode: String?
     public let companyName: String?
     public let writer: String?
 
@@ -18,7 +18,7 @@ public struct ReviewListRequestQuery: Encodable {
         companyID: Int? = nil,
         keyword: String? = nil,
         year: Int? = nil,
-        jobCode: Int? = nil,
+        jobCode: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
     ) {
