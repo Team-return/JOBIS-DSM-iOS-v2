@@ -83,7 +83,7 @@ class ReviewTechStackView: UIStackView {
             techStackViewCell.adapt(model: data)
             techStackViewCell.techCheckBoxDidTap = { [weak self] code in
                 guard let self = self else { return }
-                let tappedCell = techStackViewCell // strong 참조
+                let tappedCell = techStackViewCell
                 if self.selectedCell != tappedCell {
                     self.selectedCell?.isCheck = false
                     tappedCell.isCheck = true

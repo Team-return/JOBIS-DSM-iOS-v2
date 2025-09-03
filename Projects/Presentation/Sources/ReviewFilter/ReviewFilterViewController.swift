@@ -275,6 +275,12 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
                 self?.handleYearSelection(at: indexPath)
             })
             .disposed(by: disposeBag)
+
+        filterApplyButton.rx.tap.asObservable()
+            .subscribe(onNext: {
+                self.filterApplyButtonDidTap.accept(())
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
