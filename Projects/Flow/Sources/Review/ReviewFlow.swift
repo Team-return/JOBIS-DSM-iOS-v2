@@ -22,6 +22,9 @@ public final class ReviewFlow: Flow {
         case .reviewIsRequired:
             return navigateToReview()
 
+        case .reviewDetailIsRequired(let id):
+            return navigateToReviewDetail(id)
+
         case .searchReviewIsRequired:
             return navigateToSearchReview()
         }
@@ -39,6 +42,24 @@ private extension ReviewFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: reviewViewController,
             withNextStepper: reviewViewController.viewModel
+        ))
+    }
+
+    func navigateToReviewDetail(_ reviewID: String) -> FlowContributors {
+        let reviewDetailFlow = ReviewDetailFlow(container: container)
+
+        Flows.use(reviewDetailFlow, when: .created) { [weak self] (view: ReviewDetailViewController) in
+            view.viewModel.reviewID = reviewID
+            view.isPopViewController = { [weak nav = self?.rootViewController] _ in
+                let popView = nav?.topViewController as? ReviewViewController
+                popView?.isTabNavigation = false
+            }
+            self?.rootViewController.pushViewController(view, animated: true)
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: ReviewDetailStep.reviewDetailIsRequired)
         ))
     }
 

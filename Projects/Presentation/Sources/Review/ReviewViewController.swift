@@ -8,6 +8,7 @@ import Core
 import DesignSystem
 
 public final class ReviewViewController: BaseViewController<ReviewViewModel> {
+    public var isTabNavigation: Bool = true
     private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
         $0.setEmptyView(title: "아직 등록된 후기가 없어요")
@@ -53,6 +54,16 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
                         inSection: $0.indexPath.section
                     ) - 1
                 },
+            reviewTableViewDidTap: reviewTableView.rx
+                .modelSelected(ReviewEntity.self)
+                .asObservable()
+                .map { $0.reviewID }
+                .do(onNext: { _ in
+                    self.isTabNavigation = false
+                    if let indexPath = self.reviewTableView.indexPathForSelectedRow {
+                        self.reviewTableView.deselectRow(at: indexPath, animated: true)
+                    }
+                }),
             searchButtonDidTap: searchButton.rx.tap.asSignal(),
             filterButtonDidTap: filterButton.rx.tap.asSignal()
         )

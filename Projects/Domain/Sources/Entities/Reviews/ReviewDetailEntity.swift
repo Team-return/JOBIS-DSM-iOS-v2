@@ -6,8 +6,8 @@ public struct ReviewDetailEntity: Equatable, Hashable {
     public let writer: String
     public let year: Int
     public let major: String
-    public let type: String
-    public let location: String
+    public let type: InterviewFormat
+    public let location: LocationType
     public let interviewerCount: Int
     public let qnAs: [QnAEntity]
     public let question: String
@@ -19,8 +19,8 @@ public struct ReviewDetailEntity: Equatable, Hashable {
         writer: String,
         year: Int,
         major: String,
-        type: String,
-        location: String,
+        type: InterviewFormat,
+        location: LocationType,
         interviewerCount: Int,
         qnAs: [QnAEntity],
         question: String,

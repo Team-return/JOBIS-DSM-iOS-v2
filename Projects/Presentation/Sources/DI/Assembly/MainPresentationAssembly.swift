@@ -69,6 +69,40 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
 
+        // Review List
+        container.register(ReviewViewController.self) { resolver in
+            ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
+        }
+        container.register(ReviewViewModel.self) { resolver in
+            ReviewViewModel(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
+        }
+
+        // Review Detail
+        container.register(ReviewDetailViewController.self) { resolver in
+            ReviewDetailViewController(
+                resolver.resolve(ReviewDetailViewModel.self)!
+            )
+        }
+        container.register(ReviewDetailViewModel.self) { resolver in
+            ReviewDetailViewModel(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+            )
+        }
+
+        // Search Review List
+        container.register(SearchReviewViewController.self) { resolver in
+            SearchReviewViewController(
+                resolver.resolve(SearchReviewViewModel.self)!
+            )
+        }
+        container.register(SearchReviewViewModel.self) { resolver in
+            SearchReviewViewModel(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
+        }
+
         // Apply
         container.register(ApplyViewModel.self) { resolver in
             ApplyViewModel(

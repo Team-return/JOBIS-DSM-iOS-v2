@@ -104,13 +104,13 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
 private extension ApplicationStatusType {
     func toUIColor() -> UIColor {
         switch self {
-        case .failed, .rejected:
+        case .failed, .rejected, .docFailed:
             return .Sub.red20
 
         case .requested, .approved:
             return .Sub.yellow20
 
-        case .send:
+        case .send, .processing:
             return .Sub.skyBlue20
 
         case .acceptance, .pass, .fieldTrain:
