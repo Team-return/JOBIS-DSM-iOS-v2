@@ -110,7 +110,9 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
         container.register(ReviewFilterViewModel.self) { resolver in
-            ReviewFilterViewModel()
+            ReviewFilterViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
         }
 
         // Apply
