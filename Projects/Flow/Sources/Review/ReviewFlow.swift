@@ -25,6 +25,9 @@ public final class ReviewFlow: Flow {
         case .reviewDetailIsRequired(let id):
             return navigateToReviewDetail(id)
 
+        case .reviewFilterIsRequired:
+            return navigateToReviewFilter()
+
         case .searchReviewIsRequired:
             return navigateToSearchReview()
         }
@@ -76,6 +79,21 @@ private extension ReviewFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: searchReviewFlow,
             withNextStepper: OneStepper(withSingleStep: SearchReviewStep.searchReviewIsRequired)
+        ))
+    }
+
+    func navigateToReviewFilter() -> FlowContributors {
+        let reviewFilterFlow = ReviewFilterFlow(container: container)
+
+        Flows.use(reviewFilterFlow, when: .created) { (root) in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewFilterFlow,
+            withNextStepper: OneStepper(withSingleStep: ReviewFilterStep.reviewFilterIsRequired)
         ))
     }
 }

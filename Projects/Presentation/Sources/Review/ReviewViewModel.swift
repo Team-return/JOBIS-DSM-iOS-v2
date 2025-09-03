@@ -11,7 +11,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
     public var reviewData = BehaviorRelay<[ReviewEntity]>(value: [])
     private let fetchReviewListUseCase: FetchReviewListUseCase
     private var pageCount: Int = 1
-    public var jobCode: Int = 1
+    public var jobCode: String = ""
 
     init(
         fetchReviewListUseCase: FetchReviewListUseCase,
@@ -59,6 +59,11 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
             .map {
                 ReviewStep.searchReviewIsRequired
             }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.filterButtonDidTap.asObservable()
+            .map { _ in ReviewStep.reviewFilterIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

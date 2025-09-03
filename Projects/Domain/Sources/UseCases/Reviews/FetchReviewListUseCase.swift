@@ -14,7 +14,7 @@ public struct FetchReviewListUseCase {
         companyID: Int? = nil,
         keyword: String? = nil,
         year: Int? = nil,
-        jobCode: Int? = nil,
+        jobCode: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
     ) -> Single<[ReviewEntity]> {
