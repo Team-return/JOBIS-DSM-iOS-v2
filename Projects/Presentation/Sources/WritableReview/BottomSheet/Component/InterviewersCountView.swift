@@ -23,5 +23,45 @@ public final class InterviewersCountView: BaseView {
             textFieldType: .none
         )
     }
+    public let nextButton = JobisButton(style: .main).then {
+        $0.setText("다음")
+        $0.isEnabled = false
+    }
+    public let nextButtonDidTap = PublishRelay<Void>()
+    public var countText: String { countTextField.textField.text ?? "" }
 
+    public override func addView() {
+        [
+            addReviewTitleLabel,
+            countTextField,
+            nextButton
+        ].forEach(self.addSubview(_:))
+    }
+
+    public override func setLayout() {
+        addReviewTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(24)
+            $0.leading.equalTo(24)
+        }
+        countTextField.snp.makeConstraints {
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(32)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+        nextButton.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(56)
+        }
+    }
+
+    public override func configureView() {
+        nextButton.rx.tap
+            .bind(to: nextButtonDidTap)
+            .disposed(by: disposeBag)
+
+        countTextField.textField.rx.text.orEmpty
+            .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .bind(to: nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+    }
 }

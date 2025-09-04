@@ -2,6 +2,7 @@ import UIKit
 import Presentation
 import Swinject
 import RxFlow
+import Domain
 import Core
 
 public final class MyPageFlow: Flow {
@@ -26,7 +27,7 @@ public final class MyPageFlow: Flow {
             return .end(forwardToParentFlowWithStep: TabsStep.appIsRequired)
 
         case let .writableReviewIsRequired(id):
-            return navigateToWritableReview()
+            return navigateToWritableReview(id: id)
 
         case .notificationSettingIsRequired:
             return navigateToNotification()
@@ -65,11 +66,18 @@ extension MyPageFlow {
         ))
     }
 
-    func navigateToWritableReview() -> FlowContributors {
+    func navigateToWritableReview(id: Int) -> FlowContributors {
         let writableReviewFlow = WritableReviewFlow(container: container)
 
         Flows.use(writableReviewFlow, when: .created) { (root) in
             let view = root as? WritableReviewViewController
+            view?.viewModel.companyID = id
+            if let useCase = self.container.resolve(FetchCompanyInfoDetailUseCase.self) {
+                _ = useCase.execute(id: id)
+                    .subscribe(onSuccess: { entity in
+                        view?.viewModel.companyName = entity.companyName
+                    }, onFailure: { _ in })
+            }
             self.rootViewController.pushViewController(
                 view!, animated: true
             )

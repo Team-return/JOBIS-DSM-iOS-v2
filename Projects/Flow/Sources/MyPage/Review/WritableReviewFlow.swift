@@ -45,8 +45,11 @@ private extension WritableReviewFlow {
         let addReviewFlow = AddReviewFlow(container: container)
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
+            view?.companyName = self.rootViewController.viewModel.companyName
             view?.dismiss = { (question: String, answer: String, techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
                 self.rootViewController.viewModel.jobCode = techCode.code
+                self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
+                self.rootViewController.viewModel.location = locationType ?? .seoul
                 self.rootViewController.viewModel.interviewReviewInfo.accept(
                     QnAEntity(
                         id: techCode.code,

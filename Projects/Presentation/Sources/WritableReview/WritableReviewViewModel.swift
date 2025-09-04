@@ -9,6 +9,7 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     public var companyID = 0
+    public var companyName: String = ""
     public var jobCode = 0
     public var interviewType: InterviewFormat = .individual
     public var location: LocationType = .seoul
