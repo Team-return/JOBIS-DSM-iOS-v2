@@ -66,7 +66,7 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             forCellWithReuseIdentifier: ReviewMajorCollectionViewCell.identifier
         )
     }
-    
+
     private let interviewSectionView = UIView()
     private let interviewLabel = UILabel().then {
         $0.setJobisText("면접 구분", font: .subHeadLine, color: UIColor.GrayScale.gray70)

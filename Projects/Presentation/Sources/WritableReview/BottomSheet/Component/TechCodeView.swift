@@ -22,7 +22,7 @@ public final class TechCodeView: BaseView {
         $0.image = .jobisIcon(.searchIcon)
     }
     public let searchTextField = UITextField().then {
-        $0.placeholder = "검색어를 입력해주세요"
+        $0.placeholder = "직무를 검색해주세요"
         $0.setPlaceholderColor(.GrayScale.gray60)
         $0.layer.cornerRadius = 12
         $0.backgroundColor = .GrayScale.gray10

@@ -22,6 +22,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     private let addReviewView = AddReviewView()
     private let areaReviewView = AreaReviewView()
     private let techCodeView = TechCodeView()
+    
 
     public override func addView() {
         [
