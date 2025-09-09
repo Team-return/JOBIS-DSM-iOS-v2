@@ -194,7 +194,7 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
                 cellType: ReviewMajorCollectionViewCell.self
             )) { [weak self] index, element, cell in
                 cell.adapt(model: element)
-                cell.isCheck = Int(self?.viewModel.jobCode ?? "") == element.code
+                cell.isCheck = Int(self?.viewModel.code ?? "") == element.code
                 if cell.isCheck {
                     self?.selectedJobIndex = index
                 }

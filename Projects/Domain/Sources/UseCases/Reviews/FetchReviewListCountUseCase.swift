@@ -9,17 +9,17 @@ public struct FetchReviewListCountUseCase {
 
     public func execute(
         location: LocationType? = nil,
-        interviewType: InterviewFormat? = nil,
+        type: InterviewFormat? = nil,
         companyID: Int? = nil,
         year: Int? = nil,
-        jobCode: Int? = nil
+        code: Int? = nil
     ) -> Single<Int> {
         let request = ReviewListPageCountRequestQuery(
             location: location,
-            interviewType: interviewType,
+            type: type,
             companyID: companyID,
             year: year,
-            jobCode: jobCode
+            code: code
         )
 
         return reviewsRepository.fetchReviewListPageCount(req: request)

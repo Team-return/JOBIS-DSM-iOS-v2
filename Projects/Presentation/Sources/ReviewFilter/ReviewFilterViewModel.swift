@@ -9,9 +9,9 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
-    public var jobCode: String = ""
+    public var code: String = ""
     public var year: String = ""
-    public var interviewType: String = ""
+    public var type: String = ""
     public var location: String = ""
 
     init(
@@ -65,7 +65,7 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
 
         input.selectJobsCode.asObservable()
             .bind { [weak self] code in
-                self?.jobCode = String(code.code)
+                self?.code = String(code.code)
             }
             .disposed(by: disposeBag)
 
@@ -77,7 +77,7 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
 
         input.selectInterviewType.asObservable()
             .bind { [weak self] code in
-                self?.interviewType = code.keyword
+                self?.type = code.keyword
             }
             .disposed(by: disposeBag)
 
@@ -90,9 +90,9 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
         input.filterApplyButtonDidTap.asObservable()
             .map {
                 ReviewFilterStep.popToReview(
-                    jobCode: self.jobCode,
+                    code: self.code,
                     year: self.year,
-                    interviewType: self.interviewType,
+                    type: self.type,
                     location: self.location
                 )
             }
