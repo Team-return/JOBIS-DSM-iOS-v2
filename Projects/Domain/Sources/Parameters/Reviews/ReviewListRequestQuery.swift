@@ -2,22 +2,22 @@ import Foundation
 
 public struct ReviewListRequestQuery: Encodable {
     public let page: Int?
-    public let location: LocationType?
-    public let interviewType: InterviewFormat?
+    public let location: String?
+    public let interviewType: String?
     public let companyID: Int?
     public let keyword: String?
-    public let year: Int?
+    public let year: String?
     public let jobCode: String?
     public let companyName: String?
     public let writer: String?
 
     public init(
         page: Int? = nil,
-        location: LocationType? = nil,
-        interviewType: InterviewFormat? = nil,
+        location: String? = nil,
+        interviewType: String? = nil,
         companyID: Int? = nil,
         keyword: String? = nil,
-        year: Int? = nil,
+        year: String? = nil,
         jobCode: String? = nil,
         companyName: String? = nil,
         writer: String? = nil

@@ -9,11 +9,11 @@ public struct FetchReviewListUseCase {
 
     public func execute(
         page: Int? = nil,
-        location: LocationType? = nil,
-        interviewType: InterviewFormat? = nil,
+        location: String? = nil,
+        interviewType: String? = nil,
         companyID: Int? = nil,
         keyword: String? = nil,
-        year: Int? = nil,
+        year: String? = nil,
         jobCode: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
