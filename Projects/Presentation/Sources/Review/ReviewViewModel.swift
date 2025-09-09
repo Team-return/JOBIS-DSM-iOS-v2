@@ -10,8 +10,11 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     public var reviewData = BehaviorRelay<[ReviewEntity]>(value: [])
     private let fetchReviewListUseCase: FetchReviewListUseCase
-    private var pageCount: Int = 1
     public var jobCode: String = ""
+    public var year: String = ""
+    public var interviewType: String = ""
+    public var location: String = ""
+    private var pageCount: Int = 1
 
     init(
         fetchReviewListUseCase: FetchReviewListUseCase,
@@ -36,7 +39,10 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
                 self.pageCount = 1
                 return self.fetchReviewListUseCase.execute(
                     page: self.pageCount,
-                    jobCode: self.jobCode
+                    location: self.location,
+                    interviewType: self.interviewType,
+                    year: self.year,
+                    jobCode: self.jobCode,
                 )
             }
             .bind(onNext: {
@@ -65,6 +71,24 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
         input.filterButtonDidTap.asObservable()
             .map { _ in ReviewStep.reviewFilterIsRequired }
             .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.pageChange.asObservable()
+            .flatMap { _ in
+                self.pageCount += 1
+                return self.fetchReviewListUseCase.execute(
+                    page: self.pageCount,
+                    location: self.location,
+                    interviewType: self.interviewType,
+                    year: self.year,
+                    jobCode: self.jobCode
+                )
+                    .asObservable()
+                    .take(while: {
+                        !$0.isEmpty
+                    })
+            }
+            .bind { self.reviewData.accept(self.reviewData.value + $0) }
             .disposed(by: disposeBag)
 
         return Output(reviewData: reviewData)

@@ -23,8 +23,8 @@ public final class ReviewFilterFlow: Flow {
         case .reviewFilterIsRequired:
             return navigateToReviewFilter()
 
-        case let .popToReview(jobCode):
-            return popToReview(jobCode: jobCode ?? "")
+        case let .popToReview(jobCode, year, interviewType, location):
+            return popToReview(jobCode: jobCode ?? "", year: year, interviewType: interviewType, location: location)
         }
     }
 }
@@ -37,10 +37,13 @@ private extension ReviewFilterFlow {
         ))
     }
 
-    func popToReview(jobCode: String) -> FlowContributors {
+    func popToReview(jobCode: String, year: String?, interviewType: String?, location: String?) -> FlowContributors {
         let reviewPopView = self.rootViewController.navigationController?.viewControllers.first as? ReviewViewController
 
         reviewPopView?.viewModel.jobCode = jobCode
+        reviewPopView?.viewModel.year = year ?? ""
+        reviewPopView?.viewModel.interviewType = interviewType ?? ""
+        reviewPopView?.viewModel.location = location ?? ""
 
         self.rootViewController.navigationController?.popViewController(animated: true)
 
