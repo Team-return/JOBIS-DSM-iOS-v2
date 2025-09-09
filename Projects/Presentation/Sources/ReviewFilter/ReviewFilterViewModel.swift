@@ -9,8 +9,10 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
-    public var jobCode: String = ""
-    public var selectedYear: String = ""
+    public var code: String = ""
+    public var year: String = ""
+    public var type: String = ""
+    public var location: String = ""
 
     init(
         fetchCodeListUseCase: FetchCodeListUseCase
@@ -22,6 +24,8 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
         let viewWillAppear: PublishRelay<Void>
         let selectJobsCode: Observable<CodeEntity>
         let selectYear: Observable<String>
+        let selectInterviewType: Observable<CodeEntity>
+        let selectLocation: Observable<CodeEntity>
         let filterApplyButtonDidTap: PublishRelay<Void>
     }
     public struct Output {
@@ -43,43 +47,53 @@ public final class ReviewFilterViewModel: BaseViewModel, Stepper {
 
         input.viewWillAppear.asObservable()
             .map { _ in
-                [
-                    CodeEntity(code: 1, keyword: "개인 면접"),
-                    CodeEntity(code: 2, keyword: "단체 면접"),
-                    CodeEntity(code: 3, keyword: "기타 면접")
-                ]
+                InterviewFormat.allCases.map { format in
+                    CodeEntity(code: format.rawValue.hashValue, keyword: format.rawValue)
+                }
             }
             .bind(to: interviewTypeList)
             .disposed(by: disposeBag)
 
         input.viewWillAppear.asObservable()
             .map { _ in
-                [
-                    CodeEntity(code: 1, keyword: "대전"),
-                    CodeEntity(code: 2, keyword: "서울"),
-                    CodeEntity(code: 3, keyword: "경기"),
-                    CodeEntity(code: 4, keyword: "기타")
-                ]
+                LocationType.allCases.map { location in
+                    CodeEntity(code: location.rawValue.hashValue, keyword: location.rawValue)
+                }
             }
             .bind(to: regionList)
             .disposed(by: disposeBag)
 
         input.selectJobsCode.asObservable()
             .bind { [weak self] code in
-                self!.jobCode = self!.jobCode == "\(code)" ? "" : "\(code)"
+                self?.code = String(code.code)
             }
             .disposed(by: disposeBag)
 
         input.selectYear.asObservable()
             .bind { [weak self] year in
-                self?.selectedYear = year
+                self?.year = year
+            }
+            .disposed(by: disposeBag)
+
+        input.selectInterviewType.asObservable()
+            .bind { [weak self] code in
+                self?.type = code.keyword
+            }
+            .disposed(by: disposeBag)
+
+        input.selectLocation.asObservable()
+            .bind { [weak self] code in
+                self?.location = code.keyword
             }
             .disposed(by: disposeBag)
 
         input.filterApplyButtonDidTap.asObservable()
             .map {
                 ReviewFilterStep.popToReview(
-                    jobCode: self.jobCode
+                    code: self.code,
+                    year: self.year,
+                    type: self.type,
+                    location: self.location
                 )
             }
             .bind(to: steps)

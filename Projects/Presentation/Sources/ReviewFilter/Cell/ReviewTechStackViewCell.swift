@@ -53,14 +53,24 @@ final class ReviewTechStackViewCell: BaseView {
 
     func adapt(model: CodeEntity) {
         self.code = model
-        self.techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
+        if let interview = InterviewFormat(rawValue: model.keyword) {
+            techLabel.setJobisText(interview.koreanName, font: .body, color: .GrayScale.gray70)
+        } else if let location = LocationType(rawValue: model.keyword) {
+            techLabel.setJobisText(location.koreanName, font: .body, color: .GrayScale.gray70)
+        } else {
+            techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
+        }
     }
 }
 
 class ReviewTechStackView: UIStackView {
-    public var techDidTap: ((CodeEntity) -> Void)?
     private let disposeBag = DisposeBag()
     private var selectedCell: ReviewTechStackViewCell?
+    private let selectedTechRelay = PublishRelay<CodeEntity>()
+
+    var selectedTechObservable: Observable<CodeEntity> {
+        return selectedTechRelay.asObservable()
+    }
 
     init() {
         super.init(frame: .zero)
@@ -94,8 +104,8 @@ class ReviewTechStackView: UIStackView {
                         self.selectedCell = nil
                     }
                 }
-                if let code = code {
-                    self.techDidTap?(code)
+                if let code = code, tappedCell.isCheck {
+                    self.selectedTechRelay.accept(code)
                 }
             }
             self.addArrangedSubview(techStackViewCell)

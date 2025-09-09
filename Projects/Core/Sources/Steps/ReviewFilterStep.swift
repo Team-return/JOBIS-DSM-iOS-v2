@@ -2,5 +2,10 @@ import RxFlow
 
 public enum ReviewFilterStep: Step {
     case reviewFilterIsRequired
-    case popToReview(jobCode: String?)
+    case popToReview(
+        code: String?,
+        year: String?,
+        type: String?,
+        location: String?
+    )
 }

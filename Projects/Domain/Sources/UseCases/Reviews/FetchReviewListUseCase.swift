@@ -9,23 +9,23 @@ public struct FetchReviewListUseCase {
 
     public func execute(
         page: Int? = nil,
-        location: LocationType? = nil,
-        interviewType: InterviewFormat? = nil,
+        location: String? = nil,
+        type: String? = nil,
         companyID: Int? = nil,
         keyword: String? = nil,
-        year: Int? = nil,
-        jobCode: String? = nil,
+        year: String? = nil,
+        code: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
     ) -> Single<[ReviewEntity]> {
         let request = ReviewListRequestQuery(
             page: page,
             location: location,
-            interviewType: interviewType,
+            type: type,
             companyID: companyID,
             keyword: keyword,
             year: year,
-            jobCode: jobCode,
+            code: code,
             companyName: companyName,
             writer: writer
         )
