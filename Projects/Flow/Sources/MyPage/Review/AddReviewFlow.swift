@@ -47,7 +47,7 @@ private extension AddReviewFlow {
         let interviewAtmosphereViewController = InterviewAtmosphereViewController(
             container.resolve(InterviewAtmosphereViewModel.self)!
         )
-        
+
         rootViewController.navigationController?.pushViewController(
             interviewAtmosphereViewController,
             animated: true

@@ -92,7 +92,7 @@ private extension WritableReviewFlow {
             )
         ))
     }
-    
+
     func popToMyPage() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
         return .none
