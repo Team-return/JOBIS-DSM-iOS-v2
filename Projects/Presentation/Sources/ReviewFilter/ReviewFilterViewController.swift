@@ -182,6 +182,8 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             selectJobsCode: jobsCollectionView.rx
                 .modelSelected(CodeEntity.self).asObservable(),
             selectYear: selectedYearRelay.asObservable(),
+            selectInterviewType: interviewStackView.selectedTechObservable,
+            selectLocation: regionStackView.selectedTechObservable,
             filterApplyButtonDidTap: filterApplyButtonDidTap
         )
 

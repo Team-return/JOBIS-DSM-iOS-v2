@@ -36,6 +36,9 @@ public final class ReviewFlow: Flow {
 private extension ReviewFlow {
     func navigateToReview() -> FlowContributors {
         let reviewViewController = container.resolve(ReviewViewController.self)!
+        reviewViewController.viewWillappearWithTap = {
+            reviewViewController.viewDidLoadPublisher.accept(())
+        }
 
         self.rootViewController.setViewControllers(
             [reviewViewController],

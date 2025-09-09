@@ -8,6 +8,7 @@ import Core
 import DesignSystem
 
 public final class ReviewViewController: BaseViewController<ReviewViewModel> {
+    public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
     private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
@@ -60,9 +61,6 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
                 .map { $0.reviewID }
                 .do(onNext: { _ in
                     self.isTabNavigation = false
-                    if let indexPath = self.reviewTableView.indexPathForSelectedRow {
-                        self.reviewTableView.deselectRow(at: indexPath, animated: true)
-                    }
                 }),
             searchButtonDidTap: searchButton.rx.tap.asSignal(),
             filterButtonDidTap: filterButton.rx.tap.asSignal()
@@ -90,6 +88,10 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
             .bind {
                 self.showTabbar()
                 self.setLargeTitle(title: "후기")
+                if self.isTabNavigation {
+                    self.viewWillappearWithTap?()
+                }
+                self.isTabNavigation = true
             }
             .disposed(by: disposeBag)
 
