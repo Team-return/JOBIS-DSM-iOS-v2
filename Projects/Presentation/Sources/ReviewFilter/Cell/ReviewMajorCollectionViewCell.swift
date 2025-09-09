@@ -33,7 +33,7 @@ final class ReviewMajorCollectionViewCell: BaseCollectionViewCell<CodeEntity> {
     override func setLayout() {
         jobLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(12)
-            $0.top.bottom.equalToSuperview().inset(8)
+            $0.top.bottom.equalToSuperview().inset(4)
         }
     }
 
