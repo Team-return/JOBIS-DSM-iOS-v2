@@ -46,10 +46,13 @@ private extension WritableReviewFlow {
 
     func navigateToAddReview() -> FlowContributors {
         let addReviewFlow = AddReviewFlow(container: container)
+        
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
             view?.companyName = self.rootViewController.viewModel.companyName
             view?.dismiss = { (question: String, answer: String, techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
+                
+                // 데이터 저장
                 self.rootViewController.viewModel.jobCode = techCode.code
                 self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
                 self.rootViewController.viewModel.location = locationType ?? .seoul
@@ -60,13 +63,14 @@ private extension WritableReviewFlow {
                         answer: answer
                     )
                 )
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.rootViewController.viewModel.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
+                }
             }
-            self.rootViewController.present(
-                root,
-                animated: false
-            )
+            
+            self.rootViewController.present(root, animated: false)
         }
-
+        
         return .one(flowContributor: .contribute(
             withNextPresentable: addReviewFlow,
             withNextStepper: OneStepper(

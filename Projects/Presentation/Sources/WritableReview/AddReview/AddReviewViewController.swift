@@ -147,8 +147,24 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             .disposed(by: disposeBag)
 
         infoCheckView.nextButtonDidTap.asObservable()
-            .subscribe(onNext: {
-                self.viewModel.steps.accept(AddReviewStep.interviewAtmosphereIsRequired)
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                
+                let companyFromFlow = self.companyName
+                let fallbackTitle = self.navigationItem.title
+                let companyName = (companyFromFlow?.isEmpty == false) ? companyFromFlow : fallbackTitle
+                
+                self.dismiss?(
+                    self.viewModel.question.value,
+                    self.viewModel.answer.value,
+                    self.viewModel.techCodeEntity,
+                    self.currentInterviewFormat,
+                    self.areaReviewView.selectedLocation.value
+                )
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.viewModel.steps.accept(AddReviewStep.interviewAtmosphereIsRequired)
+                }
             })
             .disposed(by: disposeBag)
     }

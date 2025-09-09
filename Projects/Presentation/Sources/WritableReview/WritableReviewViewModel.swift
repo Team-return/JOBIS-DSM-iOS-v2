@@ -15,9 +15,11 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
     public var location: LocationType = .seoul
     public var interviewerCount = 1
     private let postReviewUseCase: PostReviewUseCase
+
     public var interviewReviewInfo = PublishRelay<QnAEntity>()
     public var qnaInfoList = PublishRelay<[QnAEntity]>()
     public var interviewReviewInfoList = BehaviorRelay<[QnaRequestQuery]>(value: [])
+    private var userAddedReviewList = BehaviorRelay<[QnaRequestQuery]>(value: [])
 
     init(
         postReviewUseCase: PostReviewUseCase
@@ -46,7 +48,6 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
 
         self.interviewReviewInfo.asObservable()
             .subscribe(onNext: { qnaEntity in
-                self.qnaInfoList.accept([qnaEntity])
                 var value = self.interviewReviewInfoList.value
                 value.append(
                     QnaRequestQuery(
@@ -86,7 +87,7 @@ public final class WritableReviewViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         return Output(
-            interviewReviewInfoList: interviewReviewInfoList,
+            interviewReviewInfoList: userAddedReviewList,
             qnaInfoList: self.qnaInfoList
         )
     }
