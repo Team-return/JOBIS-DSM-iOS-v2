@@ -6,7 +6,7 @@ import Core
 import Domain
 
 public final class AddReviewViewModel: BaseViewModel, Stepper {
-    public let steps = PublishRelay<Step>()
+    public var steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
     public let question = BehaviorRelay<String>(value: "")

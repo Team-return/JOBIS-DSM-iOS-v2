@@ -27,6 +27,9 @@ public final class WritableReviewFlow: Flow {
         case .addReviewIsRequired:
             return navigateToAddReview()
 
+        case .navigateToInterviewAtmosphere:
+            return navigateToInterviewAtmosphere()
+
         case .popToMyPage:
             return popToMyPage()
         }
@@ -72,6 +75,24 @@ private extension WritableReviewFlow {
         ))
     }
 
+    func navigateToInterviewAtmosphere() -> FlowContributors {
+        let interviewAtmosphereFlow = InterviewAtmosphereFlow(container: container)
+        Flows.use(interviewAtmosphereFlow, when: .created) { root in
+            guard let viewController = root as? UIViewController else { return }
+            self.rootViewController.navigationController?.pushViewController(
+                viewController,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interviewAtmosphereFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired
+            )
+        ))
+    }
+    
     func popToMyPage() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
         return .none

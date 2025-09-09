@@ -115,6 +115,16 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
 
+        container.register(InterviewAtmosphereViewController.self) { resolver in
+            InterviewAtmosphereViewController(
+                resolver.resolve(InterviewAtmosphereViewModel.self)!
+            )
+        }
+
+        container.register(InterviewAtmosphereViewModel.self) { resolver in
+            InterviewAtmosphereViewModel()
+        }
+
         // Apply
         container.register(ApplyViewModel.self) { resolver in
             ApplyViewModel(

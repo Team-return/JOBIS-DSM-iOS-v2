@@ -148,14 +148,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
 
         infoCheckView.nextButtonDidTap.asObservable()
             .subscribe(onNext: {
-                self.dismiss?(
-                    self.viewModel.question.value,
-                    self.viewModel.answer.value,
-                    self.viewModel.techCodeEntity,
-                    self.currentInterviewFormat,
-                    self.areaReviewView.selectedLocation.value
-                )
-                self.addReviewButtonDidTap.accept(())
+                self.viewModel.steps.accept(AddReviewStep.interviewAtmosphereIsRequired)
             })
             .disposed(by: disposeBag)
     }
