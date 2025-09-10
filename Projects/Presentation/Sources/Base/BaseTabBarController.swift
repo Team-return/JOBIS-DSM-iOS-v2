@@ -9,7 +9,6 @@ import PulseUI
 public class BaseTabBarController: UITabBarController,
                                    SetLayoutable,
                                    AddViewable {
-    
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
     private let consoleButtonSize: CGRect = CGRect(x: 0, y: 0, width: 100, height: 40)
 

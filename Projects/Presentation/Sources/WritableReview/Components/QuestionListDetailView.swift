@@ -30,10 +30,11 @@ final class QuestionListDetailView: BaseView {
     }
     private let titleHeadView = UIStackView().then {
         $0.axis = .horizontal
+        $0.alignment = .top
     }
     private let titleView = UIStackView().then {
         $0.axis = .horizontal
-        $0.alignment = .leading
+        $0.alignment = .top
         $0.spacing = 8
     }
     private let titleSubView = UIStackView().then {
@@ -46,6 +47,8 @@ final class QuestionListDetailView: BaseView {
             font: .subHeadLine,
             color: .Primary.blue20
         )
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     private let questionLabel = UILabel().then {
         $0.setJobisText(
@@ -54,6 +57,8 @@ final class QuestionListDetailView: BaseView {
             color: .GrayScale.gray90
         )
         $0.numberOfLines = 0
+        $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
     private let codeLabel = UILabel().then {
         $0.setJobisText(
@@ -64,10 +69,13 @@ final class QuestionListDetailView: BaseView {
     }
     private let interviewReviewArrowImageView = UIImageView().then {
         $0.image = .jobisIcon(.arrowDown)
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     private let detailView = UIStackView().then {
         $0.spacing = 0
         $0.axis = .horizontal
+        $0.alignment = .top
         $0.isLayoutMarginsRelativeArrangement = true
         $0.layoutMargins = .init(top: 16, left: 0, bottom: 0, right: 0)
     }
@@ -78,6 +86,8 @@ final class QuestionListDetailView: BaseView {
             color: .Primary.blue20
         )
         $0.isHidden = true
+        $0.setContentHuggingPriority(.required, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     private let answerLabel = UILabel().then {
         $0.setJobisText(
@@ -87,6 +97,8 @@ final class QuestionListDetailView: BaseView {
         )
         $0.numberOfLines = 0
         $0.isHidden = true
+        $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        $0.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
     override func addView() {
@@ -134,6 +146,14 @@ final class QuestionListDetailView: BaseView {
             $0.width.height.equalTo(24)
         }
 
+        qSymbolLabel.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(20)
+        }
+
+        aSymbolLabel.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(20)
+        }
+
         [
             aSymbolLabel,
             answerLabel
@@ -149,6 +169,10 @@ final class QuestionListDetailView: BaseView {
         questionLabel.text = model.question
         codeLabel.text = ""
         answerLabel.text = model.answer
+
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+
         self.rx.tapGesture()
             .when(.recognized)
             .bind { _ in
