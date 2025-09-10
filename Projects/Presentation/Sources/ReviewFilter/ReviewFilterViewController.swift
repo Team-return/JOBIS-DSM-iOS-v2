@@ -11,8 +11,8 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
     private let filterApplyButtonDidTap = PublishRelay<Void>()
     private var selectedYear: String = ""
     private let selectedYearRelay = BehaviorRelay<String>(value: "")
-    private var selectedJobIndex: Int? = nil
-    private var selectedYearIndex: Int? = nil
+    private var selectedJobIndex: Int?
+    private var selectedYearIndex: Int?
 
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView().then {
@@ -66,7 +66,7 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             forCellWithReuseIdentifier: ReviewMajorCollectionViewCell.identifier
         )
     }
-    
+
     private let interviewSectionView = UIView()
     private let interviewLabel = UILabel().then {
         $0.setJobisText("면접 구분", font: .subHeadLine, color: UIColor.GrayScale.gray70)
