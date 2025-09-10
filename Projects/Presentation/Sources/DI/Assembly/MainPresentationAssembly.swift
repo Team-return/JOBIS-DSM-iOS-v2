@@ -122,7 +122,9 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         container.register(InterviewAtmosphereViewModel.self) { resolver in
-            InterviewAtmosphereViewModel()
+            InterviewAtmosphereViewModel(
+                fetchReviewQuestionsUseCase: resolver.resolve(FetchReviewQuestionsUseCase.self)!
+            )
         }
 
         // Apply

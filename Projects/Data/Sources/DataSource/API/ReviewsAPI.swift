@@ -27,7 +27,7 @@ extension ReviewsAPI: JobisAPI {
         case let .fetchReviewDetail(reviewID):
             return "/\(reviewID)"
         case .fetchReviewQuestions:
-            return "questions"
+            return "/questions"
         }
     }
 
