@@ -8,123 +8,144 @@ import DesignSystem
 
 public final class InterviewAtmosphereViewController: BaseViewController<InterviewAtmosphereViewModel> {
     private let nextButtonDidTap = PublishRelay<Void>()
-    private let atmosphereTextView = UITextView().then {
-        $0.font = UIFont.jobisFont(.body)
-        $0.textColor = UIColor.GrayScale.gray90
-        $0.backgroundColor = UIColor.GrayScale.gray10
-        $0.layer.cornerRadius = 12
-        $0.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        $0.isScrollEnabled = true
-    }
-    private let placeholderLabel = UILabel().then {
-        $0.text = "면접 분위기에 대해 자세히 알려주세요"
-        $0.font = UIFont.jobisFont(.body)
-        $0.textColor = UIColor.GrayScale.gray60
-        $0.isHidden = false
-    }
+
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.keyboardDismissMode = .onDrag
     }
+
     private let contentView = UIView()
+
+    private let progressStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 6
+        $0.distribution = .equalSpacing
+        $0.alignment = .center
+    }
+
     private let questionLabel = UILabel().then {
-        $0.setJobisText(
-            "Q. 면접 분위기는 어땠나요?",
-            font: .pageTitle,
-            color: .GrayScale.gray90
-        )
+        $0.setJobisText("질문을 불러오는 중...", font: .pageTitle, color: .GrayScale.gray90)
         $0.numberOfLines = 0
     }
+
+    private let answerTitleLabel = UILabel().then {
+        $0.setJobisText("답변", font: .body, color: .GrayScale.gray90)
+    }
+
+    private let atmosphereTextView = ReviewTextView().then {
+        $0.placeholder = "면접 후기를 성심성의껏 작성해 주세요!"
+        $0.placeholderColor = UIColor.GrayScale.gray60
+        $0.textView.isScrollEnabled = true
+        $0.textView.isEditable = true
+        $0.textView.isSelectable = true
+        $0.textView.isUserInteractionEnabled = true
+    }
+
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
         $0.isEnabled = false
     }
-    private let characterCountLabel = UILabel().then {
-        $0.setJobisText(
-            "0/500",
-            font: .caption,
-            color: .GrayScale.gray60
-        )
-        $0.textAlignment = .right
-    }
+
+    private var output: InterviewAtmosphereViewModel.Output!
+    private var isUpdatingFromViewModel = false
+    private var progressCircles: [UIView] = []
+
     public override func addView() {
-        [
-            scrollView
-        ].forEach { view.addSubview($0) }
+        view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         [
+            progressStackView,
             questionLabel,
-            atmosphereTextView,
-            characterCountLabel,
-            nextButton
+            answerTitleLabel,
+            atmosphereTextView
         ].forEach { contentView.addSubview($0) }
-        atmosphereTextView.addSubview(placeholderLabel)
+        view.addSubview(nextButton)
     }
 
     public override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(nextButton.snp.top).offset(-16)
         }
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
         }
+        progressStackView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(6)
+            $0.leading.equalToSuperview().inset(24)
+            $0.width.equalTo(54)
+            $0.height.equalTo(6)
+        }
         questionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
+            $0.top.equalTo(progressStackView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(24)
+        }
+        answerTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(questionLabel.snp.bottom).offset(32)
+            $0.leading.equalToSuperview().inset(24)
         }
         atmosphereTextView.snp.makeConstraints {
-            $0.top.equalTo(questionLabel.snp.bottom).offset(24)
+            $0.top.equalTo(answerTitleLabel.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(200)
-        }
-        placeholderLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
-            $0.leading.equalToSuperview().inset(20)
-        }
-        characterCountLabel.snp.makeConstraints {
-            $0.top.equalTo(atmosphereTextView.snp.bottom).offset(8)
-            $0.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(20)
         }
         nextButton.snp.makeConstraints {
-//          $0.top.equalTo(characterCountLabel.snp.bottom).offset(32)
-            $0.bottom.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(56)
         }
     }
-
     public override func bind() {
         let input = InterviewAtmosphereViewModel.Input(
             viewWillAppear: viewWillAppearPublisher.asObservable(),
-            atmosphereText: atmosphereTextView.rx.text.orEmpty.asObservable(),
+            atmosphereText: atmosphereTextView.textView.rx.text.orEmpty
+                .filter { [weak self] _ in
+                    !(self?.isUpdatingFromViewModel ?? false)
+                }
+                .asObservable(),
             nextButtonDidTap: nextButtonDidTap.asObservable()
         )
 
-        let output = viewModel.transform(input)
+        output = viewModel.transform(input)
 
         output.isNextButtonEnabled
             .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
 
-        output.characterCount
-            .map { "\($0)/500" }
-            .bind(to: characterCountLabel.rx.text)
+        output.currentQuestion
+            .bind(to: questionLabel.rx.text)
             .disposed(by: disposeBag)
-    }
 
+        Observable.merge(
+            output.shouldClearText.map { _ in "" },
+            output.loadPreviousAnswer
+        )
+        .observe(on: MainScheduler.asyncInstance)
+        .subscribe(onNext: { [weak self] text in
+            guard let self = self else { return }
+            self.isUpdatingFromViewModel = true
+            self.atmosphereTextView.textView.text = text
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.isUpdatingFromViewModel = false
+            }
+        })
+        .disposed(by: disposeBag)
+        
+        setupProgressTracking(output: output)
+    }
     public override func configureViewController() {
         self.hideTabbar()
-
-        atmosphereTextView.rx.text.orEmpty
+        atmosphereTextView.textView.rx.text.orEmpty
             .map { !$0.isEmpty }
-            .bind(to: placeholderLabel.rx.isHidden)
+            .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
-        
+
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
             .disposed(by: disposeBag)
-        
+
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
             .compactMap { notification in
                 (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height
@@ -140,25 +161,47 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             })
             .disposed(by: disposeBag)
     }
-
+    
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.title = "면접 질문"
     }
 
     private func adjustForKeyboard(height: CGFloat, isShowing: Bool) {
-        let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: height, right: 0)
-        scrollView.contentInset = contentInsets
-        scrollView.scrollIndicatorInsets = contentInsets
+        nextButton.snp.updateConstraints {
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(isShowing ? height + 24 : 24)
+        }
 
-        if isShowing {
-            let textViewFrame = atmosphereTextView.frame
-            let visibleRect = CGRect(
-                x: textViewFrame.origin.x,
-                y: textViewFrame.origin.y,
-                width: textViewFrame.width,
-                height: textViewFrame.height + 100
-            )
-            scrollView.scrollRectToVisible(visibleRect, animated: true)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    private func setupProgressTracking(output: InterviewAtmosphereViewModel.Output) {
+        Observable.combineLatest(
+            output.questions,
+            output.currentQuestionIndex
+        )
+        .subscribe(onNext: { [weak self] questions, currentIndex in
+            self?.updateProgressCircles(totalCount: questions.count, currentIndex: currentIndex)
+        })
+        .disposed(by: disposeBag)
+    }
+    
+    private func updateProgressCircles(totalCount: Int, currentIndex: Int) {
+        progressCircles.forEach { $0.removeFromSuperview() }
+        progressCircles.removeAll()
+        
+        for index in 0..<totalCount {
+            let circle = UIView()
+            circle.layer.cornerRadius = index == currentIndex ? 11 : 6
+            circle.backgroundColor = index == currentIndex ? UIColor.Primary.blue20 : UIColor.GrayScale.gray40
+            progressStackView.addArrangedSubview(circle)
+            progressCircles.append(circle)
+            
+            circle.snp.makeConstraints {
+                $0.width.height.equalTo(index == currentIndex ? 22 : 12)
+            }
         }
     }
 }
