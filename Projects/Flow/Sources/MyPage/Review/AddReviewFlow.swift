@@ -52,7 +52,7 @@ private extension AddReviewFlow {
             interviewAtmosphereViewController,
             animated: true
         )
-        
+
         return .one(flowContributor: .contribute(
             withNextPresentable: interviewAtmosphereViewController,
             withNextStepper: interviewAtmosphereViewController.viewModel

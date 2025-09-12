@@ -25,9 +25,12 @@ public final class InterviewAtmosphereFlow: Flow {
 
         case .navigateToWritableReview:
             return navigateToWritableReview()
-            
+
         case .popViewController:
             return popViewController()
+
+        case .popToWritableReview:
+            return popToWritableReview()
         }
     }
 }
@@ -39,7 +42,7 @@ private extension InterviewAtmosphereFlow {
             withNextStepper: rootViewController.viewModel
         ))
     }
-    
+
     func navigateToWritableReview() -> FlowContributors {
         let writableReviewFlow = WritableReviewFlow(container: container)
         Flows.use(writableReviewFlow, when: .created) { root in
@@ -49,7 +52,7 @@ private extension InterviewAtmosphereFlow {
                 animated: true
             )
         }
-        
+
         return .one(flowContributor: .contribute(
             withNextPresentable: writableReviewFlow,
             withNextStepper: OneStepper(
@@ -57,9 +60,14 @@ private extension InterviewAtmosphereFlow {
             )
         ))
     }
-    
+
     func popViewController() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
         return .none
     }
+
+    func popToWritableReview() -> FlowContributors {
+           self.rootViewController.navigationController?.popViewController(animated: true)
+           return .none
+       }
 }
