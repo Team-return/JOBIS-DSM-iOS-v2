@@ -112,7 +112,7 @@ private final class InfoCheckItemView: UIView {
         $0.setJobisText("", font: .subBody, color: .GrayScale.gray60)
     }
     private let valueLabel = UILabel().then {
-        $0.setJobisText("", font: .headLine, color: .Primary.blue40)
+        $0.setJobisText("", font: .headLine, color: .Primary.blue20)
         $0.numberOfLines = 0
     }
 
@@ -137,5 +137,6 @@ private final class InfoCheckItemView: UIView {
 
     func setValue(_ text: String) {
         valueLabel.text = text
+        valueLabel.textColor = .Primary.blue20
     }
 }
