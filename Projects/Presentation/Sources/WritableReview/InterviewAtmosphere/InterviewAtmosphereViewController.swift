@@ -96,6 +96,7 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             $0.height.equalTo(56)
         }
     }
+
     public override func bind() {
         let input = InterviewAtmosphereViewModel.Input(
             viewWillAppear: viewWillAppearPublisher.asObservable(),
@@ -117,30 +118,24 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             .bind(to: questionLabel.rx.text)
             .disposed(by: disposeBag)
 
-        Observable.merge(
-            output.shouldClearText.map { _ in "" },
-            output.loadPreviousAnswer
-        )
-        .observe(on: MainScheduler.asyncInstance)
-        .subscribe(onNext: { [weak self] text in
-            guard let self = self else { return }
-            self.isUpdatingFromViewModel = true
-            self.atmosphereTextView.textView.text = text
+        output.loadAnswerForCurrentQuestion
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(onNext: { [weak self] (text: String) in
+                guard let self = self else { return }
+                self.isUpdatingFromViewModel = true
+                self.atmosphereTextView.textView.text = text
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.isUpdatingFromViewModel = false
-            }
-        })
-        .disposed(by: disposeBag)
-        
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.isUpdatingFromViewModel = false
+                }
+            })
+            .disposed(by: disposeBag)
+
         setupProgressTracking(output: output)
     }
+
     public override func configureViewController() {
         self.hideTabbar()
-        atmosphereTextView.textView.rx.text.orEmpty
-            .map { !$0.isEmpty }
-            .bind(to: nextButton.rx.isEnabled)
-            .disposed(by: disposeBag)
 
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
@@ -154,14 +149,14 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
                 self?.adjustForKeyboard(height: keyboardHeight, isShowing: true)
             })
             .disposed(by: disposeBag)
-        
+
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
             .subscribe(onNext: { [weak self] _ in
                 self?.adjustForKeyboard(height: 0, isShowing: false)
             })
             .disposed(by: disposeBag)
     }
-    
+
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.title = "면접 질문"
@@ -187,18 +182,18 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
         })
         .disposed(by: disposeBag)
     }
-    
+
     private func updateProgressCircles(totalCount: Int, currentIndex: Int) {
         progressCircles.forEach { $0.removeFromSuperview() }
         progressCircles.removeAll()
-        
+
         for index in 0..<totalCount {
             let circle = UIView()
             circle.layer.cornerRadius = index == currentIndex ? 11 : 6
             circle.backgroundColor = index == currentIndex ? UIColor.Primary.blue20 : UIColor.GrayScale.gray40
             progressStackView.addArrangedSubview(circle)
             progressCircles.append(circle)
-            
+
             circle.snp.makeConstraints {
                 $0.width.height.equalTo(index == currentIndex ? 22 : 12)
             }

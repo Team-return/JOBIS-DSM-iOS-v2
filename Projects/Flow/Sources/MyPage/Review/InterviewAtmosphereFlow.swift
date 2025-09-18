@@ -23,6 +23,9 @@ public final class InterviewAtmosphereFlow: Flow {
         case .interviewAtmosphereIsRequired:
             return navigateToInterviewAtmosphere()
 
+        case .addQuestionIsRequired:
+            return navigateToAddQuestion()
+
         case .navigateToWritableReview:
             return navigateToWritableReview()
 
@@ -37,6 +40,13 @@ public final class InterviewAtmosphereFlow: Flow {
 
 private extension InterviewAtmosphereFlow {
     func navigateToInterviewAtmosphere() -> FlowContributors {
+        return .one(flowContributor: .contribute(
+            withNextPresentable: rootViewController,
+            withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToAddQuestion() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
