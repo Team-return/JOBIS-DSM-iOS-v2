@@ -18,6 +18,9 @@ public final class TechCodeView: BaseView {
             color: .GrayScale.gray60
         )
     }
+
+    private let progressBarView = ProgressBarView()
+
     private let searchImageView = UIImageView().then {
         $0.image = .jobisIcon(.searchIcon)
     }
@@ -44,6 +47,7 @@ public final class TechCodeView: BaseView {
     public override func addView() {
         [
             techCodeTitleLabel,
+            progressBarView,
             searchTextField,
             scrollView,
             addReviewButton
@@ -61,13 +65,19 @@ public final class TechCodeView: BaseView {
             $0.height.equalTo(20)
         }
 
+        progressBarView.snp.makeConstraints {
+            $0.top.equalTo(techCodeTitleLabel.snp.bottom).offset(8)
+            $0.leading.equalToSuperview().inset(24)
+            $0.height.equalTo(6)
+        }
+
         searchImageView.snp.makeConstraints {
             $0.centerY.equalTo(searchTextField)
             $0.left.equalToSuperview().inset(16)
         }
 
         searchTextField.snp.makeConstraints {
-            $0.top.equalTo(techCodeTitleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(progressBarView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(48)
         }
@@ -90,5 +100,11 @@ public final class TechCodeView: BaseView {
         }
     }
 
-    override public func configureView() {}
+    override public func configureView() {
+        progressBarView.configure(totalSteps: 4, currentStep: 3)
+    }
+
+    public func updateProgress(currentStep: Int) {
+        progressBarView.configure(totalSteps: 4, currentStep: currentStep)
+    }
 }

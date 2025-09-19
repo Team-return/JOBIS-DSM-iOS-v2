@@ -16,6 +16,7 @@ public final class InterviewersCountView: BaseView {
             color: .GrayScale.gray60
         )
     }
+    private let progressBarView = ProgressBarView()
 
     private let countTextView = ReviewTextView().then {
         $0.setTextView(
@@ -35,6 +36,7 @@ public final class InterviewersCountView: BaseView {
         [
             addReviewTitleLabel,
             countTextView,
+            progressBarView,
             nextButton
         ].forEach(self.addSubview(_:))
     }
@@ -47,6 +49,11 @@ public final class InterviewersCountView: BaseView {
         countTextView.snp.makeConstraints {
             $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(32)
             $0.leading.trailing.equalToSuperview().inset(24)
+        }
+        progressBarView.snp.makeConstraints {
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(8)
+            $0.leading.equalToSuperview().inset(24)
+            $0.height.equalTo(6)
         }
         nextButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(24)
@@ -64,5 +71,11 @@ public final class InterviewersCountView: BaseView {
             .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
+
+        progressBarView.configure(totalSteps: 4, currentStep: 4)
+    }
+
+    public func updateProgress(currentStep: Int) {
+        progressBarView.configure(totalSteps: 4, currentStep: currentStep)
     }
 }

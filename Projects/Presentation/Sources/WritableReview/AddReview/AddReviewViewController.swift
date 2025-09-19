@@ -83,6 +83,12 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
                 self?.currentInterviewFormat = $0
             }
             .disposed(by: disposeBag)
+
+        addReviewView.backButtonDidTap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.handleBackButton()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
@@ -163,6 +169,14 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
                 )
             })
             .disposed(by: disposeBag)
+    }
+
+    private func handleBackButton() {
+        if currentViewIndex == 0 {
+            self.dismiss(animated: true)
+        } else {
+            currentViewIndex -= 1
+        }
     }
 
     private func updateViewVisibility() {

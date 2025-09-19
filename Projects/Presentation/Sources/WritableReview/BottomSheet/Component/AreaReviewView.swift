@@ -23,6 +23,8 @@ class AreaReviewView: BaseView {
         )
     }
 
+    private let progressBarView = ProgressBarView()
+
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -49,6 +51,7 @@ class AreaReviewView: BaseView {
     public override func addView() {
         [
             addReviewTitleLabel,
+            progressBarView,
             collectionView,
             nextButton
         ].forEach(self.addSubview(_:))
@@ -60,8 +63,15 @@ class AreaReviewView: BaseView {
             $0.leading.equalTo(24)
         }
 
+        progressBarView.snp.makeConstraints {
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(8)
+            $0.leading.equalTo(addReviewTitleLabel)
+            $0.width.equalTo(70)
+            $0.height.equalTo(6)
+        }
+
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(32)
+            $0.top.equalTo(progressBarView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(240)
         }
@@ -74,9 +84,14 @@ class AreaReviewView: BaseView {
     }
 
     public override func configureView() {
+        progressBarView.configure(totalSteps: 4, currentStep: 2)
+
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
             .disposed(by: disposeBag)
+    }
+    public func updateProgress(currentStep: Int) {
+        progressBarView.configure(totalSteps: 4, currentStep: currentStep)
     }
 }
 
