@@ -22,6 +22,10 @@ class AreaReviewView: BaseView {
             color: .GrayScale.gray60
         )
     }
+    private let backButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        $0.tintColor = .GrayScale.gray60
+    }
 
     private let progressBarView = ProgressBarView()
 
@@ -52,20 +56,27 @@ class AreaReviewView: BaseView {
         [
             addReviewTitleLabel,
             progressBarView,
+            backButton,
             collectionView,
             nextButton
         ].forEach(self.addSubview(_:))
     }
 
     public override func setLayout() {
+        backButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.width.height.equalTo(20)
+        }
+
         addReviewTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(24)
-            $0.leading.equalTo(24)
+            $0.centerY.equalTo(backButton)
+            $0.leading.equalTo(backButton.snp.trailing).offset(10)
         }
 
         progressBarView.snp.makeConstraints {
-            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(8)
-            $0.leading.equalTo(addReviewTitleLabel)
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(12)
+            $0.leading.equalTo(backButton)
             $0.width.equalTo(70)
             $0.height.equalTo(6)
         }

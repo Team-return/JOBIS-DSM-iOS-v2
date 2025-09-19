@@ -72,7 +72,7 @@ class AddReviewView: BaseView {
         }
 
         addReviewTitleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(backButton) // 버튼과 세로 맞춤
+            $0.centerY.equalTo(backButton)
             $0.leading.equalTo(backButton.snp.trailing).offset(10)
         }
 
