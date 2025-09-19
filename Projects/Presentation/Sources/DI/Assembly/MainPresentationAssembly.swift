@@ -189,6 +189,14 @@ public final class MainPresentationAssembly: Assembly {
             AddReviewViewController(resolver.resolve(AddReviewViewModel.self)!)
         }
 
+        // Add Question
+        container.register(AddQuestionViewModel.self) { resolver in
+            AddQuestionViewModel()
+        }
+        container.register(AddQuestionViewController.self) { resolver in
+            AddQuestionViewController(resolver.resolve(AddQuestionViewModel.self)!)
+        }
+
         // Interview Review Detail
         container.register(InterviewReviewDetailViewModel.self) { resolver in
             InterviewReviewDetailViewModel(

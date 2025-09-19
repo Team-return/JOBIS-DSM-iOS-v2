@@ -47,9 +47,18 @@ private extension InterviewAtmosphereFlow {
     }
 
     func navigateToAddQuestion() -> FlowContributors {
+        let addQuestionViewController = AddQuestionViewController(
+            container.resolve(AddQuestionViewModel.self)!
+        )
+        
+        rootViewController.navigationController?.pushViewController(
+            addQuestionViewController,
+            animated: true
+        )
+
         return .one(flowContributor: .contribute(
-            withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextPresentable: addQuestionViewController,
+            withNextStepper: addQuestionViewController.viewModel
         ))
     }
 
@@ -77,7 +86,7 @@ private extension InterviewAtmosphereFlow {
     }
 
     func popToWritableReview() -> FlowContributors {
-           self.rootViewController.navigationController?.popViewController(animated: true)
-           return .none
-       }
+        self.rootViewController.navigationController?.popViewController(animated: true)
+        return .none
+    }
 }
