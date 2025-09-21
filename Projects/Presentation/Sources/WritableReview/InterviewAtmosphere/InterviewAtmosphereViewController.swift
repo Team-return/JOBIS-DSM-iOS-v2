@@ -23,17 +23,11 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
         $0.numberOfLines = 0
     }
 
-    private let answerTitleLabel = UILabel().then {
-        $0.setJobisText("답변", font: .body, color: .GrayScale.gray90)
-    }
-
-    private let atmosphereTextView = ReviewTextView().then {
-        $0.placeholder = "면접 후기를 성심성의껏 작성해 주세요!"
-        $0.placeholderColor = UIColor.GrayScale.gray60
-        $0.textView.isScrollEnabled = true
-        $0.textView.isEditable = true
-        $0.textView.isSelectable = true
-        $0.textView.isUserInteractionEnabled = true
+    private let atmosphereTextView = ReviewTextView.large().then {
+        $0.setTextView(
+            title: "질문",
+            placeholder: "example"
+        )
     }
 
     private let nextButton = JobisButton(style: .main).then {
@@ -50,7 +44,6 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
         [
             progressBarView,
             questionLabel,
-            answerTitleLabel,
             atmosphereTextView
         ].forEach { contentView.addSubview($0) }
         view.addSubview(nextButton)
@@ -75,12 +68,8 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             $0.top.equalTo(progressBarView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
-        answerTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(questionLabel.snp.bottom).offset(32)
-            $0.leading.equalToSuperview().inset(24)
-        }
         atmosphereTextView.snp.makeConstraints {
-            $0.top.equalTo(answerTitleLabel.snp.bottom).offset(12)
+            $0.top.equalTo(questionLabel.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(20)
         }

@@ -15,4 +15,42 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
         )
         $0.numberOfLines = 0
     }
+
+    private let questionTextView = ReviewTextView.small().then {
+        $0.setTextView(
+            title: "질문",
+            placeholder: "example"
+        )
+    }
+
+    private let answerTextView = ReviewTextView.medium().then {
+        $0.setTextView(
+            title: "답변",
+            placeholder: "example"
+        )
+    }
+
+    public override func addView() {
+        [
+            questionLabel,
+            questionTextView,
+            answerTextView
+        ].forEach { self.view.addSubview($0) }
+    }
+
+    public override func setLayout() {
+        questionLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.equalToSuperview().inset(24)
+        }
+        questionTextView.snp.makeConstraints {
+            $0.top.equalTo(questionLabel
+                .snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+        answerTextView.snp.makeConstraints {
+            $0.top.equalTo(questionTextView.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
+    }
 }

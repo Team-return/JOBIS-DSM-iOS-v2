@@ -22,9 +22,10 @@ public final class InterviewersCountView: BaseView {
             color: .GrayScale.gray60
         )
     }
+
     private let progressBarView = ProgressBarView()
 
-    private let countTextView = ReviewTextView().then {
+    private let countTextView = ReviewTextView.small().then {
         $0.setTextView(
             title: "답변",
             placeholder: "면접관수를 작성해주세요."

@@ -6,8 +6,26 @@ import Then
 import Core
 import DesignSystem
 
+public enum ReviewTextViewHeight {
+    case small
+    case medium
+    case large
+
+    var value: CGFloat {
+        switch self {
+        case .small:
+            return 48
+        case .medium:
+            return 120
+        case .large:
+            return 144
+        }
+    }
+}
+
 public final class ReviewTextView: UIView {
     private var disposeBag = DisposeBag()
+    private var heightType: ReviewTextViewHeight = .large
 
     private let titleLabel = UILabel().then {
         $0.isHidden = true
@@ -17,11 +35,14 @@ public final class ReviewTextView: UIView {
         $0.numberOfLines = 0
         $0.isUserInteractionEnabled = false
         $0.isHidden = false
+        $0.textColor = .GrayScale.gray60
     }
 
     public let textView = UITextView().then {
-        $0.backgroundColor = .GrayScale.gray10
+        $0.backgroundColor = .GrayScale.gray30
         $0.layer.cornerRadius = 12
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor.GrayScale.gray40.cgColor
         $0.font = .jobisFont(.body)
         $0.textColor = .GrayScale.gray90
         $0.textContainerInset = .init(top: 12, left: 12, bottom: 12, right: 12)
@@ -40,7 +61,8 @@ public final class ReviewTextView: UIView {
         }
     }
 
-    public init() {
+    public init(height: ReviewTextViewHeight = .large) {
+        self.heightType = height
         super.init(frame: .zero)
         setupUI()
         setupBinding()
@@ -56,6 +78,19 @@ public final class ReviewTextView: UIView {
         addView()
         setLayout()
         setupPlaceholder()
+
+        adjustStyleForHeight()
+    }
+
+    private func adjustStyleForHeight() {
+        switch heightType {
+        case .small:
+            textView.textContainerInset = .init(top: 12, left: 12, bottom: 12, right: 12)
+        case .medium:
+            textView.textContainerInset = .init(top: 12, left: 12, bottom: 12, right: 12)
+        case .large:
+            textView.textContainerInset = .init(top: 12, left: 12, bottom: 12, right: 12)
+        }
     }
 
     private func setupBinding() {
@@ -91,7 +126,7 @@ public final class ReviewTextView: UIView {
         placeholder: String? = nil
     ) {
         if let title = title {
-            titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray60)
+            titleLabel.setJobisText(title, font: .description, color: .GrayScale.gray80)
             titleLabel.isHidden = false
             updateLayoutForTitle()
         } else {
@@ -123,7 +158,7 @@ public final class ReviewTextView: UIView {
         textView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(144)
+            $0.height.equalTo(heightType.value)
             $0.bottom.equalToSuperview()
         }
 
@@ -142,12 +177,26 @@ public final class ReviewTextView: UIView {
                 $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             }
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(144)
+            $0.height.equalTo(heightType.value)
             $0.bottom.equalToSuperview()
         }
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+}
+
+public extension ReviewTextView {
+    static func small() -> ReviewTextView {
+        return ReviewTextView(height: .small)
+    }
+
+    static func medium() -> ReviewTextView {
+        return ReviewTextView(height: .medium)
+    }
+
+    static func large() -> ReviewTextView {
+        return ReviewTextView(height: .large)
     }
 }
