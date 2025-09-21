@@ -16,12 +16,7 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
 
     private let contentView = UIView()
 
-    private let progressStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 6
-        $0.distribution = .equalSpacing
-        $0.alignment = .center
-    }
+    private let progressBarView = ProgressBarView()
 
     private let questionLabel = UILabel().then {
         $0.setJobisText("질문을 불러오는 중...", font: .pageTitle, color: .GrayScale.gray90)
@@ -48,13 +43,12 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
 
     private var output: InterviewAtmosphereViewModel.Output!
     private var isUpdatingFromViewModel = false
-    private var progressCircles: [UIView] = []
 
     public override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         [
-            progressStackView,
+            progressBarView,
             questionLabel,
             answerTitleLabel,
             atmosphereTextView
@@ -71,14 +65,14 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
         }
-        progressStackView.snp.makeConstraints {
+        progressBarView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(6)
             $0.leading.equalToSuperview().inset(24)
             $0.width.equalTo(54)
             $0.height.equalTo(6)
         }
         questionLabel.snp.makeConstraints {
-            $0.top.equalTo(progressStackView.snp.bottom).offset(8)
+            $0.top.equalTo(progressBarView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
         answerTitleLabel.snp.makeConstraints {
@@ -178,25 +172,8 @@ public final class InterviewAtmosphereViewController: BaseViewController<Intervi
             output.currentQuestionIndex
         )
         .subscribe(onNext: { [weak self] questions, currentIndex in
-            self?.updateProgressCircles(totalCount: questions.count, currentIndex: currentIndex)
+            self?.progressBarView.configure(totalSteps: questions.count, currentStep: currentIndex + 1)
         })
         .disposed(by: disposeBag)
-    }
-
-    private func updateProgressCircles(totalCount: Int, currentIndex: Int) {
-        progressCircles.forEach { $0.removeFromSuperview() }
-        progressCircles.removeAll()
-
-        for index in 0..<totalCount {
-            let circle = UIView()
-            circle.layer.cornerRadius = index == currentIndex ? 11 : 6
-            circle.backgroundColor = index == currentIndex ? UIColor.Primary.blue20 : UIColor.GrayScale.gray40
-            progressStackView.addArrangedSubview(circle)
-            progressCircles.append(circle)
-
-            circle.snp.makeConstraints {
-                $0.width.height.equalTo(index == currentIndex ? 22 : 12)
-            }
-        }
     }
 }
