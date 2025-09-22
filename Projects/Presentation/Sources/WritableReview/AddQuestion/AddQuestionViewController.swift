@@ -30,11 +30,17 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
         )
     }
 
+    private let nextButton = JobisButton(style: .main).then {
+        $0.setText("다음")
+        $0.isEnabled = false
+    }
+
     public override func addView() {
         [
             questionLabel,
             questionTextView,
-            answerTextView
+            answerTextView,
+            nextButton
         ].forEach { self.view.addSubview($0) }
     }
 
@@ -51,6 +57,11 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
         answerTextView.snp.makeConstraints {
             $0.top.equalTo(questionTextView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
+        }
+        nextButton.snp.makeConstraints {
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(56)
         }
     }
 }
