@@ -78,8 +78,20 @@ public final class ReviewTextView: UIView {
         addView()
         setLayout()
         setupPlaceholder()
-
         adjustStyleForHeight()
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        adjustPlaceholderPosition()
+    }
+
+    private func adjustPlaceholderPosition() {
+        let actualPadding = textView.textContainer.lineFragmentPadding
+        placeholderLabel.snp.updateConstraints {
+            $0.leading.equalToSuperview().inset(textView.textContainerInset.left + actualPadding)
+            $0.trailing.equalToSuperview().inset(textView.textContainerInset.right + actualPadding)
+        }
     }
 
     private func adjustStyleForHeight() {
@@ -103,6 +115,7 @@ public final class ReviewTextView: UIView {
 
     private func setupPlaceholder() {
         placeholderLabel.font = textView.font
+        placeholderLabel.textAlignment = textView.textAlignment
 
         NotificationCenter.default.addObserver(
             self,
@@ -163,9 +176,8 @@ public final class ReviewTextView: UIView {
         }
 
         placeholderLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12)
-            $0.leading.equalToSuperview().inset(16)
-            $0.trailing.equalToSuperview().inset(12)
+            $0.top.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
 
