@@ -171,9 +171,7 @@ public final class MainPresentationAssembly: Assembly {
 
         // Review
         container.register(WritableReviewViewModel.self) { resolver in
-            WritableReviewViewModel(
-                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
-            )
+            WritableReviewViewModel()
         }
         container.register(WritableReviewViewController.self) { resolver in
             WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
@@ -187,14 +185,6 @@ public final class MainPresentationAssembly: Assembly {
         }
         container.register(AddReviewViewController.self) { resolver in
             AddReviewViewController(resolver.resolve(AddReviewViewModel.self)!)
-        }
-
-        // Add Question
-        container.register(AddQuestionViewModel.self) { resolver in
-            AddQuestionViewModel()
-        }
-        container.register(AddQuestionViewController.self) { resolver in
-            AddQuestionViewController(resolver.resolve(AddQuestionViewModel.self)!)
         }
 
         // Interview Review Detail

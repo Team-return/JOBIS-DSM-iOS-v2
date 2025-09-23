@@ -87,8 +87,6 @@ public final class InfoCheckView: BaseView {
         location: LocationType?,
         tech: CodeEntity,
         interviewersCount: String,
-        question: String,
-        answer: String,
         companyName: String?
     ) {
         formatItem.setValue(displayName(for: format))

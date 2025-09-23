@@ -9,7 +9,7 @@ import DesignSystem
 
 public final class AddReviewViewController: BaseBottomSheetViewController<AddReviewViewModel> {
     private let searchButtonDidTap = PublishRelay<String>()
-    public var dismiss: ((String, String, CodeEntity, InterviewFormat?, LocationType?) -> Void)?
+    public var dismiss: ((CodeEntity, InterviewFormat?, LocationType?) -> Void)?
     private var appendTechCode = PublishRelay<CodeEntity>()
     private let addReviewButtonDidTap = PublishRelay<Void>()
     public var companyName: String?
@@ -144,8 +144,6 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
                     location: self.areaReviewView.selectedLocation.value,
                     tech: self.viewModel.techCodeEntity,
                     interviewersCount: self.interviewersCountView.countText,
-                    question: self.viewModel.question.value,
-                    answer: self.viewModel.answer.value,
                     companyName: companyName
                 )
                 self.currentViewIndex = 4
@@ -156,13 +154,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
 
-                let companyFromFlow = self.companyName
-                let fallbackTitle = self.navigationItem.title
-                let companyName = (companyFromFlow?.isEmpty == false) ? companyFromFlow : fallbackTitle
-
                 self.dismiss?(
-                    self.viewModel.question.value,
-                    self.viewModel.answer.value,
                     self.viewModel.techCodeEntity,
                     self.currentInterviewFormat,
                     self.areaReviewView.selectedLocation.value
@@ -195,3 +187,4 @@ extension AddReviewViewController: UITextFieldDelegate {
         return true
     }
 }
+

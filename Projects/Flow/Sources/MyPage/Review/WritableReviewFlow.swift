@@ -50,18 +50,11 @@ private extension WritableReviewFlow {
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
             view?.companyName = self.rootViewController.viewModel.companyName
-            view?.dismiss = { (question: String, answer: String, techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
+            view?.dismiss = { (techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
 
                 self.rootViewController.viewModel.jobCode = techCode.code
                 self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
                 self.rootViewController.viewModel.location = locationType ?? .seoul
-                self.rootViewController.viewModel.interviewReviewInfo.accept(
-                    QnAEntity(
-                        id: techCode.code,
-                        question: question,
-                        answer: answer
-                    )
-                )
                 view?.dismissBottomSheet()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.rootViewController.viewModel.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
@@ -79,7 +72,14 @@ private extension WritableReviewFlow {
     }
 
     func navigateToInterviewAtmosphere() -> FlowContributors {
-        let interviewAtmosphereFlow = InterviewAtmosphereFlow(container: container)
+        let interviewAtmosphereFlow = InterviewAtmosphereFlow(
+            container: container,
+            companyID: rootViewController.viewModel.companyID,
+            interviewType: rootViewController.viewModel.interviewType,
+            location: rootViewController.viewModel.location,
+            jobCode: rootViewController.viewModel.jobCode,
+            interviewerCount: rootViewController.viewModel.interviewerCount
+        )
         Flows.use(interviewAtmosphereFlow, when: .created) { root in
             guard let viewController = root as? UIViewController else { return }
             self.rootViewController.navigationController?.pushViewController(

@@ -5,5 +5,5 @@ public enum InterviewAtmosphereStep: Step {
     case navigateToWritableReview
     case popToWritableReview
     case popViewController
-    case addQuestionIsRequired
+    case addQuestionIsRequired(qnas: [any Encodable])
 }

@@ -101,7 +101,7 @@ public final class InterviewAtmosphereViewModel: BaseViewModel, Stepper {
                     currentQuestionIndexRelay,
                     isLastQuestion,
                     answersRelay,
-                    input.atmosphereText.take(1)
+                    input.atmosphereText
                 )
             )
             .subscribe(onNext: { [weak self] questions, currentIndex, isLast, answers, currentText in
@@ -142,10 +142,10 @@ public final class InterviewAtmosphereViewModel: BaseViewModel, Stepper {
     }
 
     private func completeReview(questions: [QuestionEntity], answers: [String]) {
-        let qnAs = zip(questions, answers).map { question, answer in
-            QnAEntity(id: question.id, question: question.question, answer: answer)
+        let qnas = zip(questions, answers).map {
+            QnaRequestQuery(questionID: $0.id, answer: $1)
         }
-        steps.accept(InterviewAtmosphereStep.addQuestionIsRequired)
+        steps.accept(InterviewAtmosphereStep.addQuestionIsRequired(qnas: qnas))
     }
 
     public func getCurrentAnswers() -> [String] {

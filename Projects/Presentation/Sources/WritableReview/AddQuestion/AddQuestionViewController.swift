@@ -64,4 +64,18 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
             $0.height.equalTo(56)
         }
     }
+
+    public override func bind() {
+        let input = AddQuestionViewModel.Input(
+            questionText: questionTextView.textView.rx.text.orEmpty.asDriver(),
+            answerText: answerTextView.textView.rx.text.orEmpty.asDriver(),
+            nextButtonDidTap: nextButton.rx.tap.asSignal()
+        )
+
+        let output = viewModel.transform(input)
+
+        output.isNextButtonEnabled
+            .drive(nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+    }
 }

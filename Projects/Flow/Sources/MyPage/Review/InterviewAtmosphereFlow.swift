@@ -3,6 +3,7 @@ import Presentation
 import Swinject
 import RxFlow
 import Core
+import Domain
 
 public final class InterviewAtmosphereFlow: Flow {
     public let container: Container
@@ -11,9 +12,27 @@ public final class InterviewAtmosphereFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    private let companyID: Int
+    private let interviewType: InterviewFormat
+    private let location: LocationType
+    private let jobCode: Int
+    private let interviewerCount: Int
+
+    public init(
+        container: Container,
+        companyID: Int,
+        interviewType: InterviewFormat,
+        location: LocationType,
+        jobCode: Int,
+        interviewerCount: Int
+    ) {
         self.container = container
         self.rootViewController = container.resolve(InterviewAtmosphereViewController.self)!
+        self.companyID = companyID
+        self.interviewType = interviewType
+        self.location = location
+        self.jobCode = jobCode
+        self.interviewerCount = interviewerCount
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -23,8 +42,8 @@ public final class InterviewAtmosphereFlow: Flow {
         case .interviewAtmosphereIsRequired:
             return navigateToInterviewAtmosphere()
 
-        case .addQuestionIsRequired:
-            return navigateToAddQuestion()
+        case let .addQuestionIsRequired(qnas):
+            return navigateToAddQuestion(qnas: qnas as? [QnaRequestQuery] ?? [])
 
         case .navigateToWritableReview:
             return navigateToWritableReview()
@@ -46,11 +65,18 @@ private extension InterviewAtmosphereFlow {
         ))
     }
 
-    func navigateToAddQuestion() -> FlowContributors {
-        let addQuestionViewController = AddQuestionViewController(
-            container.resolve(AddQuestionViewModel.self)!
+    func navigateToAddQuestion(qnas: [QnaRequestQuery]) -> FlowContributors {
+        let viewModel = AddQuestionViewModel(
+            postReviewUseCase: container.resolve(PostReviewUseCase.self)!,
+            companyID: companyID,
+            interviewType: interviewType,
+            location: location,
+            jobCode: jobCode,
+            interviewerCount: interviewerCount,
+            qnas: qnas
         )
-        
+        let addQuestionViewController = AddQuestionViewController(viewModel)
+
         rootViewController.navigationController?.pushViewController(
             addQuestionViewController,
             animated: true

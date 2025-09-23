@@ -10,7 +10,7 @@ import DesignSystem
 public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
     private let addQuestionButtonDidTap = PublishRelay<Void>()
     private let writableReviewButtonDidTap = PublishRelay<Void>()
-    
+
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -86,12 +86,11 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
             $0.top.leading.trailing.equalToSuperview()
         }
     }
-    
+
     public override func bind() {
         let input = WritableReviewViewModel.Input(
             viewWillAppear: self.viewWillAppearPublisher,
-            addQuestionButtonDidTap: addQuestionButtonDidTap,
-            writableReviewButtonDidTap: writableReviewButtonDidTap
+            addQuestionButtonDidTap: addQuestionButtonDidTap
         )
         let output = viewModel.transform(input)
         output.qnaInfoList.asObservable()
@@ -100,21 +99,21 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
             })
             .disposed(by: disposeBag)
     }
-    
+
     public override func configureViewController() {
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: {
                 self.hideTabbar()
             })
             .disposed(by: disposeBag)
-        
+
         addQuestionButton.rx.tap.asObservable()
             .subscribe(onNext: {
                 self.addQuestionButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }
-    
+
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
     }
