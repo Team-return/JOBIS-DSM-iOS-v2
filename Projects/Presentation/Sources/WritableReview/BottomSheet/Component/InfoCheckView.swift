@@ -36,6 +36,7 @@ public final class InfoCheckView: BaseView {
         $0.isEnabled = true
     }
     public let nextButtonDidTap = PublishRelay<Void>()
+    public let backButtonDidTap = PublishRelay<Void>()
 
     public override func addView() {
         [
@@ -79,6 +80,10 @@ public final class InfoCheckView: BaseView {
     public override func configureView() {
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
+            .disposed(by: disposeBag)
+
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
             .disposed(by: disposeBag)
     }
 

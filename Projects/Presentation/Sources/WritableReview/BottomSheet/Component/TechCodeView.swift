@@ -10,6 +10,7 @@ import Domain
 public final class TechCodeView: BaseView {
     private let disposeBag = DisposeBag()
     public var area = BehaviorRelay<String>(value: "")
+    public let backButtonDidTap = PublishRelay<Void>()
 
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
@@ -115,6 +116,10 @@ public final class TechCodeView: BaseView {
 
     override public func configureView() {
         progressBarView.configure(totalSteps: 4, currentStep: 3)
+
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
+            .disposed(by: disposeBag)
     }
 
     public func updateProgress(currentStep: Int) {

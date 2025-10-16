@@ -37,6 +37,7 @@ public final class InterviewersCountView: BaseView {
         $0.isEnabled = false
     }
     public let nextButtonDidTap = PublishRelay<Void>()
+    public let backButtonDidTap = PublishRelay<Void>()
     public var countText: String { countTextView.textView.text ?? "" }
 
     public override func addView() {
@@ -81,6 +82,10 @@ public final class InterviewersCountView: BaseView {
     public override func configureView() {
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
+            .disposed(by: disposeBag)
+
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
             .disposed(by: disposeBag)
 
         countTextView.textView.rx.text.orEmpty

@@ -10,6 +10,7 @@ import Domain
 class AreaReviewView: BaseView {
     private let disposeBag = DisposeBag()
     public let nextButtonDidTap = PublishRelay<Void>()
+    public let backButtonDidTap = PublishRelay<Void>()
     public let selectedLocation = BehaviorRelay<LocationType?>(value: nil)
 
     private let locationFormats: [LocationType] = [.daejeon, .seoul, .gyeonggi, .other]
@@ -99,6 +100,10 @@ class AreaReviewView: BaseView {
 
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
+            .disposed(by: disposeBag)
+
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
             .disposed(by: disposeBag)
     }
     public func updateProgress(currentStep: Int) {

@@ -89,6 +89,30 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
                 self?.handleBackButton()
             })
             .disposed(by: disposeBag)
+
+        areaReviewView.backButtonDidTap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.handleBackButton()
+            })
+            .disposed(by: disposeBag)
+
+        techCodeView.backButtonDidTap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.handleBackButton()
+            })
+            .disposed(by: disposeBag)
+
+        interviewersCountView.backButtonDidTap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.handleBackButton()
+            })
+            .disposed(by: disposeBag)
+
+        infoCheckView.backButtonDidTap.asObservable()
+            .subscribe(onNext: { [weak self] in
+                self?.handleBackButton()
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
