@@ -21,7 +21,7 @@ public final class SearchReviewViewController: BaseViewController<SearchReviewVi
         $0.image = .jobisIcon(.searchIcon)
     }
     private let searchTextField = UITextField().then {
-        $0.placeholder = "검색어를 입력해주세요"
+        $0.placeholder = "찾고 싶은 면접 후기를 입력해주세요"
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 44, height: 0))
         $0.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         $0.leftViewMode = .always
