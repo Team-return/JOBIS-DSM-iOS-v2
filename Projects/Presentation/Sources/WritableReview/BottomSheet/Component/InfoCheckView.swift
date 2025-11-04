@@ -104,9 +104,9 @@ public final class InfoCheckView: BaseView {
     private func displayName(for format: InterviewFormat?) -> String {
         guard let format = format else { return "-" }
         switch format {
-        case .individual: return "개인"
-        case .group: return "그룹"
-        case .other: return "기타"
+        case .individual: return "개인 면접"
+        case .group: return "단체 면접"
+        case .other: return "기타 면접"
         }
     }
 
