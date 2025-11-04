@@ -76,6 +76,7 @@ extension MyPageFlow {
                 _ = useCase.execute(id: id)
                     .subscribe(onSuccess: { entity in
                         view?.viewModel.companyName = entity.companyName
+                        view?.navigationItem.title = entity.companyName
                     }, onFailure: { _ in })
             }
             self.rootViewController.pushViewController(

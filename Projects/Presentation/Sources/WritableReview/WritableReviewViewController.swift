@@ -116,5 +116,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.title = viewModel.companyName
     }
 }
