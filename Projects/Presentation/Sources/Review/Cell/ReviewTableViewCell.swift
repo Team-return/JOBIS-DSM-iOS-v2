@@ -49,6 +49,7 @@ final class ReviewTableViewCell: BaseTableViewCell<ReviewEntity> {
         companyLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
             $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
+            $0.trailing.equalToSuperview().inset(12)
         }
         contentLabel.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(12)
