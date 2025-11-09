@@ -192,6 +192,35 @@ public class BaseBottomSheetViewController<ViewModel: BaseViewModel>: UIViewCont
             })
             .disposed(by: disposeBag)
     }
+
+    @objc open func dismissBottomSheet() {
+        performDismissBottomSheet()
+    }
+
+    private func performDismissBottomSheet() {
+        bottomSheetViewTopInset = maxTopInset
+        bottomSheetView.snp.remakeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(bottomSheetViewTopInset)
+        }
+
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            options: .curveEaseInOut
+        ) {
+            self.dimmedView.alpha = 0
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.dismiss(animated: false)
+        }
+    }
+
+    private func nearest(to number: CGFloat, inValues values: [CGFloat]) -> CGFloat {
+        guard let nearestVal = values.min(by: { abs(number - $0) < abs(number - $1) })
+        else { return number }
+        return nearestVal
+    }
 }
 
 extension BaseBottomSheetViewController {
@@ -227,31 +256,5 @@ extension BaseBottomSheetViewController {
             usingSpringWithDamping: 0.76,
             initialSpringVelocity: 0.0
         ) { self.view.layoutIfNeeded() }
-    }
-
-    public func dismissBottomSheet() {
-        bottomSheetViewTopInset = maxTopInset
-        bottomSheetView.snp.remakeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(bottomSheetViewTopInset)
-        }
-
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            options: .curveEaseInOut
-        ) {
-            self.dimmedView.alpha = 0
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.dismiss(animated: false)
-        }
-    }
-
-    // 가까이 있는 숫자 반환해주는 함수
-    private func nearest(to number: CGFloat, inValues values: [CGFloat]) -> CGFloat {
-        guard let nearestVal = values.min(by: { abs(number - $0) < abs(number - $1) })
-        else { return number }
-        return nearestVal
     }
 }

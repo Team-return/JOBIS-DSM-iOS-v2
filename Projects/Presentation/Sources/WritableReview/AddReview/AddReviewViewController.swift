@@ -13,6 +13,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
     private var appendTechCode = PublishRelay<CodeEntity>()
     private let addReviewButtonDidTap = PublishRelay<Void>()
     public var companyName: String?
+    private var isCompletingFlow = false
 
     private var currentViewIndex = 0 {
         didSet {
@@ -178,6 +179,7 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
 
+                self.isCompletingFlow = true
                 self.dismiss?(
                     self.viewModel.techCodeEntity,
                     self.currentInterviewFormat,
@@ -189,10 +191,35 @@ public final class AddReviewViewController: BaseBottomSheetViewController<AddRev
 
     private func handleBackButton() {
         if currentViewIndex == 0 {
-            self.dismiss(animated: true)
+            dismissBottomSheet()
         } else {
             currentViewIndex -= 1
         }
+    }
+
+    public override func dismissBottomSheet() {
+        if isCompletingFlow {
+            super.dismissBottomSheet()
+            return
+        }
+
+        if currentViewIndex > 0 || addReviewView.selectedFormat.value != nil {
+            showCancelAlert()
+        } else {
+            super.dismissBottomSheet()
+        }
+    }
+
+    private func showCancelAlert() {
+        AlertBuilder(viewController: self)
+            .setTitle("지금 나가면 되돌릴 수 없어요")
+            .setMessage("지금 나가면 이전 작업은 저장되지 않아요.")
+            .addActionConfirm("나가기") {
+                super.dismissBottomSheet()
+            }
+            .setCancelText("이어서하기")
+            .setAlertType(.negative)
+            .show()
     }
 
     private func updateViewVisibility() {
