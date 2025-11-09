@@ -66,7 +66,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     answer: answer
                 )
                 return self.postReviewUseCase.execute(req: req)
-                    .andThen(Single.just(WritableReviewStep.popToMyPage))
+                    .andThen(Single.just(WritableReviewStep.reviewCompleteIsRequired))
                     .catch { error in
                         print("Error posting review: \(error)")
                         return .never()
@@ -90,7 +90,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     answer: ""
                 )
                 return self.postReviewUseCase.execute(req: req)
-                    .andThen(Single.just(WritableReviewStep.popToMyPage))
+                    .andThen(Single.just(WritableReviewStep.reviewCompleteIsRequired))
                     .catch { error in
                         print("Error posting review: \(error)")
                         return .never()

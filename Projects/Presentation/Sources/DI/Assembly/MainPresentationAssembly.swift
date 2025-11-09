@@ -187,6 +187,16 @@ public final class MainPresentationAssembly: Assembly {
             AddReviewViewController(resolver.resolve(AddReviewViewModel.self)!)
         }
 
+        // Review Complete
+        container.register(ReviewCompleteViewModel.self) { resolver in
+            ReviewCompleteViewModel(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
+        container.register(ReviewCompleteViewController.self) { resolver in
+            ReviewCompleteViewController(resolver.resolve(ReviewCompleteViewModel.self)!)
+        }
+
         // Interview Review Detail
         container.register(InterviewReviewDetailViewModel.self) { resolver in
             InterviewReviewDetailViewModel(

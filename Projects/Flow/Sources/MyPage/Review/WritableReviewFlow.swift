@@ -30,6 +30,9 @@ public final class WritableReviewFlow: Flow {
         case .navigateToInterviewAtmosphere:
             return navigateToInterviewAtmosphere()
 
+        case .reviewCompleteIsRequired:
+            return navigateToReviewComplete()
+
         case .popToMyPage:
             return popToMyPage()
         }
@@ -93,6 +96,20 @@ private extension WritableReviewFlow {
             withNextStepper: OneStepper(
                 withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired
             )
+        ))
+    }
+
+    func navigateToReviewComplete() -> FlowContributors {
+        let reviewCompleteViewController = container.resolve(ReviewCompleteViewController.self)!
+
+        rootViewController.navigationController?.pushViewController(
+            reviewCompleteViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewCompleteViewController,
+            withNextStepper: reviewCompleteViewController.viewModel
         ))
     }
 
