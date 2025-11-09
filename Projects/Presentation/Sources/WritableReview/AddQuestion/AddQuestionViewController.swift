@@ -35,11 +35,17 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
         $0.isEnabled = false
     }
 
+    private let skipButton = UIButton().then {
+        $0.setJobisText("건너뛸래요.", font: .subHeadLine, color: .GrayScale.gray50)
+        $0.setUnderline()
+    }
+
     public override func addView() {
         [
             questionLabel,
             questionTextView,
             answerTextView,
+            skipButton,
             nextButton
         ].forEach { self.view.addSubview($0) }
     }
@@ -58,6 +64,10 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
             $0.top.equalTo(questionTextView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
+        skipButton.snp.makeConstraints {
+            $0.bottom.equalTo(nextButton.snp.top).offset(-12)
+            $0.centerX.equalToSuperview()
+        }
         nextButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
@@ -69,7 +79,8 @@ public final class AddQuestionViewController: BaseViewController<AddQuestionView
         let input = AddQuestionViewModel.Input(
             questionText: questionTextView.textView.rx.text.orEmpty.asDriver(),
             answerText: answerTextView.textView.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
+            nextButtonDidTap: nextButton.rx.tap.asSignal(),
+            skipButtonDidTap: skipButton.rx.tap.asSignal()
         )
 
         let output = viewModel.transform(input)

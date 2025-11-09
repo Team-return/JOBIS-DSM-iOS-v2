@@ -39,6 +39,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
         let questionText: Driver<String>
         let answerText: Driver<String>
         let nextButtonDidTap: Signal<Void>
+        let skipButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -63,6 +64,30 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     qnas: self.qnas,
                     question: question,
                     answer: answer
+                )
+                return self.postReviewUseCase.execute(req: req)
+                    .andThen(Single.just(WritableReviewStep.popToMyPage))
+                    .catch { error in
+                        print("Error posting review: \(error)")
+                        return .never()
+                    }
+            }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.skipButtonDidTap.asObservable()
+            .flatMap { [weak self] _ -> Single<Step> in
+                guard let self else { return .never() }
+
+                let req = PostReviewRequestQuery(
+                    interviewType: self.interviewType,
+                    location: self.location,
+                    companyID: self.companyID,
+                    jobCode: self.jobCode,
+                    interviewerCount: self.interviewerCount,
+                    qnas: self.qnas,
+                    question: "",
+                    answer: ""
                 )
                 return self.postReviewUseCase.execute(req: req)
                     .andThen(Single.just(WritableReviewStep.popToMyPage))
