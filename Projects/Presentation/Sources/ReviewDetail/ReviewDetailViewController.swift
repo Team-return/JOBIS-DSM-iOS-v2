@@ -158,7 +158,7 @@ public final class ReviewDetailViewController: BaseViewController<ReviewDetailVi
                     self.titleLabel.text = "\(self.writer)의 면접 후기"
                     self.questionListDetailStackView.setFieldType(interviewReview)
                 case .expectedQuestion:
-                    self.titleLabel.text = "\(self.writer)의 예상 면접 질문"
+                    self.titleLabel.text = "\(self.writer)의 받은 면접 질문"
                     self.questionListDetailStackView.setFieldType(expectedQuestion)
                 }
             })
