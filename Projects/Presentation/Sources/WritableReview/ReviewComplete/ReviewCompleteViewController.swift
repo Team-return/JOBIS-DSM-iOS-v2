@@ -8,7 +8,7 @@ import DesignSystem
 
 public final class ReviewCompleteViewController: BaseViewController<ReviewCompleteViewModel> {
     private let checkImageView = UIImageView().then {
-        $0.image = DesignSystemAsset.Check.image
+        $0.image = .jobisIcon(.check)
         $0.contentMode = .scaleAspectFit
     }
 
