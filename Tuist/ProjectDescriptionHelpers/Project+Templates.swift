@@ -29,9 +29,9 @@ public extension Project {
 
         let configurations: [Configuration] = isCI ?
         [
-          .debug(name: .dev),
-          .debug(name: .stage),
-          .release(name: .prod)
+          .debug(name: .dev, settings: [:]),
+          .debug(name: .stage, settings: [:]),
+          .release(name: .prod, settings: [:])
         ] :
         [
           .debug(name: .dev, xcconfig: .relativeToXCConfig(type: .dev, name: name)),
