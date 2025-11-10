@@ -36,6 +36,15 @@ public final class InterviewAtmosphereFlow: Flow {
     }
 
     public func navigate(to step: Step) -> FlowContributors {
+        if let writableReviewStep = step as? WritableReviewStep {
+            switch writableReviewStep {
+            case .reviewCompleteIsRequired:
+                return navigateToReviewComplete()
+            default:
+                return .none
+            }
+        }
+
         guard let step = step as? InterviewAtmosphereStep else { return .none }
 
         switch step {
@@ -114,5 +123,19 @@ private extension InterviewAtmosphereFlow {
     func popToWritableReview() -> FlowContributors {
         self.rootViewController.navigationController?.popViewController(animated: true)
         return .none
+    }
+
+    func navigateToReviewComplete() -> FlowContributors {
+        let reviewCompleteViewController = container.resolve(ReviewCompleteViewController.self)!
+
+        rootViewController.navigationController?.pushViewController(
+            reviewCompleteViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewCompleteViewController,
+            withNextStepper: reviewCompleteViewController.viewModel
+        ))
     }
 }

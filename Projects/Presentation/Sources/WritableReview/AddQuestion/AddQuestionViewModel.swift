@@ -52,8 +52,8 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
 
         input.nextButtonDidTap.asObservable()
             .withLatestFrom(info)
-            .flatMap { [weak self] question, answer -> Single<Step> in
-                guard let self, !question.isEmpty, !answer.isEmpty else { return .never() }
+            .subscribe(onNext: { [weak self] question, answer in
+                guard let self, !question.isEmpty, !answer.isEmpty else { return }
 
                 let req = PostReviewRequestQuery(
                     interviewType: self.interviewType,
@@ -65,19 +65,23 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     question: question,
                     answer: answer
                 )
-                return self.postReviewUseCase.execute(req: req)
-                    .andThen(Single.just(WritableReviewStep.reviewCompleteIsRequired))
-                    .catch { error in
-                        print("Error posting review: \(error)")
-                        return .never()
-                    }
-            }
-            .bind(to: steps)
+
+                self.postReviewUseCase.execute(req: req)
+                    .subscribe(
+                        onCompleted: {
+                            self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
+                        },
+                        onError: { error in
+                            self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
+                        }
+                    )
+                    .disposed(by: self.disposeBag)
+            })
             .disposed(by: disposeBag)
 
         input.skipButtonDidTap.asObservable()
-            .flatMap { [weak self] _ -> Single<Step> in
-                guard let self else { return .never() }
+            .subscribe(onNext: { [weak self] _ in
+                guard let self else { return }
 
                 let req = PostReviewRequestQuery(
                     interviewType: self.interviewType,
@@ -89,14 +93,18 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     question: "",
                     answer: ""
                 )
-                return self.postReviewUseCase.execute(req: req)
-                    .andThen(Single.just(WritableReviewStep.reviewCompleteIsRequired))
-                    .catch { error in
-                        print("Error posting review: \(error)")
-                        return .just(WritableReviewStep.reviewCompleteIsRequired)
-                    }
-            }
-            .bind(to: steps)
+
+                self.postReviewUseCase.execute(req: req)
+                    .subscribe(
+                        onCompleted: {
+                            self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
+                        },
+                        onError: { error in
+                            self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
+                        }
+                    )
+                    .disposed(by: self.disposeBag)
+            })
             .disposed(by: disposeBag)
 
         return Output(isNextButtonEnabled: isNextButtonEnabled)
