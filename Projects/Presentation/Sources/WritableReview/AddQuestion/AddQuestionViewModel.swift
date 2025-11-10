@@ -93,7 +93,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                     .andThen(Single.just(WritableReviewStep.reviewCompleteIsRequired))
                     .catch { error in
                         print("Error posting review: \(error)")
-                        return .never()
+                        return .just(WritableReviewStep.reviewCompleteIsRequired)
                     }
             }
             .bind(to: steps)
