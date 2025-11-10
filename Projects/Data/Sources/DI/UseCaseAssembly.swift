@@ -115,6 +115,11 @@ public final class UseCaseAssembly: Assembly {
                 reviewsRepository: resolver.resolve(ReviewsRepository.self)!
             )
         }
+        container.register(FetchReviewQuestionsUseCase.self) { resolver in
+            FetchReviewQuestionsUseCase(
+                reviewsRepository: resolver.resolve(ReviewsRepository.self)!
+            )
+        }
 
         // Applications
         container.register(ApplyCompanyUseCase.self) { resolver in

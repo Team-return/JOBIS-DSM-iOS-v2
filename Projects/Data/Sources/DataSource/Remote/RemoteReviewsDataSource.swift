@@ -6,6 +6,7 @@ public protocol RemoteReviewsDataSource {
     func fetchReviewListPageCount(req: ReviewListPageCountRequestQuery) -> Single<ReviewListPageCountResponseDTO>
     func fetchReviewDetail(reviewID: String) -> Single<ReviewDetailResponseDTO>
     func fetchReviewList(req: ReviewListRequestQuery) -> Single<ReviewListResponseDTO>
+    func fetchReviewQuestions() -> Single<ReviewQuestionResponseDTO>
 }
 
 final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, RemoteReviewsDataSource {
@@ -29,4 +30,9 @@ final class RemoteReviewsDataSourceImpl: RemoteBaseDataSource<ReviewsAPI>, Remot
         request(.fetchReviewList(req))
             .map(ReviewListResponseDTO.self)
     }
+
+    func fetchReviewQuestions() -> Single<ReviewQuestionResponseDTO> {
+            request(.fetchReviewQuestions)
+                .map(ReviewQuestionResponseDTO.self)
+        }
 }

@@ -115,6 +115,18 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
 
+        container.register(InterviewAtmosphereViewController.self) { resolver in
+            InterviewAtmosphereViewController(
+                resolver.resolve(InterviewAtmosphereViewModel.self)!
+            )
+        }
+
+        container.register(InterviewAtmosphereViewModel.self) { resolver in
+            InterviewAtmosphereViewModel(
+                fetchReviewQuestionsUseCase: resolver.resolve(FetchReviewQuestionsUseCase.self)!
+            )
+        }
+
         // Apply
         container.register(ApplyViewModel.self) { resolver in
             ApplyViewModel(
@@ -159,9 +171,7 @@ public final class MainPresentationAssembly: Assembly {
 
         // Review
         container.register(WritableReviewViewModel.self) { resolver in
-            WritableReviewViewModel(
-                postReviewUseCase: resolver.resolve(PostReviewUseCase.self)!
-            )
+            WritableReviewViewModel()
         }
         container.register(WritableReviewViewController.self) { resolver in
             WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
@@ -175,6 +185,16 @@ public final class MainPresentationAssembly: Assembly {
         }
         container.register(AddReviewViewController.self) { resolver in
             AddReviewViewController(resolver.resolve(AddReviewViewModel.self)!)
+        }
+
+        // Review Complete
+        container.register(ReviewCompleteViewModel.self) { resolver in
+            ReviewCompleteViewModel(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
+        container.register(ReviewCompleteViewController.self) { resolver in
+            ReviewCompleteViewController(resolver.resolve(ReviewCompleteViewModel.self)!)
         }
 
         // Interview Review Detail

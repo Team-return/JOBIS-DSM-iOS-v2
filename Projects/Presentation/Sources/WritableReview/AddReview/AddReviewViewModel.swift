@@ -6,7 +6,7 @@ import Core
 import Domain
 
 public final class AddReviewViewModel: BaseViewModel, Stepper {
-    public let steps = PublishRelay<Step>()
+    public var steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
     public let question = BehaviorRelay<String>(value: "")
@@ -36,7 +36,7 @@ public final class AddReviewViewModel: BaseViewModel, Stepper {
 
         input.viewWillAppear.asObservable()
             .flatMap {
-                self.fetchCodeListUseCase.execute(keyword: nil, type: .tech, parentCode: nil)
+                self.fetchCodeListUseCase.execute(keyword: nil, type: .job, parentCode: nil)
             }
             .bind(to: techList)
             .disposed(by: disposeBag)
@@ -62,7 +62,7 @@ public final class AddReviewViewModel: BaseViewModel, Stepper {
             .flatMap {
                 self.fetchCodeListUseCase.execute(
                     keyword: $0,
-                    type: .tech,
+                    type: .job,
                     parentCode: ""
                 )
             }

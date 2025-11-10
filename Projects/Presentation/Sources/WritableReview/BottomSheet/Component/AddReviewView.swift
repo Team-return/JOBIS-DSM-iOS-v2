@@ -10,10 +10,16 @@ import Domain
 class AddReviewView: BaseView {
     private let disposeBag = DisposeBag()
     public let nextButtonDidTap = PublishRelay<Void>()
+    public let backButtonDidTap = PublishRelay<Void>()
     public let selectedFormat = BehaviorRelay<InterviewFormat?>(value: nil)
 
     private let interviewFormats: [InterviewFormat] = [.individual, .group, .other]
     private var selectedIndexPath: IndexPath?
+
+    private let backButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        $0.tintColor = .GrayScale.gray60
+    }
 
     private let addReviewTitleLabel = UILabel().then {
         $0.setJobisText(
@@ -22,6 +28,8 @@ class AddReviewView: BaseView {
             color: .GrayScale.gray60
         )
     }
+
+    private let progressBarView = ProgressBarView()
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -48,22 +56,37 @@ class AddReviewView: BaseView {
 
     public override func addView() {
         [
+            backButton,
             addReviewTitleLabel,
+            progressBarView,
             collectionView,
             nextButton
         ].forEach(self.addSubview(_:))
     }
 
     public override func setLayout() {
+        backButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.width.height.equalTo(20)
+        }
+
         addReviewTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(24)
-            $0.leading.equalTo(24)
+            $0.centerY.equalTo(backButton)
+            $0.leading.equalTo(backButton.snp.trailing).offset(10)
+        }
+
+        progressBarView.snp.makeConstraints {
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(12)
+            $0.leading.equalTo(backButton)
+            $0.width.equalTo(70)
+            $0.height.equalTo(6)
         }
 
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(32)
+            $0.top.equalTo(progressBarView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(181)
+            $0.height.greaterThanOrEqualTo(181)
         }
 
         nextButton.snp.makeConstraints {
@@ -74,9 +97,19 @@ class AddReviewView: BaseView {
     }
 
     public override func configureView() {
+        progressBarView.configure(totalSteps: 4, currentStep: 1)
+
         nextButton.rx.tap
             .bind(to: nextButtonDidTap)
             .disposed(by: disposeBag)
+
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
+            .disposed(by: disposeBag)
+    }
+
+    public func updateProgress(currentStep: Int) {
+        progressBarView.configure(totalSteps: 4, currentStep: currentStep)
     }
 }
 

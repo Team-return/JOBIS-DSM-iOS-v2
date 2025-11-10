@@ -26,4 +26,9 @@ struct ReviewsRepositoryImpl: ReviewsRepository {
         remoteReviewsDataSource.fetchReviewList(req: req)
             .map { $0.toDomain() }
     }
+
+    func fetchReviewQuestions() -> Single<[QuestionEntity]> {
+        remoteReviewsDataSource.fetchReviewQuestions()
+            .map { $0.toDomain() }
+    }
 }

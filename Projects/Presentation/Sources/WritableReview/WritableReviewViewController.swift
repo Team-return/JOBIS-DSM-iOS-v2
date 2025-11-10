@@ -48,13 +48,11 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func addView() {
         emptyQuestionListView.addSubview(emptyQuestionLabel)
-
         [
             emptyQuestionListView,
             questionListDetailStackView,
             addQuestionButton
         ].forEach { mainStackView.addArrangedSubview($0) }
-
         [
             pageTitleLabel,
             scrollView
@@ -67,28 +65,23 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         emptyQuestionListView.snp.makeConstraints {
             $0.height.equalTo(52)
         }
-
         emptyQuestionLabel.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()
         }
-
         pageTitleLabel.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).inset(20)
             $0.leading.trailing.equalToSuperview().inset(24)
         }
-
         scrollView.snp.makeConstraints {
             $0.top.equalTo(pageTitleLabel.snp.bottom).offset(20)
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
         }
-
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalToSuperview()
             $0.bottom.equalTo(mainStackView.snp.bottom).offset(20)
         }
-
         mainStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
         }
@@ -97,24 +90,12 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
     public override func bind() {
         let input = WritableReviewViewModel.Input(
             viewWillAppear: self.viewWillAppearPublisher,
-            addQuestionButtonDidTap: addQuestionButtonDidTap,
-            writableReviewButtonDidTap: writableReviewButtonDidTap
+            addQuestionButtonDidTap: addQuestionButtonDidTap
         )
-
         let output = viewModel.transform(input)
-
         output.qnaInfoList.asObservable()
             .bind(onNext: {
                 self.questionListDetailStackView.setFieldType($0)
-            })
-            .disposed(by: disposeBag)
-
-        output.interviewReviewInfoList.asObservable()
-            .bind(onNext: {
-                self.emptyQuestionListView.isHidden = !$0.isEmpty
-                if !$0.isEmpty {
-                    self.showJobisToast(text: "질문이 추가되었어요!", inset: 92)
-                }
             })
             .disposed(by: disposeBag)
     }
@@ -135,5 +116,6 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.title = viewModel.companyName
     }
 }

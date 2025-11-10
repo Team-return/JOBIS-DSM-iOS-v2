@@ -27,6 +27,12 @@ public final class WritableReviewFlow: Flow {
         case .addReviewIsRequired:
             return navigateToAddReview()
 
+        case .navigateToInterviewAtmosphere:
+            return navigateToInterviewAtmosphere()
+
+        case .reviewCompleteIsRequired:
+            return navigateToReviewComplete()
+
         case .popToMyPage:
             return popToMyPage()
         }
@@ -43,22 +49,21 @@ private extension WritableReviewFlow {
 
     func navigateToAddReview() -> FlowContributors {
         let addReviewFlow = AddReviewFlow(container: container)
+
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
-            view?.dismiss = { (question: String, answer: String, techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
+            view?.companyName = self.rootViewController.viewModel.companyName
+            view?.dismiss = { (techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
+
                 self.rootViewController.viewModel.jobCode = techCode.code
-                self.rootViewController.viewModel.interviewReviewInfo.accept(
-                    QnAEntity(
-                        id: techCode.code,
-                        question: question,
-                        answer: answer
-                    )
-                )
+                self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
+                self.rootViewController.viewModel.location = locationType ?? .seoul
+                view?.dismissBottomSheet()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.rootViewController.viewModel.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
+                }
             }
-            self.rootViewController.present(
-                root,
-                animated: false
-            )
+            self.rootViewController.present(root, animated: false)
         }
 
         return .one(flowContributor: .contribute(
@@ -66,6 +71,45 @@ private extension WritableReviewFlow {
             withNextStepper: OneStepper(
                 withSingleStep: AddReviewStep.addReviewIsRequired
             )
+        ))
+    }
+
+    func navigateToInterviewAtmosphere() -> FlowContributors {
+        let interviewAtmosphereFlow = InterviewAtmosphereFlow(
+            container: container,
+            companyID: rootViewController.viewModel.companyID,
+            interviewType: rootViewController.viewModel.interviewType,
+            location: rootViewController.viewModel.location,
+            jobCode: rootViewController.viewModel.jobCode,
+            interviewerCount: rootViewController.viewModel.interviewerCount
+        )
+        Flows.use(interviewAtmosphereFlow, when: .created) { root in
+            guard let viewController = root as? UIViewController else { return }
+            self.rootViewController.navigationController?.pushViewController(
+                viewController,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interviewAtmosphereFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired
+            )
+        ))
+    }
+
+    func navigateToReviewComplete() -> FlowContributors {
+        let reviewCompleteViewController = container.resolve(ReviewCompleteViewController.self)!
+
+        rootViewController.navigationController?.pushViewController(
+            reviewCompleteViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewCompleteViewController,
+            withNextStepper: reviewCompleteViewController.viewModel
         ))
     }
 

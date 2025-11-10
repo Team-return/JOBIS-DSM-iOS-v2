@@ -11,12 +11,22 @@ final class InterviewFormatCollectionViewCell: UICollectionViewCell {
 
     public var isCheck: Bool = false {
         didSet {
-            self.layer.borderColor = isCheck ? UIColor.Primary.blue20.cgColor : UIColor.GrayScale.gray40.cgColor
-            self.formatLabel.setJobisText(
-                getDisplayText(),
-                font: .body,
-                color: isCheck ? UIColor.Primary.blue20 : UIColor.GrayScale.gray60
-            )
+            if isCheck {
+                self.layer.borderWidth = 1
+                self.layer.borderColor = UIColor.Primary.blue20.cgColor
+                self.formatLabel.setJobisText(
+                    getDisplayText(),
+                    font: .body,
+                    color: UIColor.Primary.blue20
+                )
+            } else {
+                self.layer.borderWidth = 0
+                self.formatLabel.setJobisText(
+                    getDisplayText(),
+                    font: .body,
+                    color: UIColor.GrayScale.gray60
+                )
+            }
         }
     }
 
@@ -46,10 +56,9 @@ final class InterviewFormatCollectionViewCell: UICollectionViewCell {
     }
 
     private func configureView() {
-        self.backgroundColor = .white
+        self.backgroundColor = .ETC.reviewSelection
         self.layer.cornerRadius = 12
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.GrayScale.gray40.cgColor
+        self.layer.borderWidth = 0
     }
 
     func adapt(format: InterviewFormat) {
