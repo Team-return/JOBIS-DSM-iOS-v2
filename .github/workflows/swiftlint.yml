@@ -31,6 +31,6 @@ jobs:
           ## All File Checked ✅
           | ✅     | Auto Pull Request SwiftLint Success!!!!     |
           |---    |----------------------------------------------    |
-#        repo-token: ${{ secrets.ACCESS_TOKEN }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
         repo-token-user-login: 'github-actions[bot]'
         allow-repeats: false
