@@ -7,6 +7,11 @@ import Core
 import DesignSystem
 
 public final class ReviewCompleteViewController: BaseViewController<ReviewCompleteViewModel> {
+    private let checkImageView = UIImageView().then {
+        $0.image = DesignSystemAsset.Check.image
+        $0.contentMode = .scaleAspectFit
+    }
+
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
         $0.textAlignment = .center
@@ -24,12 +29,19 @@ public final class ReviewCompleteViewController: BaseViewController<ReviewComple
 
     public override func addView() {
         [
+            checkImageView,
             titleLabel,
             descriptionLabel
         ].forEach { view.addSubview($0) }
     }
 
     public override func setLayout() {
+        checkImageView.snp.makeConstraints {
+            $0.bottom.equalTo(titleLabel.snp.top).offset(-12)
+            $0.centerX.equalToSuperview()
+            $0.width.height.equalTo(80)
+        }
+
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview().offset(-50)
