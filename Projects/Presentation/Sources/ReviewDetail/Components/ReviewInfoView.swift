@@ -4,6 +4,11 @@ import Then
 import DesignSystem
 
 final class ReviewInfoView: UIView {
+    private let scrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.showsVerticalScrollIndicator = false
+    }
+
     private let stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 0
@@ -22,8 +27,18 @@ final class ReviewInfoView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(stackView)
-        stackView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        addSubview(scrollView)
+        scrollView.addSubview(stackView)
+
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+        }
 
         [dot1, dot2, dot3].forEach { $0.text = " • " }
         [companyLabel, dot1, areaLabel, dot2, interviewTypeLabel, dot3, interviewerLabel]

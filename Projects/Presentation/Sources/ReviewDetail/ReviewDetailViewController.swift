@@ -21,7 +21,7 @@ public final class ReviewDetailViewController: BaseViewController<ReviewDetailVi
     private var currentDataType: DataType = .interviewReview
     private var writer: String = ""
 
-    private let segmentedControl = UISegmentedControl(items: ["면접 후기", "예상 질문"]).then {
+    private let segmentedControl = UISegmentedControl(items: ["면접 후기", "받은 질문"]).then {
         $0.selectedSegmentIndex = 0
         $0.selectedSegmentTintColor = UIColor.GrayScale.gray10
         $0.layer.cornerRadius = 0
@@ -158,7 +158,7 @@ public final class ReviewDetailViewController: BaseViewController<ReviewDetailVi
                     self.titleLabel.text = "\(self.writer)의 면접 후기"
                     self.questionListDetailStackView.setFieldType(interviewReview)
                 case .expectedQuestion:
-                    self.titleLabel.text = "\(self.writer)의 예상 면접 질문"
+                    self.titleLabel.text = "\(self.writer)의 받은 면접 질문"
                     self.questionListDetailStackView.setFieldType(expectedQuestion)
                 }
             })

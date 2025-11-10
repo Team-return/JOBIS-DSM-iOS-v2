@@ -243,7 +243,7 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             cell.isCheck = true
             selectedYearIndex = indexPath.item
 
-            let years = (2020...2026).map { String($0) }
+            let years = (2020...2026).reversed().map { String($0) }
             if indexPath.item < years.count {
                 selectedYear = years[indexPath.item]
                 selectedYearRelay.accept(selectedYear)
@@ -260,7 +260,7 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             }
             .disposed(by: disposeBag)
 
-        let years = (2020...2026).map { String($0) }
+        let years = (2020...2026).reversed().map { String($0) }
 
         Observable.just(years)
             .bind(to: yearsCollectionView.rx.items(

@@ -44,13 +44,12 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
 
     public override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
 
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
-            $0.top.width.equalToSuperview()
-            $0.bottom.equalTo(bugSectionView).offset(60)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
         }
 
         studentInfoView.snp.makeConstraints {
@@ -88,6 +87,7 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         bugSectionView.snp.makeConstraints {
             $0.top.equalTo(accountSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-60)
         }
     }
 
