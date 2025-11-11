@@ -28,22 +28,24 @@ public class JobisLottieView: UIView {
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        var animation: LottieAnimation? {
-            switch previousTraitCollection?.userInterfaceStyle {
-            case .dark:
-                AnimationAsset.lightOnboarding.animation
+            super.traitCollectionDidChange(previousTraitCollection)
 
-            default:
-                AnimationAsset.darkOnboarding.animation
+            if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+                let animation: LottieAnimation? = {
+                    switch self.traitCollection.userInterfaceStyle {
+                    case .dark:
+                        return AnimationAsset.darkOnboarding.animation
+                    default:
+                        return AnimationAsset.lightOnboarding.animation
+                    }
+                }()
+
+                self.lottieAnimationView?.removeFromSuperview()
+                self.lottieAnimationView = .init(animation: animation)
+                self.configureView()
+                self.play()
             }
         }
-
-        print(previousTraitCollection?.userInterfaceStyle == .dark)
-
-        self.lottieAnimationView = .init(animation: animation)
-        self.layoutIfNeeded()
-        self.play()
-    }
 
     private func configureView() {
         guard let lottieAnimationView else { return }
