@@ -34,7 +34,7 @@ public final class ReviewCompleteViewModel: BaseViewModel, Stepper {
             .share(replay: 1)
 
         input.viewDidAppear
-            .delay(.seconds(3), scheduler: MainScheduler.instance)
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
             .map { WritableReviewStep.popToMyPage }
             .bind(to: steps)
             .disposed(by: disposeBag)
