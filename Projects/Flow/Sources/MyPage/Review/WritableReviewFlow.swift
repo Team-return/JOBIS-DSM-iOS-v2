@@ -114,7 +114,15 @@ private extension WritableReviewFlow {
     }
 
     func popToMyPage() -> FlowContributors {
-        self.rootViewController.navigationController?.popViewController(animated: true)
+        guard let navigationController = self.rootViewController.navigationController else {
+            return .none
+        }
+
+        let viewControllers = navigationController.viewControllers
+        if let rootIndex = viewControllers.firstIndex(of: rootViewController), rootIndex > 0 {
+            navigationController.popToViewController(viewControllers[rootIndex - 1], animated: true)
+        }
+
         return .none
     }
 }
