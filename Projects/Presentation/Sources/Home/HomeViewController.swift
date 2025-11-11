@@ -13,7 +13,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
-    private let titleImageView = UIImageView(image: .jobisIcon(.jobisLogo))
+    private let titleImageView = UIImageView(image: .jobisIcon(.jobisWhiteLogo))
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
