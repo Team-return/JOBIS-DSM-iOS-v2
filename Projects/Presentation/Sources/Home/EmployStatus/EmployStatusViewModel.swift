@@ -34,7 +34,8 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
 
         input.viewWillAppear
             .flatMap { [self] in
-                fetchTotalPassStudentUseCase.execute()
+                let currentYear = Calendar.current.component(.year, from: Date())
+                return fetchTotalPassStudentUseCase.execute(year: currentYear)
             }
             .bind(to: totalPassStudentInfo)
             .disposed(by: disposeBag)

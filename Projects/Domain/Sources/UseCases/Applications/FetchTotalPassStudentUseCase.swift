@@ -7,7 +7,7 @@ public struct FetchTotalPassStudentUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    public func execute() -> Single<TotalPassStudentEntity> {
-        applicationsRepository.fetchTotalPassStudent()
+    public func execute(year: Int) -> Single<TotalPassStudentEntity> {
+        applicationsRepository.fetchTotalPassStudent(year: year)
     }
 }

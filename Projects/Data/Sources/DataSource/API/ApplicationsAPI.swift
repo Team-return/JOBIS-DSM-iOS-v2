@@ -7,7 +7,7 @@ enum ApplicationsAPI {
     case reApplyCompany(id: Int, ApplyCompanyRequestQuery)
     case cancelApply(id: Int)
     case fetchApplication
-    case fetchTotalPassStudent
+    case fetchTotalPassStudent(year: Int)
     case fetchRejectionReason(id: Int)
     case fetchEmploymentStatus
 }
@@ -33,8 +33,8 @@ extension ApplicationsAPI: JobisAPI {
         case .fetchApplication:
             return "/students"
 
-        case .fetchTotalPassStudent:
-            return "/employment/count"
+        case let .fetchTotalPassStudent(year):
+            return "/employment/count/\(year)"
 
         case let .fetchRejectionReason(id):
             return "/rejection/\(id)"

@@ -111,7 +111,8 @@ public final class HomeViewModel: BaseViewModel, Stepper {
 
         input.viewAppear.asObservable()
             .flatMap { [self] in
-                fetchTotalPassStudentUseCase.execute()
+                let currentYear = Calendar.current.component(.year, from: Date())
+                return fetchTotalPassStudentUseCase.execute(year: currentYear)
             }
             .bind(to: totalPassStudentInfo)
             .disposed(by: disposeBag)

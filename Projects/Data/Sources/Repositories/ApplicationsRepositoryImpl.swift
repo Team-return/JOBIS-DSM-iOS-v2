@@ -24,8 +24,8 @@ struct ApplicationsRepositoryImpl: ApplicationsRepository {
         remoteApplicationsDataSource.fetchApplication()
     }
 
-    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
-        remoteApplicationsDataSource.fetchTotalPassStudent()
+    func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity> {
+        remoteApplicationsDataSource.fetchTotalPassStudent(year: year)
     }
 
     func fetchRejectionReason(id: Int) -> Single<String> {
