@@ -19,6 +19,7 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
     public struct Input {
         let viewWillAppear: PublishRelay<Void>
         let classButtonTapped: Observable<Int>
+        let filterButtonDidTap: Signal<Void>
     }
 
     public struct Output {
@@ -42,6 +43,12 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
 
         input.classButtonTapped
             .map { EmployStatusStep.classEmploymentIsRequired(classNumber: $0) }
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        input.filterButtonDidTap
+            .asObservable()
+            .map { EmployStatusStep.employmentFilterIsRequired }
             .bind(to: steps)
             .disposed(by: disposeBag)
 

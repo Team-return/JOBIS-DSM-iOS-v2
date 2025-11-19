@@ -257,6 +257,16 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
 
+        // Employment Filter
+        container.register(EmploymentFilterViewController.self) { resolver in
+            EmploymentFilterViewController(
+                resolver.resolve(EmploymentFilterViewModel.self)!
+            )
+        }
+        container.register(EmploymentFilterViewModel.self) { resolver in
+            EmploymentFilterViewModel()
+        }
+
         // Easter Egg
         container.register(EasterEggViewController.self) { resolver in
             EasterEggViewController()

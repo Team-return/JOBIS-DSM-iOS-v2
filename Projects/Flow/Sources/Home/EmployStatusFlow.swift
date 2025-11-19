@@ -25,6 +25,9 @@ public final class EmployStatusFlow: Flow {
 
         case let .classEmploymentIsRequired(classNumber):
             return navigateToClassEmployment(classNumber)
+
+        case .employmentFilterIsRequired:
+            return navigateToEmploymentFilter()
         }
     }
 }
@@ -39,6 +42,19 @@ private extension EmployStatusFlow {
 
     func navigateToClassEmployment(_ classNumber: Int) -> FlowContributors {
         let viewController = container.resolve(ClassEmploymentViewController.self, argument: classNumber)!
+        rootViewController.navigationController?.pushViewController(viewController, animated: true)
+
+        guard let stepper = viewController.viewModel as? Stepper else {
+            return .none
+        }
+        return .one(flowContributor: .contribute(
+            withNextPresentable: viewController,
+            withNextStepper: stepper
+        ))
+    }
+
+    func navigateToEmploymentFilter() -> FlowContributors {
+        let viewController = container.resolve(EmploymentFilterViewController.self)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
 
         guard let stepper = viewController.viewModel as? Stepper else {
