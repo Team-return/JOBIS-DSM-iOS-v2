@@ -7,5 +7,5 @@ public protocol ApplicationsRepository {
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity>
     func fetchRejectionReason(id: Int) -> Single<String>
-    func fetchEmploymentStatus() -> Single<[EmploymentEntity]>
+    func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]>
 }

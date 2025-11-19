@@ -9,7 +9,7 @@ enum ApplicationsAPI {
     case fetchApplication
     case fetchTotalPassStudent(year: Int)
     case fetchRejectionReason(id: Int)
-    case fetchEmploymentStatus
+    case fetchEmploymentStatus(year: Int)
 }
 
 extension ApplicationsAPI: JobisAPI {
@@ -39,8 +39,8 @@ extension ApplicationsAPI: JobisAPI {
         case let .fetchRejectionReason(id):
             return "/rejection/\(id)"
 
-        case .fetchEmploymentStatus:
-            return "/employment"
+        case let .fetchEmploymentStatus(year):
+            return "/employment/\(year)"
         }
     }
 
