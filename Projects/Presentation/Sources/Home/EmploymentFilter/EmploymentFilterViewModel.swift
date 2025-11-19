@@ -7,6 +7,7 @@ import Core
 public final class EmploymentFilterViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
+    public var currentYear: Int = Calendar.current.component(.year, from: Date())
 
     public init() {
     }

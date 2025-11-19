@@ -65,6 +65,12 @@ public final class EmploymentFilterViewController: BaseViewController<Employment
         let years = ["2025", "2024"]
         yearStackView.setYears(years)
 
+        let currentYear = viewModel.currentYear
+        selectedYearRelay.accept(String(currentYear))
+        if let index = years.firstIndex(of: String(currentYear)) {
+            yearStackView.setInitialSelection(at: index)
+        }
+
         yearStackView.selectedYearObservable
             .bind(to: selectedYearRelay)
             .disposed(by: disposeBag)

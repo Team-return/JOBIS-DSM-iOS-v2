@@ -54,7 +54,8 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
 
         input.filterButtonDidTap
             .asObservable()
-            .map { EmployStatusStep.employmentFilterIsRequired }
+            .withLatestFrom(selectedYearRelay)
+            .map { year in EmployStatusStep.employmentFilterIsRequired(currentYear: year) }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
@@ -65,5 +66,9 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
 
     public func updateYear(_ year: Int) {
         selectedYearRelay.accept(year)
+    }
+
+    public func getCurrentYear() -> Int {
+        return selectedYearRelay.value
     }
 }

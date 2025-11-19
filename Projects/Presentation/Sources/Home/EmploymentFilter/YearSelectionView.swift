@@ -111,4 +111,13 @@ class YearSelectionView: UIStackView {
             self.addArrangedSubview(yearCell)
         }
     }
+
+    func setInitialSelection(at index: Int) {
+        guard index >= 0, index < arrangedSubviews.count,
+              let cell = arrangedSubviews[index] as? YearSelectionCell else {
+            return
+        }
+        selectedCell = cell
+        cell.isCheck = true
+    }
 }

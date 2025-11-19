@@ -3,6 +3,6 @@ import RxFlow
 public enum EmployStatusStep: Step {
     case employStatusIsRequired
     case classEmploymentIsRequired(classNumber: Int)
-    case employmentFilterIsRequired
+    case employmentFilterIsRequired(currentYear: Int)
     case applyYearFilter(year: Int)
 }
