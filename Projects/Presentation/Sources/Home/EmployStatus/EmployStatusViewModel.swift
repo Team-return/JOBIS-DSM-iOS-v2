@@ -9,6 +9,8 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     private let disposeBag = DisposeBag()
     private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+    private let selectedYearRelay = BehaviorRelay<Int>(value: Calendar.current.component(.year, from: Date()))
+    private var totalPassStudentInfoRelay: BehaviorRelay<TotalPassStudentEntity>?
 
     public init(
         fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
@@ -32,14 +34,18 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
             passedCount: 0,
             approvedCount: 0
         ))
+        self.totalPassStudentInfoRelay = totalPassStudentInfo
 
-        input.viewWillAppear
-            .flatMap { [self] in
-                let currentYear = Calendar.current.component(.year, from: Date())
-                return fetchTotalPassStudentUseCase.execute(year: currentYear)
-            }
-            .bind(to: totalPassStudentInfo)
-            .disposed(by: disposeBag)
+        Observable.merge(
+            input.viewWillAppear.map { _ in () },
+            selectedYearRelay.skip(1).map { _ in () }
+        )
+        .withLatestFrom(selectedYearRelay)
+        .flatMap { [self] year in
+            fetchTotalPassStudentUseCase.execute(year: year)
+        }
+        .bind(to: totalPassStudentInfo)
+        .disposed(by: disposeBag)
 
         input.classButtonTapped
             .map { EmployStatusStep.classEmploymentIsRequired(classNumber: $0) }
@@ -55,5 +61,9 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
         return Output(
             totalPassStudentInfo: totalPassStudentInfo
         )
+    }
+
+    public func updateYear(_ year: Int) {
+        selectedYearRelay.accept(year)
     }
 }

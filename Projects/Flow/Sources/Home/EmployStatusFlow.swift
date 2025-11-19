@@ -29,8 +29,8 @@ public final class EmployStatusFlow: Flow {
         case .employmentFilterIsRequired:
             return navigateToEmploymentFilter()
 
-        case .popEmploymentFilter:
-            return popEmploymentFilter()
+        case let .applyYearFilter(year):
+            return applyYearFilter(year: year)
         }
     }
 }
@@ -69,8 +69,11 @@ private extension EmployStatusFlow {
         ))
     }
 
-    func popEmploymentFilter() -> FlowContributors {
+    func applyYearFilter(year: Int) -> FlowContributors {
         rootViewController.navigationController?.popViewController(animated: true)
+        if let employStatusViewModel = rootViewController.viewModel as? EmployStatusViewModel {
+            employStatusViewModel.updateYear(year)
+        }
         return .none
     }
 }

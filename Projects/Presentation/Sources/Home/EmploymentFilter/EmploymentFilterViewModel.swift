@@ -13,7 +13,7 @@ public final class EmploymentFilterViewModel: BaseViewModel, Stepper {
 
     public struct Input {
         let viewAppear: PublishRelay<Void>
-        let applyButtonDidTap: Signal<Void>
+        let applyButtonDidTap: Signal<Int>
     }
 
     public struct Output {
@@ -22,8 +22,8 @@ public final class EmploymentFilterViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         input.applyButtonDidTap
             .asObservable()
-            .subscribe(onNext: { [weak self] in
-                self?.steps.accept(EmployStatusStep.popEmploymentFilter)
+            .subscribe(onNext: { [weak self] year in
+                self?.steps.accept(EmployStatusStep.applyYearFilter(year: year))
             })
             .disposed(by: disposeBag)
 

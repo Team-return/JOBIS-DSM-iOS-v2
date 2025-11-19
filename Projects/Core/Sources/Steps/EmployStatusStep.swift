@@ -4,5 +4,5 @@ public enum EmployStatusStep: Step {
     case employStatusIsRequired
     case classEmploymentIsRequired(classNumber: Int)
     case employmentFilterIsRequired
-    case popEmploymentFilter
+    case applyYearFilter(year: Int)
 }

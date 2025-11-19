@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 
 public final class EmploymentFilterViewController: BaseViewController<EmploymentFilterViewModel> {
-    private var selectedYear: String?
+    private let selectedYearRelay = BehaviorRelay<String?>(value: nil)
 
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView().then {
@@ -62,21 +62,23 @@ public final class EmploymentFilterViewController: BaseViewController<Employment
     }
 
     public override func bind() {
-        let input = EmploymentFilterViewModel.Input(
-            viewAppear: viewWillAppearPublisher,
-            applyButtonDidTap: filterApplyButton.rx.tap.asSignal()
-        )
-
-        let output = viewModel.transform(input)
-
         let years = ["2025", "2024"]
         yearStackView.setYears(years)
 
         yearStackView.selectedYearObservable
-            .bind { [weak self] year in
-                self?.selectedYear = year
-            }
+            .bind(to: selectedYearRelay)
             .disposed(by: disposeBag)
+
+        let input = EmploymentFilterViewModel.Input(
+            viewAppear: viewWillAppearPublisher,
+            applyButtonDidTap: filterApplyButton.rx.tap
+                .withLatestFrom(selectedYearRelay.asObservable())
+                .compactMap { $0 }
+                .map { Int($0) ?? Calendar.current.component(.year, from: Date()) }
+                .asSignal(onErrorJustReturn: Calendar.current.component(.year, from: Date()))
+        )
+
+        let output = viewModel.transform(input)
     }
 
     public override func configureNavigation() {
