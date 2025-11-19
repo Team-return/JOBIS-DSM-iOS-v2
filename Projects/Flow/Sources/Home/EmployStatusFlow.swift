@@ -28,6 +28,9 @@ public final class EmployStatusFlow: Flow {
 
         case .employmentFilterIsRequired:
             return navigateToEmploymentFilter()
+
+        case .popEmploymentFilter:
+            return popEmploymentFilter()
         }
     }
 }
@@ -64,5 +67,10 @@ private extension EmployStatusFlow {
             withNextPresentable: viewController,
             withNextStepper: stepper
         ))
+    }
+
+    func popEmploymentFilter() -> FlowContributors {
+        rootViewController.navigationController?.popViewController(animated: true)
+        return .none
     }
 }

@@ -7,32 +7,79 @@ import Core
 import DesignSystem
 
 public final class EmploymentFilterViewController: BaseViewController<EmploymentFilterViewModel> {
-    private let yearLabel = UILabel().then {
-        $0.setJobisText("연도", font: .headLine, color: .GrayScale.gray90)
+    private var selectedYear: String?
+
+    private let scrollView = UIScrollView()
+    private let contentStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+    }
+
+    private let yearSectionView = UIView()
+    private lazy var yearStackView = YearSelectionView()
+
+    private let filterApplyButton = JobisButton(style: .main).then {
+        $0.setText("적용하기")
     }
 
     public override func addView() {
         [
-            yearLabel
-        ].forEach(view.addSubview)
+            scrollView,
+            filterApplyButton
+        ].forEach { view.addSubview($0) }
+        scrollView.addSubview(contentStackView)
+        contentStackView.addArrangedSubview(yearSectionView)
+        yearSectionView.addSubview(yearStackView)
     }
 
     public override func setLayout() {
-        yearLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(filterApplyButton.snp.top)
+        }
+
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+        }
+
+        yearSectionView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        yearStackView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
             $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-12)
+        }
+
+        filterApplyButton.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-12)
+            $0.height.equalTo(48)
         }
     }
 
     public override func bind() {
         let input = EmploymentFilterViewModel.Input(
-            viewAppear: viewWillAppearPublisher
+            viewAppear: viewWillAppearPublisher,
+            applyButtonDidTap: filterApplyButton.rx.tap.asSignal()
         )
 
         let output = viewModel.transform(input)
+
+        let years = ["2025", "2024"]
+        yearStackView.setYears(years)
+
+        yearStackView.selectedYearObservable
+            .bind { [weak self] year in
+                self?.selectedYear = year
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
-        setSmallTitle(title: "필터")
+        setSmallTitle(title: "년도 설정")
     }
 }
