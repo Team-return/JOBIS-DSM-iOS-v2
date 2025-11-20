@@ -7,7 +7,7 @@ public struct FetchEmploymentStatusUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    public func execute() -> Single<[EmploymentEntity]> {
-        applicationsRepository.fetchEmploymentStatus()
+    public func execute(year: Int) -> Single<[EmploymentEntity]> {
+        applicationsRepository.fetchEmploymentStatus(year: year)
     }
 }

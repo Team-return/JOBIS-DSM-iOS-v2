@@ -1,4 +1,5 @@
 import Foundation
+import Core
 import RxSwift
 import RxCocoa
 import Domain
@@ -29,7 +30,8 @@ public final class ClassEmploymentViewModel: BaseViewModel, Stepper {
     public func transform(_ input: Input) -> Output {
         let classInfo = input.viewAppear
             .flatMapLatest { [fetchEmploymentStatusUseCase, classNumber] in
-                fetchEmploymentStatusUseCase.execute()
+                let currentYear = Calendar.current.component(.year, from: Date())
+                return fetchEmploymentStatusUseCase.execute(year: currentYear)
                     .asObservable()
                     .map { employments in
                         employments.first { $0.classID == classNumber } ??

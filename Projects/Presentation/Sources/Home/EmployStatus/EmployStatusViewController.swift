@@ -10,6 +10,10 @@ import Charts
 
 public final class EmployStatusViewController: BaseViewController<EmployStatusViewModel> {
     private let classButtonTapped = PublishRelay<Int>()
+    private let filterButton = UIButton(type: .system).then {
+        $0.setImage(.jobisIcon(.filterIcon), for: .normal)
+        $0.tintColor = .GrayScale.gray90
+    }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -82,7 +86,8 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
     public override func bind() {
         let input = EmployStatusViewModel.Input(
             viewWillAppear: viewWillAppearPublisher,
-            classButtonTapped: classButtonTapped.asObservable()
+            classButtonTapped: classButtonTapped.asObservable(),
+            filterButtonDidTap: filterButton.rx.tap.asSignal()
         )
         let output = viewModel.transform(input)
         output.totalPassStudentInfo
@@ -115,5 +120,12 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
 
     public override func configureNavigation() {
         setSmallTitle(title: "취업 현황")
+
+        let rightBarButtonItem = UIBarButtonItem(customView: filterButton)
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+
+        filterButton.snp.makeConstraints {
+            $0.width.height.equalTo(28)
+        }
     }
 }
