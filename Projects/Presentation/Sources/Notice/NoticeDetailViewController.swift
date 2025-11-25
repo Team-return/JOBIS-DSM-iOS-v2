@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class NoticeDetailViewController: BaseViewController<NoticeDetailViewModel> {
+public final class NoticeDetailViewController: BaseReactorViewController<NoticeDetailReactor> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -17,24 +17,12 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
-    private var noticeDateLabel = UILabel()
+    private let noticeDateLabel = UILabel()
     private let noticeContentLabel = UILabel().then {
-        $0.setJobisText(
-            "-",
-            font: .body,
-            color: .GrayScale.gray80
-        )
+        $0.setJobisText("-", font: .body, color: .GrayScale.gray80)
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
-//    private let attachmentLabel = UILabel().then {
-//        $0.setJobisText(
-//            "첨부파일",
-//            font: .largeBody,
-//            color: .GrayScale.gray60
-//        )
-//        $0.isHidden = true
-//    }
 
     public override func addView() {
         view.addSubview(scrollView)
@@ -43,7 +31,6 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             noticeTitleLabel,
             noticeDateLabel,
             noticeContentLabel
-//            attachmentLabel
         ].forEach(contentView.addSubview(_:))
     }
 
@@ -72,38 +59,33 @@ public final class NoticeDetailViewController: BaseViewController<NoticeDetailVi
             $0.top.equalTo(noticeDateLabel.snp.bottom).offset(16)
             $0.left.right.equalToSuperview().inset(24)
         }
-
-//        attachmentLabel.snp.makeConstraints {
-//            $0.top.equalTo(noticeContentLabel.snp.bottom).offset(16)
-//            $0.leading.equalToSuperview().inset(24)
-//        }
     }
 
-    public override func bind() {
-        let input = NoticeDetailViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { NoticeDetailReactor.Action.viewDidAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
 
-        let output = viewModel.transform(input)
-
-        output.noticeDetailInfo
-            .bind { [weak self] in
-                self?.noticeTitleLabel.text = $0.title
+    public override func bindState() {
+        reactor.state.compactMap { $0.noticeDetail }
+            .subscribe(onNext: { [weak self] detail in
+                self?.noticeTitleLabel.text = detail.title
                 self?.noticeDateLabel.setJobisText(
-                    $0.createdAt,
+                    detail.createdAt,
                     font: .description,
                     color: .GrayScale.gray60
                 )
-                self?.noticeContentLabel.text = $0.content
-//                self?.attachmentLabel.isHidden = $0.attachments.isEmpty
-            }
+                self?.noticeContentLabel.text = detail.content
+            })
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() { }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "공지사항")
-        self.navigationItem.largeTitleDisplayMode = .never
+        setSmallTitle(title: "공지사항")
+        navigationItem.largeTitleDisplayMode = .never
     }
 }
