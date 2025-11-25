@@ -71,13 +71,14 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
 
         input.bookMarkButtonDidTap.asObservable()
             .do(onNext: { id in
-                var oldData = self.recruitmentData.value
-                oldData.enumerated().forEach {
-                    if $0.element.recruitID == id {
-                        oldData[$0.offset].bookmarked.toggle()
+                let updatedData = self.recruitmentData.value.map { item in
+                    var mutableItem = item
+                    if mutableItem.recruitID == id {
+                        mutableItem.bookmarked.toggle()
                     }
+                    return mutableItem
                 }
-                self.recruitmentData.accept(oldData)
+                self.recruitmentData.accept(updatedData)
             })
             .flatMap { id in
                 self.bookmarkUseCase.execute(id: id)
