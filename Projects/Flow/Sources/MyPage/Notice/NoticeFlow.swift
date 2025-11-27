@@ -33,7 +33,7 @@ private extension NoticeFlow {
     func navigateToNotice() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.reactor ?? rootViewController.reactor
+            withNextStepper: rootViewController.reactor
         ))
     }
 
