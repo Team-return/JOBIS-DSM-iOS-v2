@@ -10,9 +10,13 @@ public final class NoticeDetailReactor: BaseReactor, Stepper {
     public let initialState: State
     private let disposeBag = DisposeBag()
     private let fetchNoticeDetailUseCase: FetchNoticeDetailUseCase
-    public var noticeID: Int?
+    public let noticeID: Int
 
-    init(fetchNoticeDetailUseCase: FetchNoticeDetailUseCase) {
+    init(
+        noticeID: Int,
+        fetchNoticeDetailUseCase: FetchNoticeDetailUseCase
+    ) {
+        self.noticeID = noticeID
         self.initialState = .init()
         self.fetchNoticeDetailUseCase = fetchNoticeDetailUseCase
     }
@@ -34,7 +38,7 @@ extension NoticeDetailReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchNoticeDetail:
-            return fetchNoticeDetailUseCase.execute(id: noticeID ?? 0)
+            return fetchNoticeDetailUseCase.execute(id: noticeID)
                 .asObservable()
                 .map { Mutation.setNoticeDetail($0) }
         }
