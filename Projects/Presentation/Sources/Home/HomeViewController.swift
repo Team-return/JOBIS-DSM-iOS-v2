@@ -170,12 +170,13 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
 
-        let totalPassBannerModel = output.totalPassStudentInfo.value
-
-        let combinedBanners = output.bannerList
-            .map { banners in
-                return [totalPassBannerModel] + banners
-            }
+        let combinedBanners = Observable.combineLatest(
+            output.totalPassStudentInfo,
+            output.bannerList
+        )
+        .map { totalPass, banners -> [Any] in
+            return [totalPass] + banners
+        }
 
         combinedBanners
             .do(onNext: { [weak self] _ in
@@ -190,8 +191,10 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             )) { [weak self] index, element, cell in
                 guard let self = self else { return }
 
-                if index == 0, let cell = cell as? BannerCollectionViewCell {
-                    cell.totalPassAdapt(model: output.totalPassStudentInfo.value)
+                if index == 0,
+                   let totalPassModel = element as? TotalPassStudentEntity,
+                   let cell = cell as? BannerCollectionViewCell {
+                    cell.totalPassAdapt(model: totalPassModel)
                     cell.employStatusButton.rx.tap
                         .map { _ in () }
                         .bind(to: self.employStatusButtonTap)
