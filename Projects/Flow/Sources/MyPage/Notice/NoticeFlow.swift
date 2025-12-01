@@ -33,7 +33,7 @@ private extension NoticeFlow {
     func navigateToNotice() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -42,7 +42,7 @@ private extension NoticeFlow {
 
         Flows.use(noticeDetailFlow, when: .created) { (root) in
             let view = root as? NoticeDetailViewController
-            view?.viewModel.noticeID = id
+            view?.reactor.noticeID = id
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

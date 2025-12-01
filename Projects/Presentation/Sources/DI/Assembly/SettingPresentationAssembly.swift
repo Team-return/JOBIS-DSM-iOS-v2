@@ -57,23 +57,23 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Notice
-        container.register(NoticeViewModel.self) { resolver in
-            NoticeViewModel(
+        container.register(NoticeReactor.self) { resolver in
+            NoticeReactor(
                 fetchNoticeListUseCase: resolver.resolve(FetchNoticeListUseCase.self)!
             )
         }
         container.register(NoticeViewController.self) { resolver in
-            NoticeViewController(resolver.resolve(NoticeViewModel.self)!)
+            NoticeViewController(resolver.resolve(NoticeReactor.self)!)
         }
 
         // Notice Detail
-        container.register(NoticeDetailViewModel.self) { resolver in
-            NoticeDetailViewModel(
+        container.register(NoticeDetailReactor.self) { resolver in
+            NoticeDetailReactor(
                 fetchNoticeDetailUseCase: resolver.resolve(FetchNoticeDetailUseCase.self)!
             )
         }
         container.register(NoticeDetailViewController.self) { resolver in
-            NoticeDetailViewController(resolver.resolve(NoticeDetailViewModel.self)!)
+            NoticeDetailViewController(resolver.resolve(NoticeDetailReactor.self)!)
         }
 
         // Bug Report
