@@ -17,7 +17,7 @@ public final class NoticeReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewDidAppear
+        case fetchNoticeList
         case noticeDidSelect(Int)
     }
 
@@ -34,7 +34,7 @@ public final class NoticeReactor: BaseReactor, Stepper {
 extension NoticeReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidAppear:
+        case .fetchNoticeList:
             return fetchNoticeListUseCase.execute()
                 .asObservable()
                 .map { Mutation.setNoticeList($0) }

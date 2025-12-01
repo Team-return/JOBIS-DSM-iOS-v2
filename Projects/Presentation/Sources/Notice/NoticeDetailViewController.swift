@@ -62,8 +62,8 @@ public final class NoticeDetailViewController: BaseReactorViewController<NoticeD
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher
-            .map { NoticeDetailReactor.Action.viewDidAppear }
+        viewDidLoadPublisher
+            .map { NoticeDetailReactor.Action.fetchNoticeDetail }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
