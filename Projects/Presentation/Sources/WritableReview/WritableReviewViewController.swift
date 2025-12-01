@@ -94,8 +94,17 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         )
         let output = viewModel.transform(input)
         output.qnaInfoList.asObservable()
-            .bind(onNext: {
-                self.questionListDetailStackView.setFieldType($0)
+            .bind(onNext: { [weak self] list in
+                guard let self = self else { return }
+                let validList = list.filter { !$0.question.isEmpty && !$0.answer.isEmpty }
+                let isEmpty = validList.isEmpty
+
+                self.questionListDetailStackView.isHidden = isEmpty
+                self.emptyQuestionListView.isHidden = !isEmpty
+
+                if !isEmpty {
+                    self.questionListDetailStackView.setFieldType(list)
+                }
             })
             .disposed(by: disposeBag)
     }
