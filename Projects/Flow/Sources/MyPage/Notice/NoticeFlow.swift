@@ -38,11 +38,10 @@ private extension NoticeFlow {
     }
 
     func navigateToNoticeDetail(_ id: Int) -> FlowContributors {
-        let noticeDetailFlow = NoticeDetailFlow(container: container)
+        let noticeDetailFlow = NoticeDetailFlow(container: container, noticeID: id)
 
         Flows.use(noticeDetailFlow, when: .created) { (root) in
             let view = root as? NoticeDetailViewController
-            view?.reactor.noticeID = id
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

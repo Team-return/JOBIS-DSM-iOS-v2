@@ -67,13 +67,14 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Notice Detail
-        container.register(NoticeDetailReactor.self) { resolver in
+        container.register(NoticeDetailReactor.self) { (resolver: Resolver, noticeID: Int) in
             NoticeDetailReactor(
+                noticeID: noticeID,
                 fetchNoticeDetailUseCase: resolver.resolve(FetchNoticeDetailUseCase.self)!
             )
         }
-        container.register(NoticeDetailViewController.self) { resolver in
-            NoticeDetailViewController(resolver.resolve(NoticeDetailReactor.self)!)
+        container.register(NoticeDetailViewController.self) { (resolver: Resolver, noticeID: Int) in
+            NoticeDetailViewController(resolver.resolve(NoticeDetailReactor.self, argument: noticeID)!)
         }
 
         // Bug Report

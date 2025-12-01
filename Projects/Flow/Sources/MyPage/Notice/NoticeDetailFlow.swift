@@ -11,9 +11,9 @@ public final class NoticeDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, noticeID: Int) {
         self.container = container
-        self.rootViewController = container.resolve(NoticeDetailViewController.self)!
+        self.rootViewController = container.resolve(NoticeDetailViewController.self, argument: noticeID)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
