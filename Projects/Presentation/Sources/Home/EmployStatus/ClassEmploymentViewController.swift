@@ -9,6 +9,7 @@ import DesignSystem
 
 public final class ClassEmploymentViewController: BaseViewController<ClassEmploymentViewModel> {
     private let classNumber: Int
+    private let year: Int
     private let companyCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: ClassEmploymentCollectionViewLayout()
@@ -23,8 +24,9 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
         $0.textAlignment = .center
     }
 
-    public init(viewModel: ClassEmploymentViewModel, classNumber: Int) {
+    public init(viewModel: ClassEmploymentViewModel, classNumber: Int, year: Int) {
         self.classNumber = classNumber
+        self.year = year
         super.init(viewModel)
     }
 

@@ -48,7 +48,8 @@ public final class EmployStatusViewModel: BaseViewModel, Stepper {
         .disposed(by: disposeBag)
 
         input.classButtonTapped
-            .map { EmployStatusStep.classEmploymentIsRequired(classNumber: $0) }
+            .withLatestFrom(selectedYearRelay) { (classNumber: $0, year: $1) }
+            .map { EmployStatusStep.classEmploymentIsRequired(classNumber: $0.classNumber, year: $0.year) }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
