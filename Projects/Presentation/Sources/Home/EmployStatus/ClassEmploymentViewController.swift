@@ -23,6 +23,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
         $0.setJobisText("0/0", font: .body, color: .Primary.blue20)
         $0.textAlignment = .center
     }
+    private let companyDataRelay = BehaviorRelay<[EmploymentCompany?]>(value: Array(repeating: nil, count: 16))
 
     public init(viewModel: ClassEmploymentViewModel, classNumber: Int, year: Int) {
         self.classNumber = classNumber
@@ -54,6 +55,16 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     }
 
     public override func bind() {
+        companyDataRelay
+            .asDriver()
+            .drive(companyCollectionView.rx.items(
+                cellIdentifier: ClassCollectionViewCell.identifier,
+                cellType: ClassCollectionViewCell.self
+            )) { _, company, cell in
+                cell.adapt(model: company)
+            }
+            .disposed(by: disposeBag)
+
         let input = ClassEmploymentViewModel.Input(
             viewAppear: viewWillAppearPublisher
         )
@@ -86,16 +97,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
             repeating: nil,
             count: max(0, 16 - companies.count)
         )
-
-        Observable.just(allCompanies)
-            .asDriver(onErrorJustReturn: [])
-            .drive(companyCollectionView.rx.items(
-                cellIdentifier: ClassCollectionViewCell.identifier,
-                cellType: ClassCollectionViewCell.self
-            )) { _, company, cell in
-                cell.adapt(model: company)
-            }
-            .disposed(by: disposeBag)
+        companyDataRelay.accept(allCompanies)
     }
 
     public override func configureNavigation() {
