@@ -22,6 +22,7 @@ public extension TargetDependency.SPM {
     static let FCM = TargetDependency.package(product: "FirebaseMessaging")
     static let Pulse = TargetDependency.external(name: "Pulse")
     static let PulseUI = TargetDependency.external(name: "PulseUI")
+    static let Nuke = TargetDependency.external(name: "Nuke")
 }
 
 public extension Package {
