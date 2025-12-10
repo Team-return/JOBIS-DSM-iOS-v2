@@ -15,8 +15,10 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
     public var isMan: Bool = false
     public var profileImageURL: String?
     private let privacyWebView = WKWebView().then {
-        let url = URL(string: "https://jobis-webview.team-return.com/sign-up-policy")
-        let request = URLRequest(url: url!)
+        let url = URL(
+            string: Bundle.main.object(forInfoDictionaryKey: "PRIVACY_WEB_URL") as? String ?? ""
+        ) ?? URL(string: "https://www.google.com")!
+        let request = URLRequest(url: url)
         $0.load(request)
     }
     private let signupButton = JobisButton(style: .main).then {
