@@ -4,7 +4,6 @@ import RxCocoa
 import SnapKit
 import Then
 import Core
-import Kingfisher
 import DesignSystem
 import Domain
 

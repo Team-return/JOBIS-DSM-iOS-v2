@@ -35,21 +35,25 @@ public final class ProfileSettingViewModel: BaseViewModel, Stepper {
     public struct Output {}
 
     public func transform(_ input: Input) -> Output {
-        input.nextButtonDidTap.asObservable()
+        let profileImageWithTap = input.nextButtonDidTap.asObservable()
             .withLatestFrom(input.profileImage)
             .avoidDuplication
             .filter { $0?.file != nil }
-            .flatMap { file in
+
+        let presignedURLWithData = profileImageWithTap
+            .flatMap { file -> Observable<(PresignedURLEntity?, Data?)> in
                 self.fetchPresignedURLUseCase.execute(
                     req: .init(files: [.init(fileName: file?.fileName ?? "")])
                 )
                 .asObservable()
                 .map { ($0.first, file?.file) }
             }
-            .flatMap { url, data in
+
+        let uploadedStep = presignedURLWithData
+            .flatMap { (url, data) -> Single<ProfileSettingStep> in
                 self.uploadImageToS3UseCase.execute(
                     presignedURL: url?.presignedUrl ?? "",
-                    data: data ?? .empty
+                    data: data ?? Data()
                 )
                 .andThen(
                     Single.just(ProfileSettingStep.privacyIsRequired(
@@ -62,30 +66,25 @@ public final class ProfileSettingViewModel: BaseViewModel, Stepper {
                     ))
                 )
             }
-            .catchAndReturn(
-                ProfileSettingStep.privacyIsRequired(
-                    name: input.name,
-                    gcn: input.gcn,
-                    email: input.email,
-                    password: input.password,
-                    isMan: input.isMan,
-                    profileImageURL: nil
-                )
-            )
+
+        let fallbackStep = ProfileSettingStep.privacyIsRequired(
+            name: input.name,
+            gcn: input.gcn,
+            email: input.email,
+            password: input.password,
+            isMan: input.isMan,
+            profileImageURL: nil
+        )
+
+        uploadedStep
+            .asObservable()
+            .catchAndReturn(fallbackStep)
+            .map { $0 as Step }
             .bind(to: steps)
             .disposed(by: disposeBag)
 
         input.laterButtonDidTap.asObservable()
-            .map { _ in
-                ProfileSettingStep.privacyIsRequired(
-                    name: input.name,
-                    gcn: input.gcn,
-                    email: input.email,
-                    password: input.password,
-                    isMan: input.isMan,
-                    profileImageURL: nil
-                )
-            }
+            .map { _ -> Step in fallbackStep }
             .bind(to: self.steps)
             .disposed(by: self.disposeBag)
 
