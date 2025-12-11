@@ -5,7 +5,6 @@ import RxGesture
 import SnapKit
 import Then
 import Core
-import Kingfisher
 import DesignSystem
 
 class BugReportMajorView: BaseView {
