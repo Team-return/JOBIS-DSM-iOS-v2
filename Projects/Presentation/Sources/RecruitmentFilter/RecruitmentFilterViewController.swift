@@ -12,6 +12,11 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     private let filterApplyButtonDidTap = PublishRelay<Void>()
     private var appendTechCode = PublishRelay<CodeEntity>()
     private var resetTechCode = PublishRelay<Void>()
+    private let yearList = Array((2023...RecruitmentFilterViewController.currentYear()).reversed())
+    private let stateList = [
+        CodeEntity(code: 0, keyword: "모집중"),
+        CodeEntity(code: 1, keyword: "모집종료")
+    ]
 
     private let searchTextField = JobisSearchTextField().then {
         $0.setTextField(placeholder: "검색어를 입력해주세요")
@@ -19,19 +24,49 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 12
+        $0.spacing = 8
     }
-    private let layout = LeftAlignedCollectionViewFlowLayout().then {
-        $0.minimumLineSpacing = 8
-        $0.minimumInteritemSpacing = 8
-        $0.scrollDirection = .vertical
-        $0.itemSize = UICollectionViewFlowLayout.automaticSize
-        $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        $0.sectionInset = .init(top: 8, left: 24, bottom: 8, right: 24)
+    private let yearLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
+    }
+    private let yearLabel = UILabel().then {
+        $0.setJobisText("연도", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private lazy var yearCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: yearLayout
+    ).then {
+        $0.isScrollEnabled = false
+        $0.register(
+            JobsCollectionViewCell.self,
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+        )
+    }
+    private let jobsLabel = UILabel().then {
+        $0.setJobisText("모집 분야", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private let jobsLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
     }
     private lazy var jobsCollectionView = UICollectionView(
         frame: .zero,
-        collectionViewLayout: layout
+        collectionViewLayout: jobsLayout
+    ).then {
+        $0.isScrollEnabled = false
+        $0.register(
+            JobsCollectionViewCell.self,
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+        )
+    }
+    private let stateLabel = UILabel().then {
+        $0.setJobisText("모집 상태", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private let stateLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
+    }
+    private lazy var stateCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: stateLayout
     ).then {
         $0.isScrollEnabled = false
         $0.register(
@@ -52,7 +87,12 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         ].forEach(self.view.addSubview(_:))
         scrollView.addSubview(contentStackView)
         [
+            yearLabel,
+            yearCollectionView,
+            jobsLabel,
             jobsCollectionView,
+            stateLabel,
+            stateCollectionView,
             techStackView
         ].forEach(self.contentStackView.addArrangedSubview(_:))
     }
@@ -74,8 +114,28 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             $0.width.equalToSuperview()
         }
 
+        yearLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
+        yearCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(yearCollectionView.contentSize.height)
+        }
+
+        jobsLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
         jobsCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(jobsCollectionView.contentSize.height)
+        }
+
+        stateLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
+        stateCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(stateCollectionView.contentSize.height)
         }
 
         filterApplyButton.snp.makeConstraints {
@@ -118,6 +178,26 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                 }
             }
             .disposed(by: disposeBag)
+
+        Observable.just(yearList)
+            .bind(to: yearCollectionView.rx.items(
+                cellIdentifier: JobsCollectionViewCell.identifier,
+                cellType: JobsCollectionViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: CodeEntity(code: element, keyword: "\(element)"))
+                cell.isCheck = false
+            }
+            .disposed(by: disposeBag)
+
+        Observable.just(stateList)
+            .bind(to: stateCollectionView.rx.items(
+                cellIdentifier: JobsCollectionViewCell.identifier,
+                cellType: JobsCollectionViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+                cell.isCheck = false
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
@@ -138,4 +218,10 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     }
 
     public override func configureNavigation() {}
+}
+
+extension RecruitmentFilterViewController {
+    fileprivate static func currentYear() -> Int {
+        Calendar.current.component(.year, from: Date())
+    }
 }
