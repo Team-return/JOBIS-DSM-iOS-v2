@@ -153,6 +153,12 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                 .do(onNext: { _ in
                     self.viewModel.techCode.accept([])
                 }),
+            selectYears: yearCollectionView.rx.modelSelected(CodeEntity.self)
+                .do(onNext: { _ in
+                    self.yearCollectionView.reloadData()
+                })
+                .asObservable(),
+            selectStatus: stateCollectionView.rx.modelSelected(CodeEntity.self).asObservable(),
             filterApplyButtonDidTap: filterApplyButtonDidTap,
             appendTechCode: appendTechCode,
             resetTechCode: resetTechCode
@@ -179,13 +185,14 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             }
             .disposed(by: disposeBag)
 
-        Observable.just(yearList)
+        let yearEntities = yearList.map { CodeEntity(code: $0, keyword: "\($0)") }
+        Observable.just(yearEntities)
             .bind(to: yearCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
             )) { _, element, cell in
-                cell.adapt(model: CodeEntity(code: element, keyword: "\(element)"))
-                cell.isCheck = false
+                cell.adapt(model: element)
+                cell.isCheck = self.viewModel.years.value.contains("\(element.code)")
             }
             .disposed(by: disposeBag)
 

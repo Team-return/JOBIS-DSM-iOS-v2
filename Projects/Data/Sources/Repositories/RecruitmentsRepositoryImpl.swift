@@ -18,7 +18,7 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
         techCode: [String]?,
         name: String?,
         winterIntern: Bool?,
-        years: [Int]?,
+        years: [String]?,
         status: String?
     ) -> Single<[RecruitmentEntity]> {
         remoteRecruitmentsDataSource.fetchRecruitmentList(

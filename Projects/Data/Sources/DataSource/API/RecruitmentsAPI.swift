@@ -4,7 +4,7 @@ import AppNetwork
 
 enum RecruitmentsAPI {
     case fetchRecruitmentDetail(id: Int)
-    case fetchRecruitmentList(page: Int, jobCode: String?, techCode: [String]?, name: String?, winterIntern: Bool?, years: [Int]?, status: String?)
+    case fetchRecruitmentList(page: Int, jobCode: String?, techCode: [String]?, name: String?, winterIntern: Bool?, years: [String]?, status: String?)
 }
 
 extension RecruitmentsAPI: JobisAPI {
@@ -40,7 +40,7 @@ extension RecruitmentsAPI: JobisAPI {
                 "tech_code": techCode?.joined(separator: ",") ?? "",
                 "name": name ?? "",
                 "winter_intern": winterIntern ?? false,
-                "years": years ?? "",
+                "years": years?.joined(separator: ",") ?? "",
                 "status": status ?? ""
             ], encoding: URLEncoding.queryString)
 
