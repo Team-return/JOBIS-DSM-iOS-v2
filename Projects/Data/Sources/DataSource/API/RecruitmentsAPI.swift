@@ -4,7 +4,15 @@ import AppNetwork
 
 enum RecruitmentsAPI {
     case fetchRecruitmentDetail(id: Int)
-    case fetchRecruitmentList(page: Int, jobCode: String?, techCode: [String]?, name: String?, winterIntern: Bool?, years: [String]?, status: String?)
+    case fetchRecruitmentList(
+        page: Int,
+        jobCode: String?,
+        techCode: [String]?,
+        name: String?,
+        winterIntern: Bool?,
+        years: [String]?,
+        status: String?
+    )
 }
 
 extension RecruitmentsAPI: JobisAPI {
