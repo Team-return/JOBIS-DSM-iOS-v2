@@ -158,7 +158,10 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                     self.yearCollectionView.reloadData()
                 })
                 .asObservable(),
-            selectStatus: stateCollectionView.rx.modelSelected(CodeEntity.self).asObservable(),
+            selectStatus: stateCollectionView.rx.modelSelected(CodeEntity.self)
+                .do(onNext: { _ in
+                    self.stateCollectionView.reloadData()
+                }),
             filterApplyButtonDidTap: filterApplyButtonDidTap,
             appendTechCode: appendTechCode,
             resetTechCode: resetTechCode
@@ -202,7 +205,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
                 cellType: JobsCollectionViewCell.self
             )) { _, element, cell in
                 cell.adapt(model: element)
-                cell.isCheck = false
+                cell.isCheck = self.viewModel.status == self.viewModel.mapStatus(code: element.code)
             }
             .disposed(by: disposeBag)
     }

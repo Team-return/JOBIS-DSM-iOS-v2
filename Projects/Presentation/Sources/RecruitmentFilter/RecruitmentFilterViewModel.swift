@@ -10,6 +10,7 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
     public var jobCode: String = ""
+    public var status: String = ""
     public var years = BehaviorRelay<[String]>(value: [])
     public let techCode = BehaviorRelay<[String]>(value: [])
 
@@ -75,12 +76,24 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
             }
             .disposed(by: disposeBag)
 
+        input.selectStatus.asObservable()
+            .bind { code in
+                let mappedStatus = self.mapStatus(code: code.code)
+                if self.status == mappedStatus {
+                    self.status = ""
+                } else {
+                    self.status = mappedStatus
+                }
+            }
+            .disposed(by: disposeBag)
+
         input.filterApplyButtonDidTap.asObservable()
             .map {
                 RecruitmentFilterStep.popToRecruitment(
                     jobCode: self.jobCode,
                     techCode: self.techCode.value,
-                    years: self.years.value
+                    years: self.years.value,
+                    status: self.status
                 )
             }
             .bind(to: steps)
@@ -102,5 +115,18 @@ public final class RecruitmentFilterViewModel: BaseViewModel, Stepper {
             .disposed(by: disposeBag)
 
         return Output(jobList: jobList, techList: techList)
+    }
+}
+
+extension RecruitmentFilterViewModel {
+    public func mapStatus(code: Int) -> String {
+        switch code {
+        case 0:
+            return "RECRUITING"
+        case 1:
+            return "DONE"
+        default:
+            return ""
+        }
     }
 }
