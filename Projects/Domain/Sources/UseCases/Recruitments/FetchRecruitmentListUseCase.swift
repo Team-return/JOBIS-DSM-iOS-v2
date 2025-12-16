@@ -12,14 +12,18 @@ public struct FetchRecruitmentListUseCase {
         jobCode: String? = nil,
         techCode: [String]? = nil,
         name: String? = nil,
-        winterIntern: Bool? = nil
+        winterIntern: Bool? = nil,
+        years: [String]? = nil,
+        status: String? = nil
     ) -> Single<[RecruitmentEntity]> {
         recruitmentsRepository.fetchRecruitmentList(
             page: page,
             jobCode: jobCode,
             techCode: techCode,
             name: name,
-            winterIntern: winterIntern
+            winterIntern: winterIntern,
+            years: years,
+            status: status
         )
     }
 }

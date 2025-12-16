@@ -9,6 +9,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
     public let steps = PublishRelay<Step>()
     public var jobCode: String = ""
     public var techCode: [String]?
+    public var years: [String]?
+    public var status: String?
     public var recruitmentData = BehaviorRelay<[RecruitmentEntity]>(value: [])
     private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
@@ -43,7 +45,9 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 return self.fetchRecruitmentListUseCase.execute(
                     page: self.pageCount,
                     jobCode: self.jobCode,
-                    techCode: self.techCode
+                    techCode: self.techCode,
+                    years: self.years,
+                    status: self.status
                 )
             }
             .bind(onNext: {
@@ -59,7 +63,8 @@ public final class RecruitmentViewModel: BaseViewModel, Stepper {
                 return self.fetchRecruitmentListUseCase.execute(
                     page: self.pageCount,
                     jobCode: self.jobCode,
-                    techCode: self.techCode
+                    techCode: self.techCode,
+                    years: self.years
                 )
                     .asObservable()
                     .take(while: {

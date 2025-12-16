@@ -8,6 +8,8 @@ public struct RecruitmentEntity: Equatable, Hashable {
     public let militarySupport: Bool
     public let hiringJobs: String
     public var bookmarked: Bool
+    public let status: String
+    public let year: Int
 
     public init(
         recruitID: Int,
@@ -16,7 +18,9 @@ public struct RecruitmentEntity: Equatable, Hashable {
         trainPay: Int,
         militarySupport: Bool,
         hiringJobs: String,
-        bookmarked: Bool
+        bookmarked: Bool,
+        status: String,
+        year: Int
     ) {
         self.recruitID = recruitID
         self.companyName = companyName
@@ -25,5 +29,7 @@ public struct RecruitmentEntity: Equatable, Hashable {
         self.militarySupport = militarySupport
         self.hiringJobs = hiringJobs
         self.bookmarked = bookmarked
+        self.status = status
+        self.year = year
     }
 }

@@ -1,4 +1,5 @@
 import Core
+import Moya
 import DesignSystem
 import RxFlow
 import RxSwift
@@ -49,13 +50,37 @@ public final class InfoSettingViewModel: BaseViewModel, Stepper {
                     gcn: gcn,
                     name: name
                 )
-                .catch { _ in
-                    gcnErrorDescription.accept(.error(description: "이미 가입 된 학번이에요."))
-                    return .never()
-                }
                 .andThen(
-                    Single.just(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: Int(gcn)!))
+                    Single.deferred {
+                        gcnErrorDescription.accept(.error(description: "이미 가입 된 학번이에요."))
+                        return .never()
+                    }
                 )
+                .catch { error in
+                    if let appError = error as? ApplicationsError {
+                        switch appError {
+
+                        case .conflict:
+                            gcnErrorDescription.accept(.error(description: "이미 가입 된 학번이에요."))
+                            return .never()
+
+                        case .badRequest:
+                            gcnErrorDescription.accept(.error(description: "학번이나 이름을 확인해주세요."))
+                            return .never()
+
+                        case .internalServerError:
+                            gcnErrorDescription.accept(.error(description: "서버 오류가 발생했어요."))
+                            return .never()
+                        }
+                    }
+
+                    return Single.just(
+                        InfoSettingStep.verifyEmailIsRequired(
+                            name: name,
+                            gcn: Int(gcn)!
+                        )
+                    )
+                }
             }
             .bind(to: steps)
             .disposed(by: disposeBag)

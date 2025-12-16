@@ -8,7 +8,13 @@ public struct ReviewEntity: Equatable, Hashable {
     public let writer: String
     public let major: String
 
-    public init(reviewID: Int, companyName: String, companyProfileURL: String, year: Int, writer: String, major: String) {
+    public init(
+        reviewID: Int,
+        companyName: String,
+        companyProfileURL: String,
+        year: Int, writer: String,
+        major: String
+    ) {
         self.reviewID = reviewID
         self.companyName = companyName
         self.companyProfileURL = companyProfileURL
