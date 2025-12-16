@@ -25,6 +25,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
     private let laterButton = LaterButton()
     private let nextButton = JobisButton(style: .main).then {
         $0.setText("완료")
+        $0.isEnabled = false
     }
 
     public override func addView() {
@@ -82,6 +83,12 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
             .bind { [weak self] _ in
                 self?.openLibrary()
             }
+            .disposed(by: disposeBag)
+
+        selectedFileModel
+            .map { $0 != nil }
+            .distinctUntilChanged()
+            .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
 
