@@ -15,7 +15,7 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     private let yearList = Array((2023...RecruitmentFilterViewController.currentYear()).reversed())
     private let stateList = [
         CodeEntity(code: 0, keyword: "모집중"),
-        CodeEntity(code: 1, keyword: "모집종료")
+        CodeEntity(code: 1, keyword: "모집 종료")
     ]
 
     private let searchTextField = JobisSearchTextField().then {
@@ -42,22 +42,6 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
         )
     }
-    private let jobsLabel = UILabel().then {
-        $0.setJobisText("모집 분야", font: .subHeadLine, color: .GrayScale.gray70)
-    }
-    private let jobsLayout = LeftAlignedCollectionViewFlowLayout().then {
-        $0.applyDefaultLayout()
-    }
-    private lazy var jobsCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: jobsLayout
-    ).then {
-        $0.isScrollEnabled = false
-        $0.register(
-            JobsCollectionViewCell.self,
-            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
-        )
-    }
     private let stateLabel = UILabel().then {
         $0.setJobisText("모집 상태", font: .subHeadLine, color: .GrayScale.gray70)
     }
@@ -67,6 +51,22 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
     private lazy var stateCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: stateLayout
+    ).then {
+        $0.isScrollEnabled = false
+        $0.register(
+            JobsCollectionViewCell.self,
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+        )
+    }
+    private let jobsLabel = UILabel().then {
+        $0.setJobisText("모집 분야", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private let jobsLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
+    }
+    private lazy var jobsCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: jobsLayout
     ).then {
         $0.isScrollEnabled = false
         $0.register(
@@ -89,10 +89,10 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         [
             yearLabel,
             yearCollectionView,
-            jobsLabel,
-            jobsCollectionView,
             stateLabel,
             stateCollectionView,
+            jobsLabel,
+            jobsCollectionView,
             techStackView
         ].forEach(self.contentStackView.addArrangedSubview(_:))
     }
@@ -122,20 +122,20 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             $0.height.greaterThanOrEqualTo(yearCollectionView.contentSize.height)
         }
 
-        jobsLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(24)
-        }
-
-        jobsCollectionView.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(jobsCollectionView.contentSize.height)
-        }
-
         stateLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(24)
         }
 
         stateCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(stateCollectionView.contentSize.height)
+        }
+
+        jobsLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
+        jobsCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(jobsCollectionView.contentSize.height)
         }
 
         filterApplyButton.snp.makeConstraints {
