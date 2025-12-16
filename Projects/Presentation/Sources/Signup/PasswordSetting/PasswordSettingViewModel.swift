@@ -45,9 +45,8 @@ public final class PasswordSettingViewModel: BaseViewModel, Stepper {
                     passwordErrorDescription.accept(.error(description: "비밀번호 형식에 맞지 않아요."))
                     return false
                 } else if password != checkingPassword {
-                    checkingPasswordErrorDescription.accept(
-                        .error(description: "비밀번호가 동일하지 않아요.")
-                    )
+                    checkingPasswordErrorDescription.accept(.error(description: "비밀번호가 동일하지 않아요."))
+                    return false
                 }
                 return true
             }
