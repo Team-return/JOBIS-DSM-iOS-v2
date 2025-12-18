@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public class RecruitmentDetailViewController: BaseViewController<RecruitmentDetailViewModel> {
+public class RecruitmentDetailViewController: BaseReactorViewController<RecruitmentDetailReactor> {
     public var isPopViewController: ((Int, Bool) -> Void)?
     private var isBookmarked = false {
         didSet {
@@ -117,62 +117,67 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
         }
     }
 
-    public override func bind() {
-        let input = RecruitmentDetailViewModel.Input(
-            viewDidLoad: self.viewDidLoadPublisher,
-            companyDetailButtonDidClicked: companyProfileView.companyDetailButton.rx.tap.asSignal(),
-            bookMarkButtonDidTap: bookmarkButton.rx.tap.asSignal()
-                .do(onNext: { [weak self] in
-                    self?.isBookmarked.toggle()
-                }),
-            applyButtonDidTap: applyButton.rx.tap.asSignal()
-        )
-        let output = viewModel.transform(input)
-
-        output.recruitmentDetailEntity.asObservable()
-            .bind { [self] in
-                viewModel.companyId = $0.companyID
-                companyProfileView.setCompanyProfile(
-                    imageUrl: $0.companyProfileURL,
-                    companyName: $0.companyName
-                )
-                recruitmentPeriodLabel.setSubTitle($0.period)
-                militaryServiceLabel.setSubTitle("병역특례 \($0.military ?? false ? "가능" : "불가능")")
-                certificateLabel.setSubTitle($0.requiredLicenses)
-                recruitmentProcessLabel.setSubTitle($0.hiringProgress)
-                requiredGradeLabel.setSubTitle($0.additionalQualifications)
-                workingHoursLabel.setSubTitle($0.workingHours)
-                benefitsWelfareLabel.setSubTitle($0.benefits)
-                needThingsLabel.setSubTitle($0.submitDocument)
-                otherMattersLabel.setSubTitle($0.etc)
-                isBookmarked = $0.bookmarked
-                viewModel.isApplicable = $0.isApplicable
-            }.disposed(by: disposeBag)
-
-        output.areaListEntity.asObservable()
-            .bind {
-                self.fieldTypeDetailStackView.setFieldType($0)
-            }
+    public override func bindAction() {
+        viewDidLoadPublisher
+            .map { RecruitmentDetailReactor.Action.fetchRecruitmentDetail }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.isApplicable.asObservable()
-            .bind { [weak self] isApplicable in
-                if UserDefaults.standard.string(forKey: "user_grade") != "3" {
-                    self?.applyButton.isEnabled = false
-                    self?.applyButton.setText("3학년만 지원할 수 있어요")
-                } else {
-                    isApplicable ?
-                    self?.applyButton.setText("지원하기") :
-                    self?.applyButton.setText("이미 지원한 기업이에요")
+        companyProfileView.companyDetailButton.rx.tap
+            .map { RecruitmentDetailReactor.Action.companyDetailButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-                    self?.applyButton.isEnabled = isApplicable
+        bookmarkButton.rx.tap
+            .do(onNext: { [weak self] in
+                self?.isBookmarked.toggle()
+            })
+            .map { RecruitmentDetailReactor.Action.bookmarkButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        applyButton.rx.tap
+            .map { RecruitmentDetailReactor.Action.applyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.compactMap { $0.recruitmentDetail }
+            .bind { [weak self] detail in
+                guard let self = self else { return }
+                self.companyProfileView.setCompanyProfile(
+                    imageUrl: detail.companyProfileURL,
+                    companyName: detail.companyName
+                )
+                self.recruitmentPeriodLabel.setSubTitle(detail.period)
+                self.militaryServiceLabel.setSubTitle("병역특례 \(detail.military ?? false ? "가능" : "불가능")")
+                self.certificateLabel.setSubTitle(detail.requiredLicenses)
+                self.recruitmentProcessLabel.setSubTitle(detail.hiringProgress)
+                self.requiredGradeLabel.setSubTitle(detail.additionalQualifications)
+                self.workingHoursLabel.setSubTitle(detail.workingHours)
+                self.benefitsWelfareLabel.setSubTitle(detail.benefits)
+                self.needThingsLabel.setSubTitle(detail.submitDocument)
+                self.otherMattersLabel.setSubTitle(detail.etc)
+                self.isBookmarked = detail.bookmarked
+                self.fieldTypeDetailStackView.setFieldType(detail.areas)
+
+                if UserDefaults.standard.string(forKey: "user_grade") != "3" {
+                    self.applyButton.isEnabled = false
+                    self.applyButton.setText("3학년만 지원할 수 있어요")
+                } else {
+                    detail.isApplicable ?
+                    self.applyButton.setText("지원하기") :
+                    self.applyButton.setText("이미 지원한 기업이에요")
+
+                    self.applyButton.isEnabled = detail.isApplicable
                 }
             }
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDeatil
+        companyProfileView.companyDetailButton.isHidden = reactor.currentState.type == .companyDeatil
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
@@ -182,8 +187,9 @@ public class RecruitmentDetailViewController: BaseViewController<RecruitmentDeta
             .disposed(by: disposeBag)
 
         self.viewWillDisappearPublisher.asObservable()
-            .bind {
-                self.isPopViewController?(self.viewModel.recruitmentID!, self.isBookmarked)
+            .bind { [weak self] in
+                guard let self = self else { return }
+                self.isPopViewController?(self.reactor.currentState.recruitmentID ?? 0, self.isBookmarked)
             }
             .disposed(by: disposeBag)
     }

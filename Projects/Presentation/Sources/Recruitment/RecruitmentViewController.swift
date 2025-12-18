@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+public final class RecruitmentViewController: BaseReactorViewController<RecruitmentReactor> {
     public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
@@ -47,30 +47,48 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         }
     }
 
-    public override func bind() {
-        let input = RecruitmentViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
-            bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: recruitmentTableView.rx.willDisplayCell
-                .filter {
-                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(
-                        inSection: $0.indexPath.section
-                    ) - 1
-                },
-            recruitmentTableViewDidTap: recruitmentTableView.rx
-                .modelSelected(RecruitmentEntity.self)
-                .asObservable()
-                .map { $0.recruitID }
-                .do(onNext: { _ in
-                    self.isTabNavigation = false
-                }),
-            searchButtonDidTap: searchButton.rx.tap.asSignal(),
-            filterButtonDidTap: filterButton.rx.tap.asSignal()
-        )
+    public override func bindAction() {
+        viewDidLoadPublisher
+            .map { RecruitmentReactor.Action.fetchRecruitmentList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        recruitmentTableView.rx.willDisplayCell
+            .filter {
+                $0.indexPath.row == self.recruitmentTableView.numberOfRows(
+                    inSection: $0.indexPath.section
+                ) - 1
+            }
+            .map { _ in RecruitmentReactor.Action.loadMoreRecruitments }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.recruitmentData
+        bookmarkButtonDidClicked
+            .map { RecruitmentReactor.Action.bookmarkButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        recruitmentTableView.rx.modelSelected(RecruitmentEntity.self)
+            .do(onNext: { _ in
+                self.isTabNavigation = false
+            })
+            .map { RecruitmentReactor.Action.recruitmentDidSelect($0.recruitID) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchButton.rx.tap
+            .map { RecruitmentReactor.Action.searchButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterButton.rx.tap
+            .map { RecruitmentReactor.Action.filterButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.recruitmentList }
             .skip(1)
             .do(onNext: {
                 self.listEmptyView.isHidden = !$0.isEmpty

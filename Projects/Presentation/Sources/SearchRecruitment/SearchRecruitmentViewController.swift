@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class SearchRecruitmentViewController: BaseViewController<SearchRecruitmentViewModel> {
+public final class SearchRecruitmentViewController: BaseReactorViewController<SearchRecruitmentReactor> {
     private let searchButtonDidTap = PublishRelay<String>()
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let emptySearchView = ListEmptyView().then {
@@ -74,41 +74,55 @@ public final class SearchRecruitmentViewController: BaseViewController<SearchRec
         }
     }
 
-    public override func bind() {
-        let input = SearchRecruitmentViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            pageChange: searchTableView.rx.willDisplayCell
-                .filter {
-                    $0.indexPath.row == self.searchTableView.numberOfRows(inSection: $0.indexPath.section) - 1
-                }.asObservable(),
-            searchButtonDidTap: searchButtonDidTap,
-            bookmarkButtonDidClicked: bookmarkButtonDidClicked,
-            searchTableViewDidTap: searchTableView.rx.itemSelected
-        )
-
-        let output = viewModel.transform(input)
-
-        output.recruitmentListInfo
+    public override func bindAction() {
+        viewWillAppearPublisher
             .skip(1)
-            .do(onNext: {
-                self.emptySearchView.isHidden = !$0.isEmpty
+            .map { SearchRecruitmentReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchTableView.rx.willDisplayCell
+            .filter {
+                $0.indexPath.row == self.searchTableView.numberOfRows(inSection: $0.indexPath.section) - 1
+            }
+            .map { _ in SearchRecruitmentReactor.Action.loadMoreRecruitments }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchButtonDidTap
+            .map { SearchRecruitmentReactor.Action.searchButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        bookmarkButtonDidClicked
+            .map { SearchRecruitmentReactor.Action.bookmarkButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchTableView.rx.itemSelected
+            .withLatestFrom(reactor.state) { indexPath, state in
+                state.recruitmentList[indexPath.row].recruitID
+            }
+            .map { SearchRecruitmentReactor.Action.recruitmentDidSelect($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.recruitmentList }
+            .skip(1)
+            .do(onNext: { [weak self] in
+                self?.emptySearchView.isHidden = !$0.isEmpty
             })
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: RecruitmentTableViewCell.identifier,
                 cellType: RecruitmentTableViewCell.self
-            )) { _, element, cell in
+            )) { [weak self] _, element, cell in
                 cell.adapt(model: element)
                 cell.bookmarkButtonDidTap = {
-                    self.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
+                    self?.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
                 }
             }
-            .disposed(by: disposeBag)
-
-        output.emptyViewIsHidden.asObservable()
-            .map {
-                self.emptySearchView.isHidden = $0
-            }
-            .subscribe()
             .disposed(by: disposeBag)
     }
 
@@ -127,8 +141,6 @@ public final class SearchRecruitmentViewController: BaseViewController<SearchRec
 
 extension SearchRecruitmentViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let title = textField.text
-        viewModel.searchText = title
         searchButtonDidTap.accept(textField.text ?? "")
         self.view.endEditing(true)
         return true
