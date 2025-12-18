@@ -58,7 +58,11 @@ let dependencies = Dependencies(
             ),
             .remote(
                 url: "https://github.com/kean/Nuke.git",
-                requirement: .upToNextMajor(from: "12.8.0"))
+                requirement: .upToNextMajor(from: "12.8.0")
+            ),
+            .remote(
+                url: "https://github.com/Juanpe/SkeletonView.git",
+                requirement: .upToNextMajor(from: "1.31.0"))
         ],
         baseSettings: .settings(
             configurations: [
