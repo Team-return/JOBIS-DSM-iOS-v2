@@ -33,7 +33,7 @@ private extension RecruitmentFilterFlow {
     func navigateToRecruitmentFilter() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -41,10 +41,12 @@ private extension RecruitmentFilterFlow {
         let recruitmentPopView = self.rootViewController.navigationController?.viewControllers.first as? RecruitmentViewController
         let winterInternPopView = self.rootViewController.navigationController?.viewControllers.first(where: { $0 is WinterInternViewController}) as? WinterInternViewController
 
-        recruitmentPopView?.viewModel.jobCode = jobCode
-        recruitmentPopView?.viewModel.techCode = techCode
-        recruitmentPopView?.viewModel.years = years
-        recruitmentPopView?.viewModel.status = status
+        // Update filter options via reactor action
+        recruitmentPopView?.reactor.action.onNext(
+            .updateFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status)
+        )
+        recruitmentPopView?.reactor.action.onNext(.fetchRecruitmentList)
+
         winterInternPopView?.viewModel.jobCode = jobCode
         winterInternPopView?.viewModel.techCode = techCode
 
