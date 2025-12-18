@@ -41,6 +41,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case navigateToSearch
         case navigateToFilter
         case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
+        case setLoading(Bool)
     }
 
     public struct State {
@@ -50,6 +51,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         var years: [String]?
         var status: String?
         var pageCount: Int = 1
+        var isLoading: Bool = false
     }
 }
 
@@ -59,6 +61,7 @@ extension RecruitmentReactor {
         case .fetchRecruitmentList:
             return .concat([
                 .just(.resetPageCount),
+                .just(.setLoading(true)),
                 fetchRecruitmentListUseCase.execute(
                     page: 1,
                     jobCode: currentState.jobCode,
@@ -67,7 +70,12 @@ extension RecruitmentReactor {
                     status: currentState.status
                 )
                 .asObservable()
-                .map { Mutation.setRecruitmentList($0) }
+                .flatMap { list -> Observable<Mutation> in
+                    return .concat([
+                        .just(.setRecruitmentList(list)),
+                        .just(.setLoading(false)).delay(.seconds(3), scheduler: MainScheduler.instance)
+                    ])
+                }
             ])
 
         case .loadMoreRecruitments:
@@ -146,6 +154,9 @@ extension RecruitmentReactor {
             newState.techCode = techCode
             newState.years = years
             newState.status = status
+
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
         }
         return newState
     }
