@@ -71,11 +71,19 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        recruitmentTableView.rx.modelSelected(RecruitmentEntity.self)
+        recruitmentTableView.rx.itemSelected
             .do(onNext: { _ in
                 self.isTabNavigation = false
             })
-            .map { RecruitmentReactor.Action.recruitmentDidSelect($0.recruitID) }
+            .compactMap { [weak self] indexPath -> Int? in
+                guard let self = self,
+                      !self.reactor.currentState.isLoading,
+                      indexPath.row < self.reactor.currentState.recruitmentList.count else {
+                    return nil
+                }
+                return self.reactor.currentState.recruitmentList[indexPath.row].recruitID
+            }
+            .map { RecruitmentReactor.Action.recruitmentDidSelect($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

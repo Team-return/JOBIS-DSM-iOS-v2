@@ -73,7 +73,7 @@ extension RecruitmentReactor {
                 .flatMap { list -> Observable<Mutation> in
                     return .concat([
                         .just(.setRecruitmentList(list)),
-                        .just(.setLoading(false)).delay(.seconds(3), scheduler: MainScheduler.instance)
+                        .just(.setLoading(false))
                     ])
                 }
             ])
