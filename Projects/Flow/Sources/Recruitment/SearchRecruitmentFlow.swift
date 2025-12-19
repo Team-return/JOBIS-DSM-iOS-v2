@@ -33,16 +33,18 @@ private extension SearchRecruitmentFlow {
     func navigateToSearchRecruitment() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func navigateToRecruitmentDetail(_ recruitmentId: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentId
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentId
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

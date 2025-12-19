@@ -5,6 +5,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import SkeletonView
 
 final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
@@ -119,6 +120,12 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
                 self?.isBookmarked.toggle()
             })
             .disposed(by: disposeBag)
+
+        contentView.isSkeletonable = true
+        companyProfileImageView.isSkeletonable = true
+        companyLabel.isSkeletonable = true
+        benefitsLabel.isSkeletonable = true
+        yearLabel.isSkeletonable = true
     }
 
     override func adapt(model: RecruitmentEntity) {

@@ -43,11 +43,13 @@ private extension BookmarkFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
             self.rootViewController.pushViewController(
                 view!, animated: true
             )

@@ -49,12 +49,14 @@ private extension CompanyDetailFlow {
     }
 
     func navigateToRecruimtentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID,
+            type: .companyDetail
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
-            view?.viewModel.type = .companyDeatil
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

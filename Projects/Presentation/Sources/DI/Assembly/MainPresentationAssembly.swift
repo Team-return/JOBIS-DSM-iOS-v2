@@ -22,36 +22,39 @@ public final class MainPresentationAssembly: Assembly {
 
         // Recruitment
         container.register(RecruitmentViewController.self) { resolver in
-            RecruitmentViewController(resolver.resolve(RecruitmentViewModel.self)!)
+            RecruitmentViewController(resolver.resolve(RecruitmentReactor.self)!)
         }
-        container.register(RecruitmentViewModel.self) { resolver in
-            RecruitmentViewModel(
+        container.register(RecruitmentReactor.self) { resolver in
+            RecruitmentReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
 
         // Recruitment Detail
-        container.register(RecruitmentDetailViewModel.self) { resolver in
-            RecruitmentDetailViewModel(
+        container.register(RecruitmentDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+            RecruitmentDetailReactor(
                 fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                recruitmentID: recruitmentID,
+                companyId: companyId,
+                type: type
             )
         }
-        container.register(RecruitmentDetailViewController.self) { resolver in
+        container.register(RecruitmentDetailViewController.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
             RecruitmentDetailViewController(
-                resolver.resolve(RecruitmentDetailViewModel.self)!
+                resolver.resolve(RecruitmentDetailReactor.self, arguments: recruitmentID, companyId, type)!
             )
         }
 
         // Search Recruitment
         container.register(SearchRecruitmentViewController.self) { resolver in
             SearchRecruitmentViewController(
-                resolver.resolve(SearchRecruitmentViewModel.self)!
+                resolver.resolve(SearchRecruitmentReactor.self)!
             )
         }
-        container.register(SearchRecruitmentViewModel.self) { resolver in
-            SearchRecruitmentViewModel(
+        container.register(SearchRecruitmentReactor.self) { resolver in
+            SearchRecruitmentReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
@@ -60,11 +63,11 @@ public final class MainPresentationAssembly: Assembly {
         // Recruitment Filter
         container.register(RecruitmentFilterViewController.self) { resolver in
             RecruitmentFilterViewController(
-                resolver.resolve(RecruitmentFilterViewModel.self)!
+                resolver.resolve(RecruitmentFilterReactor.self)!
             )
         }
-        container.register(RecruitmentFilterViewModel.self) { resolver in
-            RecruitmentFilterViewModel(
+        container.register(RecruitmentFilterReactor.self) { resolver in
+            RecruitmentFilterReactor(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
         }

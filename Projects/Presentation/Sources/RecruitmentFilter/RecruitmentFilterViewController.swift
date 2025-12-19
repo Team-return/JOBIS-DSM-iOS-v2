@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 import Domain
 
-public final class RecruitmentFilterViewController: BaseViewController<RecruitmentFilterViewModel> {
+public final class RecruitmentFilterViewController: BaseReactorViewController<RecruitmentFilterReactor> {
     private let collectionViewDidTap = PublishRelay<String>()
     private let filterApplyButtonDidTap = PublishRelay<Void>()
     private var appendTechCode = PublishRelay<CodeEntity>()
@@ -145,41 +145,66 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
         }
     }
 
-    public override func bind() {
-        let input = RecruitmentFilterViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher,
-            selectJobsCode: jobsCollectionView.rx
-                .modelSelected(CodeEntity.self).asObservable()
-                .do(onNext: { _ in
-                    self.viewModel.techCode.accept([])
-                }),
-            selectYears: yearCollectionView.rx.modelSelected(CodeEntity.self)
-                .do(onNext: { _ in
-                    self.yearCollectionView.reloadData()
-                })
-                .asObservable(),
-            selectStatus: stateCollectionView.rx.modelSelected(CodeEntity.self)
-                .do(onNext: { _ in
-                    self.stateCollectionView.reloadData()
-                }),
-            filterApplyButtonDidTap: filterApplyButtonDidTap,
-            appendTechCode: appendTechCode,
-            resetTechCode: resetTechCode
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { RecruitmentFilterReactor.Action.fetchCodeLists }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
-        output.jobList
+        jobsCollectionView.rx.modelSelected(CodeEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.resetTechCode.accept(())
+            })
+            .map { RecruitmentFilterReactor.Action.selectJobCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        yearCollectionView.rx.modelSelected(CodeEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.yearCollectionView.reloadData()
+            })
+            .map { RecruitmentFilterReactor.Action.selectYear($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        stateCollectionView.rx.modelSelected(CodeEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.stateCollectionView.reloadData()
+            })
+            .map { RecruitmentFilterReactor.Action.selectStatus($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterApplyButtonDidTap
+            .map { RecruitmentFilterReactor.Action.filterApplyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        appendTechCode
+            .map { RecruitmentFilterReactor.Action.appendTechCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        resetTechCode
+            .map { RecruitmentFilterReactor.Action.resetTechCode }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.jobList }
             .bind(to: jobsCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
-            )) { _, element, cell in
+            )) { [weak self] _, element, cell in
+                guard let self = self else { return }
                 cell.adapt(model: element)
-                cell.isCheck = Int(self.viewModel.jobCode) == cell.model?.code
+                cell.isCheck = Int(self.reactor.currentState.jobCode) == cell.model?.code
                 self.jobsCollectionView.layoutIfNeeded()
             }
             .disposed(by: disposeBag)
 
-        output.techList
+        reactor.state.map { $0.techList }
             .bind { [weak self] in
                 self?.techStackView.setTech(techList: $0)
                 self?.techStackView.techDidTap = { code in
@@ -193,9 +218,10 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             .bind(to: yearCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
-            )) { _, element, cell in
+            )) { [weak self] _, element, cell in
+                guard let self = self else { return }
                 cell.adapt(model: element)
-                cell.isCheck = self.viewModel.years.value.contains("\(element.code)")
+                cell.isCheck = self.reactor.currentState.years.contains("\(element.code)")
             }
             .disposed(by: disposeBag)
 
@@ -203,9 +229,11 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
             .bind(to: stateCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
-            )) { _, element, cell in
+            )) { [weak self] _, element, cell in
+                guard let self = self else { return }
                 cell.adapt(model: element)
-                cell.isCheck = self.viewModel.status == self.viewModel.mapStatus(code: element.code)
+                let mappedStatus = self.mapStatus(code: element.code)
+                cell.isCheck = self.reactor.currentState.status == mappedStatus
             }
             .disposed(by: disposeBag)
     }
@@ -233,5 +261,16 @@ public final class RecruitmentFilterViewController: BaseViewController<Recruitme
 extension RecruitmentFilterViewController {
     fileprivate static func currentYear() -> Int {
         Calendar.current.component(.year, from: Date())
+    }
+
+    private func mapStatus(code: Int) -> String {
+        switch code {
+        case 0:
+            return "RECRUITING"
+        case 1:
+            return "DONE"
+        default:
+            return ""
+        }
     }
 }
