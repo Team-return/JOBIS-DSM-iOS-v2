@@ -6,7 +6,7 @@ import Core
 import Domain
 
 public enum RecruitmentDetailPreviousViewType {
-    case companyDeatil
+    case companyDetail
     case recruitmentList
 }
 

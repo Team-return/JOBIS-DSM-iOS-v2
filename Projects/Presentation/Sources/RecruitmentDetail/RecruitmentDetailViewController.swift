@@ -177,7 +177,7 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
     }
 
     public override func configureViewController() {
-        companyProfileView.companyDetailButton.isHidden = reactor.currentState.type == .companyDeatil
+        companyProfileView.companyDetailButton.isHidden = reactor.currentState.type == .companyDetail
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in

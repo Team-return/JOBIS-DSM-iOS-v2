@@ -52,7 +52,7 @@ private extension CompanyDetailFlow {
         let recruitmentDetailFlow = RecruitmentDetailFlow(
             container: container,
             recruitmentID: recruitmentID,
-            type: .companyDeatil
+            type: .companyDetail
         )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in

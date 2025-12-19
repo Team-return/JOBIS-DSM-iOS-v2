@@ -176,7 +176,7 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
     }
 
     public override func configureViewController() {
-        companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDeatil
+        companyProfileView.companyDetailButton.isHidden = viewModel.type == .companyDetail
 
         self.viewWillAppearPublisher.asObservable()
             .subscribe(onNext: { [weak self] in
