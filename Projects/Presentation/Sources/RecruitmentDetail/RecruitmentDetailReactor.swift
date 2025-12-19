@@ -58,16 +58,26 @@ extension RecruitmentDetailReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchRecruitmentDetail:
-            return fetchRecruitmentDetailUseCase.execute(id: currentState.recruitmentID ?? 0)
+            guard let recruitmentID = currentState.recruitmentID else {
+                return .empty()
+            }
+            return fetchRecruitmentDetailUseCase.execute(id: recruitmentID)
                 .asObservable()
                 .map { Mutation.setRecruitmentDetail($0) }
 
         case .companyDetailButtonDidTap:
+            guard currentState.companyId != nil else {
+                return .empty()
+            }
             return .just(.navigateToCompanyDetail)
 
         case .bookmarkButtonDidTap:
-            return bookmarkUseCase.execute(id: currentState.recruitmentID ?? 0)
+            guard let recruitmentID = currentState.recruitmentID else {
+                return .empty()
+            }
+            return bookmarkUseCase.execute(id: recruitmentID)
                 .asObservable()
+                .catch { _ in .empty() }
                 .flatMap { _ in Observable<Mutation>.empty() }
 
         case .applyButtonDidTap:
@@ -90,8 +100,9 @@ extension RecruitmentDetailReactor {
             newState.companyId = detail.companyID
 
         case .navigateToCompanyDetail:
+            guard let companyId = state.companyId else { return newState }
             steps.accept(RecruitmentDetailStep.companyDetailIsRequired(
-                id: state.companyId ?? 0
+                id: companyId
             ))
 
         case let .navigateToApply(id, name, imageURL):

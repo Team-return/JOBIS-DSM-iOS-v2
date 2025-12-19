@@ -80,19 +80,22 @@ extension RecruitmentReactor {
 
         case .loadMoreRecruitments:
             let nextPage = currentState.pageCount + 1
-            return .concat([
-                .just(.incrementPageCount),
-                fetchRecruitmentListUseCase.execute(
-                    page: nextPage,
-                    jobCode: currentState.jobCode,
-                    techCode: currentState.techCode,
-                    years: currentState.years,
-                    status: currentState.status
-                )
-                .asObservable()
-                .take(while: { !$0.isEmpty })
-                .map { Mutation.appendRecruitmentList($0) }
-            ])
+            return fetchRecruitmentListUseCase.execute(
+                page: nextPage,
+                jobCode: currentState.jobCode,
+                techCode: currentState.techCode,
+                years: currentState.years,
+                status: currentState.status
+            )
+            .asObservable()
+            .catch { _ in .empty() }
+            .filter { !$0.isEmpty }
+            .flatMap { list -> Observable<Mutation> in
+                return .concat([
+                    .just(.appendRecruitmentList(list)),
+                    .just(.incrementPageCount)
+                ])
+            }
 
         case let .bookmarkButtonDidTap(id):
             return .concat([
