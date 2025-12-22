@@ -19,59 +19,83 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Info Setting
-        container.register(InfoSettingViewModel.self) { resolver in
-            InfoSettingViewModel(
+        container.register(InfoSettingReactor.self) { resolver in
+            InfoSettingReactor(
                 studentExistsUseCase: resolver.resolve(StudentExistsUseCase.self)!
             )
         }
         container.register(InfoSettingViewController.self) { resolver in
-            InfoSettingViewController(resolver.resolve(InfoSettingViewModel.self)!)
+            InfoSettingViewController(resolver.resolve(InfoSettingReactor.self)!)
         }
 
         // Email Verification
-        container.register(VerifyEmailViewModel.self) { resolver in
-            VerifyEmailViewModel(
+        container.register(VerifyEmailReactor.self) { (resolver, name: String, gcn: Int) in
+            VerifyEmailReactor(
+                name: name,
+                gcn: gcn,
                 sendAuthCodeUseCase: resolver.resolve(SendAuthCodeUseCase.self)!,
                 verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
             )
         }
-        container.register(VerifyEmailViewController.self) { resolver in
-            VerifyEmailViewController(resolver.resolve(VerifyEmailViewModel.self)!)
+        container.register(VerifyEmailViewController.self) { (resolver, reactor: VerifyEmailReactor) in
+            VerifyEmailViewController(reactor)
         }
 
         // Password Setting
-        container.register(PasswordSettingViewModel.self) { _ in
-            PasswordSettingViewModel()
+        container.register(PasswordSettingReactor.self) { (_, name: String, gcn: Int, email: String) in
+            PasswordSettingReactor(
+                name: name,
+                gcn: gcn,
+                email: email
+            )
         }
-        container.register(PasswordSettingViewController.self) { resolver in
-            PasswordSettingViewController(resolver.resolve(PasswordSettingViewModel.self)!)
+        container.register(PasswordSettingViewController.self) { (_, reactor: PasswordSettingReactor) in
+            PasswordSettingViewController(reactor)
         }
 
         // Gender Setting
-        container.register(GenderSettingViewModel.self) { _ in
-            GenderSettingViewModel()
+        container.register(GenderSettingReactor.self) { (_, name: String, gcn: Int, email: String, password: String) in
+            GenderSettingReactor(
+                name: name,
+                gcn: gcn,
+                email: email,
+                password: password
+            )
         }
-        container.register(GenderSettingViewController.self) { resolver in
-            GenderSettingViewController(resolver.resolve(GenderSettingViewModel.self)!)
+        container.register(GenderSettingViewController.self) { (_, reactor: GenderSettingReactor) in
+            GenderSettingViewController(reactor)
         }
 
         // Profile Setting
-        container.register(ProfileSettingViewModel.self) { resolver in
-            ProfileSettingViewModel(
+        container.register(ProfileSettingReactor.self) { (resolver, name: String, gcn: Int, email: String, password: String, isMan: Bool) in
+            ProfileSettingReactor(
+                name: name,
+                gcn: gcn,
+                email: email,
+                password: password,
+                isMan: isMan,
                 fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
                 uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!
             )
         }
-        container.register(ProfileSettingViewController.self) { resolver in
-            ProfileSettingViewController(resolver.resolve(ProfileSettingViewModel.self)!)
+        container.register(ProfileSettingViewController.self) { (_, reactor: ProfileSettingReactor) in
+            ProfileSettingViewController(reactor)
         }
 
         // Privacy
-        container.register(PrivacyViewModel.self) { resolver in
-            PrivacyViewModel(signupUseCase: resolver.resolve(SignupUseCase.self)!)
+        container.register(PrivacyReactor.self) { (resolver, name: String, gcn: Int, email: String, password: String, isMan: Bool, profileImageURL: String?) in
+            PrivacyReactor(
+                name: name,
+                gcn: gcn,
+                email: email,
+                password: password,
+                isMan: isMan,
+                profileImageURL: profileImageURL,
+                signupUseCase: resolver.resolve(SignupUseCase.self)!
+            )
         }
-        container.register(PrivacyViewController.self) { resolver in
-            PrivacyViewController(resolver.resolve(PrivacyViewModel.self)!)
+        container.register(PrivacyViewController.self) { (_, reactor: PrivacyReactor) in
+            PrivacyViewController(reactor)
         }
 
         // Signin

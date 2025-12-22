@@ -6,15 +6,15 @@ import Core
 
 public final class PasswordSettingFlow: Flow {
     public let container: Container
-    private var rootViewController: PasswordSettingViewController!
+    private let rootViewController: PasswordSettingViewController
     public var root: Presentable {
         return rootViewController
     }
 
-    private var reactor: PasswordSettingReactor?
-
-    public init(container: Container) {
+    public init(container: Container, name: String, gcn: Int, email: String) {
         self.container = container
+        let reactor = container.resolve(PasswordSettingReactor.self, arguments: name, gcn, email)!
+        self.rootViewController = PasswordSettingViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -35,13 +35,9 @@ public final class PasswordSettingFlow: Flow {
 
 private extension PasswordSettingFlow {
     func navigateToPasswordSetting(name: String, gcn: Int, email: String) -> FlowContributors {
-        let reactor = container.resolve(PasswordSettingReactor.self, arguments: name, gcn, email)!
-        self.reactor = reactor
-        self.rootViewController = PasswordSettingViewController(reactor)
-
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: reactor
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -51,7 +47,7 @@ private extension PasswordSettingFlow {
         email: String,
         password: String
     ) -> FlowContributors {
-        let genderFlow = GenderSettingFlow(container: container)
+        let genderFlow = GenderSettingFlow(container: container, name: name, gcn: gcn, email: email, password: password)
 
         Flows.use(genderFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
