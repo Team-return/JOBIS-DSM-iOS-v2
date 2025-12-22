@@ -13,7 +13,7 @@ enum StudentsAPI {
 }
 
 extension StudentsAPI: JobisAPI {
-    typealias ErrorType = JobisError
+    typealias ErrorType = ApplicationsError
 
     var domain: JobisDomain {
         .students
@@ -100,6 +100,13 @@ extension StudentsAPI: JobisAPI {
     }
 
     var errorMap: [Int: ErrorType]? {
-        return nil
+        switch self {
+        case .studentExists:
+            return [
+                409: .conflict
+            ]
+        default:
+            return nil
+        }
     }
 }
