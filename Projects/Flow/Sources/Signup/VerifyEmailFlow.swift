@@ -11,9 +11,11 @@ public final class VerifyEmailFlow: Flow {
         return rootViewController
     }
 
+    private var reactor: VerifyEmailReactor?
+
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(VerifyEmailViewController.self)!
+        self.rootViewController = VerifyEmailViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -34,12 +36,13 @@ public final class VerifyEmailFlow: Flow {
 
 private extension VerifyEmailFlow {
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
+        let reactor = container.resolve(VerifyEmailReactor.self, arguments: name, gcn)!
+        self.reactor = reactor
+        rootViewController.reactor = reactor
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: reactor
         ))
     }
 

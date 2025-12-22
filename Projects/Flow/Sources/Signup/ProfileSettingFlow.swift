@@ -11,9 +11,11 @@ public final class ProfileSettingFlow: Flow {
         return rootViewController
     }
 
+    private var reactor: ProfileSettingReactor?
+
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ProfileSettingViewController.self)!
+        self.rootViewController = ProfileSettingViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -53,15 +55,13 @@ private extension ProfileSettingFlow {
         password: String,
         isMan: Bool
     ) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
-        rootViewController.email = email
-        rootViewController.password = password
-        rootViewController.isMan = isMan
+        let reactor = container.resolve(ProfileSettingReactor.self, arguments: name, gcn, email, password, isMan)!
+        self.reactor = reactor
+        rootViewController.reactor = reactor
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: reactor
         ))
     }
 

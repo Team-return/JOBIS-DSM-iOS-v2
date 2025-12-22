@@ -11,9 +11,11 @@ public final class GenderSettingFlow: Flow {
         return rootViewController
     }
 
+    private var reactor: GenderSettingReactor?
+
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(GenderSettingViewController.self)!
+        self.rootViewController = GenderSettingViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -50,14 +52,13 @@ private extension GenderSettingFlow {
         email: String,
         password: String
     ) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
-        rootViewController.email = email
-        rootViewController.password = password
+        let reactor = container.resolve(GenderSettingReactor.self, arguments: name, gcn, email, password)!
+        self.reactor = reactor
+        rootViewController.reactor = reactor
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: reactor
         ))
     }
 
