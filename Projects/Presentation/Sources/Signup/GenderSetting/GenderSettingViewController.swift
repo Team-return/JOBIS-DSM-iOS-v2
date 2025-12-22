@@ -7,13 +7,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class GenderSettingViewController: BaseViewController<GenderSettingViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
-    public var email: String = ""
-    public var password: String = ""
-    private let selectedGender = PublishRelay<GenderType>()
+public final class GenderSettingViewController: BaseReactorViewController<GenderSettingReactor> {
     private let genderSelectorStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
@@ -51,40 +47,40 @@ public final class GenderSettingViewController: BaseViewController<GenderSetting
         }
     }
 
-    public override func bind() {
-        let input = GenderSettingViewModel.Input(
-            name: name,
-            gcn: gcn,
-            email: email,
-            password: password,
-            gender: selectedGender.asSignal(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
-        )
-        _ = viewModel.transform(input)
-    }
-
-    public override func configureViewController() {
-        selectedGender.asObservable().bind { [weak self] gender in
-            self?.nextButton.isEnabled = true
-            self?.maleSelectorButton.isSelectedGender = gender == .man
-            self?.femaleSelectorButton.isSelectedGender = gender == .woman
-        }
-        .disposed(by: disposeBag)
-
+    public override func bindAction() {
         maleSelectorButton.rx.tap
-            .asObservable()
-            .bind { [weak self] _ in
-                self?.selectedGender.accept(.man)
-            }
+            .map { GenderSettingReactor.Action.selectGender(.man) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         femaleSelectorButton.rx.tap
-            .asObservable()
-            .bind { [weak self] _ in
-                self?.selectedGender.accept(.woman)
-            }
+            .map { GenderSettingReactor.Action.selectGender(.woman) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .map { GenderSettingReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
+
+    public override func bindState() {
+        reactor.state.map { $0.gender }
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind { [weak self] gender in
+                self?.maleSelectorButton.isSelectedGender = gender == .man
+                self?.femaleSelectorButton.isSelectedGender = gender == .woman
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isNextButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {}
 
     public override func configureNavigation() {
         setLargeTitle(title: "성별을 선택해주세요")

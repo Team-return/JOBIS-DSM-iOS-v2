@@ -5,11 +5,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class PasswordSettingViewController: SignupViewController<PasswordSettingViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
-    public var email: String = ""
+public final class PasswordSettingViewController: BaseReactorViewController<PasswordSettingReactor> {
     private let passwordTextField = JobisTextField().then {
         $0.setTextField(
             title: "비밀번호",
@@ -52,28 +50,41 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
         }
     }
 
-    public override func bind() {
-        let input = PasswordSettingViewModel.Input(
-            name: name,
-            gcn: gcn,
-            email: email,
-            password: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            checkingPassword: checkingPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        passwordTextField.textField.rx.text.orEmpty
+            .map { PasswordSettingReactor.Action.updatePassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.passwordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.passwordTextField.setDescription(description)
+        checkingPasswordTextField.textField.rx.text.orEmpty
+            .map { PasswordSettingReactor.Action.updateCheckingPassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .map { PasswordSettingReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.passwordErrorDescription }
+            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
+                return (lhs?.description ?? "") == (rhs?.description ?? "")
+            }
+            .compactMap { $0 }
+            .bind { [weak self] description in
+                self?.passwordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
-        output.checkingPasswordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.checkingPasswordTextField.setDescription(description)
+        reactor.state.map { $0.checkingPasswordErrorDescription }
+            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
+                return (lhs?.description ?? "") == (rhs?.description ?? "")
+            }
+            .compactMap { $0 }
+            .bind { [weak self] description in
+                self?.checkingPasswordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
     }
@@ -81,12 +92,6 @@ public final class PasswordSettingViewController: SignupViewController<PasswordS
     public override func configureViewController() {
         passwordTextField.textField.delegate = self
         checkingPasswordTextField.textField.delegate = self
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
-            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
@@ -99,7 +104,7 @@ extension PasswordSettingViewController: UITextFieldDelegate {
         if textField == passwordTextField.textField {
             self.passwordTextField.textField.becomeFirstResponder()
         } else if textField == checkingPasswordTextField.textField {
-            self.nextSignupStep()
+            self.reactor.action.onNext(.nextButtonDidTap)
         }
         return true
     }
