@@ -85,7 +85,6 @@ public final class InfoSettingViewController: BaseReactorViewController<InfoSett
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(4) { [weak self] in
                 self?.gcnTextField.textField.resignFirstResponder()
-                self?.reactor.action.onNext(.nextButtonDidTap)
             }
             .bind(to: gcnTextField.textField.rx.text)
             .disposed(by: disposeBag)
