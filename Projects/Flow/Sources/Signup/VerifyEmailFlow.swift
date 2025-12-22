@@ -6,7 +6,7 @@ import Core
 
 public final class VerifyEmailFlow: Flow {
     public let container: Container
-    private let rootViewController: VerifyEmailViewController
+    private var rootViewController: VerifyEmailViewController!
     public var root: Presentable {
         return rootViewController
     }
@@ -15,7 +15,6 @@ public final class VerifyEmailFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = VerifyEmailViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -38,7 +37,7 @@ private extension VerifyEmailFlow {
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
         let reactor = container.resolve(VerifyEmailReactor.self, arguments: name, gcn)!
         self.reactor = reactor
-        rootViewController.reactor = reactor
+        self.rootViewController = VerifyEmailViewController(reactor)
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,

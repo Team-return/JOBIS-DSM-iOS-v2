@@ -6,7 +6,7 @@ import Core
 
 public final class ProfileSettingFlow: Flow {
     public let container: Container
-    private let rootViewController: ProfileSettingViewController
+    private var rootViewController: ProfileSettingViewController!
     public var root: Presentable {
         return rootViewController
     }
@@ -15,7 +15,6 @@ public final class ProfileSettingFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = ProfileSettingViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -57,7 +56,7 @@ private extension ProfileSettingFlow {
     ) -> FlowContributors {
         let reactor = container.resolve(ProfileSettingReactor.self, arguments: name, gcn, email, password, isMan)!
         self.reactor = reactor
-        rootViewController.reactor = reactor
+        self.rootViewController = ProfileSettingViewController(reactor)
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,

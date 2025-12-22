@@ -6,7 +6,7 @@ import Core
 
 public final class GenderSettingFlow: Flow {
     public let container: Container
-    private let rootViewController: GenderSettingViewController
+    private var rootViewController: GenderSettingViewController!
     public var root: Presentable {
         return rootViewController
     }
@@ -15,7 +15,6 @@ public final class GenderSettingFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = GenderSettingViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -54,7 +53,7 @@ private extension GenderSettingFlow {
     ) -> FlowContributors {
         let reactor = container.resolve(GenderSettingReactor.self, arguments: name, gcn, email, password)!
         self.reactor = reactor
-        rootViewController.reactor = reactor
+        self.rootViewController = GenderSettingViewController(reactor)
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,

@@ -6,7 +6,7 @@ import Core
 
 public final class PrivacyFlow: Flow {
     public let container: Container
-    private let rootViewController: PrivacyViewController
+    private var rootViewController: PrivacyViewController!
     public var root: Presentable {
         return rootViewController
     }
@@ -15,7 +15,6 @@ public final class PrivacyFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = PrivacyViewController()
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -49,7 +48,7 @@ private extension PrivacyFlow {
     ) -> FlowContributors {
         let reactor = container.resolve(PrivacyReactor.self, arguments: name, gcn, email, password, isMan, profileImageURL)!
         self.reactor = reactor
-        rootViewController.reactor = reactor
+        self.rootViewController = PrivacyViewController(reactor)
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
