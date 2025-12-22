@@ -86,9 +86,7 @@ public final class VerifyEmailViewController: BaseReactorViewController<VerifyEm
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.emailErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.emailTextField.setDescription(description)
@@ -96,9 +94,7 @@ public final class VerifyEmailViewController: BaseReactorViewController<VerifyEm
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.authCodeErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.authCodeTextField.setDescription(description)

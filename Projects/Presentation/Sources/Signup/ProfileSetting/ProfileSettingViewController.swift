@@ -69,10 +69,10 @@ public final class ProfileSettingViewController: BaseReactorViewController<Profi
 
     public override func bindState() {
         reactor.state.map { $0.profileImage }
-            .distinctUntilChanged { (lhs: UploadFileModel?, rhs: UploadFileModel?) -> Bool in
-                return lhs?.fileName == rhs?.fileName
-            }
             .compactMap { $0 }
+            .distinctUntilChanged { lhs, rhs in
+                lhs.fileName == rhs.fileName
+            }
             .bind { [weak self] model in
                 self?.profileImageView.image = .init(data: model.file)
                 self?.profileImageView.asCircle()

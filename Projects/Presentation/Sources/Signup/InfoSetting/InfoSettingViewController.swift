@@ -61,9 +61,7 @@ public final class InfoSettingViewController: BaseReactorViewController<InfoSett
 
     public override func bindState() {
         reactor.state.map { $0.nameErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.nameTextField.setDescription(description)
@@ -71,9 +69,7 @@ public final class InfoSettingViewController: BaseReactorViewController<InfoSett
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.gcnErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.gcnTextField.setDescription(description)

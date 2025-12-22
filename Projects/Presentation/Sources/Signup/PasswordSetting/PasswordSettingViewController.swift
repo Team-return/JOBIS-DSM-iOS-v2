@@ -69,9 +69,7 @@ public final class PasswordSettingViewController: BaseReactorViewController<Pass
 
     public override func bindState() {
         reactor.state.map { $0.passwordErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.passwordTextField.setDescription(description)
@@ -79,9 +77,7 @@ public final class PasswordSettingViewController: BaseReactorViewController<Pass
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.checkingPasswordErrorDescription }
-            .distinctUntilChanged { (lhs: DescriptionType?, rhs: DescriptionType?) -> Bool in
-                return (lhs?.description ?? "") == (rhs?.description ?? "")
-            }
+            .distinctUntilChanged()
             .compactMap { $0 }
             .bind { [weak self] description in
                 self?.checkingPasswordTextField.setDescription(description)
