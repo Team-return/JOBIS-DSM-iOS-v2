@@ -51,14 +51,12 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
             let name = currentState.name
             let gcn = currentState.gcn
 
-            // 입력값 검증
             if name.isEmpty {
                 return .just(.setNameError(.error(description: "이름을 입력해주세요")))
             } else if gcn.isEmpty {
                 return .just(.setGCNError(.error(description: "학번을 입력해주세요")))
             }
 
-            // 에러 초기화 후 API 호출
             return .concat([
                 .just(.setNameError(nil)),
                 .just(.setGCNError(nil)),
@@ -78,7 +76,6 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
                             }
                         }
 
-                        // 에러가 아닌 경우 (학생이 존재하지 않는 경우 - 가입 가능)
                         guard let gcnInt = Int(gcn) else {
                             return .just(.setGCNError(.error(description: "올바른 학번을 입력해주세요.")))
                         }
