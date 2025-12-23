@@ -16,6 +16,7 @@ public final class PrivacyReactor: BaseReactor, Reactor {
 
     public enum Mutation {
         case setSignupButtonEnabled(Bool)
+        case setSignupError(String?)
         case navigateToTabs
     }
 
@@ -27,6 +28,7 @@ public final class PrivacyReactor: BaseReactor, Reactor {
         public let isMan: Bool
         public let profileImageURL: String?
         public var isSignupButtonEnabled: Bool = false
+        public var signupError: String?
     }
 
     public var initialState: State
@@ -66,21 +68,38 @@ public final class PrivacyReactor: BaseReactor, Reactor {
             let isMan = currentState.isMan
             let profileImageURL = currentState.profileImageURL
 
-            return signupUseCase.execute(
-                req: .init(
-                    email: email.dsmEmail(),
-                    password: password,
-                    grade: gcn.extract(4),
-                    name: name,
-                    gender: isMan ? .man : .woman,
-                    classRoom: gcn.extract(3),
-                    number: gcn % 100,
-                    deviceToken: Messaging.messaging().fcmToken,
-                    profileImageURL: profileImageURL
+            return .concat([
+                .just(.setSignupError(nil)),
+                signupUseCase.execute(
+                    req: .init(
+                        email: email.dsmEmail(),
+                        password: password,
+                        grade: gcn.extract(4),
+                        name: name,
+                        gender: isMan ? .man : .woman,
+                        classRoom: gcn.extract(3),
+                        number: gcn % 100,
+                        deviceToken: Messaging.messaging().fcmToken,
+                        profileImageURL: profileImageURL
+                    )
                 )
-            )
-            .catch { _ in .never() }
-            .andThen(Observable<Mutation>.just(.navigateToTabs))
+                .andThen(Observable<Mutation>.just(.navigateToTabs))
+                .catch { error in
+                    if let appError = error as? ApplicationsError {
+                        switch appError {
+                        case .conflict:
+                            return .just(.setSignupError("이미 가입된 계정이에요."))
+
+                        case .badRequest:
+                            return .just(.setSignupError("입력 정보를 확인해주세요."))
+
+                        case .internalServerError:
+                            return .just(.setSignupError("서버 오류가 발생했어요."))
+                        }
+                    }
+                    return .just(.setSignupError("회원가입에 실패했어요. 다시 시도해주세요."))
+                }
+            ])
         }
     }
 
@@ -90,6 +109,9 @@ public final class PrivacyReactor: BaseReactor, Reactor {
         switch mutation {
         case let .setSignupButtonEnabled(isEnabled):
             newState.isSignupButtonEnabled = isEnabled
+
+        case let .setSignupError(error):
+            newState.signupError = error
 
         case .navigateToTabs:
             steps.accept(PrivacyStep.tabsIsRequired)

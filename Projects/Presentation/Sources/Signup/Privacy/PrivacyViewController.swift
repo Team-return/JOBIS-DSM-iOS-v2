@@ -65,6 +65,14 @@ public final class PrivacyViewController: BaseReactorViewController<PrivacyReact
             .distinctUntilChanged()
             .bind(to: signupButton.rx.isEnabled)
             .disposed(by: disposeBag)
+
+        reactor.state.map { $0.signupError }
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind { [weak self] errorMessage in
+                self?.showJobisToast(text: errorMessage, inset: 92)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {}
