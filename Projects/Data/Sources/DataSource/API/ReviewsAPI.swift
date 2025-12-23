@@ -47,7 +47,16 @@ extension ReviewsAPI: JobisAPI {
         case let .fetchReviewListPageCount(req):
             return .requestParameters(parameters: req.toDictionary(), encoding: URLEncoding.queryString)
         case let .fetchReviewList(req):
-            return .requestParameters(parameters: req.toDictionary(), encoding: URLEncoding.queryString)
+            var params = req.toDictionary()
+
+            if let years = req.years {
+                params["years"] = years.joined(separator: ",")
+            }
+
+            return .requestParameters(
+                parameters: params,
+                encoding: URLEncoding.queryString
+            )
         case .fetchReviewDetail, .fetchReviewQuestions:
             return .requestPlain
         }

@@ -11,7 +11,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
     public var reviewData = BehaviorRelay<[ReviewEntity]>(value: [])
     private let fetchReviewListUseCase: FetchReviewListUseCase
     public var code: String = ""
-    public var year: String = ""
+    public var years: [String] = []
     public var type: String = ""
     public var location: String = ""
     private var pageCount: Int = 1
@@ -41,7 +41,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
                     page: self.pageCount,
                     location: self.location,
                     type: self.type,
-                    year: self.year,
+                    years: self.years,
                     code: self.code,
                 )
             }
@@ -80,7 +80,7 @@ public final class ReviewViewModel: BaseViewModel, Stepper {
                     page: self.pageCount,
                     location: self.location,
                     type: self.type,
-                    year: self.year,
+                    years: self.years,
                     code: self.code
                 )
                     .asObservable()
