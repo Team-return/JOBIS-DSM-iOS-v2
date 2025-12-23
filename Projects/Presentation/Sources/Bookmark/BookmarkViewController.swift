@@ -64,9 +64,9 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
             .disposed(by: disposeBag)
 
         bookmarkTableView.rx.itemSelected
-            .map { [weak self] indexPath in
+            .compactMap { [weak self] indexPath -> Int? in
                 guard let cell = self?.bookmarkTableView.cellForRow(at: indexPath) as? BookmarkTableViewCell,
-                      let id = cell.model?.recruitmentID else { return 0 }
+                      let id = cell.model?.recruitmentID else { return nil }
                 return id
             }
             .map { BookmarkReactor.Action.bookmarkItemDidTap($0) }
@@ -90,8 +90,9 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
                 cellType: BookmarkTableViewCell.self
             )) { [weak self] _, item, cell in
                 cell.adapt(model: item)
-                cell.trashButtonDidTap = {
-                    self?.reactor.action.onNext(.removeBookmark(cell.model?.recruitmentID ?? 0))
+                cell.trashButtonDidTap = { [weak self] in
+                    guard let id = cell.model?.recruitmentID else { return }
+                    self?.reactor.action.onNext(.removeBookmark(id))
                 }
             }
             .disposed(by: disposeBag)
