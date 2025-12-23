@@ -11,9 +11,10 @@ public final class VerifyEmailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, name: String, gcn: Int) {
         self.container = container
-        self.rootViewController = container.resolve(VerifyEmailViewController.self)!
+        let reactor = container.resolve(VerifyEmailReactor.self, arguments: name, gcn)!
+        self.rootViewController = VerifyEmailViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -34,17 +35,14 @@ public final class VerifyEmailFlow: Flow {
 
 private extension VerifyEmailFlow {
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
-
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func navigateToPasswordSetting(name: String, gcn: Int, email: String) -> FlowContributors {
-        let passwordSettingFlow = PasswordSettingFlow(container: container)
+        let passwordSettingFlow = PasswordSettingFlow(container: container, name: name, gcn: gcn, email: email)
 
         Flows.use(passwordSettingFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

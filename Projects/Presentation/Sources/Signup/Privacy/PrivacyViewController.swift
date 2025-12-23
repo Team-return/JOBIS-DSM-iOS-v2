@@ -6,14 +6,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
-    public var email: String = ""
-    public var password: String = ""
-    public var isMan: Bool = false
-    public var profileImageURL: String?
+public final class PrivacyViewController: BaseReactorViewController<PrivacyReactor> {
     private let privacyWebView = WKWebView().then {
         let url = URL(
             string: Bundle.main.object(forInfoDictionaryKey: "PRIVACY_WEB_URL") as? String ?? ""
@@ -45,30 +40,42 @@ public final class PrivacyViewController: BaseViewController<PrivacyViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = PrivacyViewModel.Input(
-            name: name,
-            gcn: gcn,
-            email: email,
-            password: password,
-            isMan: isMan,
-            profileImageURL: profileImageURL,
-            signupButtonDidTap: signupButton.rx.tap.asSignal()
-        )
-        _ = viewModel.transform(input)
-    }
+    public override func bindAction() {
+        signupButton.rx.tap
+            .map { PrivacyReactor.Action.signupButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-    public override func configureViewController() {
         privacyWebView.scrollView.rx.contentOffset
             .filter { [weak self] _ in
-                !(self?.signupButton.isEnabled ?? false)
+                !(self?.reactor.currentState.isSignupButtonEnabled ?? false)
             }
             .distinctUntilChanged()
-            .bind { [weak self] point in
-                guard let scrollView = self else { return }
-                self?.signupButton.isEnabled = scrollView.checkScrollIsBottom(yOffset: point.y)
-            }.disposed(by: disposeBag)
+            .filter { [weak self] point in
+                guard let self = self else { return false }
+                return self.checkScrollIsBottom(yOffset: point.y)
+            }
+            .map { _ in PrivacyReactor.Action.enableSignupButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
+
+    public override func bindState() {
+        reactor.state.map { $0.isSignupButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: signupButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.signupError }
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind { [weak self] errorMessage in
+                self?.showJobisToast(text: errorMessage, inset: 92)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {}
 
     public override func configureNavigation() {
         setLargeTitle(title: "아래의 사항을 읽고 동의해주세요")

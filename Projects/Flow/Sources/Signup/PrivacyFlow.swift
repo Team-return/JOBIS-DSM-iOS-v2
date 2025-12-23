@@ -11,9 +11,10 @@ public final class PrivacyFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, name: String, gcn: Int, email: String, password: String, isMan: Bool, profileImageURL: String?) {
         self.container = container
-        self.rootViewController = container.resolve(PrivacyViewController.self)!
+        let reactor = container.resolve(PrivacyReactor.self, arguments: name, gcn, email, password, isMan, profileImageURL)!
+        self.rootViewController = PrivacyViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -45,16 +46,9 @@ private extension PrivacyFlow {
         isMan: Bool,
         profileImageURL: String?
     ) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
-        rootViewController.email = email
-        rootViewController.password = password
-        rootViewController.isMan = isMan
-        rootViewController.profileImageURL = profileImageURL
-
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

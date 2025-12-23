@@ -11,9 +11,10 @@ public final class ProfileSettingFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, name: String, gcn: Int, email: String, password: String, isMan: Bool) {
         self.container = container
-        self.rootViewController = container.resolve(ProfileSettingViewController.self)!
+        let reactor = container.resolve(ProfileSettingReactor.self, arguments: name, gcn, email, password, isMan)!
+        self.rootViewController = ProfileSettingViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -53,15 +54,9 @@ private extension ProfileSettingFlow {
         password: String,
         isMan: Bool
     ) -> FlowContributors {
-        rootViewController.name = name
-        rootViewController.gcn = gcn
-        rootViewController.email = email
-        rootViewController.password = password
-        rootViewController.isMan = isMan
-
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -73,7 +68,7 @@ private extension ProfileSettingFlow {
         isMan: Bool,
         profileImageURL: String?
     ) -> FlowContributors {
-        let privacyFlow = PrivacyFlow(container: container)
+        let privacyFlow = PrivacyFlow(container: container, name: name, gcn: gcn, email: email, password: password, isMan: isMan, profileImageURL: profileImageURL)
 
         Flows.use(privacyFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

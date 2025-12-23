@@ -36,12 +36,12 @@ private extension InfoSettingFlow {
     func navigateToInfoSetting() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
-        let verifyEmailFlow = VerifyEmailFlow(container: container)
+        let verifyEmailFlow = VerifyEmailFlow(container: container, name: name, gcn: gcn)
 
         Flows.use(verifyEmailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

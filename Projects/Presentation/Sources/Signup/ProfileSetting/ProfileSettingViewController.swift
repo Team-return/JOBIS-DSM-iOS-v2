@@ -8,15 +8,10 @@ import Core
 import DesignSystem
 import Photos
 import Domain
+import ReactorKit
 
-public final class ProfileSettingViewController: BaseViewController<ProfileSettingViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
-    public var email: String = ""
-    public var password: String = ""
-    public var isMan: Bool = false
+public final class ProfileSettingViewController: BaseReactorViewController<ProfileSettingReactor> {
     private let picker = UIImagePickerController()
-    private let selectedFileModel = BehaviorRelay<UploadFileModel?>(value: nil)
     private let profileImageView = UIImageView().then {
         $0.image = .jobisIcon(.profile).resize(size: 80)
         $0.contentMode = .scaleAspectFill
@@ -60,18 +55,34 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
         }
     }
 
-    public override func bind() {
-        let input = ProfileSettingViewModel.Input(
-            name: name,
-            gcn: gcn,
-            email: email,
-            password: password,
-            isMan: isMan,
-            profileImage: selectedFileModel,
-            laterButtonDidTap: laterButton.rx.tap.asSignal(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
-        )
-        _ = viewModel.transform(input)
+    public override func bindAction() {
+        laterButton.rx.tap
+            .map { ProfileSettingReactor.Action.laterButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .map { ProfileSettingReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.profileImage }
+            .compactMap { $0 }
+            .distinctUntilChanged { lhs, rhs in
+                lhs.fileName == rhs.fileName
+            }
+            .bind { [weak self] model in
+                self?.profileImageView.image = .init(data: model.file)
+                self?.profileImageView.asCircle()
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isNextButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
@@ -84,12 +95,6 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
                 self?.openLibrary()
             }
             .disposed(by: disposeBag)
-
-        selectedFileModel
-            .map { $0 != nil }
-            .distinctUntilChanged()
-            .bind(to: nextButton.rx.isEnabled)
-            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
@@ -97,10 +102,7 @@ public final class ProfileSettingViewController: BaseViewController<ProfileSetti
     }
 
     private func selectProfileImage(_ model: UploadFileModel) {
-        self.profileImageView.image = .init(data: model.file)
-        self.profileImageView.asCircle()
-
-        self.selectedFileModel.accept(model)
+        self.reactor.action.onNext(.selectProfileImage(model))
     }
 }
 

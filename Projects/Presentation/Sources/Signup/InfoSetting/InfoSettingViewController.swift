@@ -5,8 +5,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class InfoSettingViewController: SignupViewController<InfoSettingViewModel> {
+public final class InfoSettingViewController: BaseReactorViewController<InfoSettingReactor> {
     private let nameTextField = JobisTextField().then {
         $0.setTextField(title: "이름", placeholder: "홍길동")
     }
@@ -41,21 +42,35 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
         }
     }
 
-    public override func bind() {
-        let input = InfoSettingViewModel.Input(
-            name: nameTextField.textField.rx.text.orEmpty.asDriver(),
-            gcn: gcnTextField.textField.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        nameTextField.textField.rx.text.orEmpty
+            .map { InfoSettingReactor.Action.updateName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.nameErrorDescription
+        gcnTextField.textField.rx.text.orEmpty
+            .map { InfoSettingReactor.Action.updateGCN($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .map { InfoSettingReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.nameErrorDescription }
+            .distinctUntilChanged()
+            .compactMap { $0 }
             .bind { [weak self] description in
                 self?.nameTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
-        output.gcnErrorDescription
+        reactor.state.map { $0.gcnErrorDescription }
+            .distinctUntilChanged()
+            .compactMap { $0 }
             .bind { [weak self] description in
                 self?.gcnTextField.setDescription(description)
             }
@@ -70,15 +85,8 @@ public final class InfoSettingViewController: SignupViewController<InfoSettingVi
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(4) { [weak self] in
                 self?.gcnTextField.textField.resignFirstResponder()
-                self?.nextSignupStep()
             }
-            .bind(to: gcnTextField.textField.rx.text )
-            .disposed(by: disposeBag)
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
+            .bind(to: gcnTextField.textField.rx.text)
             .disposed(by: disposeBag)
     }
 
