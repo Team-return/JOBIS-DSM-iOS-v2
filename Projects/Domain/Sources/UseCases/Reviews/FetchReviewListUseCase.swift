@@ -13,7 +13,7 @@ public struct FetchReviewListUseCase {
         type: String? = nil,
         companyID: Int? = nil,
         keyword: String? = nil,
-        year: String? = nil,
+        years: [String]? = [],
         code: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
@@ -24,7 +24,7 @@ public struct FetchReviewListUseCase {
             type: type,
             companyID: companyID,
             keyword: keyword,
-            year: year,
+            years: years,
             code: code,
             companyName: companyName,
             writer: writer

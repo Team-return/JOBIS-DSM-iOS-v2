@@ -9,10 +9,9 @@ import Domain
 
 public final class ReviewFilterViewController: BaseViewController<ReviewFilterViewModel> {
     private let filterApplyButtonDidTap = PublishRelay<Void>()
-    private var selectedYear: String = ""
-    private let selectedYearRelay = BehaviorRelay<String>(value: "")
+    private var selectedYear: [String] = []
+    private let selectedYearRelay = BehaviorRelay<[String]>(value: [])
     private var selectedJobIndex: Int?
-    private var selectedYearIndex: Int?
 
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView().then {
@@ -234,21 +233,27 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
     }
 
     private func handleYearSelection(at indexPath: IndexPath) {
-        if let previousIndex = selectedYearIndex,
-           let previousCell = yearsCollectionView.cellForItem(at: IndexPath(item: previousIndex, section: 0)) as? ReviewMajorCollectionViewCell {
-            previousCell.isCheck = false
+        guard let cell = yearsCollectionView.cellForItem(at: indexPath) as? ReviewMajorCollectionViewCell else {
+            return
         }
 
-        if let cell = yearsCollectionView.cellForItem(at: indexPath) as? ReviewMajorCollectionViewCell {
-            cell.isCheck = true
-            selectedYearIndex = indexPath.item
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let years = (currentYear...2026).reversed().map { String($0) }
 
-            let years = (2020...2026).reversed().map { String($0) }
-            if indexPath.item < years.count {
-                selectedYear = years[indexPath.item]
-                selectedYearRelay.accept(selectedYear)
+        guard indexPath.item < years.count else { return }
+        let year = years[indexPath.item]
+
+        cell.isCheck.toggle()
+
+        if cell.isCheck {
+            if !selectedYear.contains(year) {
+                selectedYear.append(year)
             }
+        } else {
+            selectedYear.removeAll { $0 == year }
         }
+
+        selectedYearRelay.accept(selectedYear)
     }
 
     public override func configureViewController() {
@@ -260,7 +265,8 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             }
             .disposed(by: disposeBag)
 
-        let years = (2020...2026).reversed().map { String($0) }
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let years = (currentYear...2026).reversed().map { String($0) }
 
         Observable.just(years)
             .bind(to: yearsCollectionView.rx.items(

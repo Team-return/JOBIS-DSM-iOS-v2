@@ -6,7 +6,7 @@ public struct ReviewListRequestQuery: Encodable {
     public let type: String?
     public let companyID: Int?
     public let keyword: String?
-    public let year: String?
+    public let years: [String]?
     public let code: String?
     public let companyName: String?
     public let writer: String?
@@ -17,7 +17,7 @@ public struct ReviewListRequestQuery: Encodable {
         type: String? = nil,
         companyID: Int? = nil,
         keyword: String? = nil,
-        year: String? = nil,
+        years: [String]? = nil,
         code: String? = nil,
         companyName: String? = nil,
         writer: String? = nil
@@ -27,7 +27,7 @@ public struct ReviewListRequestQuery: Encodable {
         self.type = type
         self.companyID = companyID
         self.keyword = keyword
-        self.year = year
+        self.years = years
         self.code = code
         self.companyName = companyName
         self.writer = writer
@@ -39,7 +39,7 @@ public struct ReviewListRequestQuery: Encodable {
         case type
         case companyID = "company_id"
         case keyword
-        case year
+        case years
         case code
         case companyName = "company_name"
         case writer
