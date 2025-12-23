@@ -23,14 +23,14 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Bookmark
-        container.register(BookmarkViewController.self) { resolver in
-            BookmarkViewController(resolver.resolve(BookmarkViewModel.self)!)
-        }
-        container.register(BookmarkViewModel.self) { resolver in
-            BookmarkViewModel(
+        container.register(BookmarkReactor.self) { resolver in
+            BookmarkReactor(
                 fetchBookmarkListUseCase: resolver.resolve(FetchBookmarkListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
+        }
+        container.register(BookmarkViewController.self) { resolver in
+            BookmarkViewController(resolver.resolve(BookmarkReactor.self)!)
         }
 
         // Alarm

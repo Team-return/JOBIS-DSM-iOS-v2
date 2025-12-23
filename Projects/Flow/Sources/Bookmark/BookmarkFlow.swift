@@ -38,7 +38,7 @@ private extension BookmarkFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: bookmarkViewController,
-            withNextStepper: bookmarkViewController.viewModel
+            withNextStepper: bookmarkViewController.reactor
         ))
     }
 

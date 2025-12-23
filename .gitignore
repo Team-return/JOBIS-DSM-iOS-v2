@@ -69,5 +69,8 @@ Derived/
 ### Tuist managed dependencies ###
 Tuist/Dependencies
 
+### Tuist cache ###
+Tuist/Cache/
+
 XCConfig/
 Projects/App/Resources/Firebase/
