@@ -5,9 +5,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class BookmarkViewController: BaseViewController<BookmarkViewModel> {
-    private let removeBookmark = PublishRelay<Int>()
+public final class BookmarkViewController: BaseReactorViewController<BookmarkReactor> {
     private let bookmarkTableView = UITableView().then {
         $0.rowHeight = 80
         $0.separatorStyle = .none
@@ -57,36 +57,41 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
         }
     }
 
-    public override func bind() {
-        let input = BookmarkViewModel.Input(
-            viewWillAppear: self.viewWillAppearPublisher,
-            removeBookmark: removeBookmark,
-            bookmarkListDidTap: bookmarkTableView.rx.itemSelected.asObservable()
-                .map {
-                    guard let cell = self.bookmarkTableView.cellForRow(at: $0) as? BookmarkTableViewCell
-                    else { return 0 }
-                    return cell.model?.recruitmentID ?? 0
-                }
-        )
-        let ouput = viewModel.transform(input)
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { BookmarkReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        ouput.bookmarkList
-            .skip(1)
-            .do(onNext: { list in
+        bookmarkTableView.rx.itemSelected
+            .map { [weak self] indexPath in
+                guard let cell = self?.bookmarkTableView.cellForRow(at: indexPath) as? BookmarkTableViewCell,
+                      let id = cell.model?.recruitmentID else { return 0 }
+                return id
+            }
+            .map { BookmarkReactor.Action.bookmarkItemDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.bookmarkList }
+            .distinctUntilChanged { $0.count == $1.count }
+            .do(onNext: { [weak self] list in
                 [
-                    self.emptyBookmarkView,
-                    self.navigateToRecruitmentButton
+                    self?.emptyBookmarkView,
+                    self?.navigateToRecruitmentButton
                 ].forEach {
-                    $0.isHidden = !list.isEmpty
+                    $0?.isHidden = !list.isEmpty
                 }
             })
             .bind(to: bookmarkTableView.rx.items(
                 cellIdentifier: BookmarkTableViewCell.identifier,
                 cellType: BookmarkTableViewCell.self
-            )) { _, item, cell in
+            )) { [weak self] _, item, cell in
                 cell.adapt(model: item)
                 cell.trashButtonDidTap = {
-                    self.removeBookmark.accept(cell.model?.recruitmentID ?? 0)
+                    self?.reactor.action.onNext(.removeBookmark(cell.model?.recruitmentID ?? 0))
                 }
             }
             .disposed(by: disposeBag)
@@ -100,15 +105,15 @@ public final class BookmarkViewController: BaseViewController<BookmarkViewModel>
             .disposed(by: disposeBag)
 
         viewWillAppearPublisher.asObservable()
-            .bind {
-                self.showTabbar()
-                self.setLargeTitle(title: "북마크")
+            .bind { [weak self] in
+                self?.showTabbar()
+                self?.setLargeTitle(title: "북마크")
             }
             .disposed(by: disposeBag)
 
         viewWillDisappearPublisher.asObservable()
-            .bind {
-                self.setSmallTitle(title: "")
+            .bind { [weak self] in
+                self?.setSmallTitle(title: "")
             }
             .disposed(by: disposeBag)
     }
