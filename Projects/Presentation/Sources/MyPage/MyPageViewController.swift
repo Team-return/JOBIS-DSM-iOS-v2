@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 import Domain
 
-public final class MyPageViewController: BaseViewController<MyPageViewModel> {
+public final class MyPageViewController: BaseReactorViewController<MyPageReactor> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -25,7 +25,6 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
     private let picker = UIImagePickerController()
     private let logoutPublisher = PublishRelay<Void>()
     private let withdrawalPublisher = PublishRelay<Void>()
-    private let changedImageURL = PublishRelay<String>()
 
     public override func addView() {
         self.view.addSubview(scrollView)
@@ -90,45 +89,79 @@ public final class MyPageViewController: BaseViewController<MyPageViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = MyPageViewModel.Input(
-            viewAppear: viewWillAppearPublisher,
-            reviewNavigate: reviewNavigateStackView.reviewNavigateButtonDidTap,
-            selectedImage: selectedImage,
-            notificationSettingSectionDidTap: notificationSettingSectionView.getSelectedItem(type:
-                    .notificationSetting),
-            helpSectionDidTap: helpSectionView.getSelectedItem(type: .announcement),
-            bugReportSectionDidTap: bugSectionView.getSelectedItem(type: .reportBug),
-            interestFieldDidTap: accountSectionView.getSelectedItem(type: .interestField),
-//            bugReportListSectionDidTap: bugSectionView.getSelectedItem(type: .bugList),
-            changePasswordSectionDidTap: accountSectionView.getSelectedItem(type: .changePassword),
-            logoutPublisher: logoutPublisher,
-            withdrawalPublisher: withdrawalPublisher,
-            changedImageURL: changedImageURL
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { MyPageReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        input.changePasswordSectionDidTap.asObservable()
-            .subscribe(onNext: { [weak self] _ in
+        reviewNavigateStackView.reviewNavigateButtonDidTap
+            .map { MyPageReactor.Action.reviewNavigateButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        selectedImage
+            .map { MyPageReactor.Action.profileImageSelected($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        notificationSettingSectionView.getSelectedItem(type: .notificationSetting)
+            .map { _ in MyPageReactor.Action.notificationSettingDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        helpSectionView.getSelectedItem(type: .announcement)
+            .map { _ in MyPageReactor.Action.helpDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        bugSectionView.getSelectedItem(type: .reportBug)
+            .map { _ in MyPageReactor.Action.bugReportDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        accountSectionView.getSelectedItem(type: .interestField)
+            .map { _ in MyPageReactor.Action.interestFieldDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        accountSectionView.getSelectedItem(type: .changePassword)
+            .do(onNext: { [weak self] _ in
                 self?.hideTabbar()
+            })
+            .map { _ in MyPageReactor.Action.changePasswordDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        logoutPublisher
+            .map { MyPageReactor.Action.logout }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        withdrawalPublisher
+            .map { MyPageReactor.Action.withdrawal }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.studentInfo }
+            .compactMap { $0 }
+            .bind(onNext: { [weak self] studentInfo in
+                self?.studentInfoView.setStudentInfo(
+                    profileImageUrl: studentInfo.profileImageUrl,
+                    gcn: studentInfo.studentGcn,
+                    name: studentInfo.studentName,
+                    department: studentInfo.department.localizedString()
+                )
             })
             .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
-
-        output.studentInfo.asObservable()
-            .bind(onNext: { [weak self] in
-                self?.studentInfoView.setStudentInfo(
-                    profileImageUrl: $0.profileImageUrl,
-                    gcn: $0.studentGcn,
-                    name: $0.studentName,
-                    department: $0.department.localizedString()
-                )
-            }).disposed(by: disposeBag)
-
-        output.writableReviewList
-            .bind(onNext: { [weak self] in
-                self?.reviewNavigateStackView.setList(writableReviewCompanylist: $0)
-            }).disposed(by: disposeBag)
+        reactor.state.map { $0.writableReviewList }
+            .bind(onNext: { [weak self] list in
+                self?.reviewNavigateStackView.setList(writableReviewCompanylist: list)
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
