@@ -62,7 +62,7 @@ extension MyPageFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: myPageViewController,
-            withNextStepper: myPageViewController.viewModel
+            withNextStepper: myPageViewController.reactor
         ))
     }
 

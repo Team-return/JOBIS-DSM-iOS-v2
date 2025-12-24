@@ -7,11 +7,8 @@ public final class SettingPresentationAssembly: Assembly {
     public init() {}
 
     public func assemble(container: Container) {
-        container.register(MyPageViewController.self) { resolver in
-            MyPageViewController(resolver.resolve(MyPageViewModel.self)!)
-        }
-        container.register(MyPageViewModel.self) { resolver in
-            MyPageViewModel(
+        container.register(MyPageReactor.self) { resolver in
+            MyPageReactor(
                 fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
                 uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!,
                 changeProfileImageUseCase: resolver.resolve(ChangeProfileImageUseCase.self)!,
@@ -20,6 +17,9 @@ public final class SettingPresentationAssembly: Assembly {
                 logoutUseCase: resolver.resolve(LogoutUseCase.self)!,
                 deleteDeviceTokenUseCase: resolver.resolve(DeleteDeviceTokenUseCase.self)!
             )
+        }
+        container.register(MyPageViewController.self) { resolver in
+            MyPageViewController(resolver.resolve(MyPageReactor.self)!)
         }
 
         // Bookmark
