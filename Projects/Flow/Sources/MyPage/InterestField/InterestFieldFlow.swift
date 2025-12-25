@@ -43,7 +43,7 @@ private extension InterestFieldFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: interestFieldCheckViewController,
-            withNextStepper: interestFieldCheckViewController.viewModel
+            withNextStepper: interestFieldCheckViewController.reactor
         ))
     }
 }

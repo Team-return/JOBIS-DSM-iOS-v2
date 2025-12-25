@@ -82,7 +82,7 @@ public final class InterestFieldViewController: BaseReactorViewController<Intere
 
     public override func bindAction() {
         viewWillAppearPublisher
-            .map { InterestFieldReactor.Action.viewWillAppear }
+            .map { InterestFieldReactor.Action.fetchInterestFields }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

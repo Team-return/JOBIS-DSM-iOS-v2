@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 import Domain
 
-public final class InterestFieldCheckViewController: BaseViewController<InterestFieldCheckViewModel> {
+public final class InterestFieldCheckViewController: BaseReactorViewController<InterestFieldCheckReactor> {
     private let interestView = InterestCheckView()
 //    private let backButton = JobisButton(style: .main).then {
 //        $0.setText("홈으로 가기")
@@ -38,18 +38,18 @@ public final class InterestFieldCheckViewController: BaseViewController<Interest
         self.navigationItem.largeTitleDisplayMode = .never
     }
 
-    public override func bind() {
-        super.bind()
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { InterestFieldCheckReactor.Action.fetchStudentInfo }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
 
-        let input = InterestFieldCheckViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher.asObservable()
-//            backButtonTap: backButton.rx.tap.asObservable()
-        )
-
-        let output = viewModel.transform(input)
-
-        output.studentName
-            .drive(onNext: { [weak self] name in
+    public override func bindState() {
+        reactor.state.map { $0.studentName }
+            .filter { !$0.isEmpty }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] name in
                 self?.interestView.setStudentName(name)
             })
             .disposed(by: disposeBag)

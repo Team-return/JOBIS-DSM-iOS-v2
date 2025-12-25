@@ -25,7 +25,7 @@ public final class NotificationSettingReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
+        case fetchNotificationSettings
         case toggleNotification(NotificationType)
         case toggleAllNotifications
     }
@@ -60,7 +60,7 @@ public final class NotificationSettingReactor: BaseReactor, Stepper {
 extension NotificationSettingReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
+        case .fetchNotificationSettings:
             return fetchSubscribeStateUseCase.execute()
                 .asObservable()
                 .map { entities -> [NotificationType: Bool] in

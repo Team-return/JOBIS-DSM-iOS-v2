@@ -24,7 +24,7 @@ public final class InterestFieldReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
+        case fetchInterestFields
         case toggleInterest(CodeEntity)
         case selectButtonDidTap
     }
@@ -49,7 +49,7 @@ public final class InterestFieldReactor: BaseReactor, Stepper {
 extension InterestFieldReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
+        case .fetchInterestFields:
             let interests = fetchCodeListUseCase.execute(
                 keyword: nil,
                 type: .job,

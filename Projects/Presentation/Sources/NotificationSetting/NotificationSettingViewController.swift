@@ -89,7 +89,7 @@ public final class NotificationSettingViewController: BaseReactorViewController<
 
     public override func bindAction() {
         viewWillAppearPublisher
-            .map { NotificationSettingReactor.Action.viewWillAppear }
+            .map { NotificationSettingReactor.Action.fetchNotificationSettings }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

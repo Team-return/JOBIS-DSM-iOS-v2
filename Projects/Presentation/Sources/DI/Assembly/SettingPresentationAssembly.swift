@@ -120,11 +120,11 @@ public final class SettingPresentationAssembly: Assembly {
         }
         container.register(InterestFieldCheckViewController.self) { resolver in
             InterestFieldCheckViewController(
-                resolver.resolve(InterestFieldCheckViewModel.self)!
+                resolver.resolve(InterestFieldCheckReactor.self)!
             )
         }
-        container.register(InterestFieldCheckViewModel.self) { resolver in
-            InterestFieldCheckViewModel(
+        container.register(InterestFieldCheckReactor.self) { resolver in
+            InterestFieldCheckReactor(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
             )
         }
