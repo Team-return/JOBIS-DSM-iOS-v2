@@ -34,7 +34,7 @@ private extension CompanyFlow {
     func navigateToCompany() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
