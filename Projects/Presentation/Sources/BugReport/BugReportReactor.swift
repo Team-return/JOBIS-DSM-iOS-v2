@@ -76,7 +76,7 @@ extension BugReportReactor {
             return reportBugUseCase.execute(req: .init(
                 title: currentState.title,
                 content: currentState.content,
-                developmentArea: DevelopmentType(rawValue: currentState.majorType.uppercased()) ?? .all,
+                developmentArea: DevelopmentType(localizedString: currentState.majorType) ?? .all,
                 attachmentUrls: currentState.imageList
             ))
             .asObservable()
