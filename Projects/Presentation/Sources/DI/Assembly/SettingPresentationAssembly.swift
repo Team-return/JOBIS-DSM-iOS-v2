@@ -79,10 +79,10 @@ public final class SettingPresentationAssembly: Assembly {
 
         // Bug Report
         container.register(BugReportViewController.self) { resolver in
-            BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
+            BugReportViewController(resolver.resolve(BugReportReactor.self)!)
         }
-        container.register(BugReportViewModel.self) { resolver in
-            BugReportViewModel(
+        container.register(BugReportReactor.self) { resolver in
+            BugReportReactor(
                 reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
             )
         }
