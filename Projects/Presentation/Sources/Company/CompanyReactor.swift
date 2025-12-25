@@ -8,7 +8,6 @@ import Domain
 public final class CompanyReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
-    private let disposeBag = DisposeBag()
     private let fetchCompanyListUseCase: FetchCompanyListUseCase
 
     public init(
