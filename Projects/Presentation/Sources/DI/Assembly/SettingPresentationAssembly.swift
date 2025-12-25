@@ -45,15 +45,15 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Notification Setting
-        container.register(NotificationSettingViewModel.self) { resolver in
-            NotificationSettingViewModel(
+        container.register(NotificationSettingReactor.self) { resolver in
+            NotificationSettingReactor(
                 subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
                 subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
                 fetchSubscribeStateUseCase: resolver.resolve(FetchSubscribeStateUseCase.self)!
             )
         }
         container.register(NotificationSettingViewController.self) { resolver in
-            NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
+            NotificationSettingViewController(resolver.resolve(NotificationSettingReactor.self)!)
         }
 
         // Notice
@@ -79,10 +79,10 @@ public final class SettingPresentationAssembly: Assembly {
 
         // Bug Report
         container.register(BugReportViewController.self) { resolver in
-            BugReportViewController(resolver.resolve(BugReportViewModel.self)!)
+            BugReportViewController(resolver.resolve(BugReportReactor.self)!)
         }
-        container.register(BugReportViewModel.self) { resolver in
-            BugReportViewModel(
+        container.register(BugReportReactor.self) { resolver in
+            BugReportReactor(
                 reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
             )
         }
@@ -108,11 +108,11 @@ public final class SettingPresentationAssembly: Assembly {
         // Interest Field
         container.register(InterestFieldViewController.self) { resolver in
             InterestFieldViewController(
-                resolver.resolve(InterestFieldViewModel.self)!
+                resolver.resolve(InterestFieldReactor.self)!
             )
         }
-        container.register(InterestFieldViewModel.self) { resolver in
-            InterestFieldViewModel(
+        container.register(InterestFieldReactor.self) { resolver in
+            InterestFieldReactor(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
                 changeInterestsUseCase: resolver.resolve(ChangeInterestsUseCase.self)!,
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
@@ -120,11 +120,11 @@ public final class SettingPresentationAssembly: Assembly {
         }
         container.register(InterestFieldCheckViewController.self) { resolver in
             InterestFieldCheckViewController(
-                resolver.resolve(InterestFieldCheckViewModel.self)!
+                resolver.resolve(InterestFieldCheckReactor.self)!
             )
         }
-        container.register(InterestFieldCheckViewModel.self) { resolver in
-            InterestFieldCheckViewModel(
+        container.register(InterestFieldCheckReactor.self) { resolver in
+            InterestFieldCheckReactor(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
             )
         }

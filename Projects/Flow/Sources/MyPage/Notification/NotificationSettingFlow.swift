@@ -30,7 +30,7 @@ private extension NotificationSettingFlow {
     func navigateToNotificationSetting() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

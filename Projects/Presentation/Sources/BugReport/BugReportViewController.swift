@@ -7,13 +7,9 @@ import Core
 import DesignSystem
 import PhotosUI
 
-public final class BugReportViewController: BaseViewController<BugReportViewModel> {
-    private let bugReportButtonDidTap = PublishRelay<Void>()
-    private let bugReportImageList = BehaviorRelay<[String]>(value: [])
+public final class BugReportViewController: BaseReactorViewController<BugReportReactor> {
     var imageStringList: [String] = []
     var imageList: [UIImage] = []
-    var titleBool: Bool = false
-    var contentBool: Bool = false
 
     private let bugReportMajorView = BugReportMajorView()
     private let bugReportTitleTextField = JobisTextField().then {
@@ -154,27 +150,41 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
         }
     }
 
-    public override func bind() {
-        let input = BugReportViewModel.Input(
-            title: bugReportTitleTextField.textField.rx.text.orEmpty.asDriver(),
-            content: bugReportContentTextView.textView.rx.text.orEmpty.asDriver(),
-            bugReportImageList: bugReportImageList,
-            majorViewDidTap: self.bugReportMajorView.majorViewDidTap,
-            bugReportButtonDidTap: self.bugReportButtonDidTap
-        )
-
-        let output = viewModel.transform(input)
-
-        output.bugReportButtonIsEnable.asObservable()
-            .bind { [weak self] isEnable in
-                self?.bugReportButton.isEnabled = isEnable
-            }
+    public override func bindAction() {
+        bugReportTitleTextField.textField.rx.text.orEmpty
+            .map { BugReportReactor.Action.updateTitle($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.majorType.asObservable()
-            .subscribe(onNext: {
-                self.bugReportMajorView.majorLabel.text = $0
+        bugReportContentTextView.textView.rx.text.orEmpty
+            .map { BugReportReactor.Action.updateContent($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        bugReportMajorView.majorViewDidTap
+            .map { BugReportReactor.Action.majorViewDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        bugReportButton.rx.tap
+            .do(onNext: { [weak self] in
+                guard let self = self else { return }
+                self.reactor.action.onNext(.updateImageList(self.imageStringList))
             })
+            .map { BugReportReactor.Action.bugReportButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.isBugReportButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: bugReportButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.majorType }
+            .distinctUntilChanged()
+            .bind(to: bugReportMajorView.majorLabel.rx.text)
             .disposed(by: disposeBag)
     }
 
@@ -194,12 +204,12 @@ public final class BugReportViewController: BaseViewController<BugReportViewMode
             })
             .disposed(by: disposeBag)
 
-        bugReportButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                self.bugReportImageList.accept(self.imageStringList)
-                self.bugReportButtonDidTap.accept(())
-                self.showJobisToast(text: "버그제보가 완료되었습니다.", inset: 70)
-                self.navigationController?.popViewController(animated: true)
+        reactor.state.map { $0.isBugReportCompleted }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
+                self?.showJobisToast(text: "버그제보가 완료되었습니다.", inset: 70)
+                self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
     }

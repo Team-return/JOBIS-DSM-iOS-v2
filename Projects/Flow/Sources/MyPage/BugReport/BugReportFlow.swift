@@ -33,7 +33,7 @@ private extension BugReportFlow {
     func navigateToBugReport() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -42,7 +42,7 @@ private extension BugReportFlow {
         Flows.use(majorBottomSheetFlow, when: .created) { root in
             let view = root as? MajorBottomSheetViewController
             view?.dismiss = { majorType in
-                self.rootViewController.viewModel.majorType.accept(majorType)
+                self.rootViewController.reactor.action.onNext(.updateMajorType(majorType))
             }
             self.rootViewController.present(
                 root,
