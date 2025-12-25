@@ -32,6 +32,7 @@ public final class BugReportReactor: BaseReactor, Stepper {
         case setImageList([String])
         case setMajorType(String)
         case setBugReportButtonIsEnabled(Bool)
+        case setBugReportCompleted
     }
 
     public struct State {
@@ -40,6 +41,7 @@ public final class BugReportReactor: BaseReactor, Stepper {
         var imageList: [String] = []
         var majorType: String = "전체"
         var isBugReportButtonEnabled: Bool = false
+        var isBugReportCompleted: Bool = false
     }
 }
 
@@ -78,9 +80,7 @@ extension BugReportReactor {
                 attachmentUrls: currentState.imageList
             ))
             .asObservable()
-            .flatMap { _ -> Observable<Mutation> in
-                return .empty()
-            }
+            .map { _ in Mutation.setBugReportCompleted }
         }
     }
 
@@ -101,6 +101,9 @@ extension BugReportReactor {
 
         case let .setBugReportButtonIsEnabled(isEnabled):
             newState.isBugReportButtonEnabled = isEnabled
+
+        case .setBugReportCompleted:
+            newState.isBugReportCompleted = true
         }
         return newState
     }

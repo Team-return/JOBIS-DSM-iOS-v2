@@ -204,14 +204,10 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
             })
             .disposed(by: disposeBag)
 
-        reactor.action
-            .filter { action in
-                if case .bugReportButtonDidTap = action {
-                    return true
-                }
-                return false
-            }
-            .subscribe(onNext: { [weak self] _ in
+        reactor.state.map { $0.isBugReportCompleted }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
                 self?.showJobisToast(text: "버그제보가 완료되었습니다.", inset: 70)
                 self?.navigationController?.popViewController(animated: true)
             })
