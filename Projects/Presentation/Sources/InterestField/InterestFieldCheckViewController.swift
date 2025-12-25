@@ -43,6 +43,11 @@ public final class InterestFieldCheckViewController: BaseReactorViewController<I
             .map { InterestFieldCheckReactor.Action.fetchStudentInfo }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+
+        viewDidAppearPublisher
+            .map { InterestFieldCheckReactor.Action.startAutoNavigation }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     public override func bindState() {

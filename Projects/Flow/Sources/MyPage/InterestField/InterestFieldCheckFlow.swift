@@ -28,7 +28,7 @@ public final class InterestFieldCheckFlow: Flow {
             return navigateToInterestFieldCheck()
 
         case .popHomeFieldIsRequired:
-            return navigateToInterestField()
+            return popToMyPage()
         }
     }
 }
@@ -55,7 +55,8 @@ private extension InterestFieldCheckFlow {
         ))
     }
 
-//    func navigateToHomeField() -> FlowContributors {
-//        
-//    }
+    func popToMyPage() -> FlowContributors {
+        rootViewController.navigationController?.popToRootViewController(animated: true)
+        return .none
+    }
 }

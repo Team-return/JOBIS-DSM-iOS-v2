@@ -17,6 +17,7 @@ public final class InterestFieldCheckReactor: BaseReactor, Stepper {
 
     public enum Action {
         case fetchStudentInfo
+        case startAutoNavigation
     }
 
     public enum Mutation {
@@ -35,6 +36,16 @@ extension InterestFieldCheckReactor {
             return fetchStudentInfoUseCase.execute()
                 .asObservable()
                 .map { .setStudentName($0.studentName) }
+
+        case .startAutoNavigation:
+            return Observable<Int>.timer(
+                .seconds(2),
+                scheduler: MainScheduler.instance
+            )
+            .do(onNext: { [weak self] _ in
+                self?.steps.accept(InterestFieldCheckStep.popHomeFieldIsRequired)
+            })
+            .flatMap { _ in Observable<Mutation>.empty() }
         }
     }
 
