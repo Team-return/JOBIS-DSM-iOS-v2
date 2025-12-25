@@ -7,10 +7,7 @@ import Core
 import DesignSystem
 import Domain
 
-public final class InterestFieldViewController: BaseViewController<InterestFieldViewModel> {
-    private let selectedIndexesRelay = BehaviorRelay<Set<IndexPath>>(value: [])
-    private let interestsRelay = BehaviorRelay<[CodeEntity]>(value: [])
-    private let selectedInterestsRelay = BehaviorRelay<[CodeEntity]>(value: [])
+public final class InterestFieldViewController: BaseReactorViewController<InterestFieldReactor> {
 
     private let interestFieldTitleLabel = UILabel().then {
         $0.setJobisText(
@@ -83,56 +80,44 @@ public final class InterestFieldViewController: BaseViewController<InterestField
         }
     }
 
-    public override func bind() {
-        let input = InterestFieldViewModel.Input(
-            viewAppear: viewWillAppearPublisher,
-            selectButtonDidTap: selectButton.rx.tap.asSignal(),
-            selectedInterests: selectedInterestsRelay.asObservable()
-        )
-
-        let output = viewModel.transform(input)
-
-        output.availableInterests
-            .bind(to: interestsRelay)
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { InterestFieldReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        interestsRelay
+        majorCollectionView.rx.itemSelected
+            .compactMap { [weak self] indexPath -> CodeEntity? in
+                guard let self = self else { return nil }
+                return self.reactor.currentState.availableInterests[safe: indexPath.item]
+            }
+            .map { InterestFieldReactor.Action.toggleInterest($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        selectButton.rx.tap
+            .map { InterestFieldReactor.Action.selectButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.availableInterests }
             .bind(to: majorCollectionView.rx.items(
                 cellIdentifier: MajorCollectionViewCell.identifier,
                 cellType: MajorCollectionViewCell.self
             )) { [weak self] index, codeEntity, cell in
-                let indexPath = IndexPath(item: index, section: 0)
-                let isSelected = self?.selectedIndexesRelay.value.contains(indexPath) ?? false
+                guard let self = self else { return }
+                let isSelected = self.reactor.currentState.selectedInterests.contains(where: { $0.code == codeEntity.code })
 
                 cell.adapt(model: codeEntity)
                 cell.isCheck = isSelected
             }
             .disposed(by: disposeBag)
 
-        majorCollectionView.rx.itemSelected
-            .withUnretained(self)
-            .bind { owner, indexPath in
-                var currentSelected = owner.selectedIndexesRelay.value
-
-                if currentSelected.contains(indexPath) {
-                    currentSelected.remove(indexPath)
-                } else {
-                    currentSelected.insert(indexPath)
-                }
-
-                owner.selectedIndexesRelay.accept(currentSelected)
-                owner.updateSelectedInterests()
-
-                DispatchQueue.main.async {
-                    owner.majorCollectionView.reloadItems(at: [indexPath])
-                }
-            }
-            .disposed(by: disposeBag)
-
-        output.selectedInterests
-            .map { $0.count }
+        reactor.state.map { $0.selectedCount }
             .distinctUntilChanged()
-            .drive(onNext: { [weak self] count in
+            .bind(onNext: { [weak self] count in
                 if count == 0 {
                     self?.selectButton.setText("관심 분야를 선택해 주세요!")
                     self?.selectButton.isEnabled = false
@@ -143,13 +128,23 @@ public final class InterestFieldViewController: BaseViewController<InterestField
             })
             .disposed(by: disposeBag)
 
-        output.studentName
-            .drive(onNext: { [weak self] name in
+        reactor.state.map { $0.studentName }
+            .filter { !$0.isEmpty }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] name in
                 self?.interestFieldTitleLabel.setJobisText(
                     "\(name)님의\n관심사를 선택해주세요",
                     font: .smallBody,
                     color: .GrayScale.gray90
                 )
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.selectedInterests }
+            .distinctUntilChanged { $0.map { $0.code } == $1.map { $0.code } }
+            .skip(1)
+            .bind(onNext: { [weak self] _ in
+                self?.majorCollectionView.reloadData()
             })
             .disposed(by: disposeBag)
     }
@@ -159,11 +154,10 @@ public final class InterestFieldViewController: BaseViewController<InterestField
         navigationItem.largeTitleDisplayMode = .never
         hideTabbar()
     }
+}
 
-    private func updateSelectedInterests() {
-        let currentInterests = interestsRelay.value
-        let currentSelectedIndexes = selectedIndexesRelay.value
-        let selectedInterests = currentSelectedIndexes.map { currentInterests[$0.item] }
-        selectedInterestsRelay.accept(selectedInterests)
+extension Array {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
