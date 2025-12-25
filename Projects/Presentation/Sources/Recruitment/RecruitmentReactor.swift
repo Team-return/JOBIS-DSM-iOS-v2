@@ -8,7 +8,6 @@ import Domain
 public final class RecruitmentReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
-    private let disposeBag = DisposeBag()
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
 

@@ -144,11 +144,11 @@ public final class MainPresentationAssembly: Assembly {
         // Company
         container.register(CompanyViewController.self) { resolver in
             CompanyViewController(
-                resolver.resolve(CompanyViewModel.self)!
+                resolver.resolve(CompanyReactor.self)!
             )
         }
-        container.register(CompanyViewModel.self) { resolver in
-            CompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        container.register(CompanyReactor.self) { resolver in
+            CompanyReactor(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
         // Company Detail

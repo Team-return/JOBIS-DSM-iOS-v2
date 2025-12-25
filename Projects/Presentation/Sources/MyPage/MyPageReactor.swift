@@ -40,7 +40,6 @@ public final class MyPageReactor: BaseReactor, Stepper {
 
     public var initialState: State
     public let steps = PublishRelay<Step>()
-    private let disposeBag = DisposeBag()
 
     private let fetchPresignedURLUseCase: FetchPresignedURLUseCase
     private let uploadImageToS3UseCase: UploadImageToS3UseCase
