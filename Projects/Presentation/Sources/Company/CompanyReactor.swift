@@ -30,8 +30,6 @@ public final class CompanyReactor: BaseReactor, Stepper {
         case appendCompanyList([CompanyEntity])
         case incrementPageCount
         case resetPageCount
-        case navigateToDetail(Int)
-        case navigateToSearch
     }
 
     public struct State {
@@ -67,10 +65,12 @@ extension CompanyReactor {
                 }
 
         case let .companyDidSelect(id):
-            return .just(.navigateToDetail(id))
+            steps.accept(CompanyStep.companyDetailIsRequired(id: id))
+            return .empty()
 
         case .searchButtonDidTap:
-            return .just(.navigateToSearch)
+            steps.accept(CompanyStep.searchCompanyIsRequired)
+            return .empty()
         }
     }
 
@@ -88,12 +88,6 @@ extension CompanyReactor {
 
         case .resetPageCount:
             newState.pageCount = 1
-
-        case let .navigateToDetail(id):
-            steps.accept(CompanyStep.companyDetailIsRequired(id: id))
-
-        case .navigateToSearch:
-            steps.accept(CompanyStep.searchCompanyIsRequired)
         }
         return newState
     }
