@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class NotificationSettingViewController: BaseViewController<NotificationSettingViewModel> {
+public final class NotificationSettingViewController: BaseReactorViewController<NotificationSettingReactor> {
     private lazy var switchViewArray = [
         noticeSwitchView,
         applicationSwitchView,
@@ -87,52 +87,76 @@ public final class NotificationSettingViewController: BaseViewController<Notific
         }
     }
 
-    public override func bind() {
-        let input = NotificationSettingViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            allSwitchButtonDidTap: allNotificationSwitchView.clickSwitchButton,
-            noticeSwitchButtonDidTap: noticeSwitchView.clickSwitchButton,
-            applicationSwitchButtonDidTap: applicationSwitchView.clickSwitchButton,
-            recruitmentSwitchButtonDidTap: recruitmentSwitchView.clickSwitchButton,
-//            interestSwitchButtonDidTap: interestedSwitchView.clickSwitchButton,
-            winterInternSwitchButtonDidTap: winterInternSwitchView.clickSwitchButton
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { NotificationSettingReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        allNotificationSwitchView.clickSwitchButton
+            .skip(1)
+            .map { _ in NotificationSettingReactor.Action.toggleAllNotifications }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.subscribeNoticeState.asObservable()
-            .bind(onNext: {
-                self.noticeSwitchView.setup(isOn: $0.isSubscribed)
+        noticeSwitchView.clickSwitchButton
+            .skip(1)
+            .map { _ in NotificationSettingReactor.Action.toggleNotification(.notice) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        applicationSwitchView.clickSwitchButton
+            .skip(1)
+            .map { _ in NotificationSettingReactor.Action.toggleNotification(.application) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        recruitmentSwitchView.clickSwitchButton
+            .skip(1)
+            .map { _ in NotificationSettingReactor.Action.toggleNotification(.recruitment) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        winterInternSwitchView.clickSwitchButton
+            .skip(1)
+            .map { _ in NotificationSettingReactor.Action.toggleNotification(.winterIntern) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.isNoticeEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.noticeSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        output.subscribeApplicationState.asObservable()
-            .bind(onNext: {
-                self.applicationSwitchView.setup(isOn: $0.isSubscribed)
+        reactor.state.map { $0.isApplicationEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.applicationSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        output.subscribeRecruitmentState.asObservable()
-            .bind(onNext: {
-                self.recruitmentSwitchView.setup(isOn: $0.isSubscribed)
+        reactor.state.map { $0.isRecruitmentEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.recruitmentSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-//        output.subscribeInteresteState.asObservable()
-//            .bind(onNext: {
-//                self.interestedSwitchView.setup(isOn: $0.isSubscribed)
-//            })
-//            .disposed(by: disposeBag)
-
-        output.subscribeWinterInternState.asObservable()
-            .bind(onNext: {
-                self.winterInternSwitchView.setup(isOn: $0.isSubscribed)
+        reactor.state.map { $0.isWinterInternEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.winterInternSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        output.allSubscribeState.asObservable()
-            .bind(onNext: {
-                self.allNotificationSwitchView.setup(isOn: $0)
+        reactor.state.map { $0.isAllNotificationEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.allNotificationSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
     }
@@ -145,53 +169,10 @@ public final class NotificationSettingViewController: BaseViewController<Notific
                     $0.setup(isOn: isOn)
                 }
             }).disposed(by: disposeBag)
-
-        noticeSwitchView.clickSwitchButton
-            .asObservable()
-            .bind(onNext: { [weak self] _ in
-                self?.toggleButton()
-            }).disposed(by: disposeBag)
-
-        applicationSwitchView.clickSwitchButton
-            .asObservable()
-            .bind(onNext: { [weak self] _ in
-                self?.toggleButton()
-            }).disposed(by: disposeBag)
-
-        recruitmentSwitchView.clickSwitchButton
-            .asObservable()
-            .bind(onNext: { [weak self] _ in
-                self?.toggleButton()
-            }).disposed(by: disposeBag)
-
-//        interestedSwitchView.clickSwitchButton
-//            .asObservable()
-//            .bind(onNext: { [weak self] _ in
-//                self?.toggleButton()
-//            }).disposed(by: disposeBag)
-
-        winterInternSwitchView.clickSwitchButton
-            .asObservable()
-            .bind(onNext: { [weak self] _ in
-                self?.toggleButton()
-            }).disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.hideTabbar()
-    }
-
-    private func toggleButton() {
-        if (
-            noticeSwitchView.switchIsOn &&
-            applicationSwitchView.switchIsOn &&
-            recruitmentSwitchView.switchIsOn &&
-            winterInternSwitchView.switchIsOn
-        ) == true {
-            self.allNotificationSwitchView.setup(isOn: true)
-        } else {
-            self.allNotificationSwitchView.setup(isOn: false)
-        }
     }
 }

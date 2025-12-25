@@ -45,15 +45,15 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Notification Setting
-        container.register(NotificationSettingViewModel.self) { resolver in
-            NotificationSettingViewModel(
+        container.register(NotificationSettingReactor.self) { resolver in
+            NotificationSettingReactor(
                 subscribeNotificationUseCase: resolver.resolve(SubscribeNotificationUseCase.self)!,
                 subscribeAllNotificationUseCase: resolver.resolve(SubscribeAllNotificationUseCase.self)!,
                 fetchSubscribeStateUseCase: resolver.resolve(FetchSubscribeStateUseCase.self)!
             )
         }
         container.register(NotificationSettingViewController.self) { resolver in
-            NotificationSettingViewController(resolver.resolve(NotificationSettingViewModel.self)!)
+            NotificationSettingViewController(resolver.resolve(NotificationSettingReactor.self)!)
         }
 
         // Notice
