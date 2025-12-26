@@ -138,11 +138,6 @@ private extension HomeFlow {
     ) -> FlowContributors {
         let rejectReasonFlow = RejectReasonFlow(container: container)
         Flows.use(rejectReasonFlow, when: .created) { root in
-            let view = root as? RejectReasonViewController
-            view?.viewModel.recruitmentID = recruitmentID
-            view?.viewModel.applicationID = applicationID
-            view?.viewModel.companyName = companyName
-            view?.viewModel.companyImageUrl = companyImageUrl
             self.rootViewController.present(
                 root,
                 animated: false
@@ -152,7 +147,12 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rejectReasonFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RejectReasonStep.rejectReasonIsRequired
+                withSingleStep: RejectReasonStep.rejectReasonIsRequired(
+                    applicationID: applicationID,
+                    recruitmentID: recruitmentID,
+                    companyName: companyName,
+                    companyImageUrl: companyImageUrl
+                )
             )
         ))
     }

@@ -7,7 +7,7 @@ import Core
 import Domain
 import DesignSystem
 
-public final class RejectReasonViewController: BaseBottomSheetViewController<RejectReasonViewModel> {
+public final class RejectReasonViewController: BaseBottomSheetReactorViewController<RejectReasonReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText("반려 사유", font: .subBody, color: .GrayScale.gray60)
     }
@@ -43,17 +43,23 @@ public final class RejectReasonViewController: BaseBottomSheetViewController<Rej
         }
     }
 
-    public override func bind() {
-        let input = RejectReasonViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher,
-            reApplyButtonDidTap: reApplyButton.rx.tap.asSignal()
-        )
-        let output = viewModel.transform(input)
-
-        output.rejectReason.asObservable()
-            .bind(to: contentLabel.rx.text)
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { RejectReasonReactor.Action.fetchRejectReason }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        reApplyButton.rx.tap
+            .map { RejectReasonReactor.Action.reApplyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.rejectReason }
+            .distinctUntilChanged()
+            .bind(to: contentLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {

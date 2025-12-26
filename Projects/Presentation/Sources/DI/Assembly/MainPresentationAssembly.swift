@@ -288,9 +288,19 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Reject Reason
-        container.register(RejectReasonViewModel.self) { resolver in
-            RejectReasonViewModel(
-                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
+        container.register(RejectReasonReactor.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonReactor(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!,
+                applicationID: applicationID,
+                recruitmentID: recruitmentID,
+                companyName: companyName,
+                companyImageUrl: companyImageUrl
             )
         }
     }
