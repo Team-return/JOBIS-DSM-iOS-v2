@@ -118,13 +118,11 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Password Renewal
-        container.register(RenewalPasswordViewModel.self) { resolver in
-            RenewalPasswordViewModel(
-                renewalPasswordUseCase: resolver.resolve(RenewalPasswordUseCase.self)!
+        container.register(RenewalPasswordReactor.self) { (resolver, email: String) in
+            RenewalPasswordReactor(
+                renewalPasswordUseCase: resolver.resolve(RenewalPasswordUseCase.self)!,
+                email: email
             )
-        }
-        container.register(RenewalPasswordViewController.self) { resolver in
-            RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
     }
 }
