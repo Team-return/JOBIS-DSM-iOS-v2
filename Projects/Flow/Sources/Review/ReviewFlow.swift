@@ -47,7 +47,7 @@ private extension ReviewFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: reviewViewController,
-            withNextStepper: reviewViewController.viewModel
+            withNextStepper: reviewViewController.reactor
         ))
     }
 

@@ -6,11 +6,11 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class ReviewViewController: BaseViewController<ReviewViewModel> {
+public final class ReviewViewController: BaseReactorViewController<ReviewReactor> {
     public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
-    private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
         $0.setEmptyView(title: "아직 등록된 후기가 없어요")
         $0.isHidden = true
@@ -46,46 +46,61 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = ReviewViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
-            pageChange: reviewTableView.rx.willDisplayCell
-                .filter {
-                    $0.indexPath.row == self.reviewTableView.numberOfRows(
-                        inSection: $0.indexPath.section
-                    ) - 1
-                },
-            reviewTableViewDidTap: reviewTableView.rx
-                .modelSelected(ReviewEntity.self)
-                .asObservable()
-                .map { $0.reviewID }
-                .do(onNext: { _ in
-                    self.isTabNavigation = false
-                }),
-            searchButtonDidTap: searchButton.rx.tap.asSignal(),
-            filterButtonDidTap: filterButton.rx.tap.asSignal()
-        )
+    public override func bindAction() {
+        viewDidLoadPublisher.asObservable()
+            .map { ReviewReactor.Action.fetchReviewList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        reviewTableView.rx.willDisplayCell
+            .filter { [weak self] event in
+                guard let self = self else { return false }
+                return event.indexPath.row == self.reviewTableView.numberOfRows(
+                    inSection: event.indexPath.section
+                ) - 1
+            }
+            .map { _ in ReviewReactor.Action.loadMoreReviews }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.reviewData
-            .skip(1)
-            .do(onNext: {
-                self.listEmptyView.isHidden = !$0.isEmpty
+        reviewTableView.rx.modelSelected(ReviewEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.isTabNavigation = false
             })
-            .bind(
-                to: reviewTableView.rx.items(
-                    cellIdentifier: ReviewTableViewCell.identifier,
-                    cellType: ReviewTableViewCell.self
-                )) { _, element, cell in
-                    cell.adapt(model: element)
-                }
-                .disposed(by: disposeBag)
+            .map { ReviewReactor.Action.reviewDidSelect($0.reviewID) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchButton.rx.tap
+            .map { ReviewReactor.Action.searchButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterButton.rx.tap
+            .map { ReviewReactor.Action.filterButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.reviewList }
+            .skip(1)
+            .do(onNext: { [weak self] list in
+                self?.listEmptyView.isHidden = !list.isEmpty
+            })
+            .bind(to: reviewTableView.rx.items(
+                cellIdentifier: ReviewTableViewCell.identifier,
+                cellType: ReviewTableViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         viewWillAppearPublisher.asObservable()
-            .bind {
+            .bind { [weak self] in
+                guard let self = self else { return }
                 self.showTabbar()
                 self.setLargeTitle(title: "후기")
                 if self.isTabNavigation {
@@ -96,8 +111,8 @@ public final class ReviewViewController: BaseViewController<ReviewViewModel> {
             .disposed(by: disposeBag)
 
         viewWillDisappearPublisher.asObservable()
-            .bind {
-                self.setSmallTitle(title: "")
+            .bind { [weak self] in
+                self?.setSmallTitle(title: "")
             }
             .disposed(by: disposeBag)
     }

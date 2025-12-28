@@ -74,10 +74,10 @@ public final class MainPresentationAssembly: Assembly {
 
         // Review List
         container.register(ReviewViewController.self) { resolver in
-            ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
+            ReviewViewController(resolver.resolve(ReviewReactor.self)!)
         }
-        container.register(ReviewViewModel.self) { resolver in
-            ReviewViewModel(
+        container.register(ReviewReactor.self) { resolver in
+            ReviewReactor(
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
@@ -109,11 +109,11 @@ public final class MainPresentationAssembly: Assembly {
         // Review Filter
         container.register(ReviewFilterViewController.self) { resolver in
             ReviewFilterViewController(
-                resolver.resolve(ReviewFilterViewModel.self)!
+                resolver.resolve(ReviewFilterReactor.self)!
             )
         }
-        container.register(ReviewFilterViewModel.self) { resolver in
-            ReviewFilterViewModel(
+        container.register(ReviewFilterReactor.self) { resolver in
+            ReviewFilterReactor(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
         }
