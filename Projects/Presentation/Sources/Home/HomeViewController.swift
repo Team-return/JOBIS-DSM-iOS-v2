@@ -6,8 +6,9 @@ import Then
 import Core
 import Domain
 import DesignSystem
+import ReactorKit
 
-public final class HomeViewController: BaseViewController<HomeViewModel> {
+public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let rejectButtonDidTap = PublishRelay<ApplicationEntity>()
     private let reApplyButtonDidTap = PublishRelay<ApplicationEntity>()
     private let navigateToAlarmButton = UIButton().then {
@@ -106,32 +107,63 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = HomeViewModel.Input(
-            viewAppear: viewWillAppearPublisher,
-            viewDisappear: viewWillDisappearPublisher,
-            navigateToAlarmButtonDidTap: navigateToAlarmButton.rx.tap.asSignal(),
-            navigateToEasterEggDidTap: navigateToEasterEggDidTap,
-            navigateToCompanyButtonDidTap: findCompanysCard.rx.tap.asSignal(),
-            navigateToWinterInternButtonDidTap: findWinterRecruitmentsCard.rx.tap.asSignal(),
-            rejectButtonDidTap: rejectButtonDidTap,
-            reApplyButtonDidTap: reApplyButtonDidTap,
-            applicationStatusTableViewDidTap: applicationStatusTableView.rx
-                .modelSelected(ApplicationEntity.self)
-                .asObservable()
-                .map { ($0.recruitmentID, $0.applicationStatus) },
-            employStatusButtonDidTap: employStatusButtonTap.asSignal()
-        )
-
-        titleImageView.rx.tapGesture().when(.recognized).asObservable()
-            .bind { [weak self] _ in
-                self?.navigateToEasterEggDidTap.accept(())
-            }
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { HomeReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        viewWillDisappearPublisher.asObservable()
+            .map { HomeReactor.Action.viewWillDisappear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.studentInfo
+        navigateToAlarmButton.rx.tap
+            .map { HomeReactor.Action.navigateToAlarmButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        titleImageView.rx.tapGesture().when(.recognized).asObservable()
+            .map { _ in HomeReactor.Action.navigateToEasterEggDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        findCompanysCard.rx.tap
+            .map { HomeReactor.Action.navigateToCompanyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        findWinterRecruitmentsCard.rx.tap
+            .map { HomeReactor.Action.navigateToWinterInternButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        rejectButtonDidTap.asObservable()
+            .map { HomeReactor.Action.rejectButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        reApplyButtonDidTap.asObservable()
+            .map { HomeReactor.Action.reApplyButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        applicationStatusTableView.rx.modelSelected(ApplicationEntity.self)
+            .map { HomeReactor.Action.applicationStatusTableViewDidTap(
+                recruitmentID: $0.recruitmentID,
+                status: $0.applicationStatus
+            )}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        employStatusButtonTap.asObservable()
+            .map { HomeReactor.Action.employStatusButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.compactMap { $0.studentInfo }
             .bind { [weak self] studentInfo in
                 self?.studentInfoView.setStudentInfo(
                     profileImageUrl: studentInfo.profileImageUrl,
@@ -142,7 +174,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
 
-        output.applicationList
+        reactor.state.map { $0.applicationList }
             .do(onNext: { [weak self] applicationList in
                 if applicationList.isEmpty {
                     self?.applicationStatusTableView.setEmptyHeaderView()
@@ -171,8 +203,8 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             .disposed(by: disposeBag)
 
         let combinedBanners = Observable.combineLatest(
-            output.totalPassStudentInfo,
-            output.bannerList
+            reactor.state.map { $0.totalPassStudentInfo },
+            reactor.state.map { $0.bannerList }
         )
         .map { totalPass, banners -> [Any] in
             return [totalPass] + banners
@@ -208,7 +240,7 @@ public final class HomeViewController: BaseViewController<HomeViewModel> {
             }
             .disposed(by: disposeBag)
 
-        output.isWinterInternSeason
+        reactor.state.map { $0.isWinterInternSeason }
             .bind { [weak self] in
                 self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
                 self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))

@@ -62,7 +62,7 @@ private extension HomeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: homeViewController,
-            withNextStepper: homeViewController.viewModel
+            withNextStepper: homeViewController.reactor
         ))
     }
 

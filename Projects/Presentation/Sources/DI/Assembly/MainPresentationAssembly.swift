@@ -8,10 +8,10 @@ public final class MainPresentationAssembly: Assembly {
 
     public func assemble(container: Container) {
         container.register(HomeViewController.self) { resolver in
-            HomeViewController(resolver.resolve(HomeViewModel.self)!)
+            HomeViewController(resolver.resolve(HomeReactor.self)!)
         }
-        container.register(HomeViewModel.self) { resolver in
-            HomeViewModel(
+        container.register(HomeReactor.self) { resolver in
+            HomeReactor(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
                 fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
