@@ -6,9 +6,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class SearchCompanyViewController: BaseViewController<SearchCompanyViewModel> {
-    private let searchButtonDidTap = PublishRelay<String>()
+public final class SearchCompanyViewController: BaseReactorViewController<SearchCompanyReactor> {
     private let emptySearchView = ListEmptyView().then {
         $0.isHidden = true
         $0.setEmptyView(
@@ -39,6 +39,7 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
         )
         $0.showsVerticalScrollIndicator = false
     }
+
     public override func addView() {
         [
             searchTextField,
@@ -73,23 +74,37 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
         }
     }
 
-    public override func bind() {
-        let input = SearchCompanyViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            pageChange: searchTableView.rx.willDisplayCell
-                .filter {
-                    $0.indexPath.row == self.searchTableView.numberOfRows(inSection: $0.indexPath.section) - 1
-                }.asObservable(),
-            searchButtonDidTap: searchButtonDidTap,
-            searchTableViewDidTap: searchTableView.rx.itemSelected
-        )
-
-        let output = viewModel.transform(input)
-
-        output.companyListInfo
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
             .skip(1)
-            .do(onNext: {
-                self.emptySearchView.isHidden = !$0.isEmpty
+            .map { SearchCompanyReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchTableView.rx.willDisplayCell
+            .filter { [weak self] event in
+                guard let self = self else { return false }
+                return event.indexPath.row == self.searchTableView.numberOfRows(inSection: event.indexPath.section) - 1
+            }
+            .map { _ in SearchCompanyReactor.Action.loadMoreCompanies }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchTableView.rx.itemSelected
+            .compactMap { [weak self] indexPath -> Int? in
+                guard let self = self else { return nil }
+                return self.reactor.currentState.companyList[indexPath.row].companyID
+            }
+            .map { SearchCompanyReactor.Action.companyDidSelect($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.companyList }
+            .skip(1)
+            .do(onNext: { [weak self] list in
+                self?.emptySearchView.isHidden = !list.isEmpty
             })
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: CompanyTableViewCell.identifier,
@@ -99,20 +114,18 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
             }
             .disposed(by: disposeBag)
 
-        output.emptyViewIsHidden.asObservable()
-            .map {
-                self.emptySearchView.isHidden = $0
-            }
-            .subscribe()
+        reactor.state.map { $0.isEmptyViewHidden }
+            .distinctUntilChanged()
+            .bind(to: emptySearchView.rx.isHidden)
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         self.searchTextField.delegate = self
         viewWillAppearPublisher.asObservable()
-            .bind {
-                self.hideTabbar()
-                self.navigationController?.navigationBar.prefersLargeTitles = false
+            .bind { [weak self] in
+                self?.hideTabbar()
+                self?.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
     }
@@ -122,9 +135,8 @@ public final class SearchCompanyViewController: BaseViewController<SearchCompany
 
 extension SearchCompanyViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let title = textField.text
-        viewModel.searchText = title
-        searchButtonDidTap.accept(textField.text ?? "")
+        let searchText = textField.text ?? ""
+        reactor.action.onNext(.searchTextDidSubmit(searchText))
         self.view.endEditing(true)
         return true
     }

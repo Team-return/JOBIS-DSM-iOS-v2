@@ -165,11 +165,11 @@ public final class MainPresentationAssembly: Assembly {
         // Search Company
         container.register(SearchCompanyViewController.self) { resolver in
             SearchCompanyViewController(
-                resolver.resolve(SearchCompanyViewModel.self)!
+                resolver.resolve(SearchCompanyReactor.self)!
             )
         }
-        container.register(SearchCompanyViewModel.self) { resolver in
-            SearchCompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        container.register(SearchCompanyReactor.self) { resolver in
+            SearchCompanyReactor(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
         // Review
