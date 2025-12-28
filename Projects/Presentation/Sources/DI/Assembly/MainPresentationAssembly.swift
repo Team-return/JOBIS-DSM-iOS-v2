@@ -213,11 +213,11 @@ public final class MainPresentationAssembly: Assembly {
         // Winter Intern
         container.register(WinterInternViewController.self) { resolver in
             WinterInternViewController(
-                resolver.resolve(WinterInternVieModel.self)!
+                resolver.resolve(WinterInternReactor.self)!
             )
         }
-        container.register(WinterInternVieModel.self) { resolver in
-            WinterInternVieModel(
+        container.register(WinterInternReactor.self) { resolver in
+            WinterInternReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )

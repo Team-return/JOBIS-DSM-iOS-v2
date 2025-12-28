@@ -47,8 +47,10 @@ private extension RecruitmentFilterFlow {
         )
         recruitmentPopView?.reactor.action.onNext(.fetchRecruitmentList)
 
-        winterInternPopView?.viewModel.jobCode = jobCode
-        winterInternPopView?.viewModel.techCode = techCode
+        winterInternPopView?.reactor.action.onNext(
+            .updateFilterOptions(jobCode: jobCode, techCode: techCode)
+        )
+        winterInternPopView?.reactor.action.onNext(.fetchRecruitmentList)
 
         self.rootViewController.navigationController?.popViewController(animated: true)
 
