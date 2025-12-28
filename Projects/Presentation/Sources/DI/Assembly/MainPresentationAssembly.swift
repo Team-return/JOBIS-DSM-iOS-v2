@@ -97,11 +97,11 @@ public final class MainPresentationAssembly: Assembly {
         // Search Review List
         container.register(SearchReviewViewController.self) { resolver in
             SearchReviewViewController(
-                resolver.resolve(SearchReviewViewModel.self)!
+                resolver.resolve(SearchReviewReactor.self)!
             )
         }
-        container.register(SearchReviewViewModel.self) { resolver in
-            SearchReviewViewModel(
+        container.register(SearchReviewReactor.self) { resolver in
+            SearchReviewReactor(
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
