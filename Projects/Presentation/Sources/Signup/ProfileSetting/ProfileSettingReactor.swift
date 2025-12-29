@@ -16,7 +16,6 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
 
     public enum Mutation {
         case setProfileImage(UploadFileModel?)
-        case navigateToPrivacy(name: String, gcn: Int, email: String, password: String, isMan: Bool, profileImageURL: String?)
     }
 
     public struct State {
@@ -60,7 +59,7 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
             let password = currentState.password
             let isMan = currentState.isMan
 
-            return .just(.navigateToPrivacy(
+            steps.accept(ProfileSettingStep.privacyIsRequired(
                 name: name,
                 gcn: gcn,
                 email: email,
@@ -68,6 +67,8 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
                 isMan: isMan,
                 profileImageURL: nil
             ))
+
+            return .empty()
 
         case .nextButtonDidTap:
             let name = currentState.name
@@ -78,7 +79,7 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
             let file = currentState.profileImage
 
             guard let file = file, file.file != Data() else {
-                return .just(.navigateToPrivacy(
+                steps.accept(ProfileSettingStep.privacyIsRequired(
                     name: name,
                     gcn: gcn,
                     email: email,
@@ -86,6 +87,7 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
                     isMan: isMan,
                     profileImageURL: nil
                 ))
+                return .empty()
             }
 
             return fetchPresignedURLUseCase.execute(
@@ -104,24 +106,28 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
                 .andThen(Observable.just(presignedURL.filePath as String?))
                 .catchAndReturn(nil)
             }
-            .map { profileImageURL in
-                Mutation.navigateToPrivacy(
+            .do(onNext: { [weak self] profileImageURL in
+                self?.steps.accept(ProfileSettingStep.privacyIsRequired(
                     name: name,
                     gcn: gcn,
                     email: email,
                     password: password,
                     isMan: isMan,
                     profileImageURL: profileImageURL
-                )
+                ))
+            })
+            .flatMap { _ in Observable<Mutation>.empty() }
+            .catch { _ in
+                self.steps.accept(ProfileSettingStep.privacyIsRequired(
+                    name: name,
+                    gcn: gcn,
+                    email: email,
+                    password: password,
+                    isMan: isMan,
+                    profileImageURL: nil
+                ))
+                return .empty()
             }
-            .catchAndReturn(.navigateToPrivacy(
-                name: name,
-                gcn: gcn,
-                email: email,
-                password: password,
-                isMan: isMan,
-                profileImageURL: nil
-            ))
         }
     }
 
@@ -132,16 +138,6 @@ public final class ProfileSettingReactor: BaseReactor, Reactor {
         case let .setProfileImage(model):
             newState.profileImage = model
             newState.isNextButtonEnabled = model != nil
-
-        case let .navigateToPrivacy(name, gcn, email, password, isMan, profileImageURL):
-            steps.accept(ProfileSettingStep.privacyIsRequired(
-                name: name,
-                gcn: gcn,
-                email: email,
-                password: password,
-                isMan: isMan,
-                profileImageURL: profileImageURL
-            ))
         }
 
         return newState

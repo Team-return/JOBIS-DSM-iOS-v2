@@ -34,7 +34,6 @@ public final class ReviewFilterReactor: BaseReactor, Stepper {
         case setYears([String])
         case setInterviewType(String)
         case setLocation(String)
-        case applyFilter
     }
 
     public struct State {
@@ -79,7 +78,13 @@ extension ReviewFilterReactor {
             return .just(.setLocation(code.keyword))
 
         case .filterApplyButtonDidTap:
-            return .just(.applyFilter)
+            steps.accept(ReviewFilterStep.popToReview(
+                code: currentState.code,
+                year: currentState.years,
+                type: currentState.type,
+                location: currentState.location
+            ))
+            return .empty()
         }
     }
 
@@ -106,14 +111,6 @@ extension ReviewFilterReactor {
 
         case let .setLocation(location):
             newState.location = location
-
-        case .applyFilter:
-            steps.accept(ReviewFilterStep.popToReview(
-                code: state.code,
-                year: state.years,
-                type: state.type,
-                location: state.location
-            ))
         }
         return newState
     }

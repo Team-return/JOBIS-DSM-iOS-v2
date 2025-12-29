@@ -23,7 +23,6 @@ public final class NoticeReactor: BaseReactor, Stepper {
 
     public enum Mutation {
         case setNoticeList([NoticeEntity])
-        case navigateToDetail(Int)
     }
 
     public struct State {
@@ -40,7 +39,8 @@ extension NoticeReactor {
                 .map { Mutation.setNoticeList($0) }
 
         case let .noticeDidSelect(id):
-            return .just(.navigateToDetail(id))
+            steps.accept(NoticeStep.noticeDetailIsRequired(id: id))
+            return .empty()
         }
     }
 
@@ -49,9 +49,6 @@ extension NoticeReactor {
         switch mutation {
         case let .setNoticeList(list):
             newState.noticeList = list
-
-        case let .navigateToDetail(id):
-            steps.accept(NoticeStep.noticeDetailIsRequired(id: id))
         }
         return newState
     }

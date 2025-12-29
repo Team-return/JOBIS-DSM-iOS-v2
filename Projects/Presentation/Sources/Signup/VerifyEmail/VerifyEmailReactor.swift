@@ -21,7 +21,6 @@ public final class VerifyEmailReactor: BaseReactor, Reactor {
         case setEmailError(DescriptionType?)
         case setAuthCodeError(DescriptionType?)
         case setIsSuccessedToSendAuthCode(Bool)
-        case navigateToPasswordSetting(name: String, gcn: Int, email: String)
     }
 
     public struct State {
@@ -84,11 +83,14 @@ public final class VerifyEmailReactor: BaseReactor, Reactor {
                 .just(.setEmailError(nil)),
                 .just(.setAuthCodeError(nil)),
                 verifyAuthCodeUseCase.execute(email: email.dsmEmail(), authCode: authCode)
-                    .andThen(Observable<Mutation>.empty())
+                    .asObservable()
+                    .do(onNext: { [weak self] _ in
+                        self?.steps.accept(VerifyEmailStep.passwordSettingIsRequired(name: name, gcn: gcn, email: email))
+                    })
+                    .flatMap { _ in Observable<Mutation>.empty() }
                     .catch { _ in
                         return .just(.setAuthCodeError(.error(description: "인증코드가 잘못되었어요.")))
-                    },
-                .just(.navigateToPasswordSetting(name: name, gcn: gcn, email: email))
+                    }
             ])
         }
     }
@@ -111,9 +113,6 @@ public final class VerifyEmailReactor: BaseReactor, Reactor {
 
         case let .setIsSuccessedToSendAuthCode(isSuccessed):
             newState.isSuccessedToSendAuthCode = isSuccessed
-
-        case let .navigateToPasswordSetting(name, gcn, email):
-            steps.accept(VerifyEmailStep.passwordSettingIsRequired(name: name, gcn: gcn, email: email))
         }
 
         return newState

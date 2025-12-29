@@ -33,9 +33,6 @@ public final class OnboardingReactor: BaseReactor {
         case setAnimate
         case setShowNavigationButton
         case setServerStatusError
-        case navigateToSignin
-        case navigateToSignup
-        case navigateToTabs
     }
 
     public struct State {
@@ -53,10 +50,12 @@ public final class OnboardingReactor: BaseReactor {
             )
 
         case .signinButtonDidTap:
-            return .just(.navigateToSignin)
+            steps.accept(OnboardingStep.signinIsRequired)
+            return .empty()
 
         case .signupButtonDidTap:
-            return .just(.navigateToSignup)
+            steps.accept(OnboardingStep.signupIsRequired)
+            return .empty()
         }
     }
 
@@ -72,15 +71,6 @@ public final class OnboardingReactor: BaseReactor {
 
         case .setServerStatusError:
             newState.shouldShowServerStatusAlert = true
-
-        case .navigateToSignin:
-            steps.accept(OnboardingStep.signinIsRequired)
-
-        case .navigateToSignup:
-            steps.accept(OnboardingStep.signupIsRequired)
-
-        case .navigateToTabs:
-            steps.accept(OnboardingStep.tabsIsRequired)
         }
 
         return newState
@@ -89,7 +79,10 @@ public final class OnboardingReactor: BaseReactor {
     private func checkTokenAndServerStatus() -> Observable<Mutation> {
         let tokenCheck = reissueTokenUaseCase.execute()
             .asObservable()
-            .map { _ in Mutation.navigateToTabs }
+            .do(onNext: { [weak self] _ in
+                self?.steps.accept(OnboardingStep.tabsIsRequired)
+            })
+            .flatMap { _ in Observable<Mutation>.empty() }
             .catch { _ in .just(.setShowNavigationButton) }
 
         let serverStatusCheck = fetchServerStatusUseCase.execute()

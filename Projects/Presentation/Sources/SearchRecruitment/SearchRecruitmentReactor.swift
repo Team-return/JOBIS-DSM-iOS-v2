@@ -34,7 +34,6 @@ public final class SearchRecruitmentReactor: BaseReactor, Stepper {
         case incrementPageCount
         case resetPageCount
         case setSearchText(String?)
-        case navigateToDetail(Int)
     }
 
     public struct State {
@@ -77,7 +76,8 @@ extension SearchRecruitmentReactor {
                 .flatMap { _ in Observable<Mutation>.empty() }
 
         case let .recruitmentDidSelect(id):
-            return .just(.navigateToDetail(id))
+            steps.accept(SearchRecruitmentStep.recruitmentDetailIsRequired(id: id))
+            return .empty()
         }
     }
 
@@ -98,9 +98,6 @@ extension SearchRecruitmentReactor {
 
         case let .setSearchText(text):
             newState.searchText = text
-
-        case let .navigateToDetail(id):
-            steps.accept(SearchRecruitmentStep.recruitmentDetailIsRequired(id: id))
         }
         return newState
     }

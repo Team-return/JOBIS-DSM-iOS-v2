@@ -36,7 +36,6 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case toggleStatus(String)
         case appendTechCode(String)
         case resetTechCode
-        case applyFilter
     }
 
     public struct State {
@@ -84,7 +83,13 @@ extension RecruitmentFilterReactor {
             return .just(.toggleStatus(mappedStatus))
 
         case .filterApplyButtonDidTap:
-            return .just(.applyFilter)
+            steps.accept(RecruitmentFilterStep.popToRecruitment(
+                jobCode: currentState.jobCode,
+                techCode: currentState.techCode,
+                years: currentState.years,
+                status: currentState.status
+            ))
+            return .empty()
 
         case let .appendTechCode(code):
             let codeString = "\(code.code)"
@@ -125,14 +130,6 @@ extension RecruitmentFilterReactor {
 
         case .resetTechCode:
             newState.techCode = []
-
-        case .applyFilter:
-            steps.accept(RecruitmentFilterStep.popToRecruitment(
-                jobCode: state.jobCode,
-                techCode: state.techCode,
-                years: state.years,
-                status: state.status
-            ))
         }
         return newState
     }

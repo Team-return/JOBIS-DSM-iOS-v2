@@ -24,13 +24,6 @@ public final class MyPageReactor: BaseReactor, Stepper {
         case setStudentInfo(StudentInfoEntity)
         case setWritableReviewList([WritableReviewCompanyEntity])
         case updateProfileImage
-        case navigateToReview(Int)
-        case navigateToNotificationSetting
-        case navigateToHelp
-        case navigateToBugReport
-        case navigateToInterestField
-        case navigateToChangePassword
-        case navigateToTabs
     }
 
     public struct State {
@@ -82,7 +75,8 @@ public final class MyPageReactor: BaseReactor, Stepper {
             return Observable.merge(studentInfo, writableReviewList)
 
         case let .reviewNavigateButtonDidTap(id):
-            return .just(.navigateToReview(id))
+            steps.accept(MyPageStep.writableReviewIsRequired(id))
+            return .empty()
 
         case let .profileImageSelected(file):
             return fetchPresignedURLUseCase.execute(
@@ -113,29 +107,36 @@ public final class MyPageReactor: BaseReactor, Stepper {
             }
 
         case .notificationSettingDidTap:
-            return .just(.navigateToNotificationSetting)
+            steps.accept(MyPageStep.notificationSettingIsRequired)
+            return .empty()
 
         case .helpDidTap:
-            return .just(.navigateToHelp)
+            steps.accept(MyPageStep.noticeIsRequired)
+            return .empty()
 
         case .bugReportDidTap:
-            return .just(.navigateToBugReport)
+            steps.accept(MyPageStep.bugReportIsRequired)
+            return .empty()
 
         case .interestFieldDidTap:
-            return .just(.navigateToInterestField)
+            steps.accept(MyPageStep.interestFieldIsRequired)
+            return .empty()
 
         case .changePasswordDidTap:
-            return .just(.navigateToChangePassword)
+            steps.accept(MyPageStep.confirmIsRequired)
+            return .empty()
 
         case .logout:
             logoutUseCase.execute()
             deleteDeviceTokenUseCase.execute()
-            return .just(.navigateToTabs)
+            steps.accept(MyPageStep.tabsIsRequired)
+            return .empty()
 
         case .withdrawal:
             logoutUseCase.execute()
             deleteDeviceTokenUseCase.execute()
-            return .just(.navigateToTabs)
+            steps.accept(MyPageStep.tabsIsRequired)
+            return .empty()
         }
     }
 
@@ -151,27 +152,6 @@ public final class MyPageReactor: BaseReactor, Stepper {
 
         case .updateProfileImage:
             break
-
-        case let .navigateToReview(id):
-            steps.accept(MyPageStep.writableReviewIsRequired(id))
-
-        case .navigateToNotificationSetting:
-            steps.accept(MyPageStep.notificationSettingIsRequired)
-
-        case .navigateToHelp:
-            steps.accept(MyPageStep.noticeIsRequired)
-
-        case .navigateToBugReport:
-            steps.accept(MyPageStep.bugReportIsRequired)
-
-        case .navigateToInterestField:
-            steps.accept(MyPageStep.interestFieldIsRequired)
-
-        case .navigateToChangePassword:
-            steps.accept(MyPageStep.confirmIsRequired)
-
-        case .navigateToTabs:
-            steps.accept(MyPageStep.tabsIsRequired)
         }
 
         return newState
