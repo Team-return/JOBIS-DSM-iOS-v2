@@ -75,12 +75,6 @@ public final class SearchCompanyViewController: BaseReactorViewController<Search
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher.asObservable()
-            .skip(1)
-            .map { SearchCompanyReactor.Action.viewWillAppear }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
         searchTableView.rx.willDisplayCell
             .filter { [weak self] event in
                 guard let self = self else { return false }

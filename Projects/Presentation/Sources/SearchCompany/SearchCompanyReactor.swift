@@ -18,7 +18,6 @@ public final class SearchCompanyReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
         case searchTextDidSubmit(String)
         case loadMoreCompanies
         case companyDidSelect(Int)
@@ -44,19 +43,6 @@ public final class SearchCompanyReactor: BaseReactor, Stepper {
 extension SearchCompanyReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
-            guard let searchText = currentState.searchText else {
-                return .empty()
-            }
-            return .concat([
-                .just(.resetPageCount),
-                fetchCompanyListUseCase.execute(page: 1, name: searchText)
-                    .asObservable()
-                    .flatMap { list -> Observable<Mutation> in
-                        return .just(.setCompanyList(list))
-                    }
-            ])
-
         case let .searchTextDidSubmit(text):
             guard !text.isEmpty else {
                 return .just(.setEmptyViewHidden(false))
