@@ -10,11 +10,19 @@ public final class ReviewDetailReactor: BaseReactor, Stepper {
     public let initialState: State
     private let disposeBag = DisposeBag()
     private let fetchReviewDetailUseCase: FetchReviewDetailUseCase
-    public var reviewID: String?
+    private let reviewId: String
 
-    public init(fetchReviewDetailUseCase: FetchReviewDetailUseCase) {
-        self.initialState = .init()
+    public var reviewID: String {
+        return reviewId
+    }
+
+    public init(
+        fetchReviewDetailUseCase: FetchReviewDetailUseCase,
+        reviewId: String
+    ) {
         self.fetchReviewDetailUseCase = fetchReviewDetailUseCase
+        self.reviewId = reviewId
+        self.initialState = .init()
     }
 
     public enum Action {
@@ -69,7 +77,7 @@ extension ReviewDetailReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchReviewDetail:
-            return fetchReviewDetailUseCase.execute(reviewID: reviewID ?? "")
+            return fetchReviewDetailUseCase.execute(reviewID: reviewId)
                 .asObservable()
                 .map { Mutation.setReviewDetail($0) }
 

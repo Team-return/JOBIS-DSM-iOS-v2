@@ -83,14 +83,15 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Review Detail
-        container.register(ReviewDetailReactor.self) { resolver in
+        container.register(ReviewDetailReactor.self) { (resolver, reviewId: String) in
             ReviewDetailReactor(
-                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!,
+                reviewId: reviewId
             )
         }
-        container.register(ReviewDetailViewController.self) { resolver in
+        container.register(ReviewDetailViewController.self) { (resolver, reviewId: String) in
             ReviewDetailViewController(
-                resolver.resolve(ReviewDetailReactor.self)!
+                resolver.resolve(ReviewDetailReactor.self, argument: reviewId)!
             )
         }
 

@@ -11,9 +11,9 @@ public final class ReviewDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, reviewId: String) {
         self.container = container
-        self.rootViewController = ReviewDetailViewController(container.resolve(ReviewDetailReactor.self)!)
+        self.rootViewController = container.resolve(ReviewDetailViewController.self, argument: reviewId)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {

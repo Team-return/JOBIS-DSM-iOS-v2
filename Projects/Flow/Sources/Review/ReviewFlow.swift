@@ -52,10 +52,9 @@ private extension ReviewFlow {
     }
 
     func navigateToReviewDetail(_ reviewID: String) -> FlowContributors {
-        let reviewDetailFlow = ReviewDetailFlow(container: container)
+        let reviewDetailFlow = ReviewDetailFlow(container: container, reviewId: reviewID)
 
         Flows.use(reviewDetailFlow, when: .created) { [weak self] (view: ReviewDetailViewController) in
-            view.reactor.reviewID = reviewID
             view.isPopViewController = { [weak nav = self?.rootViewController] _ in
                 let popView = nav?.topViewController as? ReviewViewController
                 popView?.isTabNavigation = false
