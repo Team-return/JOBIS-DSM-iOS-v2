@@ -114,7 +114,7 @@ extension ApplyReactor {
         switch mutation {
         case let .addDocument(document):
             newState.documents.append(document)
-            newState.applyButtonEnabled = !newState.documents.isEmpty && !newState.urls.isEmpty
+            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case .addUrl:
             newState.urls.append(.init(url: "", type: .url))
@@ -123,19 +123,19 @@ extension ApplyReactor {
             if index < newState.urls.count {
                 newState.urls[index] = .init(url: url, type: .url)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty && !newState.urls.isEmpty
+            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .removeUrl(index):
             if index < newState.urls.count {
                 newState.urls.remove(at: index)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty && !newState.urls.isEmpty
+            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .removeDocument(index):
             if index < newState.documents.count {
                 newState.documents.remove(at: index)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty && !newState.urls.isEmpty
+            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .updateApplyButtonEnabled(enabled):
             newState.applyButtonEnabled = enabled
