@@ -82,11 +82,10 @@ public final class PrivacyReactor: BaseReactor, Reactor {
                         profileImageURL: profileImageURL
                     )
                 )
-                .asObservable()
-                .do(onNext: { [weak self] _ in
+                .andThen(Observable<Mutation>.empty())
+                .do(onCompleted: { [weak self] in
                     self?.steps.accept(PrivacyStep.tabsIsRequired)
                 })
-                .flatMap { _ in Observable<Mutation>.empty() }
                 .catch { error in
                     if let appError = error as? ApplicationsError {
                         switch appError {

@@ -64,11 +64,10 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
                 .just(.setNameError(nil)),
                 .just(.setGCNError(nil)),
                 studentExistsUseCase.execute(gcn: gcn, name: name)
-                    .asObservable()
-                    .do(onNext: { [weak self] _ in
+                    .andThen(Observable<Mutation>.empty())
+                    .do(onCompleted: { [weak self] in
                         self?.steps.accept(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: gcnInt))
                     })
-                    .flatMap { _ in Observable<Mutation>.empty() }
                     .catch { error in
                         if let appError = error as? ApplicationsError {
                             switch appError {

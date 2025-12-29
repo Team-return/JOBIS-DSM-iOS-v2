@@ -83,11 +83,10 @@ public final class VerifyEmailReactor: BaseReactor, Reactor {
                 .just(.setEmailError(nil)),
                 .just(.setAuthCodeError(nil)),
                 verifyAuthCodeUseCase.execute(email: email.dsmEmail(), authCode: authCode)
-                    .asObservable()
-                    .do(onNext: { [weak self] _ in
+                    .andThen(Observable<Mutation>.empty())
+                    .do(onCompleted: { [weak self] in
                         self?.steps.accept(VerifyEmailStep.passwordSettingIsRequired(name: name, gcn: gcn, email: email))
                     })
-                    .flatMap { _ in Observable<Mutation>.empty() }
                     .catch { _ in
                         return .just(.setAuthCodeError(.error(description: "인증코드가 잘못되었어요.")))
                     }

@@ -81,11 +81,10 @@ extension RenewalPasswordReactor {
             return renewalPasswordUseCase.execute(
                 req: .init(email: currentState.email.dsmEmail(), password: currentState.newPassword)
             )
-            .asObservable()
-            .do(onNext: { [weak self] _ in
+            .andThen(Observable<Mutation>.empty())
+            .do(onCompleted: { [weak self] in
                 self?.steps.accept(RenewalPasswordStep.tabsIsRequired)
             })
-            .flatMap { _ in Observable<Mutation>.empty() }
         }
     }
 
