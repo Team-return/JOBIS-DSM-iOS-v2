@@ -19,7 +19,7 @@ public final class EmployStatusReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
+        case fetchEmploymentStatus
         case updateYear(Int)
         case classButtonTapped(Int)
         case filterButtonDidTap
@@ -43,7 +43,7 @@ public final class EmployStatusReactor: BaseReactor, Stepper {
 extension EmployStatusReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
+        case .fetchEmploymentStatus:
             return fetchTotalPassStudentUseCase.execute(year: currentState.selectedYear)
                 .asObservable()
                 .flatMap { info -> Observable<Mutation> in

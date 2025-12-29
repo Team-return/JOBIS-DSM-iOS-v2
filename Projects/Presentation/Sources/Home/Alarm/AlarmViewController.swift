@@ -28,8 +28,8 @@ public final class AlarmViewController: BaseReactorViewController<AlarmReactor> 
     }
 
     public override func bindAction() {
-        viewDidAppearPublisher.asObservable()
-            .map { AlarmReactor.Action.viewDidAppear }
+        viewDidLoadPublisher.asObservable()
+            .map { AlarmReactor.Action.fetchNotificationList }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

@@ -22,7 +22,7 @@ public final class AlarmReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewDidAppear
+        case fetchNotificationList
         case readNotification(NotificationEntity, Int)
     }
 
@@ -39,7 +39,7 @@ public final class AlarmReactor: BaseReactor, Stepper {
 extension AlarmReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidAppear:
+        case .fetchNotificationList:
             return fetchNotificationListUseCase.execute()
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in

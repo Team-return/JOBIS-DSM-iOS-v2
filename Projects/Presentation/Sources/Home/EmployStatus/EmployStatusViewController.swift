@@ -85,8 +85,8 @@ public final class EmployStatusViewController: BaseReactorViewController<EmployS
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher.asObservable()
-            .map { EmployStatusReactor.Action.viewWillAppear }
+        viewDidLoadPublisher.asObservable()
+            .map { EmployStatusReactor.Action.fetchEmploymentStatus }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

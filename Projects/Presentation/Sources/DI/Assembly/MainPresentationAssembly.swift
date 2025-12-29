@@ -249,13 +249,11 @@ public final class MainPresentationAssembly: Assembly {
         // Class Employment
         container.register(ClassEmploymentViewController.self) { (resolver, classNumber: Int, year: Int) in
             ClassEmploymentViewController(
-                viewModel: resolver.resolve(ClassEmploymentViewModel.self, arguments: classNumber, year)!,
-                classNumber: classNumber,
-                year: year
+                resolver.resolve(ClassEmploymentReactor.self, arguments: classNumber, year)!
             )
         }
-        container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int, year: Int) in
-            ClassEmploymentViewModel(
+        container.register(ClassEmploymentReactor.self) { (resolver, classNumber: Int, year: Int) in
+            ClassEmploymentReactor(
                 fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
                 classNumber: classNumber,
                 year: year

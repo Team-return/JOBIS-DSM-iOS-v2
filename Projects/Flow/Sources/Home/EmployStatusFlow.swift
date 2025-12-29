@@ -47,12 +47,9 @@ private extension EmployStatusFlow {
         let viewController = container.resolve(ClassEmploymentViewController.self, arguments: classNumber, year)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
 
-        guard let stepper = viewController.viewModel as? Stepper else {
-            return .none
-        }
         return .one(flowContributor: .contribute(
             withNextPresentable: viewController,
-            withNextStepper: stepper
+            withNextStepper: viewController.reactor
         ))
     }
 

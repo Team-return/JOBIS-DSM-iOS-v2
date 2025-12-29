@@ -108,13 +108,8 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher.asObservable()
-            .map { HomeReactor.Action.viewWillAppear }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        viewWillDisappearPublisher.asObservable()
-            .map { HomeReactor.Action.viewWillDisappear }
+        viewDidLoadPublisher.asObservable()
+            .map { HomeReactor.Action.fetchInitialData }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

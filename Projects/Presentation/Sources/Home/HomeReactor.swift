@@ -31,8 +31,7 @@ public final class HomeReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
-        case viewWillDisappear
+        case fetchInitialData
         case navigateToAlarmButtonDidTap
         case navigateToEasterEggDidTap
         case navigateToCompanyButtonDidTap
@@ -70,7 +69,7 @@ public final class HomeReactor: BaseReactor, Stepper {
 extension HomeReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
+        case .fetchInitialData:
             return .concat([
                 .just(.resetEasterEggCount),
                 fetchStudentInfoUseCase.execute()
@@ -102,9 +101,6 @@ extension HomeReactor {
                         .just(.setTotalPassStudentInfo(totalPassStudent))
                     }
             ])
-
-        case .viewWillDisappear:
-            return .empty()
 
         case .navigateToAlarmButtonDidTap:
             steps.accept(HomeStep.alarmIsRequired)
