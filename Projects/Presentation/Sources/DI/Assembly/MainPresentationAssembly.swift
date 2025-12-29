@@ -201,13 +201,13 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Interview Review Detail
-        container.register(InterviewReviewDetailViewModel.self) { resolver in
-            InterviewReviewDetailViewModel(
+        container.register(InterviewReviewDetailReactor.self) { resolver in
+            InterviewReviewDetailReactor(
                 fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
             )
         }
         container.register(InterviewReviewDetailViewController.self) { resolver in
-            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailReactor.self)!)
         }
 
         // Winter Intern

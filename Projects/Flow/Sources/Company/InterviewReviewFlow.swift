@@ -30,7 +30,7 @@ private extension InterviewReviewDetailFlow {
     func navigateToInterviewReviewDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

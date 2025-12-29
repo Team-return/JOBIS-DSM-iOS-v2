@@ -73,8 +73,8 @@ private extension CompanyDetailFlow {
 
         Flows.use(interviewReviewDetailFlow, when: .created) { (root) in
             let view = root as? InterviewReviewDetailViewController
-            view?.viewModel.reviewId = String(id)
-            view?.viewModel.writerName = name
+            view?.reactor.reviewId = String(id)
+            view?.reactor.writerName = name
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )
