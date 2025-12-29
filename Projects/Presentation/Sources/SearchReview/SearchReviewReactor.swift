@@ -63,11 +63,11 @@ extension SearchReviewReactor {
             ])
 
         case let .searchTextDidSubmit(text):
-            guard !text.isEmpty else {
+            let searchQuery = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard !searchQuery.isEmpty else {
                 return .just(.setEmptyViewHidden(false))
             }
-
-            let searchQuery = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
             return .concat([
                 .just(.setEmptyViewHidden(true)),
