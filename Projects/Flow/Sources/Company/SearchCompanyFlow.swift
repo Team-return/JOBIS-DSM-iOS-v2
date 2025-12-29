@@ -42,8 +42,8 @@ private extension SearchCompanyFlow {
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             let view = root as? CompanyDetailViewController
-            view?.viewModel.companyID = companyId
-            view?.viewModel.type = .searchCompany
+            view?.reactor.companyID = companyId
+            view?.reactor.type = .searchCompany
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )

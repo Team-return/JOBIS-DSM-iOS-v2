@@ -13,7 +13,7 @@ public final class CompanyDetailFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(CompanyDetailViewController.self)!
+        self.rootViewController = CompanyDetailViewController(container.resolve(CompanyDetailReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -39,7 +39,7 @@ private extension CompanyDetailFlow {
     func navigateToCompanyDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 

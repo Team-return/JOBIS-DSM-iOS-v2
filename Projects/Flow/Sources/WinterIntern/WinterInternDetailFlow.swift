@@ -45,7 +45,7 @@ private extension WinterInternDetailFlow {
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             let view = root as? CompanyDetailViewController
-            view?.viewModel.companyID = companyDetailId
+            view?.reactor.companyID = companyDetailId
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )
