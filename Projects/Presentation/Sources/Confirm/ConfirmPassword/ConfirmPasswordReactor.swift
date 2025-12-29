@@ -12,7 +12,7 @@ public final class ConfirmPasswordReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let compareCurrentPassswordUseCase: CompareCurrentPassswordUseCase
 
-    init(compareCurrentPassswordUseCase: CompareCurrentPassswordUseCase) {
+    public init(compareCurrentPassswordUseCase: CompareCurrentPassswordUseCase) {
         self.initialState = .init()
         self.compareCurrentPassswordUseCase = compareCurrentPassswordUseCase
     }

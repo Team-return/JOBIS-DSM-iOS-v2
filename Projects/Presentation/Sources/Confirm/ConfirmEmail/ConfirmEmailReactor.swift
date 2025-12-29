@@ -13,7 +13,7 @@ public final class ConfirmEmailReactor: BaseReactor, Stepper {
     private let sendAuthCodeUseCase: SendAuthCodeUseCase
     private let verifyAuthCodeUseCase: VerifyAuthCodeUseCase
 
-    init(
+    public init(
         sendAuthCodeUseCase: SendAuthCodeUseCase,
         verifyAuthCodeUseCase: VerifyAuthCodeUseCase
     ) {

@@ -22,7 +22,7 @@ public final class ApplyReactor: BaseReactor, Stepper {
     public var companyImageURL: String?
     public var applyType: ApplyType = .apply
 
-    init(
+    public init(
         applyCompanyUseCase: ApplyCompanyUseCase,
         reApplyCompanyUseCase: ReApplyCompanyUseCase
     ) {

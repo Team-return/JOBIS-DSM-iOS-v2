@@ -11,7 +11,7 @@ public final class NoticeReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchNoticeListUseCase: FetchNoticeListUseCase
 
-    init(fetchNoticeListUseCase: FetchNoticeListUseCase) {
+    public init(fetchNoticeListUseCase: FetchNoticeListUseCase) {
         self.initialState = .init()
         self.fetchNoticeListUseCase = fetchNoticeListUseCase
     }

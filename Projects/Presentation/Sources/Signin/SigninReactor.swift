@@ -12,7 +12,7 @@ public final class SigninReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let signinUseCase: SigninUseCase
 
-    init(signinUseCase: SigninUseCase) {
+    public init(signinUseCase: SigninUseCase) {
         self.initialState = .init()
         self.signinUseCase = signinUseCase
     }

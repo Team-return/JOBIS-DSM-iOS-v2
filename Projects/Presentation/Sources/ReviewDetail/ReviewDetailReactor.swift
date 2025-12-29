@@ -12,7 +12,7 @@ public final class ReviewDetailReactor: BaseReactor, Stepper {
     private let fetchReviewDetailUseCase: FetchReviewDetailUseCase
     public var reviewID: String?
 
-    init(fetchReviewDetailUseCase: FetchReviewDetailUseCase) {
+    public init(fetchReviewDetailUseCase: FetchReviewDetailUseCase) {
         self.initialState = .init()
         self.fetchReviewDetailUseCase = fetchReviewDetailUseCase
     }

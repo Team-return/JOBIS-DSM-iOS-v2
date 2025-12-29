@@ -20,7 +20,7 @@ public final class CompanyDetailReactor: BaseReactor, Stepper {
     public var recruitmentID: Int?
     public var type: CompanyDetailPreviousViewType = .recruitmentDetail
 
-    init(
+    public init(
         fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
         fetchReviewListUseCase: FetchReviewListUseCase
     ) {
