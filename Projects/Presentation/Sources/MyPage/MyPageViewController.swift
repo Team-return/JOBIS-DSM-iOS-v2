@@ -90,8 +90,8 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher.asObservable()
-            .map { MyPageReactor.Action.viewWillAppear }
+        viewDidLoadPublisher.asObservable()
+            .map { MyPageReactor.Action.fetchMyPageData }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

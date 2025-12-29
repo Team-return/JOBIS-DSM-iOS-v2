@@ -8,7 +8,7 @@ import ReactorKit
 
 public final class MyPageReactor: BaseReactor, Stepper {
     public enum Action {
-        case viewWillAppear
+        case fetchMyPageData
         case reviewNavigateButtonDidTap(Int)
         case profileImageSelected(UploadFileModel)
         case notificationSettingDidTap
@@ -70,7 +70,7 @@ public final class MyPageReactor: BaseReactor, Stepper {
 
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
+        case .fetchMyPageData:
             let studentInfo = fetchStudentInfoUseCase.execute()
                 .asObservable()
                 .map { Mutation.setStudentInfo($0) }
