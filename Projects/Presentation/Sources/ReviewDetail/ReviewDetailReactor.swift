@@ -1,0 +1,98 @@
+import ReactorKit
+import RxSwift
+import RxCocoa
+import RxFlow
+import Core
+import Domain
+
+public final class ReviewDetailReactor: BaseReactor, Stepper {
+    public let steps = PublishRelay<Step>()
+    public let initialState: State
+    private let disposeBag = DisposeBag()
+    private let fetchReviewDetailUseCase: FetchReviewDetailUseCase
+    public var reviewID: String?
+
+    init(fetchReviewDetailUseCase: FetchReviewDetailUseCase) {
+        self.initialState = .init()
+        self.fetchReviewDetailUseCase = fetchReviewDetailUseCase
+    }
+
+    public enum Action {
+        case fetchReviewDetail
+        case segmentSelected(Int)
+    }
+
+    public enum Mutation {
+        case setReviewDetail(ReviewDetailEntity)
+        case updateSegmentIndex(Int)
+    }
+
+    public struct State {
+        var reviewDetailEntity: ReviewDetailEntity?
+        var currentSegmentIndex: Int = 0
+        var writer: String = ""
+        var year: String = ""
+        var major: String = ""
+        var companyName: String = ""
+        var locationType: LocationType?
+        var interviewFormat: InterviewFormat?
+        var interviewerCount: Int = 0
+        var interviewReview: [QnAEntity] = []
+        var expectedQuestion: [QnAEntity] = []
+        var currentQnAs: [QnAEntity] = []
+        var titleText: String = ""
+        var locationText: String = ""
+        var interviewFormatText: String = ""
+    }
+}
+
+extension ReviewDetailReactor {
+    public func mutate(action: Action) -> Observable<Mutation> {
+        switch action {
+        case .fetchReviewDetail:
+            return fetchReviewDetailUseCase.execute(reviewID: reviewID ?? "")
+                .asObservable()
+                .map { Mutation.setReviewDetail($0) }
+
+        case let .segmentSelected(index):
+            return .just(.updateSegmentIndex(index))
+        }
+    }
+
+    public func reduce(state: State, mutation: Mutation) -> State {
+        var newState = state
+
+        switch mutation {
+        case let .setReviewDetail(entity):
+            newState.reviewDetailEntity = entity
+            newState.writer = entity.writer
+            newState.year = "\(entity.year)"
+            newState.major = entity.major
+            newState.companyName = entity.companyName
+            newState.locationType = entity.location
+            newState.interviewFormat = entity.type
+            newState.interviewerCount = entity.interviewerCount
+            newState.interviewReview = entity.qnAs
+
+            let qna = QnAEntity(id: 0, question: entity.question, answer: entity.answer)
+            newState.expectedQuestion = [qna]
+
+            newState.titleText = "\(entity.writer)의 면접 후기"
+            newState.locationText = entity.location.koreanName
+            newState.interviewFormatText = entity.type.koreanName
+            newState.currentQnAs = entity.qnAs
+
+        case let .updateSegmentIndex(index):
+            newState.currentSegmentIndex = index
+            if index == 0 {
+                newState.titleText = "\(newState.writer)의 면접 후기"
+                newState.currentQnAs = newState.interviewReview
+            } else {
+                newState.titleText = "\(newState.writer)의 받은 면접 질문"
+                newState.currentQnAs = newState.expectedQuestion
+            }
+        }
+
+        return newState
+    }
+}

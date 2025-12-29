@@ -13,7 +13,7 @@ public final class ReviewDetailFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ReviewDetailViewController.self)!
+        self.rootViewController = ReviewDetailViewController(container.resolve(ReviewDetailReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -30,7 +30,7 @@ private extension ReviewDetailFlow {
     func navigateToReviewDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

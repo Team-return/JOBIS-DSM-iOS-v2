@@ -7,19 +7,8 @@ import Then
 import Core
 import DesignSystem
 
-enum DataType {
-    case interviewReview
-    case expectedQuestion
-}
-
-public final class ReviewDetailViewController: BaseViewController<ReviewDetailViewModel> {
+public final class ReviewDetailViewController: BaseReactorViewController<ReviewDetailReactor> {
     public var isPopViewController: ((String) -> Void)?
-    private var interviewFormat: InterviewFormat?
-    private var locationType: LocationType?
-    private var interviewReview: [QnAEntity] = []
-    private var expectedQuestion: [QnAEntity] = []
-    private var currentDataType: DataType = .interviewReview
-    private var writer: String = ""
 
     private let segmentedControl = UISegmentedControl(items: ["면접 후기", "받은 질문"]).then {
         $0.selectedSegmentIndex = 0
@@ -106,61 +95,73 @@ public final class ReviewDetailViewController: BaseViewController<ReviewDetailVi
         }
     }
 
-    public override func bind() {
-        let input = ReviewDetailViewModel.Input(
-            viewDidLoad: self.viewDidLoadPublisher
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        viewDidLoadPublisher
+            .map { ReviewDetailReactor.Action.fetchReviewDetail }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.reviewDetailEntity.asObservable()
-            .bind { [weak self] entity in
-                guard let self = self else { return }
-                self.writer = entity.writer
-                self.titleLabel.text = "\(self.writer)의 면접 후기"
-                self.yearLabel.text = "\(entity.year)"
-                self.majorLabel.text = entity.major
-                self.locationType = entity.location
-                self.interviewFormat = entity.type
+        segmentedControl.rx.selectedSegmentIndex
+            .map { ReviewDetailReactor.Action.segmentSelected($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.titleText }
+            .distinctUntilChanged()
+            .bind(to: titleLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.year }
+            .distinctUntilChanged()
+            .bind(to: yearLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.major }
+            .distinctUntilChanged()
+            .bind(to: majorLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .compactMap { $0.reviewDetailEntity }
+            .distinctUntilChanged { $0.companyName == $1.companyName }
+            .bind(onNext: { [weak self] _ in
+                guard let self = self,
+                      let state = self.reactor.currentState else { return }
                 self.dataView.configure(
-                    company: entity.companyName,
-                    area: self.getLocationText(),
-                    interviewType: self.getInterviewFormatText(),
-                    interviewerCount: entity.interviewerCount
+                    company: state.companyName,
+                    area: state.locationText,
+                    interviewType: state.interviewFormatText,
+                    interviewerCount: state.interviewerCount
                 )
-                self.questionListDetailStackView.setFieldType(entity.qnAs)
-                self.interviewReview = entity.qnAs
-                let qna = QnAEntity(id: 0, question: entity.question, answer: entity.answer)
-                self.expectedQuestion = [qna]
-            }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.currentQnAs }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] qnAs in
+                self?.questionListDetailStackView.setFieldType(qnAs)
+            })
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: { [weak self] in
+        self.rx.viewWillAppear
+            .subscribe(onNext: { [weak self] _ in
                 self?.hideTabbar()
                 self?.navigationController?.navigationBar.prefersLargeTitles = false
             })
             .disposed(by: disposeBag)
 
-        self.viewWillDisappearPublisher.asObservable()
-            .bind {
-                self.isPopViewController?(self.viewModel.reviewID!)
-            }
-            .disposed(by: disposeBag)
-
-        self.segmentedControl.rx.selectedSegmentIndex
-            .bind(onNext: { [weak self] index in
-                guard let self = self else { return }
-                self.currentDataType = index == 0 ? .interviewReview : .expectedQuestion
-                switch self.currentDataType {
-                case .interviewReview:
-                    self.titleLabel.text = "\(self.writer)의 면접 후기"
-                    self.questionListDetailStackView.setFieldType(interviewReview)
-                case .expectedQuestion:
-                    self.titleLabel.text = "\(self.writer)의 받은 면접 질문"
-                    self.questionListDetailStackView.setFieldType(expectedQuestion)
-                }
+        self.rx.viewWillDisappear
+            .subscribe(onNext: { [weak self] _ in
+                guard let reviewID = self?.reactor.reviewID else { return }
+                self?.isPopViewController?(reviewID)
             })
             .disposed(by: disposeBag)
     }
@@ -168,31 +169,5 @@ public final class ReviewDetailViewController: BaseViewController<ReviewDetailVi
     public override func configureNavigation() {
         setSmallTitle(title: "면접 후기 상세보기")
         self.navigationItem.largeTitleDisplayMode = .never
-    }
-
-    private func getInterviewFormatText() -> String {
-        guard let format = interviewFormat else { return "-" }
-        switch format {
-        case .individual:
-            return "개인 면접"
-        case .group:
-            return "단체 면접"
-        case .other:
-            return "기타 면접"
-        }
-    }
-
-    private func getLocationText() -> String {
-        guard let location = locationType else { return "-" }
-        switch location {
-        case .daejeon:
-            return "대전"
-        case .seoul:
-            return "서울"
-        case .gyeonggi:
-            return "경기"
-        case .other:
-            return "기타"
-        }
     }
 }
