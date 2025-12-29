@@ -35,10 +35,10 @@ public final class SettingPresentationAssembly: Assembly {
 
         // Alarm
         container.register(AlarmViewController.self) { resolver in
-            AlarmViewController(resolver.resolve(AlarmViewModel.self)!)
+            AlarmViewController(resolver.resolve(AlarmReactor.self)!)
         }
-        container.register(AlarmViewModel.self) { resolver in
-            AlarmViewModel(
+        container.register(AlarmReactor.self) { resolver in
+            AlarmReactor(
                 fetchNotificationListUseCase: resolver.resolve(FetchNotificationListUseCase.self)!,
                 readNotificationUseCase: resolver.resolve(ReadNotificationUseCase.self)!
             )

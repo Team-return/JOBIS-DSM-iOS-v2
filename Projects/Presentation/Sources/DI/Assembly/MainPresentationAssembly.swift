@@ -237,11 +237,11 @@ public final class MainPresentationAssembly: Assembly {
         // Employ Status
         container.register(EmployStatusViewController.self) { resolver in
             EmployStatusViewController(
-                resolver.resolve(EmployStatusViewModel.self)!
+                resolver.resolve(EmployStatusReactor.self)!
             )
         }
-        container.register(EmployStatusViewModel.self) { resolver in
-            EmployStatusViewModel(
+        container.register(EmployStatusReactor.self) { resolver in
+            EmployStatusReactor(
                 fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
         }
@@ -265,11 +265,11 @@ public final class MainPresentationAssembly: Assembly {
         // Employment Filter
         container.register(EmploymentFilterViewController.self) { resolver in
             EmploymentFilterViewController(
-                resolver.resolve(EmploymentFilterViewModel.self)!
+                resolver.resolve(EmploymentFilterReactor.self)!
             )
         }
-        container.register(EmploymentFilterViewModel.self) { resolver in
-            EmploymentFilterViewModel()
+        container.register(EmploymentFilterReactor.self) { resolver in
+            EmploymentFilterReactor()
         }
 
         // Easter Egg

@@ -6,8 +6,9 @@ import Then
 import Core
 import Domain
 import DesignSystem
+import ReactorKit
 
-public final class AlarmViewController: BaseViewController<AlarmViewModel> {
+public final class AlarmViewController: BaseReactorViewController<AlarmReactor> {
     private let alarmTableView = UITableView().then {
         $0.register(AlarmTableViewCell.self, forCellReuseIdentifier: AlarmTableViewCell.identifier)
         $0.separatorStyle = .none
@@ -26,18 +27,23 @@ public final class AlarmViewController: BaseViewController<AlarmViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = AlarmViewModel.Input(
-            viewAppear: viewDidAppearPublisher,
-            readNotification:
-                Observable.zip(
-                    alarmTableView.rx.modelSelected(NotificationEntity.self),
-                    alarmTableView.rx.itemSelected
-                )
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        viewDidAppearPublisher.asObservable()
+            .map { AlarmReactor.Action.viewDidAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.notificationList.asObservable()
+        Observable.zip(
+            alarmTableView.rx.modelSelected(NotificationEntity.self),
+            alarmTableView.rx.itemSelected
+        )
+        .map { AlarmReactor.Action.readNotification($0.0, $0.1.row) }
+        .bind(to: reactor.action)
+        .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.notificationList }
             .bind(to: alarmTableView.rx.items(
                 cellIdentifier: AlarmTableViewCell.identifier,
                 cellType: AlarmTableViewCell.self
