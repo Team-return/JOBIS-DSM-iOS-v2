@@ -39,11 +39,10 @@ private extension RejectReasonFlow {
         companyName: String,
         companyImageUrl: String
     ) -> FlowContributors {
-        let reactor = container.resolve(
-            RejectReasonReactor.self,
+        rootViewController = container.resolve(
+            RejectReasonViewController.self,
             arguments: applicationID, recruitmentID, companyName, companyImageUrl
         )!
-        rootViewController = RejectReasonViewController(reactor, state: .custom(height: 280))
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,

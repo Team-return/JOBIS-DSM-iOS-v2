@@ -302,5 +302,20 @@ public final class MainPresentationAssembly: Assembly {
                 companyImageUrl: companyImageUrl
             )
         }
+        container.register(RejectReasonViewController.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonViewController(
+                resolver.resolve(
+                    RejectReasonReactor.self,
+                    arguments: applicationID, recruitmentID, companyName, companyImageUrl
+                )!,
+                state: .custom(height: 280)
+            )
+        }
     }
 }
