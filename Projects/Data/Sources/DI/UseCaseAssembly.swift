@@ -51,8 +51,8 @@ public final class UseCaseAssembly: Assembly {
                 studentsRepository: reslover.resolve(StudentsRepository.self)!
             )
         }
-        container.register(CompareCurrentPassswordUseCase.self) { reslover in
-            CompareCurrentPassswordUseCase(
+        container.register(CompareCurrentPasswordUseCase.self) { reslover in
+            CompareCurrentPasswordUseCase(
                 studentsRepository: reslover.resolve(StudentsRepository.self)!
             )
         }

@@ -90,7 +90,7 @@ public final class SettingPresentationAssembly: Assembly {
         // Confirm Password
         container.register(ConfirmPasswordReactor.self) { resolver in
             ConfirmPasswordReactor(
-                compareCurrentPassswordUseCase: resolver.resolve(CompareCurrentPassswordUseCase.self)!
+                compareCurrentPasswordUseCase: resolver.resolve(CompareCurrentPasswordUseCase.self)!
             )
         }
         container.register(ConfirmPasswordViewController.self) { resolver in

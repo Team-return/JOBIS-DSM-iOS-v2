@@ -10,11 +10,11 @@ public final class ConfirmPasswordReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
     private let disposeBag = DisposeBag()
-    private let compareCurrentPassswordUseCase: CompareCurrentPassswordUseCase
+    private let compareCurrentPasswordUseCase: CompareCurrentPasswordUseCase
 
-    public init(compareCurrentPassswordUseCase: CompareCurrentPassswordUseCase) {
+    public init(compareCurrentPasswordUseCase: CompareCurrentPasswordUseCase) {
         self.initialState = .init()
-        self.compareCurrentPassswordUseCase = compareCurrentPassswordUseCase
+        self.compareCurrentPasswordUseCase = compareCurrentPasswordUseCase
     }
 
     public enum Action {
@@ -47,7 +47,7 @@ extension ConfirmPasswordReactor {
             return .just(.setPassword(password))
 
         case .nextButtonDidTap:
-            return compareCurrentPassswordUseCase.execute(password: currentState.currentPassword)
+            return compareCurrentPasswordUseCase.execute(password: currentState.currentPassword)
                 .andThen(Observable<Mutation>.empty())
                 .do(onCompleted: { [weak self] in
                     guard let password = self?.currentState.currentPassword else { return }
