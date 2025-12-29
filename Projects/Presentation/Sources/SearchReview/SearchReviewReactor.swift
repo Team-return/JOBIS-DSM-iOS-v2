@@ -66,24 +66,17 @@ extension SearchReviewReactor {
                 return .just(.setEmptyViewHidden(false))
             }
 
-            let query = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let searchQuery = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
             return .concat([
                 .just(.setEmptyViewHidden(true)),
-                .just(.setSearchText(text)),
+                .just(.setSearchText(searchQuery)),
                 .just(.resetPageCount),
                 fetchReviewListUseCase.execute(
                     page: 1,
-                    companyName: nil,
-                    writer: nil
+                    companyName: searchQuery,
+                    writer: searchQuery
                 )
-                .map { list in
-                    list.filter { review in
-                        let companyMatch = review.companyName.lowercased().contains(query)
-                        let writerMatch = review.writer.lowercased().contains(query)
-                        return companyMatch || writerMatch
-                    }
-                }
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
                     return .just(.setReviewList(list))
