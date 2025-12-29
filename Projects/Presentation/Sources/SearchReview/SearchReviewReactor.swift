@@ -59,6 +59,7 @@ extension SearchReviewReactor {
                 .flatMap { list -> Observable<Mutation> in
                     return .just(.setReviewList(list))
                 }
+                .catch { _ in .empty() }
             ])
 
         case let .searchTextDidSubmit(text):
