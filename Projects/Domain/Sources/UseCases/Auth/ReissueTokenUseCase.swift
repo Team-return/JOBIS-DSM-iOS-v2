@@ -1,6 +1,6 @@
 import RxSwift
 
-public struct ReissueTokenUaseCase {
+public struct ReissueTokenUseCase {
     public init(authRepository: AuthRepository) {
         self.authRepository = authRepository
     }

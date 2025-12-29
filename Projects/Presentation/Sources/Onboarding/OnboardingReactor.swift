@@ -11,14 +11,14 @@ public final class OnboardingReactor: BaseReactor {
     public let initialState: State
     private let disposeBag = DisposeBag()
 
-    private let reissueTokenUaseCase: ReissueTokenUaseCase
+    private let reissueTokenUseCase: ReissueTokenUseCase
     private let fetchServerStatusUseCase: FetchServerStatusUseCase
 
     public init(
-        reissueTokenUaseCase: ReissueTokenUaseCase,
+        reissueTokenUseCase: ReissueTokenUseCase,
         fetchServerStatusUseCase: FetchServerStatusUseCase
     ) {
-        self.reissueTokenUaseCase = reissueTokenUaseCase
+        self.reissueTokenUseCase = reissueTokenUseCase
         self.fetchServerStatusUseCase = fetchServerStatusUseCase
         self.initialState = State()
     }
@@ -77,7 +77,7 @@ public final class OnboardingReactor: BaseReactor {
     }
 
     private func checkTokenAndServerStatus() -> Observable<Mutation> {
-        let tokenCheck = reissueTokenUaseCase.execute()
+        let tokenCheck = reissueTokenUseCase.execute()
             .asObservable()
             .do(onNext: { [weak self] _ in
                 self?.steps.accept(OnboardingStep.tabsIsRequired)

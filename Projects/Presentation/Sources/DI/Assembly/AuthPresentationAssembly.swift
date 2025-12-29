@@ -10,7 +10,7 @@ public final class AuthPresentationAssembly: Assembly {
         // Onboarding
         container.register(OnboardingReactor.self) { resolver in
             OnboardingReactor(
-                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!,
+                reissueTokenUseCase: resolver.resolve(ReissueTokenUseCase.self)!,
                 fetchServerStatusUseCase: resolver.resolve(FetchServerStatusUseCase.self)!
             )
         }

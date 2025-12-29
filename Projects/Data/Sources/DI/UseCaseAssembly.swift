@@ -17,8 +17,8 @@ public final class UseCaseAssembly: Assembly {
                 authRepository: resolver.resolve(AuthRepository.self)!
             )
         }
-        container.register(ReissueTokenUaseCase.self) { resolver in
-            ReissueTokenUaseCase(
+        container.register(ReissueTokenUseCase.self) { resolver in
+            ReissueTokenUseCase(
                 authRepository: resolver.resolve(AuthRepository.self)!
             )
         }
