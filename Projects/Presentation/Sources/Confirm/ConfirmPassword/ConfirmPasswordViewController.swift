@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class ConfirmPasswordViewController: BaseViewController<ConfirmPasswordViewModel> {
+public final class ConfirmPasswordViewController: BaseReactorViewController<ConfirmPasswordReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText(
             "비밀번호 변경을 위해\n현재 비밀번호를 입력해주세요",
@@ -51,22 +51,32 @@ public final class ConfirmPasswordViewController: BaseViewController<ConfirmPass
         }
     }
 
-    public override func bind() {
-        let input = ConfirmPasswordViewModel.Input(
-            currentPassword: passwordTextField.textField.rx.text.orEmpty.asDriver(),
-            nextButtonDidTap: nextButton.rx.tap.asSignal()
-        )
-
-        let output = viewModel.transform(input)
-        output.passwordErrorDescription.asObservable()
-            .bind { [weak self] description in
-                self?.passwordTextField.setDescription(description)
-            }
+    public override func bindAction() {
+        passwordTextField.textField.rx.text.orEmpty
+            .map { ConfirmPasswordReactor.Action.updatePassword($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        output.nextButtonIsEnable.asObservable()
-            .bind { [weak self] isEnable in
-                self?.nextButton.isEnabled = isEnable
-            }
+
+        nextButton.rx.tap
+            .map { ConfirmPasswordReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.passwordError }
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .bind(onNext: { [weak self] error in
+                self?.passwordTextField.setDescription(.error(description: error))
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.isNextButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
 

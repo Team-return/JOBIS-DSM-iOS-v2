@@ -88,13 +88,13 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Confirm Password
-        container.register(ConfirmPasswordViewModel.self) { resolver in
-            ConfirmPasswordViewModel(
+        container.register(ConfirmPasswordReactor.self) { resolver in
+            ConfirmPasswordReactor(
                 compareCurrentPassswordUseCase: resolver.resolve(CompareCurrentPassswordUseCase.self)!
             )
         }
         container.register(ConfirmPasswordViewController.self) { resolver in
-            ConfirmPasswordViewController(resolver.resolve(ConfirmPasswordViewModel.self)!)
+            ConfirmPasswordViewController(resolver.resolve(ConfirmPasswordReactor.self)!)
         }
 
         // Change Password

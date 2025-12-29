@@ -6,7 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class ConfirmEmailViewController: BaseViewController<ConfirmEmailViewModel> {
+public final class ConfirmEmailViewController: BaseReactorViewController<ConfirmEmailReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText(
             "비밀번호 변경을 위해\n이메일을 인증해주세요",
@@ -66,42 +66,60 @@ public final class ConfirmEmailViewController: BaseViewController<ConfirmEmailVi
         }
     }
 
-    public override func bind() {
-        let input = ConfirmEmailViewModel.Input(
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            authCode: authCodeTextField.textField.rx.text.orEmpty.asDriver(),
-            sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),
-            nextButtonDidTap: nextPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        emailTextField.textField.rx.text.orEmpty
+            .map { ConfirmEmailReactor.Action.updateEmail($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.isSuccessedToSendAuthCode
-            .asObservable()
-            .bind { [weak self] isSuccessedToSendAuthCode in
-                if isSuccessedToSendAuthCode {
-                    UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve) {
-                        self?.authCodeTextField.startTimer()
-                        self?.emailTextField.setDescription(
-                            .success(description: "인증 메일이 발송되었어요.")
-                        )
-                        self?.emailTextField.textFieldRightView.setCustomButtonTitle(title: "재발송")
-                    }
+        authCodeTextField.textField.rx.text.orEmpty
+            .map { ConfirmEmailReactor.Action.updateAuthCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        emailTextField.textFieldRightView.customButton.rx.tap
+            .map { ConfirmEmailReactor.Action.sendAuthCodeButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextPublishRelay
+            .map { ConfirmEmailReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.isSendAuthCodeSuccess }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
+                UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve) {
+                    self?.authCodeTextField.startTimer()
+                    self?.emailTextField.setDescription(
+                        .success(description: "인증 메일이 발송되었어요.")
+                    )
+                    self?.emailTextField.textFieldRightView.setCustomButtonTitle(title: "재발송")
                 }
-            }
+            })
             .disposed(by: disposeBag)
 
-        output.emailErrorDescription
-            .asObservable()
-            .bind { [weak self] description in
-                self?.authCodeTextField.setDescription(description)
-            }
+        reactor.state
+            .map { $0.emailError }
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .bind(onNext: { [weak self] error in
+                self?.emailTextField.setDescription(.error(description: error))
+            })
             .disposed(by: disposeBag)
 
-        output.authCodeErrorDescription
-            .asObservable()
-            .bind { [weak self] description in
-                self?.authCodeTextField.setDescription(description)
-            }
+        reactor.state
+            .map { $0.authCodeError }
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .bind(onNext: { [weak self] error in
+                self?.authCodeTextField.setDescription(.error(description: error))
+            })
             .disposed(by: disposeBag)
     }
 

@@ -166,7 +166,7 @@ private extension HomeFlow {
         let applyFlow = ApplyFlow(container: container)
         Flows.use(applyFlow, when: .created) { root in
             let view = root as? ApplyViewController
-            view?.viewModel.applyType = .reApply
+            view?.reactor.applyType = .reApply
             self.rootViewController.pushViewController(
                 view!,
                 animated: true

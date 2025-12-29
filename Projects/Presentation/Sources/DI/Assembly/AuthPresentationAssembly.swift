@@ -107,14 +107,14 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Confirm Email
-        container.register(ConfirmEmailViewModel.self) { resolver in
-            ConfirmEmailViewModel(
+        container.register(ConfirmEmailReactor.self) { resolver in
+            ConfirmEmailReactor(
                 sendAuthCodeUseCase: resolver.resolve(SendAuthCodeUseCase.self)!,
                 verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
             )
         }
         container.register(ConfirmEmailViewController.self) { resolver in
-            ConfirmEmailViewController(resolver.resolve(ConfirmEmailViewModel.self)!)
+            ConfirmEmailViewController(resolver.resolve(ConfirmEmailReactor.self)!)
         }
 
         // Password Renewal

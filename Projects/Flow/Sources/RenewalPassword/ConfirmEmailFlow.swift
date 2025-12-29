@@ -13,7 +13,7 @@ public final class ConfirmEmailFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ConfirmEmailViewController.self)!
+        self.rootViewController = ConfirmEmailViewController(container.resolve(ConfirmEmailReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -33,7 +33,7 @@ private extension ConfirmEmailFlow {
     func navigateToConfirmEmail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
