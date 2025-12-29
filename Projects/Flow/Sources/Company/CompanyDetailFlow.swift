@@ -69,14 +69,15 @@ private extension CompanyDetailFlow {
     }
 
     func navigateToInterviewReviewDetail(_ id: Int, _ name: String) -> FlowContributors {
-        let interviewReviewDetailFlow = InterviewReviewDetailFlow(container: container)
+        let interviewReviewDetailFlow = InterviewReviewDetailFlow(
+            container: container,
+            reviewId: String(id)
+        )
 
-        Flows.use(interviewReviewDetailFlow, when: .created) { (root) in
-            let view = root as? InterviewReviewDetailViewController
-            view?.reactor.reviewId = String(id)
-            view?.reactor.writerName = name
+        Flows.use(interviewReviewDetailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
-                view!, animated: true
+                root,
+                animated: true
             )
         }
 

@@ -11,9 +11,7 @@ public final class InterviewReviewDetailReactor: BaseReactor {
     public let initialState: State
     private let disposeBag = DisposeBag()
 
-    public var reviewId: String = ""
-    public var writerName: String = ""
-
+    private let reviewId: String
     private let fetchReviewDetailUseCase: FetchReviewDetailUseCase
 
     public enum Action {
@@ -31,9 +29,11 @@ public final class InterviewReviewDetailReactor: BaseReactor {
     }
 
     public init(
-        fetchReviewDetailUseCase: FetchReviewDetailUseCase
+        fetchReviewDetailUseCase: FetchReviewDetailUseCase,
+        reviewId: String
     ) {
         self.fetchReviewDetailUseCase = fetchReviewDetailUseCase
+        self.reviewId = reviewId
         self.initialState = State(writerName: "")
     }
 
