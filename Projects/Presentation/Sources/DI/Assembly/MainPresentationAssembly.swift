@@ -131,14 +131,14 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Apply
-        container.register(ApplyViewModel.self) { resolver in
-            ApplyViewModel(
+        container.register(ApplyReactor.self) { resolver in
+            ApplyReactor(
                 applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
                 reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
             )
         }
         container.register(ApplyViewController.self) { resolver in
-            ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
+            ApplyViewController(resolver.resolve(ApplyReactor.self)!)
         }
 
         // Company

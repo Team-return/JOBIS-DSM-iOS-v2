@@ -13,7 +13,7 @@ public final class ApplyFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ApplyViewController.self)!
+        self.rootViewController = ApplyViewController(container.resolve(ApplyReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -37,24 +37,26 @@ public final class ApplyFlow: Flow {
 
 private extension ApplyFlow {
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        rootViewController.viewModel.recruitmentId = id
-        rootViewController.viewModel.companyName = name
-        rootViewController.viewModel.companyImageURL = imageURL
+        rootViewController.reactor.recruitmentId = id
+        rootViewController.reactor.companyName = name
+        rootViewController.reactor.companyImageURL = imageURL
+        rootViewController.reactor.applyType = .apply
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func navigateToReApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        rootViewController.viewModel.applicationId = id
-        rootViewController.viewModel.companyName = name
-        rootViewController.viewModel.companyImageURL = imageURL
+        rootViewController.reactor.applicationId = id
+        rootViewController.reactor.companyName = name
+        rootViewController.reactor.companyImageURL = imageURL
+        rootViewController.reactor.applyType = .reApply
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
