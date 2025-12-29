@@ -11,9 +11,13 @@ public final class CompanyDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(
+        container: Container,
+        companyId: Int,
+        type: CompanyDetailPreviousViewType = .recruitmentDetail
+    ) {
         self.container = container
-        self.rootViewController = CompanyDetailViewController(container.resolve(CompanyDetailReactor.self)!)
+        self.rootViewController = container.resolve(CompanyDetailViewController.self, arguments: companyId, type)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {

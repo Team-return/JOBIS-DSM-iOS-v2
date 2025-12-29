@@ -16,17 +16,21 @@ public final class CompanyDetailReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase
     private let fetchReviewListUseCase: FetchReviewListUseCase
-    public var companyID: Int?
-    public var recruitmentID: Int?
-    public var type: CompanyDetailPreviousViewType = .recruitmentDetail
+    private let companyId: Int
+    private let type: CompanyDetailPreviousViewType
+    private var recruitmentID: Int?
 
     public init(
         fetchCompanyInfoDetailUseCase: FetchCompanyInfoDetailUseCase,
-        fetchReviewListUseCase: FetchReviewListUseCase
+        fetchReviewListUseCase: FetchReviewListUseCase,
+        companyId: Int,
+        type: CompanyDetailPreviousViewType = .recruitmentDetail
     ) {
-        self.initialState = .init()
         self.fetchCompanyInfoDetailUseCase = fetchCompanyInfoDetailUseCase
         self.fetchReviewListUseCase = fetchReviewListUseCase
+        self.companyId = companyId
+        self.type = type
+        self.initialState = .init()
     }
 
     public enum Action {
@@ -50,11 +54,11 @@ extension CompanyDetailReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchCompanyDetail:
-            let companyDetail = fetchCompanyInfoDetailUseCase.execute(id: companyID ?? 0)
+            let companyDetail = fetchCompanyInfoDetailUseCase.execute(id: companyId)
                 .asObservable()
                 .map { Mutation.setCompanyDetail($0) }
 
-            let reviewList = fetchReviewListUseCase.execute(companyID: companyID)
+            let reviewList = fetchReviewListUseCase.execute(companyID: companyId)
                 .asObservable()
                 .map { Mutation.setReviewList($0) }
 

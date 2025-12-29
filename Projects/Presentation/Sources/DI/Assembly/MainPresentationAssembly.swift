@@ -153,14 +153,16 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Company Detail
-        container.register(CompanyDetailReactor.self) { resolver in
+        container.register(CompanyDetailReactor.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
             CompanyDetailReactor(
                 fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!,
-                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!,
+                companyId: companyId,
+                type: type
             )
         }
-        container.register(CompanyDetailViewController.self) { resolver in
-            CompanyDetailViewController(resolver.resolve(CompanyDetailReactor.self)!)
+        container.register(CompanyDetailViewController.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+            CompanyDetailViewController(resolver.resolve(CompanyDetailReactor.self, arguments: companyId, type)!)
         }
 
         // Search Company
