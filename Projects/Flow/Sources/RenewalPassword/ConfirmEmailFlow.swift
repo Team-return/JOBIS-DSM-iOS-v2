@@ -40,7 +40,7 @@ private extension ConfirmEmailFlow {
     func navigateToRenewalPassword(
         email: String
     ) -> FlowContributors {
-        let renewalPasswordFlow = RenewalPasswordFlow(container: container)
+        let renewalPasswordFlow = RenewalPasswordFlow(container: container, email: email)
 
         Flows.use(renewalPasswordFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
@@ -52,7 +52,7 @@ private extension ConfirmEmailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: renewalPasswordFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RenewalPasswordStep.renewalPasswordIsRequired(email: email)
+                withSingleStep: RenewalPasswordStep.renewalPasswordIsRequired
             )
         ))
     }
