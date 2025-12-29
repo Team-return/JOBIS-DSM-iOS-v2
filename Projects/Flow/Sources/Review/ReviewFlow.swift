@@ -55,7 +55,7 @@ private extension ReviewFlow {
         let reviewDetailFlow = ReviewDetailFlow(container: container)
 
         Flows.use(reviewDetailFlow, when: .created) { [weak self] (view: ReviewDetailViewController) in
-            view.viewModel.reviewID = reviewID
+            view.reactor.reviewID = reviewID
             view.isPopViewController = { [weak nav = self?.rootViewController] _ in
                 let popView = nav?.topViewController as? ReviewViewController
                 popView?.isTabNavigation = false

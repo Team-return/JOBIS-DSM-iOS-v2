@@ -43,6 +43,25 @@ public final class ReviewDetailReactor: BaseReactor, Stepper {
         var titleText: String = ""
         var locationText: String = ""
         var interviewFormatText: String = ""
+
+        mutating func update(with entity: ReviewDetailEntity) {
+            self.reviewDetailEntity = entity
+            self.writer = entity.writer
+            self.year = "\(entity.year)"
+            self.major = entity.major
+            self.companyName = entity.companyName
+            self.locationType = entity.location
+            self.interviewFormat = entity.type
+            self.interviewerCount = entity.interviewerCount
+            self.interviewReview = entity.qnAs
+            self.titleText = "\(entity.writer)의 면접 후기"
+            self.locationText = entity.location.koreanName
+            self.interviewFormatText = entity.type.koreanName
+            self.currentQnAs = entity.qnAs
+
+            let qna = QnAEntity(id: 0, question: entity.question, answer: entity.answer)
+            self.expectedQuestion = [qna]
+        }
     }
 }
 
@@ -64,23 +83,7 @@ extension ReviewDetailReactor {
 
         switch mutation {
         case let .setReviewDetail(entity):
-            newState.reviewDetailEntity = entity
-            newState.writer = entity.writer
-            newState.year = "\(entity.year)"
-            newState.major = entity.major
-            newState.companyName = entity.companyName
-            newState.locationType = entity.location
-            newState.interviewFormat = entity.type
-            newState.interviewerCount = entity.interviewerCount
-            newState.interviewReview = entity.qnAs
-
-            let qna = QnAEntity(id: 0, question: entity.question, answer: entity.answer)
-            newState.expectedQuestion = [qna]
-
-            newState.titleText = "\(entity.writer)의 면접 후기"
-            newState.locationText = entity.location.koreanName
-            newState.interviewFormatText = entity.type.koreanName
-            newState.currentQnAs = entity.qnAs
+            newState.update(with: entity)
 
         case let .updateSegmentIndex(index):
             newState.currentSegmentIndex = index

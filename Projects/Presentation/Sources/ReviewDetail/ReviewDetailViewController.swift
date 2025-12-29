@@ -130,8 +130,8 @@ public final class ReviewDetailViewController: BaseReactorViewController<ReviewD
             .compactMap { $0.reviewDetailEntity }
             .distinctUntilChanged { $0.companyName == $1.companyName }
             .bind(onNext: { [weak self] _ in
-                guard let self = self,
-                      let state = self.reactor.currentState else { return }
+                guard let self = self else { return }
+                let state = self.reactor.currentState
                 self.dataView.configure(
                     company: state.companyName,
                     area: state.locationText,
@@ -151,15 +151,15 @@ public final class ReviewDetailViewController: BaseReactorViewController<ReviewD
     }
 
     public override func configureViewController() {
-        self.rx.viewWillAppear
-            .subscribe(onNext: { [weak self] _ in
+        viewWillAppearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
                 self?.hideTabbar()
                 self?.navigationController?.navigationBar.prefersLargeTitles = false
             })
             .disposed(by: disposeBag)
 
-        self.rx.viewWillDisappear
-            .subscribe(onNext: { [weak self] _ in
+        viewWillDisappearPublisher.asObservable()
+            .subscribe(onNext: { [weak self] in
                 guard let reviewID = self?.reactor.reviewID else { return }
                 self?.isPopViewController?(reviewID)
             })
