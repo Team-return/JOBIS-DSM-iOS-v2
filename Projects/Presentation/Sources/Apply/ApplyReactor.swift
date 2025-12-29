@@ -73,13 +73,19 @@ extension ApplyReactor {
 
             let applyRequest: Completable
             if applyType == .apply {
+                guard let recruitmentId = recruitmentId else {
+                    return .empty()
+                }
                 applyRequest = applyCompanyUseCase.execute(
-                    id: recruitmentId!,
+                    id: recruitmentId,
                     req: .init(attachments: attachments)
                 )
             } else {
+                guard let applicationId = applicationId else {
+                    return .empty()
+                }
                 applyRequest = reApplyCompanyUseCase.execute(
-                    id: applicationId!,
+                    id: applicationId,
                     req: .init(attachments: attachments)
                 )
             }
@@ -89,8 +95,8 @@ extension ApplyReactor {
                 .do(onCompleted: { [weak self] in
                     self?.steps.accept(ApplyStep.popToRecruitmentDetail)
                 })
-                .catch { _ in
-                    self.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
+                .catch { [weak self] _ in
+                    self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
                     return .empty()
                 }
 
