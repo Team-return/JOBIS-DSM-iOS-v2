@@ -163,12 +163,17 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: recruitmentID,
+            applicationId: applicationID,
+            companyName: companyName,
+            companyImageURL: companyImageUrl,
+            applyType: .reApply
+        )
         Flows.use(applyFlow, when: .created) { root in
-            let view = root as? ApplyViewController
-            view?.reactor.applyType = .reApply
             self.rootViewController.pushViewController(
-                view!,
+                root,
                 animated: true
             )
         }

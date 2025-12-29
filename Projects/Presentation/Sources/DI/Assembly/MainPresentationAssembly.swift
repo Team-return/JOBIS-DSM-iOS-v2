@@ -132,14 +132,33 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Apply
-        container.register(ApplyReactor.self) { resolver in
+        container.register(ApplyReactor.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
             ApplyReactor(
                 applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
-                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!,
+                recruitmentId: recruitmentId,
+                applicationId: applicationId,
+                companyName: companyName,
+                companyImageURL: companyImageURL,
+                applyType: applyType
             )
         }
-        container.register(ApplyViewController.self) { resolver in
-            ApplyViewController(resolver.resolve(ApplyReactor.self)!)
+        container.register(ApplyViewController.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
+            ApplyViewController(resolver.resolve(ApplyReactor.self, arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType)!)
         }
 
         // Company

@@ -16,19 +16,29 @@ public final class ApplyReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let applyCompanyUseCase: ApplyCompanyUseCase
     private let reApplyCompanyUseCase: ReApplyCompanyUseCase
-    public var recruitmentId: Int?
-    public var applicationId: Int?
-    public var companyName: String?
-    public var companyImageURL: String?
-    public var applyType: ApplyType = .apply
+    private let recruitmentId: Int?
+    private let applicationId: Int?
+    private let applyType: ApplyType
+    public let companyName: String
+    public let companyImageURL: String
 
     public init(
         applyCompanyUseCase: ApplyCompanyUseCase,
-        reApplyCompanyUseCase: ReApplyCompanyUseCase
+        reApplyCompanyUseCase: ReApplyCompanyUseCase,
+        recruitmentId: Int? = nil,
+        applicationId: Int? = nil,
+        companyName: String,
+        companyImageURL: String,
+        applyType: ApplyType
     ) {
-        self.initialState = .init()
         self.applyCompanyUseCase = applyCompanyUseCase
         self.reApplyCompanyUseCase = reApplyCompanyUseCase
+        self.recruitmentId = recruitmentId
+        self.applicationId = applicationId
+        self.companyName = companyName
+        self.companyImageURL = companyImageURL
+        self.applyType = applyType
+        self.initialState = .init()
     }
 
     public enum Action {

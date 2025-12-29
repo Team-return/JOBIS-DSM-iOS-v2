@@ -70,7 +70,14 @@ private extension RecruitmentDetailFlow {
     }
 
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: id,
+            applicationId: nil,
+            companyName: name,
+            companyImageURL: imageURL,
+            applyType: .apply
+        )
 
         Flows.use(applyFlow, when: .created) { (root) in
             self.rootViewController.navigationController?.pushViewController(
