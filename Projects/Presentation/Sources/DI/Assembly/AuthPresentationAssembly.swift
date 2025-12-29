@@ -8,14 +8,14 @@ public final class AuthPresentationAssembly: Assembly {
 
     public func assemble(container: Container) {
         // Onboarding
-        container.register(OnboardingViewModel.self) { resolver in
-            OnboardingViewModel(
+        container.register(OnboardingReactor.self) { resolver in
+            OnboardingReactor(
                 reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!,
                 fetchServerStatusUseCase: resolver.resolve(FetchServerStatusUseCase.self)!
             )
         }
         container.register(OnboardingViewController.self) { resolver in
-            OnboardingViewController(resolver.resolve(OnboardingViewModel.self)!)
+            OnboardingViewController(resolver.resolve(OnboardingReactor.self)!)
         }
 
         // Info Setting

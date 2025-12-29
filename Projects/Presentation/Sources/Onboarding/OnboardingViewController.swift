@@ -6,8 +6,9 @@ import Then
 import Core
 import DesignSystem
 import Lottie
+import ReactorKit
 
-public final class OnboardingViewController: BaseViewController<OnboardingViewModel> {
+public final class OnboardingViewController: BaseReactorViewController<OnboardingReactor> {
     private let animationView = JobisLottieView()
     private let teamReturnLogoImage = UIImageView().then {
         $0.image = .onboardingImage(.teamReturnLogo)
@@ -58,26 +59,43 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
         }
     }
 
-    public override func bind() {
-        let input = OnboardingViewModel.Input(
-            navigateToSigninDidTap: navigateToSigninButton.rx.tap.asSignal(),
-            navigateToSignupDidTap: navigateToSignupButton.rx.tap.asSignal(),
-            viewAppear: viewDidAppearPublisher
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        viewDidAppearPublisher.asObservable()
+            .map { OnboardingReactor.Action.viewDidAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.animate.asObservable()
-            .bind(onNext: { [weak self] in
+        navigateToSigninButton.rx.tap
+            .map { OnboardingReactor.Action.signinButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        navigateToSignupButton.rx.tap
+            .map { OnboardingReactor.Action.signupButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.shouldAnimate }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
                 guard let self else { return }
 
                 if !isOnLoading {
                     animationView.play()
                 }
                 isOnLoading = true
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
 
-        output.showNavigationButton.asObservable()
-            .bind(onNext: { [weak self] in
+        reactor.state
+            .map { $0.shouldShowNavigationButton }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
                 guard let self, isOnLoading else { return }
                 UIView.transition(
                     with: self.navigateButtonStackView,
@@ -87,17 +105,23 @@ public final class OnboardingViewController: BaseViewController<OnboardingViewMo
                         self.setNavigateButton()
                     }
                 )
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
 
-        output.serverStatus.asObservable()
-            .subscribe(onNext: {_ in
+        reactor.state
+            .map { $0.shouldShowServerStatusAlert }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                guard let self else { return }
                 AlertBuilder(viewController: self)
                     .setTitle("현재 JOBIS 서버가 점검중이에요")
                     .setMessage("더욱 원활한 서비스 이용을 위해\n노력중이니 조금만 기다려주세요!")
                     .addActionConfirm("확인")
                     .setAlertType(.positive)
                     .show()
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func setNavigateButton() {

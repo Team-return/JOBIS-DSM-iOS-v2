@@ -74,7 +74,7 @@ private extension OnboardingFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: onboardingViewController,
-            withNextStepper: onboardingViewController.viewModel
+            withNextStepper: onboardingViewController.reactor
         ))
     }
 }
