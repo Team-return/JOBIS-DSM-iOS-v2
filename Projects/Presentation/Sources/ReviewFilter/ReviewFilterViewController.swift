@@ -6,9 +6,9 @@ import Then
 import Core
 import DesignSystem
 import Domain
+import ReactorKit
 
-public final class ReviewFilterViewController: BaseViewController<ReviewFilterViewModel> {
-    private let filterApplyButtonDidTap = PublishRelay<Void>()
+public final class ReviewFilterViewController: BaseReactorViewController<ReviewFilterReactor> {
     private var selectedYear: [String] = []
     private let selectedYearRelay = BehaviorRelay<[String]>(value: [])
     private var selectedJobIndex: Int?
@@ -175,25 +175,46 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
         }
     }
 
-    public override func bind() {
-        let input = ReviewFilterViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher,
-            selectJobsCode: jobsCollectionView.rx
-                .modelSelected(CodeEntity.self).asObservable(),
-            selectYear: selectedYearRelay.asObservable(),
-            selectInterviewType: interviewStackView.selectedTechObservable,
-            selectLocation: regionStackView.selectedTechObservable,
-            filterApplyButtonDidTap: filterApplyButtonDidTap
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { ReviewFilterReactor.Action.fetchCodeLists }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
-        output.jobList
+        jobsCollectionView.rx.modelSelected(CodeEntity.self)
+            .map { ReviewFilterReactor.Action.selectJobCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        selectedYearRelay.asObservable()
+            .map { ReviewFilterReactor.Action.selectYear($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        interviewStackView.selectedTechObservable
+            .map { ReviewFilterReactor.Action.selectInterviewType($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        regionStackView.selectedTechObservable
+            .map { ReviewFilterReactor.Action.selectLocation($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterApplyButton.rx.tap
+            .map { ReviewFilterReactor.Action.filterApplyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.jobList }
             .bind(to: jobsCollectionView.rx.items(
                 cellIdentifier: ReviewMajorCollectionViewCell.identifier,
                 cellType: ReviewMajorCollectionViewCell.self
             )) { [weak self] index, element, cell in
                 cell.adapt(model: element)
-                cell.isCheck = Int(self?.viewModel.code ?? "") == element.code
+                cell.isCheck = Int(self?.reactor.currentState.code ?? "") == element.code
                 if cell.isCheck {
                     self?.selectedJobIndex = index
                 }
@@ -206,13 +227,13 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
             })
             .disposed(by: disposeBag)
 
-        output.interviewTypeList
+        reactor.state.map { $0.interviewTypeList }
             .bind { [weak self] interviewTypes in
                 self?.interviewStackView.setTech(techList: interviewTypes)
             }
             .disposed(by: disposeBag)
 
-        output.regionList
+        reactor.state.map { $0.regionList }
             .bind { [weak self] regions in
                 self?.regionStackView.setTech(techList: regions)
             }
@@ -258,10 +279,10 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
 
     public override func configureViewController() {
         viewWillAppearPublisher.asObservable()
-            .bind {
-                self.hideTabbar()
-                self.setSmallTitle(title: "필터 설정")
-                self.navigationController?.navigationBar.prefersLargeTitles = false
+            .bind { [weak self] in
+                self?.hideTabbar()
+                self?.setSmallTitle(title: "필터 설정")
+                self?.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
 
@@ -281,12 +302,6 @@ public final class ReviewFilterViewController: BaseViewController<ReviewFilterVi
         yearsCollectionView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
                 self?.handleYearSelection(at: indexPath)
-            })
-            .disposed(by: disposeBag)
-
-        filterApplyButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                self.filterApplyButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
     }

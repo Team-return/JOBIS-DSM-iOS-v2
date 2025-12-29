@@ -6,8 +6,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class InterviewReviewDetailViewController: BaseViewController<InterviewReviewDetailViewModel> {
+public final class InterviewReviewDetailViewController: BaseReactorViewController<InterviewReviewDetailReactor> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -70,17 +71,30 @@ public final class InterviewReviewDetailViewController: BaseViewController<Inter
         }
     }
 
-    public override func bind() {
-        let input = InterviewReviewDetailViewModel.Input(
-            viewWillAppear: self.viewWillAppearPublisher)
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { InterviewReviewDetailReactor.Action.fetchReviewDetail }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
 
-        let output = viewModel.transform(input)
+    public override func bindState() {
+        reactor.state
+            .map { $0.writerName }
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .bind(onNext: { [weak self] writerName in
+                self?.pageTitleLabel.text = "\(writerName)님의 면접 후기"
+            })
+            .disposed(by: disposeBag)
 
-        output.reviewDetailEntity.asObservable()
-            .bind { [weak self] reviewDetail in
-                self?.pageTitleLabel.text = "\(reviewDetail.writer)님의 면접 후기"
-                self?.questionListDetailStackView.setFieldType(reviewDetail.qnAs)
-            }
+        reactor.state
+            .map { $0.qnAs }
+            .distinctUntilChanged { $0.count == $1.count }
+            .filter { !$0.isEmpty }
+            .bind(onNext: { [weak self] qnAs in
+                self?.questionListDetailStackView.setFieldType(qnAs)
+            })
             .disposed(by: disposeBag)
     }
 

@@ -7,7 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public class CompanyDetailViewController: BaseViewController<CompanyDetailViewModel> {
+public class CompanyDetailViewController: BaseReactorViewController<CompanyDetailReactor> {
     private let companyDetailProfileView = CompanyDetailProfileView()
     public var isTabNavigation: Bool = true
     private let scrollView = UIScrollView().then {
@@ -106,41 +106,50 @@ public class CompanyDetailViewController: BaseViewController<CompanyDetailViewMo
         }
     }
 
-    public override func bind() {
-        let input = CompanyDetailViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            recruitmentButtonDidTap: recruitmentButton.rx.tap.asSignal(),
-            interviewReviewTableViewDidTap: interviewReviewTableView.rx
-                .modelSelected(ReviewEntity.self)
-                .asObservable()
-                .map { ($0.reviewID, $0.writer) }
-                .do(onNext: { _ in
-                    self.isTabNavigation = false
-                })
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher
+            .map { CompanyDetailReactor.Action.fetchCompanyDetail }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        recruitmentButton.rx.tap
+            .map { CompanyDetailReactor.Action.recruitmentButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.companyDetailInfo
-            .bind(onNext: { [weak self] in
+        interviewReviewTableView.rx.modelSelected(ReviewEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.isTabNavigation = false
+            })
+            .map { CompanyDetailReactor.Action.interviewReviewDidSelect($0.reviewID, $0.writer) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .compactMap { $0.companyDetail }
+            .distinctUntilChanged { $0.companyName == $1.companyName }
+            .bind(onNext: { [weak self] detail in
                 self?.companyDetailProfileView.setCompanyProfile(
-                    imageUrl: $0.companyProfileURL,
-                    companyName: $0.companyName,
-                    companyContent: $0.companyIntroduce
+                    imageUrl: detail.companyProfileURL,
+                    companyName: detail.companyName,
+                    companyContent: detail.companyIntroduce
                 )
-                self?.bossLabel.setContent(contentText: $0.representativeName)
-                self?.serviceNameLabel.setContent(contentText: $0.serviceName)
-                self?.startedDayLabel.setContent(contentText: $0.foundedAt)
-                self?.workersNumbersLabel.setContent(contentText: $0.workerNumber)
-                self?.annualSalesLabel.setContent(contentText: $0.take)
-                self?.headAddressLabel.setContent(contentText: $0.mainAddress)
-                self?.businessAreaLabel.setContent(contentText: $0.businessArea)
-                self?.viewModel.recruitmentID = $0.recruitmentID
-                self?.recruitmentButton.isHidden = $0.recruitmentID == nil
+                self?.bossLabel.setContent(contentText: detail.representativeName)
+                self?.serviceNameLabel.setContent(contentText: detail.serviceName)
+                self?.startedDayLabel.setContent(contentText: detail.foundedAt)
+                self?.workersNumbersLabel.setContent(contentText: detail.workerNumber)
+                self?.annualSalesLabel.setContent(contentText: detail.take)
+                self?.headAddressLabel.setContent(contentText: detail.mainAddress)
+                self?.businessAreaLabel.setContent(contentText: detail.businessArea)
+                self?.recruitmentButton.isHidden = detail.recruitmentID == nil
             })
             .disposed(by: disposeBag)
 
-        output.reviewListInfo.asObservable()
+        reactor.state
+            .map { $0.reviewList }
+            .distinctUntilChanged()
             .bind(to: interviewReviewTableView.rx.items(
                 cellIdentifier: InterviewReviewTableViewCell.identifier,
                 cellType: InterviewReviewTableViewCell.self

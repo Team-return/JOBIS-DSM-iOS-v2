@@ -5,7 +5,7 @@ import Domain
 import DesignSystem
 import RxSwift
 
-final class InterviewReviewTableViewCell: BaseTableViewCell<CompanyDetailViewModel> {
+final class InterviewReviewTableViewCell: BaseTableViewCell<ReviewEntity> {
     static let identifier = "InterviewReviewTableViewCell"
 
     public var interviewReviewID: Int?
@@ -70,7 +70,7 @@ final class InterviewReviewTableViewCell: BaseTableViewCell<CompanyDetailViewMod
         self.selectionStyle = .none
     }
 
-    public func adapt(model: ReviewEntity) {
+    public override func adapt(model: ReviewEntity) {
         interviewReviewLabel.setJobisText(
             model.writer + "님의 후기",
             font: .subHeadLine,

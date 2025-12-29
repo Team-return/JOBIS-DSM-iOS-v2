@@ -17,7 +17,6 @@ public final class PrivacyReactor: BaseReactor, Reactor {
     public enum Mutation {
         case setSignupButtonEnabled(Bool)
         case setSignupError(String?)
-        case navigateToTabs
     }
 
     public struct State {
@@ -83,7 +82,10 @@ public final class PrivacyReactor: BaseReactor, Reactor {
                         profileImageURL: profileImageURL
                     )
                 )
-                .andThen(Observable<Mutation>.just(.navigateToTabs))
+                .andThen(Observable<Mutation>.empty())
+                .do(onCompleted: { [weak self] in
+                    self?.steps.accept(PrivacyStep.tabsIsRequired)
+                })
                 .catch { error in
                     if let appError = error as? ApplicationsError {
                         switch appError {
@@ -112,9 +114,6 @@ public final class PrivacyReactor: BaseReactor, Reactor {
 
         case let .setSignupError(error):
             newState.signupError = error
-
-        case .navigateToTabs:
-            steps.accept(PrivacyStep.tabsIsRequired)
         }
 
         return newState

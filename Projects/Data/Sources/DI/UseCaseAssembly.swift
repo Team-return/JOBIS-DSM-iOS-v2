@@ -17,8 +17,8 @@ public final class UseCaseAssembly: Assembly {
                 authRepository: resolver.resolve(AuthRepository.self)!
             )
         }
-        container.register(ReissueTokenUaseCase.self) { resolver in
-            ReissueTokenUaseCase(
+        container.register(ReissueTokenUseCase.self) { resolver in
+            ReissueTokenUseCase(
                 authRepository: resolver.resolve(AuthRepository.self)!
             )
         }
@@ -51,8 +51,8 @@ public final class UseCaseAssembly: Assembly {
                 studentsRepository: reslover.resolve(StudentsRepository.self)!
             )
         }
-        container.register(CompareCurrentPassswordUseCase.self) { reslover in
-            CompareCurrentPassswordUseCase(
+        container.register(CompareCurrentPasswordUseCase.self) { reslover in
+            CompareCurrentPasswordUseCase(
                 studentsRepository: reslover.resolve(StudentsRepository.self)!
             )
         }

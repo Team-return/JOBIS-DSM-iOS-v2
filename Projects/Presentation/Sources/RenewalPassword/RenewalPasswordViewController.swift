@@ -6,8 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class RenewalPasswordViewController: BaseViewController<RenewalPasswordViewModel> {
-    public var email: String?
+public final class RenewalPasswordViewController: BaseReactorViewController<RenewalPasswordReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText(
             "새로 사용할\n비밀번호를 입력해주세요",
@@ -35,6 +34,7 @@ public final class RenewalPasswordViewController: BaseViewController<RenewalPass
         $0.setText("완료")
         $0.isEnabled = false
     }
+
     public override func addView() {
         [
             titleLabel,
@@ -66,38 +66,44 @@ public final class RenewalPasswordViewController: BaseViewController<RenewalPass
         }
     }
 
-    public override func bind() {
-        guard let email else { return }
-        let input = RenewalPasswordViewModel.Input(
-            email: email,
-            newPassword: newPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            checkNewPassword: checkNewPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            changePasswordButtonDidTap: changePasswordButtonDidTap.rx.tap.asSignal()
-        )
-
-        let output = viewModel.transform(input)
-        output.passwordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.newPasswordTextField.setDescription(description)
-            }
+    public override func bindAction() {
+        newPasswordTextField.textField.rx.text.orEmpty
+            .map { RenewalPasswordReactor.Action.updateNewPassword($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.checkingPasswordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.checkNewPasswordTextField.setDescription(description)
-            }
+        checkNewPasswordTextField.textField.rx.text.orEmpty
+            .map { RenewalPasswordReactor.Action.updateCheckNewPassword($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.changePasswordButtonIsEnable.asObservable()
-            .bind { [weak self] isEnable in
-                self?.changePasswordButtonDidTap.isEnabled = isEnable
-            }
+        changePasswordButtonDidTap.rx.tap
+            .map { RenewalPasswordReactor.Action.changePasswordButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
 
-    public override func configureViewController() {
+    public override func bindState() {
+        reactor.state.map { $0.passwordError }
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] error in
+                self?.newPasswordTextField.setDescription(error)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.checkPasswordError }
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] error in
+                self?.checkNewPasswordTextField.setDescription(error)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: changePasswordButtonDidTap.rx.isEnabled)
+            .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {

@@ -22,7 +22,6 @@ public final class SearchRecruitmentReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case viewWillAppear
         case loadMoreRecruitments
         case searchButtonDidTap(String)
         case bookmarkButtonDidTap(Int)
@@ -35,7 +34,6 @@ public final class SearchRecruitmentReactor: BaseReactor, Stepper {
         case incrementPageCount
         case resetPageCount
         case setSearchText(String?)
-        case navigateToDetail(Int)
     }
 
     public struct State {
@@ -48,17 +46,6 @@ public final class SearchRecruitmentReactor: BaseReactor, Stepper {
 extension SearchRecruitmentReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewWillAppear:
-            guard let searchText = currentState.searchText else {
-                return .empty()
-            }
-            return .concat([
-                .just(.resetPageCount),
-                fetchRecruitmentListUseCase.execute(page: 1, name: searchText)
-                    .asObservable()
-                    .map { Mutation.setRecruitmentList($0) }
-            ])
-
         case .loadMoreRecruitments:
             let nextPage = currentState.pageCount + 1
             guard let searchText = currentState.searchText else {
@@ -89,7 +76,8 @@ extension SearchRecruitmentReactor {
                 .flatMap { _ in Observable<Mutation>.empty() }
 
         case let .recruitmentDidSelect(id):
-            return .just(.navigateToDetail(id))
+            steps.accept(SearchRecruitmentStep.recruitmentDetailIsRequired(id: id))
+            return .empty()
         }
     }
 
@@ -110,9 +98,6 @@ extension SearchRecruitmentReactor {
 
         case let .setSearchText(text):
             newState.searchText = text
-
-        case let .navigateToDetail(id):
-            steps.accept(SearchRecruitmentStep.recruitmentDetailIsRequired(id: id))
         }
         return newState
     }

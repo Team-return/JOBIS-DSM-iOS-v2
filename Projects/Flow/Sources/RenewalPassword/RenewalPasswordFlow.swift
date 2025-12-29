@@ -11,17 +11,18 @@ public final class RenewalPasswordFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, email: String) {
         self.container = container
-        self.rootViewController = container.resolve(RenewalPasswordViewController.self)!
+        let reactor = container.resolve(RenewalPasswordReactor.self, argument: email)!
+        self.rootViewController = RenewalPasswordViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? RenewalPasswordStep else { return .none }
 
         switch step {
-        case let .renewalPasswordIsRequired(email):
-            return navigateToRenewalPassword(email: email)
+        case .renewalPasswordIsRequired:
+            return navigateToRenewalPassword()
 
         case .tabsIsRequired:
             return navigateToTab()
@@ -30,12 +31,10 @@ public final class RenewalPasswordFlow: Flow {
 }
 
 private extension RenewalPasswordFlow {
-    func navigateToRenewalPassword(email: String) -> FlowContributors {
-        rootViewController.email = email
-
+    func navigateToRenewalPassword() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 

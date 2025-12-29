@@ -30,7 +30,7 @@ private extension AlarmFlow {
     func navigateToAlarm() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

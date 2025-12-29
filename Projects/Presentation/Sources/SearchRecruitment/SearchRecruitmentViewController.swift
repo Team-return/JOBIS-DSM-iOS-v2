@@ -75,12 +75,6 @@ public final class SearchRecruitmentViewController: BaseReactorViewController<Se
     }
 
     public override func bindAction() {
-        viewWillAppearPublisher
-            .skip(1)
-            .map { SearchRecruitmentReactor.Action.viewWillAppear }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
         searchTableView.rx.willDisplayCell
             .filter {
                 $0.indexPath.row == self.searchTableView.numberOfRows(inSection: $0.indexPath.section) - 1

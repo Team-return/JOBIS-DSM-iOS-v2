@@ -39,7 +39,7 @@ private extension EmployStatusFlow {
     func navigateToEmployStatus() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -47,36 +47,25 @@ private extension EmployStatusFlow {
         let viewController = container.resolve(ClassEmploymentViewController.self, arguments: classNumber, year)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
 
-        guard let stepper = viewController.viewModel as? Stepper else {
-            return .none
-        }
         return .one(flowContributor: .contribute(
             withNextPresentable: viewController,
-            withNextStepper: stepper
+            withNextStepper: viewController.reactor
         ))
     }
 
     func navigateToEmploymentFilter(currentYear: Int) -> FlowContributors {
         let viewController = container.resolve(EmploymentFilterViewController.self)!
-        if let viewModel = viewController.viewModel as? EmploymentFilterViewModel {
-            viewModel.currentYear = currentYear
-        }
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
 
-        guard let stepper = viewController.viewModel as? Stepper else {
-            return .none
-        }
         return .one(flowContributor: .contribute(
             withNextPresentable: viewController,
-            withNextStepper: stepper
+            withNextStepper: viewController.reactor
         ))
     }
 
     func applyYearFilter(year: Int) -> FlowContributors {
         rootViewController.navigationController?.popViewController(animated: true)
-        if let employStatusViewModel = rootViewController.viewModel as? EmployStatusViewModel {
-            employStatusViewModel.updateYear(year)
-        }
+        rootViewController.reactor.updateYear(year)
         return .none
     }
 }

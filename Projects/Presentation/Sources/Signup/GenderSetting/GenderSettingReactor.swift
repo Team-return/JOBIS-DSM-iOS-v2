@@ -14,7 +14,6 @@ public final class GenderSettingReactor: BaseReactor, Reactor {
 
     public enum Mutation {
         case setGender(GenderType)
-        case navigateToProfileSetting(name: String, gcn: Int, email: String, password: String, isMan: Bool)
     }
 
     public struct State {
@@ -54,13 +53,15 @@ public final class GenderSettingReactor: BaseReactor, Reactor {
             let password = currentState.password
             let isMan = gender == .man
 
-            return .just(.navigateToProfileSetting(
+            steps.accept(GenderSettingStep.profileSettingIsRequired(
                 name: name,
                 gcn: gcn,
                 email: email,
                 password: password,
                 isMan: isMan
             ))
+
+            return .empty()
         }
     }
 
@@ -71,15 +72,6 @@ public final class GenderSettingReactor: BaseReactor, Reactor {
         case let .setGender(gender):
             newState.gender = gender
             newState.isNextButtonEnabled = true
-
-        case let .navigateToProfileSetting(name, gcn, email, password, isMan):
-            steps.accept(GenderSettingStep.profileSettingIsRequired(
-                name: name,
-                gcn: gcn,
-                email: email,
-                password: password,
-                isMan: isMan
-            ))
         }
 
         return newState

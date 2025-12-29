@@ -20,7 +20,6 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
         case setGCN(String)
         case setNameError(DescriptionType?)
         case setGCNError(DescriptionType?)
-        case navigateToVerifyEmail(name: String, gcn: Int)
     }
 
     public struct State {
@@ -57,12 +56,19 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
                 return .just(.setGCNError(.error(description: "학번을 입력해주세요")))
             }
 
+            guard let gcnInt = Int(gcn) else {
+                return .just(.setGCNError(.error(description: "올바른 학번을 입력해주세요.")))
+            }
+
             return .concat([
                 .just(.setNameError(nil)),
                 .just(.setGCNError(nil)),
                 studentExistsUseCase.execute(gcn: gcn, name: name)
                     .andThen(Observable<Mutation>.empty())
-                    .catch { [weak self] error in
+                    .do(onCompleted: { [weak self] in
+                        self?.steps.accept(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: gcnInt))
+                    })
+                    .catch { error in
                         if let appError = error as? ApplicationsError {
                             switch appError {
                             case .conflict:
@@ -75,11 +81,7 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
                                 return .just(.setGCNError(.error(description: "서버 오류가 발생했어요.")))
                             }
                         }
-
-                        guard let gcnInt = Int(gcn) else {
-                            return .just(.setGCNError(.error(description: "올바른 학번을 입력해주세요.")))
-                        }
-                        return .just(.navigateToVerifyEmail(name: name, gcn: gcnInt))
+                        return .empty()
                     }
             ])
         }
@@ -100,9 +102,6 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
 
         case let .setGCNError(error):
             newState.gcnErrorDescription = error
-
-        case let .navigateToVerifyEmail(name, gcn):
-            steps.accept(InfoSettingStep.verifyEmailIsRequired(name: name, gcn: gcn))
         }
 
         return newState

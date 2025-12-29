@@ -8,14 +8,14 @@ public final class AuthPresentationAssembly: Assembly {
 
     public func assemble(container: Container) {
         // Onboarding
-        container.register(OnboardingViewModel.self) { resolver in
-            OnboardingViewModel(
-                reissueTokenUaseCase: resolver.resolve(ReissueTokenUaseCase.self)!,
+        container.register(OnboardingReactor.self) { resolver in
+            OnboardingReactor(
+                reissueTokenUseCase: resolver.resolve(ReissueTokenUseCase.self)!,
                 fetchServerStatusUseCase: resolver.resolve(FetchServerStatusUseCase.self)!
             )
         }
         container.register(OnboardingViewController.self) { resolver in
-            OnboardingViewController(resolver.resolve(OnboardingViewModel.self)!)
+            OnboardingViewController(resolver.resolve(OnboardingReactor.self)!)
         }
 
         // Info Setting
@@ -107,24 +107,22 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Confirm Email
-        container.register(ConfirmEmailViewModel.self) { resolver in
-            ConfirmEmailViewModel(
+        container.register(ConfirmEmailReactor.self) { resolver in
+            ConfirmEmailReactor(
                 sendAuthCodeUseCase: resolver.resolve(SendAuthCodeUseCase.self)!,
                 verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
             )
         }
         container.register(ConfirmEmailViewController.self) { resolver in
-            ConfirmEmailViewController(resolver.resolve(ConfirmEmailViewModel.self)!)
+            ConfirmEmailViewController(resolver.resolve(ConfirmEmailReactor.self)!)
         }
 
         // Password Renewal
-        container.register(RenewalPasswordViewModel.self) { resolver in
-            RenewalPasswordViewModel(
-                renewalPasswordUseCase: resolver.resolve(RenewalPasswordUseCase.self)!
+        container.register(RenewalPasswordReactor.self) { (resolver, email: String) in
+            RenewalPasswordReactor(
+                renewalPasswordUseCase: resolver.resolve(RenewalPasswordUseCase.self)!,
+                email: email
             )
-        }
-        container.register(RenewalPasswordViewController.self) { resolver in
-            RenewalPasswordViewController(resolver.resolve(RenewalPasswordViewModel.self)!)
         }
     }
 }

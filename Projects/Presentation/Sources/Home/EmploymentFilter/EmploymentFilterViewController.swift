@@ -5,8 +5,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class EmploymentFilterViewController: BaseViewController<EmploymentFilterViewModel> {
+public final class EmploymentFilterViewController: BaseReactorViewController<EmploymentFilterReactor> {
     private let selectedYearRelay = BehaviorRelay<String?>(value: nil)
 
     private let scrollView = UIScrollView()
@@ -61,11 +62,26 @@ public final class EmploymentFilterViewController: BaseViewController<Employment
         }
     }
 
-    public override func bind() {
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { EmploymentFilterReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterApplyButton.rx.tap
+            .withLatestFrom(selectedYearRelay.asObservable())
+            .compactMap { $0 }
+            .map { Int($0) ?? Calendar.current.component(.year, from: Date()) }
+            .map { EmploymentFilterReactor.Action.applyButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
         let years = ["2025", "2024"]
         yearStackView.setYears(years)
 
-        let currentYear = viewModel.currentYear
+        let currentYear = reactor.currentState.currentYear
         selectedYearRelay.accept(String(currentYear))
         if let index = years.firstIndex(of: String(currentYear)) {
             yearStackView.setInitialSelection(at: index)
@@ -74,17 +90,6 @@ public final class EmploymentFilterViewController: BaseViewController<Employment
         yearStackView.selectedYearObservable
             .bind(to: selectedYearRelay)
             .disposed(by: disposeBag)
-
-        let input = EmploymentFilterViewModel.Input(
-            viewAppear: viewWillAppearPublisher,
-            applyButtonDidTap: filterApplyButton.rx.tap
-                .withLatestFrom(selectedYearRelay.asObservable())
-                .compactMap { $0 }
-                .map { Int($0) ?? Calendar.current.component(.year, from: Date()) }
-                .asSignal(onErrorJustReturn: Calendar.current.component(.year, from: Date()))
-        )
-
-        let output = viewModel.transform(input)
     }
 
     public override func configureNavigation() {

@@ -12,7 +12,7 @@ public final class NoticeDetailReactor: BaseReactor, Stepper {
     private let fetchNoticeDetailUseCase: FetchNoticeDetailUseCase
     public let noticeID: Int
 
-    init(
+    public init(
         noticeID: Int,
         fetchNoticeDetailUseCase: FetchNoticeDetailUseCase
     ) {

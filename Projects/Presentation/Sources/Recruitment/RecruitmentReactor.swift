@@ -36,9 +36,6 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case updateBookmark(Int)
         case incrementPageCount
         case resetPageCount
-        case navigateToDetail(Int)
-        case navigateToSearch
-        case navigateToFilter
         case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
         case setLoading(Bool)
     }
@@ -105,13 +102,16 @@ extension RecruitmentReactor {
             ])
 
         case let .recruitmentDidSelect(id):
-            return .just(.navigateToDetail(id))
+            steps.accept(RecruitmentStep.recruitmentDetailIsRequired(recruitmentId: id))
+            return .empty()
 
         case .searchButtonDidTap:
-            return .just(.navigateToSearch)
+            steps.accept(RecruitmentStep.searchRecruitmentIsRequired)
+            return .empty()
 
         case .filterButtonDidTap:
-            return .just(.navigateToFilter)
+            steps.accept(RecruitmentStep.recruitmentFilterIsRequired)
+            return .empty()
 
         case let .updateFilterOptions(jobCode, techCode, years, status):
             return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status))
@@ -141,15 +141,6 @@ extension RecruitmentReactor {
 
         case .resetPageCount:
             newState.pageCount = 1
-
-        case let .navigateToDetail(id):
-            steps.accept(RecruitmentStep.recruitmentDetailIsRequired(recruitmentId: id))
-
-        case .navigateToSearch:
-            steps.accept(RecruitmentStep.searchRecruitmentIsRequired)
-
-        case .navigateToFilter:
-            steps.accept(RecruitmentStep.recruitmentFilterIsRequired)
 
         case let .setFilterOptions(jobCode, techCode, years, status):
             newState.jobCode = jobCode

@@ -6,10 +6,9 @@ import Then
 import Core
 import Domain
 import DesignSystem
+import ReactorKit
 
-public final class ClassEmploymentViewController: BaseViewController<ClassEmploymentViewModel> {
-    private let classNumber: Int
-    private let year: Int
+public final class ClassEmploymentViewController: BaseReactorViewController<ClassEmploymentReactor> {
     private let companyCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: ClassEmploymentCollectionViewLayout()
@@ -24,16 +23,6 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
         $0.textAlignment = .center
     }
     private let companyDataRelay = BehaviorRelay<[EmploymentCompany?]>(value: Array(repeating: nil, count: 16))
-
-    public init(viewModel: ClassEmploymentViewModel, classNumber: Int, year: Int) {
-        self.classNumber = classNumber
-        self.year = year
-        super.init(viewModel)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     public override func addView() {
         [
@@ -54,7 +43,14 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
         }
     }
 
-    public override func bind() {
+    public override func bindAction() {
+        viewDidLoadPublisher.asObservable()
+            .map { ClassEmploymentReactor.Action.fetchClassEmployment }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
         companyDataRelay
             .asDriver()
             .drive(companyCollectionView.rx.items(
@@ -65,14 +61,10 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
             }
             .disposed(by: disposeBag)
 
-        let input = ClassEmploymentViewModel.Input(
-            viewAppear: viewWillAppearPublisher
-        )
-
-        let output = viewModel.transform(input)
-
-        output.classInfo
-            .drive(onNext: { [weak self] info in
+        reactor.state
+            .map { $0.classInfo }
+            .skip(1)
+            .bind(onNext: { [weak self] info in
                 self?.updateUI(with: info)
             })
             .disposed(by: disposeBag)
@@ -101,6 +93,7 @@ public final class ClassEmploymentViewController: BaseViewController<ClassEmploy
     }
 
     public override func configureNavigation() {
+        let classNumber = reactor.currentState.classNumber
         let title = ClassCategory(rawValue: classNumber)?.title
         setSmallTitle(title: title ?? "\(classNumber)반")
     }

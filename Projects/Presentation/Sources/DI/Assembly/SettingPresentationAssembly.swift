@@ -35,10 +35,10 @@ public final class SettingPresentationAssembly: Assembly {
 
         // Alarm
         container.register(AlarmViewController.self) { resolver in
-            AlarmViewController(resolver.resolve(AlarmViewModel.self)!)
+            AlarmViewController(resolver.resolve(AlarmReactor.self)!)
         }
-        container.register(AlarmViewModel.self) { resolver in
-            AlarmViewModel(
+        container.register(AlarmReactor.self) { resolver in
+            AlarmReactor(
                 fetchNotificationListUseCase: resolver.resolve(FetchNotificationListUseCase.self)!,
                 readNotificationUseCase: resolver.resolve(ReadNotificationUseCase.self)!
             )
@@ -88,13 +88,13 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Confirm Password
-        container.register(ConfirmPasswordViewModel.self) { resolver in
-            ConfirmPasswordViewModel(
-                compareCurrentPassswordUseCase: resolver.resolve(CompareCurrentPassswordUseCase.self)!
+        container.register(ConfirmPasswordReactor.self) { resolver in
+            ConfirmPasswordReactor(
+                compareCurrentPasswordUseCase: resolver.resolve(CompareCurrentPasswordUseCase.self)!
             )
         }
         container.register(ConfirmPasswordViewController.self) { resolver in
-            ConfirmPasswordViewController(resolver.resolve(ConfirmPasswordViewModel.self)!)
+            ConfirmPasswordViewController(resolver.resolve(ConfirmPasswordReactor.self)!)
         }
 
         // Change Password

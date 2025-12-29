@@ -19,7 +19,6 @@ public final class PasswordSettingReactor: BaseReactor, Reactor {
         case setCheckingPassword(String)
         case setPasswordError(DescriptionType?)
         case setCheckingPasswordError(DescriptionType?)
-        case navigateToGenderSetting(name: String, gcn: Int, email: String, password: String)
     }
 
     public struct State {
@@ -71,10 +70,16 @@ public final class PasswordSettingReactor: BaseReactor, Reactor {
                 return .just(.setCheckingPasswordError(.error(description: "비밀번호가 동일하지 않아요.")))
             }
 
+            steps.accept(PasswordSettingStep.genderSettingIsRequired(
+                name: name,
+                gcn: gcn,
+                email: email,
+                password: password
+            ))
+
             return .concat([
                 .just(.setPasswordError(nil)),
-                .just(.setCheckingPasswordError(nil)),
-                .just(.navigateToGenderSetting(name: name, gcn: gcn, email: email, password: password))
+                .just(.setCheckingPasswordError(nil))
             ])
         }
     }
@@ -94,14 +99,6 @@ public final class PasswordSettingReactor: BaseReactor, Reactor {
 
         case let .setCheckingPasswordError(error):
             newState.checkingPasswordErrorDescription = error
-
-        case let .navigateToGenderSetting(name, gcn, email, password):
-            steps.accept(PasswordSettingStep.genderSettingIsRequired(
-                name: name,
-                gcn: gcn,
-                email: email,
-                password: password
-            ))
         }
 
         return newState

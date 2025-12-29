@@ -11,9 +11,9 @@ public final class InterviewReviewDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, reviewId: String) {
         self.container = container
-        self.rootViewController = container.resolve(InterviewReviewDetailViewController.self)!
+        self.rootViewController = container.resolve(InterviewReviewDetailViewController.self, argument: reviewId)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -30,7 +30,7 @@ private extension InterviewReviewDetailFlow {
     func navigateToInterviewReviewDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 }

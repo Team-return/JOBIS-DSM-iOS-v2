@@ -47,15 +47,14 @@ private extension ReviewFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: reviewViewController,
-            withNextStepper: reviewViewController.viewModel
+            withNextStepper: reviewViewController.reactor
         ))
     }
 
     func navigateToReviewDetail(_ reviewID: String) -> FlowContributors {
-        let reviewDetailFlow = ReviewDetailFlow(container: container)
+        let reviewDetailFlow = ReviewDetailFlow(container: container, reviewId: reviewID)
 
         Flows.use(reviewDetailFlow, when: .created) { [weak self] (view: ReviewDetailViewController) in
-            view.viewModel.reviewID = reviewID
             view.isPopViewController = { [weak nav = self?.rootViewController] _ in
                 let popView = nav?.topViewController as? ReviewViewController
                 popView?.isTabNavigation = false

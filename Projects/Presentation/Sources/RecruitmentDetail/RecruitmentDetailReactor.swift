@@ -42,8 +42,6 @@ public final class RecruitmentDetailReactor: BaseReactor, Stepper {
 
     public enum Mutation {
         case setRecruitmentDetail(RecruitmentDetailEntity)
-        case navigateToCompanyDetail
-        case navigateToApply(id: Int, name: String, imageURL: String)
     }
 
     public struct State {
@@ -66,10 +64,11 @@ extension RecruitmentDetailReactor {
                 .map { Mutation.setRecruitmentDetail($0) }
 
         case .companyDetailButtonDidTap:
-            guard currentState.companyId != nil else {
+            guard let companyId = currentState.companyId else {
                 return .empty()
             }
-            return .just(.navigateToCompanyDetail)
+            steps.accept(RecruitmentDetailStep.companyDetailIsRequired(id: companyId))
+            return .empty()
 
         case .bookmarkButtonDidTap:
             guard let recruitmentID = currentState.recruitmentID else {
@@ -84,11 +83,12 @@ extension RecruitmentDetailReactor {
             guard let detail = currentState.recruitmentDetail else {
                 return .empty()
             }
-            return .just(.navigateToApply(
+            steps.accept(RecruitmentDetailStep.applyIsRequired(
                 id: detail.recruitmentID,
                 name: detail.companyName,
                 imageURL: detail.companyProfileURL
             ))
+            return .empty()
         }
     }
 
@@ -98,19 +98,6 @@ extension RecruitmentDetailReactor {
         case let .setRecruitmentDetail(detail):
             newState.recruitmentDetail = detail
             newState.companyId = detail.companyID
-
-        case .navigateToCompanyDetail:
-            guard let companyId = state.companyId else { return newState }
-            steps.accept(RecruitmentDetailStep.companyDetailIsRequired(
-                id: companyId
-            ))
-
-        case let .navigateToApply(id, name, imageURL):
-            steps.accept(RecruitmentDetailStep.applyIsRequired(
-                id: id,
-                name: name,
-                imageURL: imageURL
-            ))
         }
         return newState
     }

@@ -33,17 +33,18 @@ private extension ReviewFilterFlow {
     func navigateToReviewFilter() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func popToReview(code: String, years: [String]?, type: String?, location: String?) -> FlowContributors {
         let reviewPopView = self.rootViewController.navigationController?.viewControllers.first as? ReviewViewController
 
-        reviewPopView?.viewModel.code = code
-        reviewPopView?.viewModel.years = years ?? []
-        reviewPopView?.viewModel.type = type ?? ""
-        reviewPopView?.viewModel.location = location ?? ""
+        // Update filter options via reactor action
+        reviewPopView?.reactor.action.onNext(
+            .updateFilterOptions(code: code, years: years ?? [], type: type ?? "", location: location ?? "")
+        )
+        reviewPopView?.reactor.action.onNext(.fetchReviewList)
 
         self.rootViewController.navigationController?.popViewController(animated: true)
 

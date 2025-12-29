@@ -8,10 +8,10 @@ public final class MainPresentationAssembly: Assembly {
 
     public func assemble(container: Container) {
         container.register(HomeViewController.self) { resolver in
-            HomeViewController(resolver.resolve(HomeViewModel.self)!)
+            HomeViewController(resolver.resolve(HomeReactor.self)!)
         }
-        container.register(HomeViewModel.self) { resolver in
-            HomeViewModel(
+        container.register(HomeReactor.self) { resolver in
+            HomeReactor(
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
                 fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
@@ -74,34 +74,35 @@ public final class MainPresentationAssembly: Assembly {
 
         // Review List
         container.register(ReviewViewController.self) { resolver in
-            ReviewViewController(resolver.resolve(ReviewViewModel.self)!)
+            ReviewViewController(resolver.resolve(ReviewReactor.self)!)
         }
-        container.register(ReviewViewModel.self) { resolver in
-            ReviewViewModel(
+        container.register(ReviewReactor.self) { resolver in
+            ReviewReactor(
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
 
         // Review Detail
-        container.register(ReviewDetailViewController.self) { resolver in
-            ReviewDetailViewController(
-                resolver.resolve(ReviewDetailViewModel.self)!
+        container.register(ReviewDetailReactor.self) { (resolver, reviewId: String) in
+            ReviewDetailReactor(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!,
+                reviewId: reviewId
             )
         }
-        container.register(ReviewDetailViewModel.self) { resolver in
-            ReviewDetailViewModel(
-                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+        container.register(ReviewDetailViewController.self) { (resolver, reviewId: String) in
+            ReviewDetailViewController(
+                resolver.resolve(ReviewDetailReactor.self, argument: reviewId)!
             )
         }
 
         // Search Review List
         container.register(SearchReviewViewController.self) { resolver in
             SearchReviewViewController(
-                resolver.resolve(SearchReviewViewModel.self)!
+                resolver.resolve(SearchReviewReactor.self)!
             )
         }
-        container.register(SearchReviewViewModel.self) { resolver in
-            SearchReviewViewModel(
+        container.register(SearchReviewReactor.self) { resolver in
+            SearchReviewReactor(
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
             )
         }
@@ -109,11 +110,11 @@ public final class MainPresentationAssembly: Assembly {
         // Review Filter
         container.register(ReviewFilterViewController.self) { resolver in
             ReviewFilterViewController(
-                resolver.resolve(ReviewFilterViewModel.self)!
+                resolver.resolve(ReviewFilterReactor.self)!
             )
         }
-        container.register(ReviewFilterViewModel.self) { resolver in
-            ReviewFilterViewModel(
+        container.register(ReviewFilterReactor.self) { resolver in
+            ReviewFilterReactor(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
             )
         }
@@ -131,14 +132,33 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Apply
-        container.register(ApplyViewModel.self) { resolver in
-            ApplyViewModel(
+        container.register(ApplyReactor.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
+            ApplyReactor(
                 applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
-                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!,
+                recruitmentId: recruitmentId,
+                applicationId: applicationId,
+                companyName: companyName,
+                companyImageURL: companyImageURL,
+                applyType: applyType
             )
         }
-        container.register(ApplyViewController.self) { resolver in
-            ApplyViewController(resolver.resolve(ApplyViewModel.self)!)
+        container.register(ApplyViewController.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
+            ApplyViewController(resolver.resolve(ApplyReactor.self, arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType)!)
         }
 
         // Company
@@ -152,24 +172,26 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Company Detail
-        container.register(CompanyDetailViewModel.self) { resolver in
-            CompanyDetailViewModel(
+        container.register(CompanyDetailReactor.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+            CompanyDetailReactor(
                 fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!,
-                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!,
+                companyId: companyId,
+                type: type
             )
         }
-        container.register(CompanyDetailViewController.self) { resolver in
-            CompanyDetailViewController(resolver.resolve(CompanyDetailViewModel.self)!)
+        container.register(CompanyDetailViewController.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+            CompanyDetailViewController(resolver.resolve(CompanyDetailReactor.self, arguments: companyId, type)!)
         }
 
         // Search Company
         container.register(SearchCompanyViewController.self) { resolver in
             SearchCompanyViewController(
-                resolver.resolve(SearchCompanyViewModel.self)!
+                resolver.resolve(SearchCompanyReactor.self)!
             )
         }
-        container.register(SearchCompanyViewModel.self) { resolver in
-            SearchCompanyViewModel(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        container.register(SearchCompanyReactor.self) { resolver in
+            SearchCompanyReactor(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
         }
 
         // Review
@@ -201,23 +223,24 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Interview Review Detail
-        container.register(InterviewReviewDetailViewModel.self) { resolver in
-            InterviewReviewDetailViewModel(
-                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!
+        container.register(InterviewReviewDetailReactor.self) { (resolver, reviewId: String) in
+            InterviewReviewDetailReactor(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!,
+                reviewId: reviewId
             )
         }
-        container.register(InterviewReviewDetailViewController.self) { resolver in
-            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailViewModel.self)!)
+        container.register(InterviewReviewDetailViewController.self) { (resolver, reviewId: String) in
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailReactor.self, argument: reviewId)!)
         }
 
         // Winter Intern
         container.register(WinterInternViewController.self) { resolver in
             WinterInternViewController(
-                resolver.resolve(WinterInternVieModel.self)!
+                resolver.resolve(WinterInternReactor.self)!
             )
         }
-        container.register(WinterInternVieModel.self) { resolver in
-            WinterInternVieModel(
+        container.register(WinterInternReactor.self) { resolver in
+            WinterInternReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
@@ -237,11 +260,11 @@ public final class MainPresentationAssembly: Assembly {
         // Employ Status
         container.register(EmployStatusViewController.self) { resolver in
             EmployStatusViewController(
-                resolver.resolve(EmployStatusViewModel.self)!
+                resolver.resolve(EmployStatusReactor.self)!
             )
         }
-        container.register(EmployStatusViewModel.self) { resolver in
-            EmployStatusViewModel(
+        container.register(EmployStatusReactor.self) { resolver in
+            EmployStatusReactor(
                 fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
         }
@@ -249,13 +272,11 @@ public final class MainPresentationAssembly: Assembly {
         // Class Employment
         container.register(ClassEmploymentViewController.self) { (resolver, classNumber: Int, year: Int) in
             ClassEmploymentViewController(
-                viewModel: resolver.resolve(ClassEmploymentViewModel.self, arguments: classNumber, year)!,
-                classNumber: classNumber,
-                year: year
+                resolver.resolve(ClassEmploymentReactor.self, arguments: classNumber, year)!
             )
         }
-        container.register(ClassEmploymentViewModel.self) { (resolver, classNumber: Int, year: Int) in
-            ClassEmploymentViewModel(
+        container.register(ClassEmploymentReactor.self) { (resolver, classNumber: Int, year: Int) in
+            ClassEmploymentReactor(
                 fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
                 classNumber: classNumber,
                 year: year
@@ -265,11 +286,11 @@ public final class MainPresentationAssembly: Assembly {
         // Employment Filter
         container.register(EmploymentFilterViewController.self) { resolver in
             EmploymentFilterViewController(
-                resolver.resolve(EmploymentFilterViewModel.self)!
+                resolver.resolve(EmploymentFilterReactor.self)!
             )
         }
-        container.register(EmploymentFilterViewModel.self) { resolver in
-            EmploymentFilterViewModel()
+        container.register(EmploymentFilterReactor.self) { resolver in
+            EmploymentFilterReactor()
         }
 
         // Easter Egg
@@ -288,9 +309,34 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Reject Reason
-        container.register(RejectReasonViewModel.self) { resolver in
-            RejectReasonViewModel(
-                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!
+        container.register(RejectReasonReactor.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonReactor(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!,
+                applicationID: applicationID,
+                recruitmentID: recruitmentID,
+                companyName: companyName,
+                companyImageUrl: companyImageUrl
+            )
+        }
+        container.register(RejectReasonViewController.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonViewController(
+                resolver.resolve(
+                    RejectReasonReactor.self,
+                    arguments: applicationID, recruitmentID, companyName, companyImageUrl
+                )!,
+                state: .custom(height: 280)
             )
         }
     }
