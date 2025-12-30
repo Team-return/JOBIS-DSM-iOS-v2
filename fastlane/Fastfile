@@ -1,0 +1,83 @@
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    # Ensure we're in the project root
+    Dir.chdir("..") if Dir.pwd.end_with?("/fastlane")
+  end
+
+  desc "Run tests"
+  lane :test do
+    run_tests(
+      workspace: "JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-DEV",
+      devices: ["iPhone 15 Pro"],
+      code_coverage: true,
+      result_bundle: true,
+      output_directory: "./test_output",
+      clean: true
+    )
+  end
+
+  desc "Build for development"
+  lane :build_dev do
+    xcodebuild(
+      workspace: "JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-DEV",
+      configuration: "DEV",
+      clean: true,
+      build: true,
+      destination: "platform=iOS Simulator,name=iPhone 15 Pro",
+      xcargs: "-skipPackagePluginValidation"
+    )
+  end
+
+  desc "Build for staging"
+  lane :build_stage do
+    xcodebuild(
+      workspace: "JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-STAGE",
+      configuration: "STAGE",
+      clean: true,
+      build: true,
+      destination: "platform=iOS Simulator,name=iPhone 15 Pro",
+      xcargs: "-skipPackagePluginValidation"
+    )
+  end
+
+  desc "Build for production"
+  lane :build_prod do
+    build_app(
+      workspace: "JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-PROD",
+      configuration: "PROD",
+      export_method: "app-store",
+      clean: true
+    )
+  end
+
+  desc "Run SwiftLint"
+  lane :lint do
+    swiftlint(
+      mode: :lint,
+      executable: "Pods/SwiftLint/swiftlint",
+      config_file: ".swiftlint.yml",
+      raise_if_swiftlint_error: true
+    )
+  end
+
+  desc "Deploy to TestFlight"
+  lane :beta do
+    increment_build_number(xcodeproj: "Projects/App/JOBIS-DSM-iOS-v2.xcodeproj")
+    build_prod
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "CI Build and Test"
+  lane :ci do
+    build_dev
+    test
+  end
+end

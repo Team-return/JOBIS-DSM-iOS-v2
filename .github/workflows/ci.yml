@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build-and-test:
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.2'
+
+    - name: Cache SPM
+      uses: actions/cache@v4
+      with:
+        path: |
+          .build
+          ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Install Tuist
+      run: |
+        curl -Ls https://install.tuist.io | bash
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+
+    - name: Install dependencies
+      run: |
+        bundle install
+
+    - name: Generate Xcode project with Tuist
+      run: |
+        tuist install
+        tuist generate
+      env:
+        TUIST_CI: "1"
+
+    - name: Run Fastlane CI
+      run: |
+        bundle exec fastlane ci
+      env:
+        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: test_output/
+        retention-days: 30
+
+    - name: Upload code coverage
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        files: test_output/**/*.xcresult
+        fail_ci_if_error: false

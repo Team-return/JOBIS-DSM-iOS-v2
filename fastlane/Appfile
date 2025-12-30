@@ -1,0 +1,7 @@
+app_identifier("com.team.return.JOBIS-DSM-iOS")
+apple_id(ENV["APPLE_ID"])
+team_id(ENV["TEAM_ID"])
+
+for_platform :ios do
+  app_identifier("com.team.return.JOBIS-DSM-iOS")
+end
