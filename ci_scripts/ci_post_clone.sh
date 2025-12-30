@@ -1,22 +1,85 @@
 #!/bin/sh
-cd ../
+
+# Exit on error
+set -e
+
+# Enable debug output
+set -x
+
+# Store the original project directory
+PROJECT_DIR="$(pwd)"
+echo "Project directory: $PROJECT_DIR"
+echo "Directory contents:"
+ls -la
+
+# Move to parent directory
+cd ..
+
+# Clone XCConfig repository
+echo "Cloning JOBIS-v2-XCConfig..."
+if [ -d "JOBIS-v2-XCConfig" ]; then
+    echo "JOBIS-v2-XCConfig already exists, removing..."
+    rm -rf JOBIS-v2-XCConfig
+fi
 git clone https://github.com/Team-return/JOBIS-v2-XCConfig.git
-mv JOBIS-v2-XCConfig/XCConfig/ .
+echo "Moving XCConfig to project root..."
+cp -R JOBIS-v2-XCConfig/XCConfig/ "$PROJECT_DIR/"
+rm -rf JOBIS-v2-XCConfig
 
+# Clone GoogleInfo repository
+echo "Cloning JOBIS-GoogleInfo..."
+if [ -d "JOBIS-GoogleInfo" ]; then
+    echo "JOBIS-GoogleInfo already exists, removing..."
+    rm -rf JOBIS-GoogleInfo
+fi
 git clone https://github.com/Team-return/JOBIS-GoogleInfo.git
-mv JOBIS-GoogleInfo/FireBase/ Projects/App/Resources/
+echo "Moving FireBase config to project..."
+mkdir -p "$PROJECT_DIR/Projects/App/Resources"
+cp -R JOBIS-GoogleInfo/FireBase/ "$PROJECT_DIR/Projects/App/Resources/"
+rm -rf JOBIS-GoogleInfo
 
-brew install make
+# Install make if not already installed
+if ! command -v make &> /dev/null; then
+    echo "Installing make..."
+    brew install make
+else
+    echo "make is already installed"
+fi
 
-curl https://mise.jdx.dev/install.sh | sh
-export PATH="$HOME/.local/bin:$PATH"
-eval "$(mise activate bash --shims)"
+# Install mise
+echo "Installing mise..."
+if ! command -v mise &> /dev/null; then
+    curl -fsSL https://mise.jdx.dev/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+    eval "$(mise activate bash --shims)"
+else
+    echo "mise is already installed"
+    export PATH="$HOME/.local/bin:$PATH"
+    eval "$(mise activate bash --shims)"
+fi
 
+# Install tuist
+echo "Installing tuist@3.40.0..."
 mise install tuist@3.40.0
 
+# Verify tuist installation
+echo "Tuist version:"
 tuist version
 
+# Navigate back to project directory
+echo "Returning to project directory: $PROJECT_DIR"
+cd "$PROJECT_DIR"
+
+# Reset project
+echo "Running make reset..."
 make reset
 
+# Fetch dependencies
+echo "Fetching tuist dependencies..."
 tuist fetch
+
+# Generate project
+echo "Generating Xcode project..."
 TUIST_CI=1 tuist generate
+
+echo "ci_post_clone.sh completed successfully!"
