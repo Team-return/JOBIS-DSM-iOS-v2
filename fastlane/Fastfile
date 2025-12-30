@@ -13,7 +13,7 @@ platform :ios do
     run_tests(
       workspace: WORKSPACE_PATH,
       scheme: "JOBIS-DSM-iOS-v2-DEV",
-      devices: ["iPhone 15 Pro"],
+      destination: "platform=iOS Simulator,name=iPhone 16",
       code_coverage: true,
       result_bundle: true,
       output_directory: TEST_OUTPUT_PATH,
@@ -29,7 +29,7 @@ platform :ios do
       configuration: "DEV",
       clean: true,
       build: true,
-      destination: "platform=iOS Simulator,name=iPhone 15 Pro",
+      destination: "generic/platform=iOS Simulator",
       xcargs: "-skipPackagePluginValidation"
     )
   end
@@ -42,7 +42,7 @@ platform :ios do
       configuration: "STAGE",
       clean: true,
       build: true,
-      destination: "platform=iOS Simulator,name=iPhone 15 Pro",
+      destination: "generic/platform=iOS Simulator",
       xcargs: "-skipPackagePluginValidation"
     )
   end
