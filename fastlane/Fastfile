@@ -27,9 +27,9 @@ platform :ios do
       workspace: WORKSPACE_PATH,
       scheme: "JOBIS-DSM-iOS-v2-DEV",
       configuration: "DEV",
+      sdk: "iphonesimulator",
       clean: true,
       build: true,
-      destination: "generic/platform=iOS Simulator",
       xcargs: "-skipPackagePluginValidation"
     )
   end
@@ -40,9 +40,9 @@ platform :ios do
       workspace: WORKSPACE_PATH,
       scheme: "JOBIS-DSM-iOS-v2-STAGE",
       configuration: "STAGE",
+      sdk: "iphonesimulator",
       clean: true,
       build: true,
-      destination: "generic/platform=iOS Simulator",
       xcargs: "-skipPackagePluginValidation"
     )
   end
