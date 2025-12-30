@@ -30,11 +30,6 @@ jobs:
       with:
         xcode-version: '16.2'
 
-    - name: Install iOS Simulator
-      run: |
-        sudo xcrun simctl list runtimes
-        xcodebuild -downloadPlatform iOS || true
-
     - name: Cache SPM
       uses: actions/cache@v4
       with:
@@ -67,28 +62,5 @@ jobs:
       env:
         TUIST_CI: "1"
 
-    - name: Verify workspace exists
-      run: |
-        ls -la *.xcworkspace
-        echo "Workspace found!"
-
     - name: Run Fastlane CI
-      run: |
-        bundle exec fastlane ci
-      env:
-        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
-
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: test_output/
-        retention-days: 30
-
-    - name: Upload code coverage
-      if: success()
-      uses: codecov/codecov-action@v4
-      with:
-        files: test_output/**/*.xcresult
-        fail_ci_if_error: false
+      run: bundle exec fastlane ci
