@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Exit on error
 set -e
@@ -46,25 +46,31 @@ else
     echo "make is already installed"
 fi
 
-# Install mise
-echo "Installing mise..."
-if ! command -v mise &> /dev/null; then
-    curl -fsSL https://mise.jdx.dev/install.sh | sh
-    export PATH="$HOME/.local/bin:$PATH"
-    eval "$(mise activate bash --shims)"
+# Install tuist via Homebrew
+echo "Installing tuist..."
+if ! command -v tuist &> /dev/null; then
+    echo "Tuist not found, installing via curl..."
+    curl -Ls https://install.tuist.io | bash
+    export PATH="$HOME/.tuist/bin:$PATH"
 else
-    echo "mise is already installed"
-    export PATH="$HOME/.local/bin:$PATH"
-    eval "$(mise activate bash --shims)"
+    echo "Tuist is already installed"
 fi
-
-# Install tuist
-echo "Installing tuist@3.40.0..."
-mise install tuist@3.40.0
 
 # Verify tuist installation
 echo "Tuist version:"
 tuist version
+
+# Install specific tuist version if needed
+REQUIRED_VERSION="3.40.0"
+CURRENT_VERSION=$(tuist version 2>&1 | grep -o '[0-9]*\.[0-9]*\.[0-9]*' | head -1)
+echo "Current tuist version: $CURRENT_VERSION"
+echo "Required tuist version: $REQUIRED_VERSION"
+
+if [ "$CURRENT_VERSION" != "$REQUIRED_VERSION" ]; then
+    echo "Installing tuist $REQUIRED_VERSION..."
+    tuist install $REQUIRED_VERSION
+    export PATH="$HOME/.tuist/bin:$PATH"
+fi
 
 # Navigate back to project directory
 echo "Returning to project directory: $PROJECT_DIR"
