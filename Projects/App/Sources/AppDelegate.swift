@@ -10,17 +10,22 @@ import DesignSystem
 import UserNotifications
 import Firebase
 import Pulse
+import Nuke
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     static var container = Container()
     var assembler: Assembler!
+    var cacheCleanupTimer: Timer?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         DesignSystemFontFamily.registerAllCustomFonts()
+
+        // Nuke 이미지 캐시 설정
+        configureNukeImageCache()
 
         assembler = Assembler([
             KeychainAssembly(),
@@ -65,6 +70,49 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
     ) {}
+}
+
+// MARK: - Nuke Image Cache Configuration
+extension AppDelegate {
+    private func configureNukeImageCache() {
+        // 디스크 캐시 설정
+        let diskCache = DataCache(name: "com.jobis.imagecache")
+        diskCache.sizeLimit = 150 * 1024 * 1024 // 150MB
+        diskCache.ttl = 60 * 60 * 24 * 7 // 7일
+
+        // ImagePipeline Configuration 설정
+        let configuration = ImagePipeline.Configuration()
+        configuration.dataCache = diskCache
+
+        // 메모리 캐시 설정 (5분 TTL)
+        configuration.imageCache = ImageCache()
+        configuration.imageCache?.ttl = 60 * 5 // 5분
+
+        // 커스텀 파이프라인을 shared로 설정
+        ImagePipeline.shared = ImagePipeline(configuration: configuration)
+
+        // 주기적 캐시 정리 타이머 시작 (240초 = 4분 주기)
+        startCacheCleanupTimer()
+    }
+
+    private func startCacheCleanupTimer() {
+        cacheCleanupTimer?.invalidate()
+        cacheCleanupTimer = Timer.scheduledTimer(
+            withTimeInterval: 240.0,
+            repeats: true
+        ) { [weak self] _ in
+            self?.performCacheCleanup()
+        }
+    }
+
+    private func performCacheCleanup() {
+        // 만료된 캐시 정리
+        ImagePipeline.shared.cache.removeAll()
+
+        if let dataCache = ImagePipeline.shared.configuration.dataCache {
+            dataCache.sweep()
+        }
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
