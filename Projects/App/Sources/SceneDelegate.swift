@@ -1,6 +1,7 @@
 import UIKit
 import RxFlow
 import Flow
+import Nuke
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -30,6 +31,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {}
 
-    func sceneDidEnterBackground(_ scene: UIScene) {}
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        if let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache {
+            dataCache.sweep()
+        }
+    }
 
 }
