@@ -72,6 +72,7 @@ Tuist/Dependencies
 ### Tuist cache ###
 Tuist/Cache/
 
+### Secrets (handled via GitHub Secrets in CI) ###
 XCConfig/
 Projects/App/Resources/Firebase/
 
@@ -90,3 +91,4 @@ test_output/
 .bundle/
 vendor/bundle/
 Gemfile.lock
+.claude/

@@ -14,6 +14,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Setup XCConfig Files
+      run: |
+        echo "${{ secrets.XCCONFIG_BASE64 }}" | base64 --decode | tar -xz
+
+    - name: Setup Firebase Config Files
+      run: |
+        mkdir -p Projects/App/Resources/Firebase
+        echo "${{ secrets.GOOGLE_SERVICE_DEV_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Dev-Info.plist
+        echo "${{ secrets.GOOGLE_SERVICE_STAGE_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Stage-Info.plist
+        echo "${{ secrets.GOOGLE_SERVICE_PROD_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Prod-Info.plist
+
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
