@@ -62,6 +62,11 @@ jobs:
       env:
         TUIST_CI: "1"
 
+    - name: Verify workspace exists
+      run: |
+        ls -la *.xcworkspace
+        echo "Workspace found!"
+
     - name: Run Fastlane CI
       run: |
         bundle exec fastlane ci
