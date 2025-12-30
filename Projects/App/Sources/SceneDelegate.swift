@@ -32,8 +32,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {}
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // 백그라운드 진입 시 만료된 이미지 캐시 정리
-        if let dataCache = ImagePipeline.shared.configuration.dataCache {
+        if let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache {
             dataCache.sweep()
         }
     }

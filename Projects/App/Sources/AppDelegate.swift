@@ -75,23 +75,23 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Nuke Image Cache Configuration
 extension AppDelegate {
     private func configureNukeImageCache() {
-        // 디스크 캐시 설정
-        let diskCache = DataCache(name: "com.jobis.imagecache")
-        diskCache.sizeLimit = 150 * 1024 * 1024 // 150MB
-        diskCache.ttl = 60 * 60 * 24 * 7 // 7일
+        guard let diskCache = try? DataCache(name: "com.jobis.imagecache") else {
+            return
+        }
+        diskCache.sizeLimit = 150 * 1024 * 1024
+        diskCache.sweepInterval = 60 * 60 * 24
+
+        let imageCache = ImageCache()
+        imageCache.ttl = 60 * 5
 
         // ImagePipeline Configuration 설정
-        let configuration = ImagePipeline.Configuration()
+        var configuration = ImagePipeline.Configuration()
         configuration.dataCache = diskCache
+        configuration.imageCache = imageCache
 
-        // 메모리 캐시 설정 (5분 TTL)
-        configuration.imageCache = ImageCache()
-        configuration.imageCache?.ttl = 60 * 5 // 5분
-
-        // 커스텀 파이프라인을 shared로 설정
         ImagePipeline.shared = ImagePipeline(configuration: configuration)
 
-        // 주기적 캐시 정리 타이머 시작 (240초 = 4분 주기)
+        // 4분 주기
         startCacheCleanupTimer()
     }
 
@@ -106,10 +106,7 @@ extension AppDelegate {
     }
 
     private func performCacheCleanup() {
-        // 만료된 캐시 정리
-        ImagePipeline.shared.cache.removeAll()
-
-        if let dataCache = ImagePipeline.shared.configuration.dataCache {
+        if let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache {
             dataCache.sweep()
         }
     }
