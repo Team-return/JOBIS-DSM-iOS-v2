@@ -30,6 +30,11 @@ jobs:
       with:
         xcode-version: '16.2'
 
+    - name: Install iOS Simulator
+      run: |
+        sudo xcrun simctl list runtimes
+        xcodebuild -downloadPlatform iOS || true
+
     - name: Cache SPM
       uses: actions/cache@v4
       with:

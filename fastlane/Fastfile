@@ -28,6 +28,7 @@ platform :ios do
       scheme: "JOBIS-DSM-iOS-v2-DEV",
       configuration: "DEV",
       sdk: "iphonesimulator",
+      destination: "platform=iOS Simulator,OS=latest,name=Any iOS Simulator Device",
       clean: true,
       build: true,
       xcargs: "-skipPackagePluginValidation"
@@ -41,6 +42,7 @@ platform :ios do
       scheme: "JOBIS-DSM-iOS-v2-STAGE",
       configuration: "STAGE",
       sdk: "iphonesimulator",
+      destination: "platform=iOS Simulator,OS=latest,name=Any iOS Simulator Device",
       clean: true,
       build: true,
       xcargs: "-skipPackagePluginValidation"
