@@ -70,6 +70,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
     ) {}
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        // 앱 종료 시 타이머 정리
+        stopCacheCleanupTimer()
+    }
 }
 
 // MARK: - Nuke Image Cache Configuration
@@ -103,6 +108,11 @@ extension AppDelegate {
         ) { [weak self] _ in
             self?.performCacheCleanup()
         }
+    }
+
+    private func stopCacheCleanupTimer() {
+        cacheCleanupTimer?.invalidate()
+        cacheCleanupTimer = nil
     }
 
     private func performCacheCleanup() {
