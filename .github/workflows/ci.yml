@@ -57,7 +57,7 @@ jobs:
 
     - name: Generate Xcode project with Tuist
       run: |
-        mise exec -- tuist install
+        mise exec -- tuist fetch
         mise exec -- tuist generate
       env:
         TUIST_CI: "1"
