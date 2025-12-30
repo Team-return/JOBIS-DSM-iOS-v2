@@ -23,15 +23,7 @@ platform :ios do
 
   desc "Build for development"
   lane :build_dev do
-    sh("xcodebuild",
-       "-workspace", WORKSPACE_PATH,
-       "-scheme", "JOBIS-DSM-iOS-v2-DEV",
-       "-configuration", "DEV",
-       "-sdk", "iphonesimulator",
-       "clean", "build",
-       "-skipPackagePluginValidation",
-       "CODE_SIGNING_ALLOWED=NO"
-    )
+    sh("mise", "exec", "--", "tuist", "build", "JOBIS-DSM-iOS-v2-DEV")
   end
 
   desc "Build for staging"
