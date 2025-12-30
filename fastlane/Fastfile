@@ -23,7 +23,9 @@ platform :ios do
 
   desc "Build for development"
   lane :build_dev do
-    sh("mise", "exec", "--", "tuist", "build", "JOBIS-DSM-iOS-v2-DEV")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("mise", "exec", "--", "tuist", "build", "JOBIS-DSM-iOS-v2-DEV")
+    end
   end
 
   desc "Build for staging"
