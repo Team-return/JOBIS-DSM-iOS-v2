@@ -1,0 +1,63 @@
+name: Release to App Store
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    runs-on: macos-15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup XCConfig Files
+      run: |
+        echo "${{ secrets.XCCONFIG_BASE64 }}" | base64 --decode | tar -xz
+
+    - name: Setup Firebase Config Files
+      run: |
+        mkdir -p Projects/App/Resources/Firebase
+        echo "${{ secrets.GOOGLE_SERVICE_DEV_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Dev-Info.plist
+        echo "${{ secrets.GOOGLE_SERVICE_STAGE_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Stage-Info.plist
+        echo "${{ secrets.GOOGLE_SERVICE_PROD_INFO }}" > Projects/App/Resources/Firebase/GoogleService-Prod-Info.plist
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.2'
+
+    - name: Cache SPM
+      uses: actions/cache@v4
+      with:
+        path: |
+          .build
+          ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Install mise
+      uses: jdx/mise-action@v2
+      with:
+        install: true
+
+    - name: Install Fastlane
+      run: brew install fastlane
+
+    - name: Generate Xcode project with Tuist
+      run: |
+        mise exec -- tuist fetch
+        mise exec -- tuist generate --xcframeworks
+      env:
+        TUIST_CI: "1"
+
+    - name: Run Fastlane Release
+      run: fastlane release
+      env:
+        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

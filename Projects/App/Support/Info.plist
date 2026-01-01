@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>PRIVACY_WEB_URL</key>
+	<string>$(PRIVACY_WEB_URL)</string>
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
 	<key>AppIdentifierPrefix</key>
@@ -21,9 +23,9 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.4</string>
+	<string>2.3.8</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>88</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>

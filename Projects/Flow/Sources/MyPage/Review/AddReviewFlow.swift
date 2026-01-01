@@ -26,6 +26,9 @@ public final class AddReviewFlow: Flow {
         case .addReviewIsRequired:
             return navigateToAddReview()
 
+        case .interviewAtmosphereIsRequired:
+            return navigateToInterviewAtmosphere()
+
         case .dismissToWritableReview:
             return dismissToWritableReview()
         }
@@ -37,6 +40,22 @@ private extension AddReviewFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
+        ))
+    }
+
+    func navigateToInterviewAtmosphere() -> FlowContributors {
+        let interviewAtmosphereViewController = InterviewAtmosphereViewController(
+            container.resolve(InterviewAtmosphereViewModel.self)!
+        )
+
+        rootViewController.navigationController?.pushViewController(
+            interviewAtmosphereViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interviewAtmosphereViewController,
+            withNextStepper: interviewAtmosphereViewController.viewModel
         ))
     }
 

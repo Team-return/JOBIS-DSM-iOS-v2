@@ -33,19 +33,20 @@ private extension SearchCompanyFlow {
     func navigateToSearchCompany() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
     func navigateToCompanyDetail(_ companyId: Int) -> FlowContributors {
-        let companyDetailFlow = CompanyDetailFlow(container: container)
+        let companyDetailFlow = CompanyDetailFlow(
+            container: container,
+            companyId: companyId,
+            type: .searchCompany
+        )
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
-            let view = root as? CompanyDetailViewController
-            view?.viewModel.companyID = companyId
-            view?.viewModel.type = .searchCompany
             self.rootViewController.navigationController?.pushViewController(
-                view!, animated: true
+                root, animated: true
             )
         }
 

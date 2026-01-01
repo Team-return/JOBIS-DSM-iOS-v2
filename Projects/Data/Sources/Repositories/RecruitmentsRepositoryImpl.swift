@@ -16,14 +16,19 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
         page: Int,
         jobCode: String?,
         techCode: [String]?,
-        name: String?, winterIntern: Bool?
+        name: String?,
+        winterIntern: Bool?,
+        years: [String]?,
+        status: String?
     ) -> Single<[RecruitmentEntity]> {
         remoteRecruitmentsDataSource.fetchRecruitmentList(
             page: page,
             jobCode: jobCode,
             techCode: techCode,
             name: name,
-            winterIntern: winterIntern
+            winterIntern: winterIntern,
+            years: years,
+            status: status
         )
     }
 }

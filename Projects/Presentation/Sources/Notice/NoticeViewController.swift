@@ -7,11 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class NoticeViewController: BaseViewController<NoticeViewModel> {
-    private let cellClick = PublishRelay<Void>()
-    private let noticeTableViewCellDidTap = PublishRelay<Int>()
-    private var noticeId: Int = 0
-
+public final class NoticeViewController: BaseReactorViewController<NoticeReactor> {
     private let noticeTableView = UITableView().then {
         $0.register(
             NoticeTableViewCell.self,
@@ -21,6 +17,7 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
         $0.rowHeight = 80
         $0.showsVerticalScrollIndicator = false
     }
+
     public override func addView() {
         view.addSubview(noticeTableView)
     }
@@ -31,42 +28,39 @@ public final class NoticeViewController: BaseViewController<NoticeViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = NoticeViewModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            noticeTableViewCellDidTap: noticeTableViewCellDidTap
-        )
-
-        let output = viewModel.transform(input)
-
-        output.noticeListInfo.asObservable()
-            .bind(
-                to: noticeTableView.rx.items(
-                    cellIdentifier: NoticeTableViewCell.identifier,
-                    cellType: NoticeTableViewCell.self
-                )) { _, element, cell in
-            cell.adapt(model: element)
-            self.noticeId = element.companyId
-        }
-        .disposed(by: disposeBag)
+    public override func bindAction() {
+        viewDidLoadPublisher
+            .map { NoticeReactor.Action.fetchNoticeList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
         noticeTableView.rx.modelSelected(NoticeEntity.self)
-            .subscribe(onNext: { data in
-                self.noticeTableViewCellDidTap.accept(data.companyId)
-            })
+            .map { NoticeReactor.Action.noticeDidSelect($0.companyId) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.noticeList }
+            .bind(to: noticeTableView.rx.items(
+                cellIdentifier: NoticeTableViewCell.identifier,
+                cellType: NoticeTableViewCell.self
+            )) { _, element, cell in
+                cell.adapt(model: element)
+            }
             .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
-        self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: {
-                self.hideTabbar()
+        viewWillAppearPublisher
+            .subscribe(onNext: { [weak self] in
+                self?.hideTabbar()
             })
             .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
-        self.setSmallTitle(title: "공지사항")
-        self.navigationItem.largeTitleDisplayMode = .never
+        setSmallTitle(title: "공지사항")
+        navigationItem.largeTitleDisplayMode = .never
     }
 }

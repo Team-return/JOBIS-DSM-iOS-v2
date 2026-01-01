@@ -19,7 +19,7 @@ final class TechStackViewCell: BaseView {
         $0.spacing = 8
         $0.axis = .horizontal
         $0.isLayoutMarginsRelativeArrangement = true
-        $0.layoutMargins = .init(top: 12, left: 24, bottom: 12, right: 24)
+        $0.layoutMargins = .init(top: 12, left: 0, bottom: 12, right: 0)
     }
     private let techCheckBox = JobisCheckBox()
     private let techLabel = UILabel()

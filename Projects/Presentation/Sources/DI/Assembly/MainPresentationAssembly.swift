@@ -1,0 +1,343 @@
+import Foundation
+import Swinject
+import Core
+import Domain
+
+public final class MainPresentationAssembly: Assembly {
+    public init() {}
+
+    public func assemble(container: Container) {
+        container.register(HomeViewController.self) { resolver in
+            HomeViewController(resolver.resolve(HomeReactor.self)!)
+        }
+        container.register(HomeReactor.self) { resolver in
+            HomeReactor(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
+                fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
+                fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
+                fetchWinterInternUseCase: resolver.resolve(FetchWinterInternSeasonUseCase.self)!,
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+            )
+        }
+
+        // Recruitment
+        container.register(RecruitmentViewController.self) { resolver in
+            RecruitmentViewController(resolver.resolve(RecruitmentReactor.self)!)
+        }
+        container.register(RecruitmentReactor.self) { resolver in
+            RecruitmentReactor(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
+        // Recruitment Detail
+        container.register(RecruitmentDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+            RecruitmentDetailReactor(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                recruitmentID: recruitmentID,
+                companyId: companyId,
+                type: type
+            )
+        }
+        container.register(RecruitmentDetailViewController.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+            RecruitmentDetailViewController(
+                resolver.resolve(RecruitmentDetailReactor.self, arguments: recruitmentID, companyId, type)!
+            )
+        }
+
+        // Search Recruitment
+        container.register(SearchRecruitmentViewController.self) { resolver in
+            SearchRecruitmentViewController(
+                resolver.resolve(SearchRecruitmentReactor.self)!
+            )
+        }
+        container.register(SearchRecruitmentReactor.self) { resolver in
+            SearchRecruitmentReactor(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
+        // Recruitment Filter
+        container.register(RecruitmentFilterViewController.self) { resolver in
+            RecruitmentFilterViewController(
+                resolver.resolve(RecruitmentFilterReactor.self)!
+            )
+        }
+        container.register(RecruitmentFilterReactor.self) { resolver in
+            RecruitmentFilterReactor(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
+        // Review List
+        container.register(ReviewViewController.self) { resolver in
+            ReviewViewController(resolver.resolve(ReviewReactor.self)!)
+        }
+        container.register(ReviewReactor.self) { resolver in
+            ReviewReactor(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
+        }
+
+        // Review Detail
+        container.register(ReviewDetailReactor.self) { (resolver, reviewId: String) in
+            ReviewDetailReactor(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!,
+                reviewId: reviewId
+            )
+        }
+        container.register(ReviewDetailViewController.self) { (resolver, reviewId: String) in
+            ReviewDetailViewController(
+                resolver.resolve(ReviewDetailReactor.self, argument: reviewId)!
+            )
+        }
+
+        // Search Review List
+        container.register(SearchReviewViewController.self) { resolver in
+            SearchReviewViewController(
+                resolver.resolve(SearchReviewReactor.self)!
+            )
+        }
+        container.register(SearchReviewReactor.self) { resolver in
+            SearchReviewReactor(
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!
+            )
+        }
+
+        // Review Filter
+        container.register(ReviewFilterViewController.self) { resolver in
+            ReviewFilterViewController(
+                resolver.resolve(ReviewFilterReactor.self)!
+            )
+        }
+        container.register(ReviewFilterReactor.self) { resolver in
+            ReviewFilterReactor(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+
+        container.register(InterviewAtmosphereViewController.self) { resolver in
+            InterviewAtmosphereViewController(
+                resolver.resolve(InterviewAtmosphereViewModel.self)!
+            )
+        }
+
+        container.register(InterviewAtmosphereViewModel.self) { resolver in
+            InterviewAtmosphereViewModel(
+                fetchReviewQuestionsUseCase: resolver.resolve(FetchReviewQuestionsUseCase.self)!
+            )
+        }
+
+        // Apply
+        container.register(ApplyReactor.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
+            ApplyReactor(
+                applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
+                reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!,
+                recruitmentId: recruitmentId,
+                applicationId: applicationId,
+                companyName: companyName,
+                companyImageURL: companyImageURL,
+                applyType: applyType
+            )
+        }
+        container.register(ApplyViewController.self) { (
+            resolver,
+            recruitmentId: Int?,
+            applicationId: Int?,
+            companyName: String,
+            companyImageURL: String,
+            applyType: ApplyType
+        ) in
+            ApplyViewController(resolver.resolve(ApplyReactor.self, arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType)!)
+        }
+
+        // Company
+        container.register(CompanyViewController.self) { resolver in
+            CompanyViewController(
+                resolver.resolve(CompanyReactor.self)!
+            )
+        }
+        container.register(CompanyReactor.self) { resolver in
+            CompanyReactor(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        }
+
+        // Company Detail
+        container.register(CompanyDetailReactor.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+            CompanyDetailReactor(
+                fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!,
+                fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!,
+                companyId: companyId,
+                type: type
+            )
+        }
+        container.register(CompanyDetailViewController.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+            CompanyDetailViewController(resolver.resolve(CompanyDetailReactor.self, arguments: companyId, type)!)
+        }
+
+        // Search Company
+        container.register(SearchCompanyViewController.self) { resolver in
+            SearchCompanyViewController(
+                resolver.resolve(SearchCompanyReactor.self)!
+            )
+        }
+        container.register(SearchCompanyReactor.self) { resolver in
+            SearchCompanyReactor(fetchCompanyListUseCase: resolver.resolve(FetchCompanyListUseCase.self)!)
+        }
+
+        // Review
+        container.register(WritableReviewViewModel.self) { resolver in
+            WritableReviewViewModel()
+        }
+        container.register(WritableReviewViewController.self) { resolver in
+            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+        }
+
+        // Add Review
+        container.register(AddReviewViewModel.self) { resolver in
+            AddReviewViewModel(
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+            )
+        }
+        container.register(AddReviewViewController.self) { resolver in
+            AddReviewViewController(resolver.resolve(AddReviewViewModel.self)!)
+        }
+
+        // Review Complete
+        container.register(ReviewCompleteViewModel.self) { resolver in
+            ReviewCompleteViewModel(
+                fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!
+            )
+        }
+        container.register(ReviewCompleteViewController.self) { resolver in
+            ReviewCompleteViewController(resolver.resolve(ReviewCompleteViewModel.self)!)
+        }
+
+        // Interview Review Detail
+        container.register(InterviewReviewDetailReactor.self) { (resolver, reviewId: String) in
+            InterviewReviewDetailReactor(
+                fetchReviewDetailUseCase: resolver.resolve(FetchReviewDetailUseCase.self)!,
+                reviewId: reviewId
+            )
+        }
+        container.register(InterviewReviewDetailViewController.self) { (resolver, reviewId: String) in
+            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailReactor.self, argument: reviewId)!)
+        }
+
+        // Winter Intern
+        container.register(WinterInternViewController.self) { resolver in
+            WinterInternViewController(
+                resolver.resolve(WinterInternReactor.self)!
+            )
+        }
+        container.register(WinterInternReactor.self) { resolver in
+            WinterInternReactor(
+                fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+        container.register(WinterInternDetailViewController.self) { resolver in
+            WinterInternDetailViewController(
+                resolver.resolve(WinterInternDetailViewModel.self)!
+            )
+        }
+        container.register(WinterInternDetailViewModel.self) { resolver in
+            WinterInternDetailViewModel(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+            )
+        }
+
+        // Employ Status
+        container.register(EmployStatusViewController.self) { resolver in
+            EmployStatusViewController(
+                resolver.resolve(EmployStatusReactor.self)!
+            )
+        }
+        container.register(EmployStatusReactor.self) { resolver in
+            EmployStatusReactor(
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+            )
+        }
+
+        // Class Employment
+        container.register(ClassEmploymentViewController.self) { (resolver, classNumber: Int, year: Int) in
+            ClassEmploymentViewController(
+                resolver.resolve(ClassEmploymentReactor.self, arguments: classNumber, year)!
+            )
+        }
+        container.register(ClassEmploymentReactor.self) { (resolver, classNumber: Int, year: Int) in
+            ClassEmploymentReactor(
+                fetchEmploymentStatusUseCase: resolver.resolve(FetchEmploymentStatusUseCase.self)!,
+                classNumber: classNumber,
+                year: year
+            )
+        }
+
+        // Employment Filter
+        container.register(EmploymentFilterViewController.self) { resolver in
+            EmploymentFilterViewController(
+                resolver.resolve(EmploymentFilterReactor.self)!
+            )
+        }
+        container.register(EmploymentFilterReactor.self) { resolver in
+            EmploymentFilterReactor()
+        }
+
+        // Easter Egg
+        container.register(EasterEggViewController.self) { resolver in
+            EasterEggViewController()
+        }
+
+        // Major Bottom Sheet
+        container.register(MajorBottomSheetViewController.self) { resolver in
+            MajorBottomSheetViewController(
+                resolver.resolve(MajorBottomSheetViewModel.self)!
+            )
+        }
+        container.register(MajorBottomSheetViewModel.self) { resolver in
+            MajorBottomSheetViewModel()
+        }
+
+        // Reject Reason
+        container.register(RejectReasonReactor.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonReactor(
+                fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!,
+                applicationID: applicationID,
+                recruitmentID: recruitmentID,
+                companyName: companyName,
+                companyImageUrl: companyImageUrl
+            )
+        }
+        container.register(RejectReasonViewController.self) { (
+            resolver,
+            applicationID: Int,
+            recruitmentID: Int,
+            companyName: String,
+            companyImageUrl: String
+        ) in
+            RejectReasonViewController(
+                resolver.resolve(
+                    RejectReasonReactor.self,
+                    arguments: applicationID, recruitmentID, companyName, companyImageUrl
+                )!,
+                state: .custom(height: 280)
+            )
+        }
+    }
+}

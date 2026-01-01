@@ -7,7 +7,7 @@ import Core
 import DesignSystem
 import Domain
 
-public final class ApplyViewController: BaseViewController<ApplyViewModel> {
+public final class ApplyViewController: BaseReactorViewController<ApplyReactor> {
     private let backStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 0
@@ -91,33 +91,59 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
         }
     }
 
-    public override func bind() {
-        let input = ApplyViewModel.Input(
-            documentAddButtonDidTap: documents,
-            urlsAddButtonDidTap: attachmentUrlsStackView.addAttachmentButton.rx.tap.asSignal(),
-            urlsWillChanged: attachmentUrlsStackView.urlWillChanged,
-            applyButtonDidTap: applyButton.rx.tap.asSignal(),
-            removeUrlsButtonDidTap: attachmentUrlsStackView.removeButtonDidTap.asSignal(),
-            removeDocsButtonDidTap: attachmentDocsStackView.removeButtonDidTap.asSignal()
-        )
-        let output = viewModel.transform(input)
-
-        output.documents.asObservable()
-            .bind {
-                self.attachmentDocsStackView.updateList($0)
-            }
+    public override func bindAction() {
+        documents
+            .map { ApplyReactor.Action.documentDidAdd($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.urls.asObservable()
-            .bind {
-                self.attachmentUrlsStackView.updateList($0)
-            }
+        attachmentUrlsStackView.addAttachmentButton.rx.tap
+            .map { ApplyReactor.Action.urlAddButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        output.applyButtonEnabled
-            .bind {
-                self.applyButton.isEnabled = $0
-            }
+        attachmentUrlsStackView.urlWillChanged
+            .map { ApplyReactor.Action.urlDidChange($0.0, $0.1) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        applyButton.rx.tap
+            .map { ApplyReactor.Action.applyButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        attachmentUrlsStackView.removeButtonDidTap
+            .map { ApplyReactor.Action.removeUrl($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        attachmentDocsStackView.removeButtonDidTap
+            .map { ApplyReactor.Action.removeDocument($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state
+            .map { $0.documents }
+            .distinctUntilChanged { $0.count == $1.count }
+            .bind(onNext: { [weak self] documents in
+                self?.attachmentDocsStackView.updateList(documents)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.urls }
+            .distinctUntilChanged { $0.count == $1.count }
+            .bind(onNext: { [weak self] urls in
+                self?.attachmentUrlsStackView.updateList(urls)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.applyButtonEnabled }
+            .distinctUntilChanged()
+            .bind(to: applyButton.rx.isEnabled)
             .disposed(by: disposeBag)
     }
 
@@ -129,8 +155,8 @@ public final class ApplyViewController: BaseViewController<ApplyViewModel> {
             }
             .disposed(by: disposeBag)
 
-        companyLogoImageView.setJobisImage(urlString: viewModel.companyImageURL ?? "")
-        companyLabel.text = viewModel.companyName
+        companyLogoImageView.setJobisImage(urlString: reactor.companyImageURL ?? "")
+        companyLabel.text = reactor.companyName
         viewWillAppearPublisher.asObservable()
             .bind(with: self, onNext: { owner, _ in
                 owner.hideTabbar()

@@ -41,13 +41,15 @@ private extension WinterInternDetailFlow {
     }
 
     func navigateToCompanyDetail(_ companyDetailId: Int) -> FlowContributors {
-        let companyDetailFlow = CompanyDetailFlow(container: container)
+        let companyDetailFlow = CompanyDetailFlow(
+            container: container,
+            companyId: companyDetailId,
+            type: .recruitmentDetail
+        )
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
-            let view = root as? CompanyDetailViewController
-            view?.viewModel.companyID = companyDetailId
             self.rootViewController.navigationController?.pushViewController(
-                view!, animated: true
+                root, animated: true
             )
         }
 
@@ -60,7 +62,14 @@ private extension WinterInternDetailFlow {
     }
 
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: id,
+            applicationId: nil,
+            companyName: name,
+            companyImageURL: imageURL,
+            applyType: .apply
+        )
 
         Flows.use(applyFlow, when: .created) { (root) in
             self.rootViewController.navigationController?.pushViewController(

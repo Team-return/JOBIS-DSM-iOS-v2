@@ -39,7 +39,7 @@ private extension WinterInternFlow {
     func navigateToRecruitment() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -50,14 +50,9 @@ private extension WinterInternFlow {
             let view = root as? WinterInternDetailViewController
             view?.viewModel.recruitmentID = recruitmentID
             view?.isPopViewController = { id, bookmark in
+                // In ReactorKit, state is immutable
+                // The list will be refreshed on viewWillAppear if needed
                 let popView = self.rootViewController
-                var oldData = popView.viewModel.recruitmentData.value
-                oldData.enumerated().forEach {
-                    if $0.element.recruitID == id {
-                        oldData[$0.offset].bookmarked = bookmark
-                    }
-                }
-                popView.viewModel.recruitmentData.accept(oldData)
                 popView.isTabNavigation = false
             }
             self.rootViewController.navigationController?.pushViewController(

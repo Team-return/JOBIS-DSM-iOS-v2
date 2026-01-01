@@ -25,4 +25,15 @@ public enum DevelopmentType: String, Codable {
             return "iOS"
         }
     }
+
+    public init?(localizedString: String) {
+        switch localizedString {
+        case "전체", "All": self = .all
+        case "서버", "Server": self = .server
+        case "웹", "Web": self = .web
+        case "안드로이드", "Android": self = .android
+        case "iOS": self = .ios
+        default: return nil
+        }
+    }
 }

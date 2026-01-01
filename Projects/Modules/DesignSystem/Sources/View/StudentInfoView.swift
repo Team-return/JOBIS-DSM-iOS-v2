@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 import Then
-import Kingfisher
+import Nuke
 
 public final class StudentInfoView: UIView {
     private let profileImageView = UIImageView().then {

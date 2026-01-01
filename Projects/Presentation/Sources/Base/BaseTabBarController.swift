@@ -9,7 +9,6 @@ import PulseUI
 public class BaseTabBarController: UITabBarController,
                                    SetLayoutable,
                                    AddViewable {
-    
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
     private let consoleButtonSize: CGRect = CGRect(x: 0, y: 0, width: 100, height: 40)
 
@@ -66,7 +65,7 @@ public class BaseTabBarController: UITabBarController,
     }
 
     @objc func panAction(recognizer: UIPanGestureRecognizer) {
-        
+
         let transition = recognizer.translation(in: consoleButton)
 
         if recognizer.state != .ended {

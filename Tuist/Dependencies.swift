@@ -33,10 +33,6 @@ let dependencies = Dependencies(
                 requirement: .upToNextMajor(from: "4.3.3")
             ),
             .remote(
-                url: "https://github.com/onevcat/Kingfisher.git",
-                requirement: .upToNextMajor(from: "7.0.0")
-            ),
-            .remote(
                 url: "https://github.com/evgenyneu/keychain-swift.git",
                 requirement: .upToNextMajor(from: "20.0.0")
             ),
@@ -59,7 +55,14 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/kean/Pulse.git",
                 requirement: .upToNextMajor(from: "4.2.0")
-            )
+            ),
+            .remote(
+                url: "https://github.com/kean/Nuke.git",
+                requirement: .upToNextMajor(from: "12.8.0")
+            ),
+            .remote(
+                url: "https://github.com/Juanpe/SkeletonView.git",
+                requirement: .upToNextMajor(from: "1.31.0"))
         ],
         baseSettings: .settings(
             configurations: [

@@ -5,7 +5,7 @@ public protocol ApplicationsRepository {
     func reApplyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable
     func cancelApply(id: Int) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
-    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
+    func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity>
     func fetchRejectionReason(id: Int) -> Single<String>
-    func fetchEmploymentStatus() -> Single<[EmploymentEntity]>
+    func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]>
 }

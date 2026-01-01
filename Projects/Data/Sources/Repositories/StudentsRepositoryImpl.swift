@@ -24,8 +24,8 @@ struct StudentsRepositoryImpl: StudentsRepository {
         remoteStudentsDataSource.fetchStudentInfo()
     }
 
-    func compareCurrentPasssword(password: String) -> Completable {
-        remoteStudentsDataSource.compareCurrentPasssword(password: password)
+    func compareCurrentPassword(password: String) -> Completable {
+        remoteStudentsDataSource.compareCurrentPassword(password: password)
     }
 
     func changePassword(req: ChangePasswordRequestQuery) -> Completable {

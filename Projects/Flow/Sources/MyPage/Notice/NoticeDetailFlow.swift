@@ -11,9 +11,9 @@ public final class NoticeDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, noticeID: Int) {
         self.container = container
-        self.rootViewController = container.resolve(NoticeDetailViewController.self)!
+        self.rootViewController = container.resolve(NoticeDetailViewController.self, argument: noticeID)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -32,7 +32,7 @@ private extension NoticeDetailFlow {
     func navigateToNoticeDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 

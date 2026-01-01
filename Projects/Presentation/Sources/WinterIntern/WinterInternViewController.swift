@@ -6,12 +6,11 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class WinterInternViewController: BaseViewController<WinterInternVieModel> {
+public final class WinterInternViewController: BaseReactorViewController<WinterInternReactor> {
     public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
-    private let bookmarkButtonDidClicked = PublishRelay<Int>()
-    private let pageCount = PublishRelay<Int>()
     private let listEmptyView = ListEmptyView().then {
         $0.setEmptyView(title: "아직 등록된 모집의뢰서가 없어요")
         $0.isHidden = true
@@ -47,50 +46,65 @@ public final class WinterInternViewController: BaseViewController<WinterInternVi
         }
     }
 
-    public override func bind() {
-        let input = WinterInternVieModel.Input(
-            viewAppear: self.viewWillAppearPublisher,
-            bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: recruitmentTableView.rx.willDisplayCell
-                .filter {
-                    $0.indexPath.row == self.recruitmentTableView.numberOfRows(
-                        inSection: $0.indexPath.section
-                    ) - 1
-                },
-            recruitmentTableViewDidTap: recruitmentTableView.rx
-                .modelSelected(RecruitmentEntity.self)
-                .asObservable()
-                .map { $0.recruitID }
-                .do(onNext: { _ in
-                    self.isTabNavigation = false
-                }),
-            searchButtonDidTap: searchButton.rx.tap.asSignal(),
-            filterButtonDidTap: filterButton.rx.tap.asSignal()
-        )
+    public override func bindAction() {
+        viewWillAppearPublisher.asObservable()
+            .map { WinterInternReactor.Action.fetchRecruitmentList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        recruitmentTableView.rx.willDisplayCell
+            .filter { [weak self] event in
+                guard let self = self else { return false }
+                return event.indexPath.row == self.recruitmentTableView.numberOfRows(
+                    inSection: event.indexPath.section
+                ) - 1
+            }
+            .map { _ in WinterInternReactor.Action.loadMoreRecruitments }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.recruitmentData
-            .skip(1)
-            .do(onNext: {
-                self.listEmptyView.isHidden = !$0.isEmpty
+        recruitmentTableView.rx.modelSelected(RecruitmentEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.isTabNavigation = false
             })
-            .bind(
-                to: recruitmentTableView.rx.items(
-                    cellIdentifier: RecruitmentTableViewCell.identifier,
-                    cellType: RecruitmentTableViewCell.self
-                )) { _, element, cell in
-                    cell.adapt(model: element)
-                    cell.bookmarkButtonDidTap = {
-                        self.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
-                    }
+            .map { WinterInternReactor.Action.recruitmentDidSelect($0.recruitID) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchButton.rx.tap
+            .map { WinterInternReactor.Action.searchButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterButton.rx.tap
+            .map { WinterInternReactor.Action.filterButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.recruitmentList }
+            .skip(1)
+            .do(onNext: { [weak self] list in
+                self?.listEmptyView.isHidden = !list.isEmpty
+            })
+            .bind(to: recruitmentTableView.rx.items(
+                cellIdentifier: RecruitmentTableViewCell.identifier,
+                cellType: RecruitmentTableViewCell.self
+            )) { [weak self] _, element, cell in
+                cell.adapt(model: element)
+                cell.bookmarkButtonDidTap = { [weak self] in
+                    guard let id = cell.model?.recruitID else { return }
+                    self?.reactor.action.onNext(.bookmarkButtonDidTap(id))
                 }
-                .disposed(by: disposeBag)
+            }
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
         viewWillAppearPublisher.asObservable()
-            .bind {
+            .bind { [weak self] in
+                guard let self = self else { return }
                 self.hideTabbar()
                 if self.isTabNavigation {
                     self.viewWillappearWithTap?()

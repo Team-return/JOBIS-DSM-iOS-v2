@@ -8,9 +8,9 @@ public protocol RemoteApplicationsDataSource {
     func reApplyCompany(id: Int, req: ApplyCompanyRequestQuery) -> Completable
     func cancelApply(id: Int) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
-    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity>
+    func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity>
     func fetchRejectionReason(id: Int) -> Single<String>
-    func fetchEmploymentStatus() -> Single<[EmploymentEntity]>
+    func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]>
 }
 
 final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsAPI>, RemoteApplicationsDataSource {
@@ -35,8 +35,8 @@ final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsA
             .map { $0.toDomain() }
     }
 
-    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
-        request(.fetchTotalPassStudent)
+    func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity> {
+        request(.fetchTotalPassStudent(year: year))
             .map(TotalPassStudentResponseDTO.self)
             .map { $0.toDomain() }
     }
@@ -46,8 +46,8 @@ final class RemoteApplicationsDataSourceImpl: RemoteBaseDataSource<ApplicationsA
             .map(FetchRejectionReasonResponseDTO.self)
             .map { $0.rejectionReason }
     }
-    func fetchEmploymentStatus() -> Single<[EmploymentEntity]> {
-        request(.fetchEmploymentStatus)
+    func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]> {
+        request(.fetchEmploymentStatus(year: year))
             .map(ClassEmploymentListResponseDTO.self)
             .map { $0.toDomain() }
     }

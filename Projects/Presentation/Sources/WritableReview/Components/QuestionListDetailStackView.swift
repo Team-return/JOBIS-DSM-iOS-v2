@@ -11,26 +11,52 @@ public final class QuestionListDetailStackView: BaseView {
         $0.layoutMargins = .init(top: 4, left: 0, bottom: 4, right: 0)
         $0.isLayoutMarginsRelativeArrangement = true
     }
+
+    private var emptyView: ListEmptyView?
+
     public override func addView() {
-        [
-            backStackView
-        ].forEach(self.addSubview(_:))
+        self.addSubview(backStackView)
     }
 
     public override func setLayout() {
         backStackView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
 
-    func setFieldType(_ list: [QnaEntity]) {
-        list.forEach { data in
-            let attachmentView = QuestionListDetailView().then {
-                $0.configureView(model: data)
+    func setFieldType(_ list: [QnAEntity]) {
+        backStackView.arrangedSubviews.forEach { view in
+            backStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
+        emptyView?.removeFromSuperview()
+        emptyView = nil
+
+        let validList = list.filter { !$0.question.isEmpty && !$0.answer.isEmpty }
+
+        if validList.isEmpty {
+            let empty = ListEmptyView().then {
+                $0.setEmptyView(
+                    title: "받은 질문을 작성하지 않았어요!",
+                    subTitle: "다른 학생의 전공 후기를 봐주세요!"
+                )
             }
-            self.backStackView.addArrangedSubview(attachmentView)
+            self.addSubview(empty)
+            empty.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
+            self.emptyView = empty
+            backStackView.isHidden = true
+        } else {
+            backStackView.isHidden = false
+
+            validList.forEach { data in
+                let attachmentView = QuestionListDetailView().then {
+                    $0.configureView(model: data)
+                }
+                backStackView.addArrangedSubview(attachmentView)
+            }
         }
     }
 }

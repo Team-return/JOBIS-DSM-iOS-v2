@@ -24,15 +24,15 @@ struct ApplicationsRepositoryImpl: ApplicationsRepository {
         remoteApplicationsDataSource.fetchApplication()
     }
 
-    func fetchTotalPassStudent() -> Single<TotalPassStudentEntity> {
-        remoteApplicationsDataSource.fetchTotalPassStudent()
+    func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity> {
+        remoteApplicationsDataSource.fetchTotalPassStudent(year: year)
     }
 
     func fetchRejectionReason(id: Int) -> Single<String> {
         remoteApplicationsDataSource.fetchRejectionReason(id: id)
     }
 
-    func fetchEmploymentStatus() -> Single<[EmploymentEntity]> {
-        remoteApplicationsDataSource.fetchEmploymentStatus()
+    func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]> {
+        remoteApplicationsDataSource.fetchEmploymentStatus(year: year)
     }
 }
