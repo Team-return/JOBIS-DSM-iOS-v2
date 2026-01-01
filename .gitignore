@@ -72,5 +72,23 @@ Tuist/Dependencies
 ### Tuist cache ###
 Tuist/Cache/
 
+### Secrets (handled via GitHub Secrets in CI) ###
 XCConfig/
 Projects/App/Resources/Firebase/
+
+### Fastlane ###
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/.env
+test_output/
+*.ipa
+*.dSYM.zip
+*.mobileprovision
+
+### Ruby/Bundler ###
+.bundle/
+vendor/bundle/
+Gemfile.lock
+.claude/
