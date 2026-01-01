@@ -1,14 +1,11 @@
-name: CI/CD Pipeline
+name: Release to App Store
 
 on:
-  workflow_dispatch:  # 수동 실행만 가능
-  # push:
-  #   branches: [ develop ]
-  # pull_request:
-  #   branches: [ develop ]
+  push:
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  release:
     runs-on: macos-15
 
     steps:
@@ -50,8 +47,7 @@ jobs:
         install: true
 
     - name: Install Fastlane
-      run: |
-        brew install fastlane
+      run: brew install fastlane
 
     - name: Generate Xcode project with Tuist
       run: |
@@ -60,5 +56,8 @@ jobs:
       env:
         TUIST_CI: "1"
 
-    - name: Run Fastlane CI
-      run: fastlane ci
+    - name: Run Fastlane Release
+      run: fastlane release
+      env:
+        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
