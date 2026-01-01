@@ -6,8 +6,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import SkeletonView
 
-public final class RecruitmentViewController: BaseViewController<RecruitmentViewModel> {
+public final class RecruitmentViewController: BaseReactorViewController<RecruitmentReactor> {
     public var viewWillappearWithTap: (() -> Void)?
     public var isTabNavigation: Bool = true
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
@@ -24,6 +25,7 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         $0.separatorStyle = .none
         $0.rowHeight = 72
         $0.showsVerticalScrollIndicator = false
+        $0.isSkeletonable = true
     }
     private let filterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
@@ -47,48 +49,80 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
         }
     }
 
-    public override func bind() {
-        let input = RecruitmentViewModel.Input(
-            viewAppear: self.viewDidLoadPublisher,
-            bookMarkButtonDidTap: bookmarkButtonDidClicked,
-            pageChange: recruitmentTableView.rx.willDisplayCell
-                .filter {
+    public override func bindAction() {
+        viewDidLoadPublisher
+            .map { RecruitmentReactor.Action.fetchRecruitmentList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        recruitmentTableView.rx.willDisplayCell
+            .filter {
+                return !self.reactor.currentState.isLoading &&
                     $0.indexPath.row == self.recruitmentTableView.numberOfRows(
                         inSection: $0.indexPath.section
                     ) - 1
-                },
-            recruitmentTableViewDidTap: recruitmentTableView.rx
-                .modelSelected(RecruitmentEntity.self)
-                .asObservable()
-                .map { $0.recruitID }
-                .do(onNext: { _ in
-                    self.isTabNavigation = false
-                }),
-            searchButtonDidTap: searchButton.rx.tap.asSignal(),
-            filterButtonDidTap: filterButton.rx.tap.asSignal()
-        )
+            }
+            .map { _ in RecruitmentReactor.Action.loadMoreRecruitments }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
+        bookmarkButtonDidClicked
+            .map { RecruitmentReactor.Action.bookmarkButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.recruitmentData
-            .skip(1)
-            .do(onNext: {
-                self.listEmptyView.isHidden = !$0.isEmpty
+        recruitmentTableView.rx.itemSelected
+            .do(onNext: { _ in
+                self.isTabNavigation = false
             })
-            .bind(
-                to: recruitmentTableView.rx.items(
-                    cellIdentifier: RecruitmentTableViewCell.identifier,
-                    cellType: RecruitmentTableViewCell.self
-                )) { _, element, cell in
-                    cell.adapt(model: element)
-                    cell.bookmarkButtonDidTap = {
-                        self.bookmarkButtonDidClicked.accept(cell.model!.recruitID)
-                    }
+            .compactMap { [weak self] indexPath -> Int? in
+                guard let self = self,
+                      !self.reactor.currentState.isLoading,
+                      indexPath.row < self.reactor.currentState.recruitmentList.count else {
+                    return nil
                 }
-                .disposed(by: disposeBag)
+                return self.reactor.currentState.recruitmentList[indexPath.row].recruitID
+            }
+            .map { RecruitmentReactor.Action.recruitmentDidSelect($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        searchButton.rx.tap
+            .map { RecruitmentReactor.Action.searchButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterButton.rx.tap
+            .map { RecruitmentReactor.Action.filterButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { ($0.recruitmentList, $0.isLoading) }
+            .skip(1)
+            .bind(onNext: { [weak self] list, isLoading in
+                guard let self = self else { return }
+                self.listEmptyView.isHidden = isLoading || !list.isEmpty
+
+                if isLoading {
+                    self.recruitmentTableView.reloadData()
+                    DispatchQueue.main.async {
+                        self.recruitmentTableView.showAnimatedSkeleton(
+                            usingColor: .systemGray5,
+                            transition: .crossDissolve(0.25)
+                        )
+                    }
+                } else {
+                    self.recruitmentTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.25))
+                }
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
+        recruitmentTableView.dataSource = self
+
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
@@ -112,5 +146,38 @@ public final class RecruitmentViewController: BaseViewController<RecruitmentView
             UIBarButtonItem(customView: searchButton),
             UIBarButtonItem(customView: filterButton)
         ]
+    }
+}
+
+extension RecruitmentViewController: SkeletonTableViewDataSource {
+    public func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+        return RecruitmentTableViewCell.identifier
+    }
+
+    public func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 8
+    }
+
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return reactor.currentState.isLoading ? 8 : reactor.currentState.recruitmentList.count
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: RecruitmentTableViewCell.identifier,
+            for: indexPath
+        ) as? RecruitmentTableViewCell else {
+            return UITableViewCell()
+        }
+
+        if !reactor.currentState.isLoading {
+            let recruitment = reactor.currentState.recruitmentList[indexPath.row]
+            cell.adapt(model: recruitment)
+            cell.bookmarkButtonDidTap = { [weak self] in
+                self?.bookmarkButtonDidClicked.accept(recruitment.recruitID)
+            }
+        }
+
+        return cell
     }
 }

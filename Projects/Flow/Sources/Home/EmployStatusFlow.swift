@@ -23,8 +23,14 @@ public final class EmployStatusFlow: Flow {
         case .employStatusIsRequired:
             return navigateToEmployStatus()
 
-        case let .classEmploymentIsRequired(classNumber):
-            return navigateToClassEmployment(classNumber)
+        case let .classEmploymentIsRequired(classNumber, year):
+            return navigateToClassEmployment(classNumber, year: year)
+
+        case let .employmentFilterIsRequired(currentYear):
+            return navigateToEmploymentFilter(currentYear: currentYear)
+
+        case let .applyYearFilter(year):
+            return applyYearFilter(year: year)
         }
     }
 }
@@ -33,20 +39,33 @@ private extension EmployStatusFlow {
     func navigateToEmployStatus() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
-    func navigateToClassEmployment(_ classNumber: Int) -> FlowContributors {
-        let viewController = container.resolve(ClassEmploymentViewController.self, argument: classNumber)!
+    func navigateToClassEmployment(_ classNumber: Int, year: Int) -> FlowContributors {
+        let viewController = container.resolve(ClassEmploymentViewController.self, arguments: classNumber, year)!
         rootViewController.navigationController?.pushViewController(viewController, animated: true)
 
-        guard let stepper = viewController.viewModel as? Stepper else {
-            return .none
-        }
         return .one(flowContributor: .contribute(
             withNextPresentable: viewController,
-            withNextStepper: stepper
+            withNextStepper: viewController.reactor
         ))
+    }
+
+    func navigateToEmploymentFilter(currentYear: Int) -> FlowContributors {
+        let viewController = container.resolve(EmploymentFilterViewController.self)!
+        rootViewController.navigationController?.pushViewController(viewController, animated: true)
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: viewController,
+            withNextStepper: viewController.reactor
+        ))
+    }
+
+    func applyYearFilter(year: Int) -> FlowContributors {
+        rootViewController.navigationController?.popViewController(animated: true)
+        rootViewController.reactor.updateYear(year)
+        return .none
     }
 }

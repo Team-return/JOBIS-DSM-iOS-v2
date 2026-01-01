@@ -12,7 +12,7 @@ public final class SigninReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let signinUseCase: SigninUseCase
 
-    init(signinUseCase: SigninUseCase) {
+    public init(signinUseCase: SigninUseCase) {
         self.initialState = .init()
         self.signinUseCase = signinUseCase
     }
@@ -30,8 +30,6 @@ public final class SigninReactor: BaseReactor, Stepper {
         case emailError(String)
         case passwordError(String)
         case errorReset
-        case navigateToRenewalPassword
-        case signinSuccess
     }
 
     public struct State {
@@ -56,7 +54,8 @@ extension SigninReactor {
             ])
 
         case .foregetPasswordButtonDidTap:
-            return .just(.navigateToRenewalPassword)
+            steps.accept(SigninStep.confirmEmailIsRequired)
+            return .empty()
 
         case let .updateEmail(email):
             return .just(.updateEmail(email))
@@ -81,12 +80,6 @@ extension SigninReactor {
         case let .passwordError(error):
             newState.passwordError = error
 
-        case .signinSuccess:
-            steps.accept(SigninStep.tabsIsRequired)
-
-        case .navigateToRenewalPassword:
-            steps.accept(SigninStep.confirmEmailIsRequired)
-
         case .errorReset:
             newState.emailError = ""
             newState.passwordError = ""
@@ -106,7 +99,10 @@ extension SigninReactor {
                 deviceToken: Messaging.messaging().fcmToken
             ))
             .asObservable()
-            .map { _ in Mutation.signinSuccess }
+            .do(onNext: { [weak self] _ in
+                self?.steps.accept(SigninStep.tabsIsRequired)
+            })
+            .flatMap { _ in Observable<Mutation>.empty() }
             .catch { error in
                 guard let error = error as? UsersError,
                       let description = error.errorDescription

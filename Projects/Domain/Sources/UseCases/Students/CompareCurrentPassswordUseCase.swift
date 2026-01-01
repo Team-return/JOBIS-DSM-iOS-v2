@@ -1,6 +1,6 @@
 import RxSwift
 
-public struct CompareCurrentPassswordUseCase {
+public struct CompareCurrentPasswordUseCase {
     private let studentsRepository: any StudentsRepository
 
     public init(studentsRepository: any StudentsRepository) {
@@ -8,6 +8,6 @@ public struct CompareCurrentPassswordUseCase {
     }
 
     public func execute(password: String) -> Completable {
-        studentsRepository.compareCurrentPasssword(password: password)
+        studentsRepository.compareCurrentPassword(password: password)
     }
 }

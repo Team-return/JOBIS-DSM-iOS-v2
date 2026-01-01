@@ -5,10 +5,9 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import ReactorKit
 
-public final class VerifyEmailViewController: SignupViewController<VerifyEmailViewModel> {
-    public var name: String = ""
-    public var gcn: Int = 0
+public final class VerifyEmailViewController: BaseReactorViewController<VerifyEmailReactor> {
     private let emailTextField = JobisTextField().then {
         $0.textField.keyboardType = .emailAddress
         $0.setTextField(
@@ -48,19 +47,31 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
         }
     }
 
-    public override func bind() {
-        let input = VerifyEmailViewModel.Input(
-            name: name,
-            gcn: gcn,
-            email: emailTextField.textField.rx.text.orEmpty.asDriver(),
-            authCode: authCodeTextField.textField.rx.text.orEmpty.asDriver(),
-            sendAuthCodeButtonDidTap: emailTextField.textFieldRightView.customButton.rx.tap.asSignal(),
-            nextButtonDidTap: nextPublishRelay.asSignal()
-        )
-        let output = viewModel.transform(input)
+    public override func bindAction() {
+        emailTextField.textField.rx.text.orEmpty
+            .map { VerifyEmailReactor.Action.updateEmail($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        output.isSuccessedToSendAuthCode
-            .asObservable()
+        authCodeTextField.textField.rx.text.orEmpty
+            .map { VerifyEmailReactor.Action.updateAuthCode($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        emailTextField.textFieldRightView.customButton.rx.tap
+            .map { VerifyEmailReactor.Action.sendAuthCodeButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        nextButton.rx.tap
+            .map { VerifyEmailReactor.Action.nextButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.isSuccessedToSendAuthCode }
+            .distinctUntilChanged()
             .bind { [weak self] isSuccessedToSendAuthCode in
                 if isSuccessedToSendAuthCode {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .transitionCrossDissolve) {
@@ -74,15 +85,17 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             }
             .disposed(by: disposeBag)
 
-        output.emailErrorDescription
-            .asObservable()
+        reactor.state.map { $0.emailErrorDescription }
+            .distinctUntilChanged()
+            .compactMap { $0 }
             .bind { [weak self] description in
-                self?.authCodeTextField.setDescription(description)
+                self?.emailTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
-        output.authCodeErrorDescription
-            .asObservable()
+        reactor.state.map { $0.authCodeErrorDescription }
+            .distinctUntilChanged()
+            .compactMap { $0 }
             .bind { [weak self] description in
                 self?.authCodeTextField.setDescription(description)
             }
@@ -97,15 +110,9 @@ public final class VerifyEmailViewController: SignupViewController<VerifyEmailVi
             .observe(on: MainScheduler.asyncInstance)
             .limitWithOnlyInt(6) { [weak self] in
                 self?.authCodeTextField.textField.resignFirstResponder()
-                self?.nextSignupStep()
+                self?.reactor.action.onNext(.nextButtonDidTap)
             }
-            .bind(to: authCodeTextField.textField.rx.text )
-            .disposed(by: disposeBag)
-
-        nextButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.nextSignupStep()
-            })
+            .bind(to: authCodeTextField.textField.rx.text)
             .disposed(by: disposeBag)
     }
 
@@ -119,7 +126,7 @@ extension VerifyEmailViewController: UITextFieldDelegate {
         if textField == emailTextField.textField {
             self.authCodeTextField.textField.becomeFirstResponder()
         } else if textField == authCodeTextField.textField {
-            self.nextSignupStep()
+            self.reactor.action.onNext(.nextButtonDidTap)
         }
         return true
     }

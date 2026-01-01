@@ -6,25 +6,26 @@ import Core
 
 public final class RejectReasonFlow: Flow {
     public let container: Container
-    private let rootViewController: RejectReasonViewController
+    private var rootViewController: RejectReasonViewController!
     public var root: Presentable {
         return rootViewController
     }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = RejectReasonViewController(
-            container.resolve(RejectReasonViewModel.self)!,
-            state: .custom(height: 280)
-        )
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? RejectReasonStep else { return .none }
 
         switch step {
-        case .rejectReasonIsRequired:
-            return navigateToRejectReason()
+        case let .rejectReasonIsRequired(applicationID, recruitmentID, companyName, companyImageUrl):
+            return navigateToRejectReason(
+                applicationID: applicationID,
+                recruitmentID: recruitmentID,
+                companyName: companyName,
+                companyImageUrl: companyImageUrl
+            )
         case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
             return navigateToReApply(recruitmentID, applicationID, companyName, companyImageUrl)
         }
@@ -32,10 +33,20 @@ public final class RejectReasonFlow: Flow {
 }
 
 private extension RejectReasonFlow {
-    func navigateToRejectReason() -> FlowContributors {
+    func navigateToRejectReason(
+        applicationID: Int,
+        recruitmentID: Int,
+        companyName: String,
+        companyImageUrl: String
+    ) -> FlowContributors {
+        rootViewController = container.resolve(
+            RejectReasonViewController.self,
+            arguments: applicationID, recruitmentID, companyName, companyImageUrl
+        )!
+
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 

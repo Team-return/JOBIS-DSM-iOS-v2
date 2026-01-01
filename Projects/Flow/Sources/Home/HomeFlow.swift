@@ -62,7 +62,7 @@ private extension HomeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: homeViewController,
-            withNextStepper: homeViewController.viewModel
+            withNextStepper: homeViewController.reactor
         ))
     }
 
@@ -138,11 +138,6 @@ private extension HomeFlow {
     ) -> FlowContributors {
         let rejectReasonFlow = RejectReasonFlow(container: container)
         Flows.use(rejectReasonFlow, when: .created) { root in
-            let view = root as? RejectReasonViewController
-            view?.viewModel.recruitmentID = recruitmentID
-            view?.viewModel.applicationID = applicationID
-            view?.viewModel.companyName = companyName
-            view?.viewModel.companyImageUrl = companyImageUrl
             self.rootViewController.present(
                 root,
                 animated: false
@@ -152,7 +147,12 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rejectReasonFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RejectReasonStep.rejectReasonIsRequired
+                withSingleStep: RejectReasonStep.rejectReasonIsRequired(
+                    applicationID: applicationID,
+                    recruitmentID: recruitmentID,
+                    companyName: companyName,
+                    companyImageUrl: companyImageUrl
+                )
             )
         ))
     }
@@ -163,12 +163,17 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: recruitmentID,
+            applicationId: applicationID,
+            companyName: companyName,
+            companyImageURL: companyImageUrl,
+            applyType: .reApply
+        )
         Flows.use(applyFlow, when: .created) { root in
-            let view = root as? ApplyViewController
-            view?.viewModel.applyType = .reApply
             self.rootViewController.pushViewController(
-                view!,
+                root,
                 animated: true
             )
         }
@@ -186,20 +191,15 @@ private extension HomeFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
             view?.isPopViewController = { id, bookmark in
                 let popView = self.rootViewController.topViewController as? RecruitmentViewController
-                var oldData = popView?.viewModel.recruitmentData.value
-                oldData?.enumerated().forEach {
-                    if $0.element.recruitID == id {
-                        oldData![$0.offset].bookmarked = bookmark
-                    }
-                }
-                popView?.viewModel.recruitmentData.accept(oldData!)
                 popView?.isTabNavigation = false
             }
             self.rootViewController.pushViewController(

@@ -7,9 +7,14 @@ import Core
 import Domain
 import DesignSystem
 import Charts
+import ReactorKit
 
-public final class EmployStatusViewController: BaseViewController<EmployStatusViewModel> {
+public final class EmployStatusViewController: BaseReactorViewController<EmployStatusReactor> {
     private let classButtonTapped = PublishRelay<Int>()
+    private let filterButton = UIButton(type: .system).then {
+        $0.setImage(.jobisIcon(.filterIcon), for: .normal)
+        $0.tintColor = .GrayScale.gray90
+    }
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -79,17 +84,20 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
         }
     }
 
-    public override func bind() {
-        let input = EmployStatusViewModel.Input(
-            viewWillAppear: viewWillAppearPublisher,
-            classButtonTapped: classButtonTapped.asObservable()
-        )
-        let output = viewModel.transform(input)
-        output.totalPassStudentInfo
-            .asObservable()
-            .bind { [weak self] info in
-                self?.chartView.setChartData(model: info)
-            }
+    public override func bindAction() {
+        viewDidLoadPublisher.asObservable()
+            .map { EmployStatusReactor.Action.fetchEmploymentStatus }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        classButtonTapped.asObservable()
+            .map { EmployStatusReactor.Action.classButtonTapped($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        filterButton.rx.tap
+            .map { EmployStatusReactor.Action.filterButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
         [
@@ -105,7 +113,17 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
                     .bind(to: classButtonTapped)
                     .disposed(by: disposeBag)
             }
+    }
 
+    public override func bindState() {
+        reactor.state.map { $0.totalPassStudentInfo }
+            .bind { [weak self] info in
+                self?.chartView.setChartData(model: info)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    public override func configureViewController() {
         viewWillAppearPublisher
             .bind { [weak self] _ in
                 self?.hideTabbar()
@@ -115,5 +133,12 @@ public final class EmployStatusViewController: BaseViewController<EmployStatusVi
 
     public override func configureNavigation() {
         setSmallTitle(title: "취업 현황")
+
+        let rightBarButtonItem = UIBarButtonItem(customView: filterButton)
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+
+        filterButton.snp.makeConstraints {
+            $0.width.height.equalTo(28)
+        }
     }
 }

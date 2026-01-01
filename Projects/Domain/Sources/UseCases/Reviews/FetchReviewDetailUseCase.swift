@@ -7,7 +7,7 @@ public struct FetchReviewDetailUseCase {
 
     private let reviewsRepository: ReviewsRepository
 
-    public func execute(id: Int) -> Single<[QnaEntity]> {
-        return reviewsRepository.fetchReviewDetail(id: id)
+    public func execute(reviewID: String) -> Single<ReviewDetailEntity> {
+        reviewsRepository.fetchReviewDetail(reviewID: reviewID)
     }
 }

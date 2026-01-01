@@ -12,6 +12,8 @@ struct RecruitmentResponseDTO: Codable {
     let militarySupport: Bool?
     let hiringJobs: String
     let bookmarked: Bool
+    let status: String
+    let year: Int
 
     enum CodingKeys: String, CodingKey {
         case recruitID = "id"
@@ -21,6 +23,8 @@ struct RecruitmentResponseDTO: Codable {
         case militarySupport = "military_support"
         case hiringJobs = "hiring_jobs"
         case bookmarked
+        case status
+        case year
     }
 }
 
@@ -34,7 +38,9 @@ extension RecruitmentListResponseDTO {
                 trainPay: $0.trainPay ?? 0,
                 militarySupport: $0.militarySupport ?? false,
                 hiringJobs: $0.hiringJobs,
-                bookmarked: $0.bookmarked
+                bookmarked: $0.bookmarked,
+                status: $0.status,
+                year: $0.year
             )
         }
     }

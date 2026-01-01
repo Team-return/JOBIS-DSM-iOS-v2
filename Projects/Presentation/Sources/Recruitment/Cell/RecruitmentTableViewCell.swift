@@ -5,6 +5,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import SkeletonView
 
 final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     static let identifier = "RecruitmentTableViewCell"
@@ -41,6 +42,26 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
             color: UIColor.GrayScale.gray70
         )
     }
+    private let dotLabel = UILabel().then {
+        $0.setJobisText(
+            "•",
+            font: .description,
+            color: UIColor.GrayScale.gray70
+        )
+    }
+    private let yearLabel = UILabel().then {
+        $0.setJobisText(
+            "-",
+            font: .subBody,
+            color: UIColor.Primary.blue20
+        )
+    }
+    private let benefitYearStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 6
+        $0.alignment = .center
+    }
+    private let statusTagView = RecruitmentStatusTagView()
     public let bookmarkButton = UIButton().then {
         $0.setImage(.jobisIcon(.bookmarkOff).resize(size: 28), for: .normal)
     }
@@ -48,11 +69,19 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
     override func addView() {
         [
             companyProfileImageView,
-            benefitsLabel,
             companyLabel,
+            benefitYearStackView,
+            statusTagView,
             bookmarkButton
         ].forEach {
             contentView.addSubview($0)
+        }
+        [
+            benefitsLabel,
+            dotLabel,
+            yearLabel
+        ].forEach {
+            benefitYearStackView.addArrangedSubview($0)
         }
     }
 
@@ -62,6 +91,10 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
             $0.leading.equalToSuperview().inset(24)
             $0.width.height.equalTo(48)
         }
+        statusTagView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(bookmarkButton.snp.leading).offset(-8)
+        }
         bookmarkButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(24)
@@ -70,11 +103,12 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
         companyLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(12)
             $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
-            $0.trailing.equalTo(bookmarkButton.snp.leading).offset(4)
+            $0.trailing.lessThanOrEqualTo(statusTagView.snp.leading).offset(-8)
         }
-        benefitsLabel.snp.makeConstraints {
+        benefitYearStackView.snp.makeConstraints {
             $0.top.equalTo(companyLabel.snp.bottom).offset(4)
             $0.leading.equalTo(companyProfileImageView.snp.trailing).offset(12)
+            $0.trailing.lessThanOrEqualTo(statusTagView.snp.leading).offset(-8)
         }
     }
 
@@ -86,6 +120,12 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
                 self?.isBookmarked.toggle()
             })
             .disposed(by: disposeBag)
+
+        contentView.isSkeletonable = true
+        companyProfileImageView.isSkeletonable = true
+        companyLabel.isSkeletonable = true
+        benefitsLabel.isSkeletonable = true
+        yearLabel.isSkeletonable = true
     }
 
     override func adapt(model: RecruitmentEntity) {
@@ -96,6 +136,23 @@ final class RecruitmentTableViewCell: BaseTableViewCell<RecruitmentEntity> {
         let militarySupport = model.militarySupport ? "O": "X"
         companyLabel.text = model.companyName
         benefitsLabel.text = "병역특례 \(militarySupport)"
+        var status: RecruitmentStatus
+        if model.status == "RECRUITING" {
+            status = .recruiting
+        } else {
+            status = .done
+        }
+        let currentYear = Calendar.current.component(.year, from: Date())
+        if model.year == currentYear {
+            yearLabel.isHidden = true
+            dotLabel.isHidden = true
+        } else {
+            yearLabel.isHidden = false
+            dotLabel.isHidden = false
+            yearLabel.text = "\(model.year)"
+            status = .none
+        }
         isBookmarked = model.bookmarked
+        statusTagView.configure(with: status)
     }
 }

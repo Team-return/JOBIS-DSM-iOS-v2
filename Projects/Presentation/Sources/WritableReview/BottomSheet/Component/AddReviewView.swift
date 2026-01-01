@@ -10,127 +10,155 @@ import Domain
 class AddReviewView: BaseView {
     private let disposeBag = DisposeBag()
     public let nextButtonDidTap = PublishRelay<Void>()
+    public let backButtonDidTap = PublishRelay<Void>()
+    public let selectedFormat = BehaviorRelay<InterviewFormat?>(value: nil)
+
+    private let interviewFormats: [InterviewFormat] = [.individual, .group, .other]
+    private var selectedIndexPath: IndexPath?
+
+    private let backButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        $0.tintColor = .GrayScale.gray60
+    }
 
     private let addReviewTitleLabel = UILabel().then {
         $0.setJobisText(
-            "질문 추가하기",
-            font: .subBody,
+            "면접 구분",
+            font: .headLine,
             color: .GrayScale.gray60
         )
     }
-    private let questionLabel = UILabel().then {
-        $0.setJobisText(
-            "질문",
-            font: .description,
-            color: .GrayScale.gray90
-        )
-    }
-    public let questionTextField = UITextField().then {
-        $0.placeholder = "example"
-        $0.setPlaceholderColor(.GrayScale.gray60)
-        $0.layer.cornerRadius = 12
-        $0.backgroundColor = .GrayScale.gray10
-        $0.font = UIFont.jobisFont(.body)
-        $0.addLeftPadding(size: 16)
-        $0.addRightPadding(size: 16)
-    }
-    private let answerLabel = UILabel().then {
-        $0.setJobisText(
-            "답변",
-            font: .description,
-            color: .GrayScale.gray90
-        )
-    }
-    public let answerTextView = UITextView().then {
-        $0.text = "example"
-        $0.layer.cornerRadius = 12
-        $0.textColor = UIColor.GrayScale.gray60
-        $0.backgroundColor = .GrayScale.gray10
-        $0.font = UIFont.jobisFont(.body)
-        $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-    }
-    private let nextButton = JobisButton(style: .main).then {
+
+    private let progressBarView = ProgressBarView()
+
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 12
+        layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.register(InterviewFormatCollectionViewCell.self,
+                   forCellWithReuseIdentifier: InterviewFormatCollectionViewCell.identifier)
+        cv.delegate = self
+        cv.dataSource = self
+        cv.contentInset = UIEdgeInsets.zero
+        cv.scrollIndicatorInsets = UIEdgeInsets.zero
+        return cv
+    }()
+
+    public let nextButton = JobisButton(style: .main).then {
         $0.setText("다음")
         $0.isEnabled = false
     }
 
     public override func addView() {
         [
+            backButton,
             addReviewTitleLabel,
-            questionLabel,
-            questionTextField,
-            answerLabel,
-            answerTextView,
+            progressBarView,
+            collectionView,
             nextButton
         ].forEach(self.addSubview(_:))
     }
 
     public override func setLayout() {
+        backButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().inset(24)
+            $0.width.height.equalTo(20)
+        }
+
         addReviewTitleLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(24)
-            $0.height.equalTo(20)
+            $0.centerY.equalTo(backButton)
+            $0.leading.equalTo(backButton.snp.trailing).offset(10)
         }
 
-        questionLabel.snp.makeConstraints {
-            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(28)
-            $0.leading.equalToSuperview().inset(24)
+        progressBarView.snp.makeConstraints {
+            $0.top.equalTo(addReviewTitleLabel.snp.bottom).offset(12)
+            $0.leading.equalTo(backButton)
+            $0.width.equalTo(70)
+            $0.height.equalTo(6)
         }
 
-        questionTextField.snp.makeConstraints {
-            $0.top.equalTo(questionLabel.snp.bottom).offset(4)
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(progressBarView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(48)
-        }
-
-        answerLabel.snp.makeConstraints {
-            $0.top.equalTo(questionTextField.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(24)
-        }
-
-        answerTextView.snp.makeConstraints {
-            $0.top.equalTo(answerLabel.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.bottom.equalTo(nextButton.snp.top).inset(-24)
+            $0.height.greaterThanOrEqualTo(181)
         }
 
         nextButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(24)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(56)
         }
     }
 
     public override func configureView() {
-        answerTextView.delegate = self
-        let textFieldIsEmpty = questionTextField.rx.text.orEmpty.map { !$0.isEmpty }
-        let textViewIsEmpty = answerTextView.rx.text.orEmpty.map {
-            !$0.isEmpty && $0 != "example"
-        }
+        progressBarView.configure(totalSteps: 4, currentStep: 1)
 
-        Observable.combineLatest(textFieldIsEmpty, textViewIsEmpty) { $0 && $1 }
-            .bind(to: nextButton.rx.isEnabled)
+        nextButton.rx.tap
+            .bind(to: nextButtonDidTap)
             .disposed(by: disposeBag)
 
-        nextButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                self.nextButtonDidTap.accept(())
-            })
+        backButton.rx.tap
+            .bind(to: backButtonDidTap)
             .disposed(by: disposeBag)
+    }
+
+    public func updateProgress(currentStep: Int) {
+        progressBarView.configure(totalSteps: 4, currentStep: currentStep)
     }
 }
 
-extension AddReviewView: UITextViewDelegate {
-    public func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.GrayScale.gray60 {
-            textView.text = nil
-            textView.textColor = UIColor.GrayScale.gray90
-        }
+extension AddReviewView: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return interviewFormats.count
     }
 
-    public func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = "example"
-            textView.textColor = UIColor.GrayScale.gray60
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: InterviewFormatCollectionViewCell.identifier,
+            for: indexPath
+        ) as? InterviewFormatCollectionViewCell else {
+            return UICollectionViewCell()
         }
+
+        let format = interviewFormats[indexPath.item]
+        cell.adapt(format: format)
+        cell.isCheck = selectedIndexPath == indexPath
+
+        return cell
+    }
+}
+
+extension AddReviewView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let previousIndexPath = selectedIndexPath {
+            if let previousCell = collectionView.cellForItem(at: previousIndexPath) as? InterviewFormatCollectionViewCell {
+                previousCell.isCheck = false
+            }
+        }
+
+        selectedIndexPath = indexPath
+        if let cell = collectionView.cellForItem(at: indexPath) as? InterviewFormatCollectionViewCell {
+            cell.isCheck = true
+        }
+
+        let selectedFormat = interviewFormats[indexPath.item]
+        self.selectedFormat.accept(selectedFormat)
+
+        nextButton.isEnabled = true
+    }
+}
+
+extension AddReviewView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let collectionViewWidth = collectionView.bounds.width
+        let cellWidth = collectionViewWidth > 0 ? collectionViewWidth : UIScreen.main.bounds.width - 48
+        return CGSize(width: cellWidth, height: 51)
     }
 }

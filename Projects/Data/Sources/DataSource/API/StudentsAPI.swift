@@ -7,13 +7,13 @@ enum StudentsAPI {
     case renewalPassword(RenewalPasswordRequestQuery)
     case studentExists(gcn: String, name: String)
     case fetchStudentInfo
-    case compareCurrentPasssword(password: String)
+    case compareCurrentPassword(password: String)
     case changePassword(ChangePasswordRequestQuery)
     case changeProfileImage(url: String)
 }
 
 extension StudentsAPI: JobisAPI {
-    typealias ErrorType = JobisError
+    typealias ErrorType = ApplicationsError
 
     var domain: JobisDomain {
         .students
@@ -33,7 +33,7 @@ extension StudentsAPI: JobisAPI {
         case .fetchStudentInfo:
             return "/my"
 
-        case .compareCurrentPasssword, .changePassword:
+        case .compareCurrentPassword, .changePassword:
             return "/password"
 
         case .changeProfileImage:
@@ -49,7 +49,7 @@ extension StudentsAPI: JobisAPI {
         case .renewalPassword, .changePassword, .changeProfileImage:
             return .patch
 
-        case .studentExists, .fetchStudentInfo, .compareCurrentPasssword:
+        case .studentExists, .fetchStudentInfo, .compareCurrentPassword:
             return .get
         }
     }
@@ -73,7 +73,7 @@ extension StudentsAPI: JobisAPI {
         case .fetchStudentInfo:
             return .requestPlain
 
-        case let .compareCurrentPasssword(password):
+        case let .compareCurrentPassword(password):
             return .requestParameters(
                 parameters: [
                     "password": password
@@ -92,7 +92,7 @@ extension StudentsAPI: JobisAPI {
 
     var jwtTokenType: JwtTokenType {
         switch self {
-        case .fetchStudentInfo, .compareCurrentPasssword, .changePassword, .changeProfileImage:
+        case .fetchStudentInfo, .compareCurrentPassword, .changePassword, .changeProfileImage:
             return .accessToken
         default:
             return .none
@@ -100,6 +100,13 @@ extension StudentsAPI: JobisAPI {
     }
 
     var errorMap: [Int: ErrorType]? {
-        return nil
+        switch self {
+        case .studentExists:
+            return [
+                409: .conflict
+            ]
+        default:
+            return nil
+        }
     }
 }

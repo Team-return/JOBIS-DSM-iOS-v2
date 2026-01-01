@@ -1,0 +1,3 @@
+[submodule "fastlane"]
+	path = fastlane
+	url = https://github.com/Team-return/JOBIS_fastlane.git

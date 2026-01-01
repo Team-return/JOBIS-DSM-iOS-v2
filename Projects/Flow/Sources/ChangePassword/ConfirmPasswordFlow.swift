@@ -13,7 +13,7 @@ public final class ConfirmPasswordFlow: Flow {
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ConfirmPasswordViewController.self)!
+        self.rootViewController = ConfirmPasswordViewController(container.resolve(ConfirmPasswordReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -33,7 +33,7 @@ private extension ConfirmPasswordFlow {
     func navigateToConfirmPassword() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 

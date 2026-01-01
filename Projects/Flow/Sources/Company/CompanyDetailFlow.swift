@@ -11,9 +11,13 @@ public final class CompanyDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(
+        container: Container,
+        companyId: Int,
+        type: CompanyDetailPreviousViewType = .recruitmentDetail
+    ) {
         self.container = container
-        self.rootViewController = container.resolve(CompanyDetailViewController.self)!
+        self.rootViewController = container.resolve(CompanyDetailViewController.self, arguments: companyId, type)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -39,7 +43,7 @@ private extension CompanyDetailFlow {
     func navigateToCompanyDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -49,12 +53,14 @@ private extension CompanyDetailFlow {
     }
 
     func navigateToRecruimtentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID,
+            type: .companyDetail
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
-            view?.viewModel.type = .companyDeatil
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
             )
@@ -67,14 +73,15 @@ private extension CompanyDetailFlow {
     }
 
     func navigateToInterviewReviewDetail(_ id: Int, _ name: String) -> FlowContributors {
-        let interviewReviewDetailFlow = InterviewReviewDetailFlow(container: container)
+        let interviewReviewDetailFlow = InterviewReviewDetailFlow(
+            container: container,
+            reviewId: String(id)
+        )
 
-        Flows.use(interviewReviewDetailFlow, when: .created) { (root) in
-            let view = root as? InterviewReviewDetailViewController
-            view?.viewModel.reviewId = id
-            view?.viewModel.writerName = name
+        Flows.use(interviewReviewDetailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
-                view!, animated: true
+                root,
+                animated: true
             )
         }
 

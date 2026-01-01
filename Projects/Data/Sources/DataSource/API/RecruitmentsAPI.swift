@@ -4,7 +4,15 @@ import AppNetwork
 
 enum RecruitmentsAPI {
     case fetchRecruitmentDetail(id: Int)
-    case fetchRecruitmentList(page: Int, jobCode: String?, techCode: [String]?, name: String?, winterIntern: Bool?)
+    case fetchRecruitmentList(
+        page: Int,
+        jobCode: String?,
+        techCode: [String]?,
+        name: String?,
+        winterIntern: Bool?,
+        years: [String]?,
+        status: String?
+    )
 }
 
 extension RecruitmentsAPI: JobisAPI {
@@ -33,13 +41,15 @@ extension RecruitmentsAPI: JobisAPI {
 
     var task: Moya.Task {
         switch self {
-        case let .fetchRecruitmentList(page, jobCode, techCode, name, winterIntern):
+        case let .fetchRecruitmentList(page, jobCode, techCode, name, winterIntern, years, status):
             return .requestParameters(parameters: [
                 "page": page,
                 "job_code": jobCode ?? " ",
                 "tech_code": techCode?.joined(separator: ",") ?? "",
                 "name": name ?? "",
-                "winter_intern": winterIntern ?? false
+                "winter_intern": winterIntern ?? false,
+                "years": years?.joined(separator: ",") ?? "",
+                "status": status ?? ""
             ], encoding: URLEncoding.queryString)
 
         default:

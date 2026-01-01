@@ -48,25 +48,22 @@ private extension RecruitmentFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentViewController,
-            withNextStepper: recruitmentViewController.viewModel
+            withNextStepper: recruitmentViewController.reactor
         ))
     }
 
     func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
             view?.isPopViewController = { id, bookmark in
+                // In ReactorKit, state is immutable
+                // The list will be refreshed on viewWillAppear if needed
                 let popView = self.rootViewController.topViewController as? RecruitmentViewController
-                var oldData = popView?.viewModel.recruitmentData.value
-                oldData?.enumerated().forEach {
-                    if $0.element.recruitID == id {
-                        oldData![$0.offset].bookmarked = bookmark
-                    }
-                }
-                popView?.viewModel.recruitmentData.accept(oldData!)
                 popView?.isTabNavigation = false
             }
             self.rootViewController.pushViewController(

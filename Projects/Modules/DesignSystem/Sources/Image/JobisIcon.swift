@@ -26,7 +26,8 @@ public enum JobisIcon {
     case bell
     case officeBuilding
     case snowman
-    case jobisLogo
+    case jobisWhiteLogo
+    case jobisBlackLogo
     case currentPageControl
     case defaultPageControl
     case pieChart
@@ -105,8 +106,11 @@ public enum JobisIcon {
         case .snowman:
             return dsIcons.snowman.image
 
-        case .jobisLogo:
-            return dsIcons.jobisLogo.image
+        case .jobisWhiteLogo:
+            return dsIcons.jobisWhiteLogo.image
+
+        case .jobisBlackLogo:
+            return dsIcons.jobisBlackLogo.image
 
         case .currentPageControl:
             return dsIcons.currentPageControl.image

@@ -21,15 +21,17 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.4</string>
+	<string>2.3.11</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>88</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>PRIVACY_WEB_URL</key>
+	<string>$(PRIVACY_WEB_URL)</string>
 	<key>S3_BASE_URL</key>
 	<string>$(S3_BASE_URL)</string>
 	<key>UIApplicationSceneManifest</key>

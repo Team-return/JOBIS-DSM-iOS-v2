@@ -8,7 +8,7 @@ protocol RemoteStudentsDataSource {
     func studentExists(gcn: String, name: String) -> Completable
     func fetchStudentInfo() -> Single<StudentInfoEntity>
     func changePassword(req: ChangePasswordRequestQuery) -> Completable
-    func compareCurrentPasssword(password: String) -> Completable
+    func compareCurrentPassword(password: String) -> Completable
     func changeProfileImage(url: String) -> Completable
 }
 
@@ -39,8 +39,8 @@ final class RemoteStudentsDataSourceImpl: RemoteBaseDataSource<StudentsAPI>, Rem
             .asCompletable()
     }
 
-    func compareCurrentPasssword(password: String) -> Completable {
-        request(.compareCurrentPasssword(password: password))
+    func compareCurrentPassword(password: String) -> Completable {
+        request(.compareCurrentPassword(password: password))
             .asCompletable()
     }
 

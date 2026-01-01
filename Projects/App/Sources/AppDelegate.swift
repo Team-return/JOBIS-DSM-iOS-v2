@@ -1,4 +1,5 @@
 import UIKit
+import FirebaseMessaging
 import Data
 import Swinject
 import Then
@@ -9,17 +10,22 @@ import DesignSystem
 import UserNotifications
 import Firebase
 import Pulse
+import Nuke
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     static var container = Container()
     var assembler: Assembler!
+    var cacheCleanupTimer: Timer?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         DesignSystemFontFamily.registerAllCustomFonts()
+
+        // Nuke 이미지 캐시 설정
+        configureNukeImageCache()
 
         assembler = Assembler([
             KeychainAssembly(),
@@ -64,6 +70,56 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
     ) {}
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        // 앱 종료 시 타이머 정리
+        stopCacheCleanupTimer()
+    }
+}
+
+// MARK: - Nuke Image Cache Configuration
+extension AppDelegate {
+    private func configureNukeImageCache() {
+        guard let diskCache = try? DataCache(name: "com.jobis.imagecache") else {
+            return
+        }
+        diskCache.sizeLimit = 150 * 1024 * 1024
+        diskCache.sweepInterval = 60 * 60 * 24
+
+        let imageCache = ImageCache()
+        imageCache.ttl = 60 * 5
+
+        // ImagePipeline Configuration 설정
+        var configuration = ImagePipeline.Configuration()
+        configuration.dataCache = diskCache
+        configuration.imageCache = imageCache
+
+        ImagePipeline.shared = ImagePipeline(configuration: configuration)
+
+        // 4분 주기
+        startCacheCleanupTimer()
+    }
+
+    private func startCacheCleanupTimer() {
+        cacheCleanupTimer?.invalidate()
+        cacheCleanupTimer = Timer.scheduledTimer(
+            withTimeInterval: 240.0,
+            repeats: true
+        ) { [weak self] _ in
+            self?.performCacheCleanup()
+        }
+    }
+
+    private func stopCacheCleanupTimer() {
+        cacheCleanupTimer?.invalidate()
+        cacheCleanupTimer = nil
+    }
+
+    private func performCacheCleanup() {
+        if let dataCache = ImagePipeline.shared.configuration.dataCache as? DataCache {
+            dataCache.sweep()
+        }
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {

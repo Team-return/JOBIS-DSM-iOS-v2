@@ -27,6 +27,12 @@ public final class WritableReviewFlow: Flow {
         case .addReviewIsRequired:
             return navigateToAddReview()
 
+        case .navigateToInterviewAtmosphere:
+            return navigateToInterviewAtmosphere()
+
+        case .reviewCompleteIsRequired:
+            return navigateToReviewComplete()
+
         case .popToMyPage:
             return popToMyPage()
         }
@@ -43,22 +49,21 @@ private extension WritableReviewFlow {
 
     func navigateToAddReview() -> FlowContributors {
         let addReviewFlow = AddReviewFlow(container: container)
+
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
-            view?.dismiss = { question, answer, techCode in
-                self.rootViewController.viewModel.techCode = techCode.code
-                self.rootViewController.viewModel.interviewReviewInfo.accept(
-                    QnaEntity(
-                        question: question,
-                        answer: answer,
-                        area: techCode.keyword
-                    )
-                )
+            view?.companyName = self.rootViewController.viewModel.companyName
+            view?.dismiss = { (techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
+
+                self.rootViewController.viewModel.jobCode = techCode.code
+                self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
+                self.rootViewController.viewModel.location = locationType ?? .seoul
+                view?.dismissBottomSheet()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.rootViewController.viewModel.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
+                }
             }
-            self.rootViewController.present(
-                root,
-                animated: false
-            )
+            self.rootViewController.present(root, animated: false)
         }
 
         return .one(flowContributor: .contribute(
@@ -69,8 +74,55 @@ private extension WritableReviewFlow {
         ))
     }
 
+    func navigateToInterviewAtmosphere() -> FlowContributors {
+        let interviewAtmosphereFlow = InterviewAtmosphereFlow(
+            container: container,
+            companyID: rootViewController.viewModel.companyID,
+            interviewType: rootViewController.viewModel.interviewType,
+            location: rootViewController.viewModel.location,
+            jobCode: rootViewController.viewModel.jobCode,
+            interviewerCount: rootViewController.viewModel.interviewerCount
+        )
+        Flows.use(interviewAtmosphereFlow, when: .created) { root in
+            guard let viewController = root as? UIViewController else { return }
+            self.rootViewController.navigationController?.pushViewController(
+                viewController,
+                animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: interviewAtmosphereFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired
+            )
+        ))
+    }
+
+    func navigateToReviewComplete() -> FlowContributors {
+        let reviewCompleteViewController = container.resolve(ReviewCompleteViewController.self)!
+
+        rootViewController.navigationController?.pushViewController(
+            reviewCompleteViewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: reviewCompleteViewController,
+            withNextStepper: reviewCompleteViewController.viewModel
+        ))
+    }
+
     func popToMyPage() -> FlowContributors {
-        self.rootViewController.navigationController?.popViewController(animated: true)
+        guard let navigationController = self.rootViewController.navigationController else {
+            return .none
+        }
+
+        let viewControllers = navigationController.viewControllers
+        if let rootIndex = viewControllers.firstIndex(of: rootViewController), rootIndex > 0 {
+            navigationController.popToViewController(viewControllers[rootIndex - 1], animated: true)
+        }
+
         return .none
     }
 }
