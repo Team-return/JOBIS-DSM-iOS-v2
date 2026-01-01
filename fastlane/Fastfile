@@ -2,24 +2,8 @@ default_platform(:ios)
 
 # Get project root directory
 PROJECT_ROOT = File.expand_path("..", __dir__)
-WORKSPACE_PATH = File.join(PROJECT_ROOT, "JOBIS-DSM-iOS-v2.xcworkspace")
-TEST_OUTPUT_PATH = File.join(PROJECT_ROOT, "test_output")
-XCODEPROJ_PATH = File.join(PROJECT_ROOT, "Projects/App/JOBIS-DSM-iOS-v2.xcodeproj")
 
 platform :ios do
-
-  desc "Run tests"
-  lane :test do
-    run_tests(
-      workspace: WORKSPACE_PATH,
-      scheme: "JOBIS-DSM-iOS-v2-DEV",
-      destination: "platform=iOS Simulator,name=iPhone 16",
-      code_coverage: true,
-      result_bundle: true,
-      output_directory: TEST_OUTPUT_PATH,
-      clean: true
-    )
-  end
 
   desc "Build for development"
   lane :build_dev do
@@ -30,51 +14,83 @@ platform :ios do
 
   desc "Build for staging"
   lane :build_stage do
-    xcodebuild(
-      workspace: WORKSPACE_PATH,
-      scheme: "JOBIS-DSM-iOS-v2-STAGE",
-      configuration: "STAGE",
-      sdk: "iphonesimulator",
-      destination: "platform=iOS Simulator,OS=latest,name=Any iOS Simulator Device",
-      clean: true,
-      build: true,
-      xcargs: "-skipPackagePluginValidation"
-    )
+    Dir.chdir(PROJECT_ROOT) do
+      sh("mise", "exec", "--", "tuist", "build", "JOBIS-DSM-iOS-v2-STAGE")
+    end
   end
 
   desc "Build for production"
   lane :build_prod do
-    build_app(
-      workspace: WORKSPACE_PATH,
-      scheme: "JOBIS-DSM-iOS-v2-PROD",
-      configuration: "PROD",
-      export_method: "app-store",
-      clean: true
-    )
+    Dir.chdir(PROJECT_ROOT) do
+      sh("mise", "exec", "--", "tuist", "build", "JOBIS-DSM-iOS-v2-PROD")
+    end
   end
 
-  desc "Run SwiftLint"
-  lane :lint do
-    swiftlint(
-      mode: :lint,
-      executable: "Pods/SwiftLint/swiftlint",
-      config_file: ".swiftlint.yml",
-      raise_if_swiftlint_error: true
-    )
-  end
-
-  desc "Deploy to TestFlight"
-  lane :beta do
-    increment_build_number(xcodeproj: XCODEPROJ_PATH)
-    build_prod
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true
-    )
-  end
-
-  desc "CI Build and Test"
+  desc "CI Build"
   lane :ci do
     build_dev
-    # test - 시뮬레이터 설정 후 활성화
+  end
+
+  desc "Build and upload to TestFlight (DEV - Testing only)"
+  lane :beta do
+    # Generate project first
+    Dir.chdir(PROJECT_ROOT) do
+      sh("mise", "exec", "--", "tuist", "fetch")
+      sh("mise", "exec", "--", "tuist", "generate", "--xcframeworks")
+    end
+
+    # Build the app (Xcode will use existing signing from project)
+    build_app(
+      workspace: "#{PROJECT_ROOT}/JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-DEV",
+      export_method: "app-store",
+      output_directory: "#{PROJECT_ROOT}/build",
+      output_name: "JOBIS-DSM-iOS-v2-DEV.ipa"
+    )
+
+    # Upload to TestFlight (DEV 앱)
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      app_identifier: "com.team.return.JOBIS-DSM-iOS.dev"
+    )
+  end
+
+  desc "Build and upload to App Store (Production - App ID: 6450888392)"
+  lane :release do
+    # Generate project first
+    Dir.chdir(PROJECT_ROOT) do
+      sh("mise", "exec", "--", "tuist", "fetch")
+      sh("mise", "exec", "--", "tuist", "generate", "--xcframeworks")
+    end
+
+    # Build the app (Xcode will use existing signing from project)
+    build_app(
+      workspace: "#{PROJECT_ROOT}/JOBIS-DSM-iOS-v2.xcworkspace",
+      scheme: "JOBIS-DSM-iOS-v2-PROD",
+      export_method: "app-store",
+      output_directory: "#{PROJECT_ROOT}/build",
+      output_name: "JOBIS-DSM-iOS-v2-PROD.ipa"
+    )
+
+    # Upload to TestFlight first (PROD 앱 - App ID: 6450888392)
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      app_identifier: "com.team.return.JOBIS-DSM-iOS"
+    )
+  end
+
+  desc "Submit PROD app to App Store for review"
+  lane :submit_review do
+    # Submit latest build for App Store review
+    upload_to_app_store(
+      skip_binary_upload: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: true,
+      automatic_release: false,
+      app_identifier: "com.team.return.JOBIS-DSM-iOS"
+    )
   end
 end

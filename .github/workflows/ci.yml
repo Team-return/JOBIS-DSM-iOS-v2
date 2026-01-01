@@ -45,22 +45,16 @@ jobs:
       with:
         install: true
 
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2'
-        bundler-cache: true
-
-    - name: Install dependencies
+    - name: Install Fastlane
       run: |
-        bundle install
+        brew install fastlane
 
     - name: Generate Xcode project with Tuist
       run: |
         mise exec -- tuist fetch
-        mise exec -- tuist generate
+        mise exec -- tuist generate --xcframeworks
       env:
         TUIST_CI: "1"
 
     - name: Run Fastlane CI
-      run: bundle exec fastlane ci
+      run: fastlane ci
