@@ -17,5 +17,8 @@ public let env = ProjectEnvironment(
     organizationName: "com.team.return",
     deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone, .ipad]),
     platform: .iOS,
-    baseSetting: ["OTHER_LDFLAGS": .array(["$(inherited)", "-ObjC"])]
+    baseSetting: [
+        "OTHER_LDFLAGS": .array(["$(inherited)", "-ObjC"]),
+        "ENABLE_TESTABILITY": .string("YES")
+    ]
 )

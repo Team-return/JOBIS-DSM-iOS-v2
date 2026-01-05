@@ -25,8 +25,6 @@ let project = Project.makeModule(
         .SPM.Pulse,
         .SPM.PulseUI,
         .SPM.Nuke,
-        .SPM.SkeletonView,
-        .SPM.Quick,
-        .SPM.Nimble
+        .SPM.SkeletonView
     ]
 )
