@@ -62,7 +62,16 @@ let dependencies = Dependencies(
             ),
             .remote(
                 url: "https://github.com/Juanpe/SkeletonView.git",
-                requirement: .upToNextMajor(from: "1.31.0"))
+                requirement: .upToNextMajor(from: "1.31.0")
+            ),
+            .remote(
+                url: "https://github.com/Quick/Quick.git",
+                requirement: .upToNextMajor(from: "6.0.0")
+            ),
+            .remote(
+                url: "https://github.com/Quick/Nimble.git",
+                requirement: .upToNextMajor(from: "13.0.0")
+            )
         ],
         baseSettings: .settings(
             configurations: [
