@@ -8,9 +8,9 @@ import Foundation
 let isCI: Bool = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1"
 
 let configurations: [Configuration] = [
-    .debug(name: .dev, xcconfig: .relativeToXCConfig(type: .dev, name: env.targetName)),
-    .debug(name: .stage, xcconfig: .relativeToXCConfig(type: .stage, name: env.targetName)),
-    .release(name: .prod, xcconfig: .relativeToXCConfig(type: .prod, name: env.targetName))
+    .debug(name: "DEV", xcconfig: .relativeToXCConfig(type: .dev, name: env.targetName)),
+    .debug(name: "STAGE", xcconfig: .relativeToXCConfig(type: .stage, name: env.targetName)),
+    .release(name: "PROD", xcconfig: .relativeToXCConfig(type: .prod, name: env.targetName))
 ]
 
 let settings: Settings = .settings(
@@ -37,7 +37,11 @@ let targets: [Target] = [
             .Projects.flow,
             .SPM.FCM
         ],
-        settings: .settings(base: env.baseSetting)
+        settings: .settings(
+            base: env.baseSetting,
+            configurations: configurations,
+            defaultSettings: .recommended
+        )
     ),
     .target(
         name: env.targetTestName,
@@ -60,36 +64,36 @@ let schemes: [Scheme] = [
       buildAction: .buildAction(targets: ["\(env.targetName)"]),
       testAction: TestAction.targets(
           ["\(env.targetTestName)"],
-          configuration: .dev,
+          configuration: "DEV",
           options: TestActionOptions.options(
               coverage: true,
               codeCoverageTargets: ["\(env.targetName)"]
           )
       ),
-      runAction: RunAction.runAction(configuration: .dev),
-      archiveAction: ArchiveAction.archiveAction(configuration: .dev),
-      profileAction: ProfileAction.profileAction(configuration: .dev),
-      analyzeAction: AnalyzeAction.analyzeAction(configuration: .dev)
+      runAction: RunAction.runAction(configuration: "DEV"),
+      archiveAction: ArchiveAction.archiveAction(configuration: "DEV"),
+      profileAction: ProfileAction.profileAction(configuration: "DEV"),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: "DEV")
     ),
     Scheme.scheme(
       name: "\(env.targetName)-PROD",
       shared: true,
       buildAction: .buildAction(targets: ["\(env.targetName)"]),
       testAction: nil,
-      runAction: RunAction.runAction(configuration: .prod),
-      archiveAction: ArchiveAction.archiveAction(configuration: .prod),
-      profileAction: ProfileAction.profileAction(configuration: .prod),
-      analyzeAction: AnalyzeAction.analyzeAction(configuration: .prod)
+      runAction: RunAction.runAction(configuration: "PROD"),
+      archiveAction: ArchiveAction.archiveAction(configuration: "PROD"),
+      profileAction: ProfileAction.profileAction(configuration: "PROD"),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: "PROD")
     ),
     Scheme.scheme(
       name: "\(env.targetName)-STAGE",
       shared: true,
       buildAction: .buildAction(targets: ["\(env.targetName)"]),
       testAction: nil,
-      runAction: RunAction.runAction(configuration: .stage),
-      archiveAction: ArchiveAction.archiveAction(configuration: .stage),
-      profileAction: ProfileAction.profileAction(configuration: .stage),
-      analyzeAction: AnalyzeAction.analyzeAction(configuration: .stage)
+      runAction: RunAction.runAction(configuration: "STAGE"),
+      archiveAction: ArchiveAction.archiveAction(configuration: "STAGE"),
+      profileAction: ProfileAction.profileAction(configuration: "STAGE"),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: "STAGE")
     )
 ]
 
