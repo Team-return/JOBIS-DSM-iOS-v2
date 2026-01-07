@@ -29,14 +29,14 @@ public extension Project {
 
         let configurations: [Configuration] = isCI ?
         [
-          .debug(name: .dev, settings: [:]),
-          .debug(name: .stage, settings: [:]),
-          .release(name: .prod, settings: [:])
+          .debug(name: "DEV", settings: [:]),
+          .debug(name: "STAGE", settings: [:]),
+          .release(name: "PROD", settings: [:])
         ] :
         [
-          .debug(name: .dev, xcconfig: .relativeToXCConfig(type: .dev, name: name)),
-          .debug(name: .stage, xcconfig: .relativeToXCConfig(type: .stage, name: name)),
-          .release(name: .prod, xcconfig: .relativeToXCConfig(type: .prod, name: name))
+          .debug(name: "DEV", xcconfig: .relativeToXCConfig(type: .dev, name: name)),
+          .debug(name: "STAGE", xcconfig: .relativeToXCConfig(type: .stage, name: name)),
+          .release(name: "PROD", xcconfig: .relativeToXCConfig(type: .prod, name: name))
         ]
 
         let settings: Settings = .settings(
