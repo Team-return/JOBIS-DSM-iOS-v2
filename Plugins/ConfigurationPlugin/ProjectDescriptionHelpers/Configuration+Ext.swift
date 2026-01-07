@@ -1,7 +1,7 @@
 import ProjectDescription
 
 public extension ConfigurationName {
-    static var dev: ConfigurationName { configuration(ProjectDeployTarget.dev.rawValue) }
-    static var stage: ConfigurationName { configuration(ProjectDeployTarget.stage.rawValue) }
-    static var prod: ConfigurationName { configuration(ProjectDeployTarget.prod.rawValue) }
+    static var dev: ConfigurationName { "DEV" }
+    static var stage: ConfigurationName { "STAGE" }
+    static var prod: ConfigurationName { "PROD" }
 }

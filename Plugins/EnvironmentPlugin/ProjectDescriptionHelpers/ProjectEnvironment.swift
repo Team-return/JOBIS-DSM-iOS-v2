@@ -5,7 +5,7 @@ public struct ProjectEnvironment {
     public let targetName: String
     public let targetTestName: String
     public let organizationName: String
-    public let deploymentTarget: DeploymentTarget
+    public let deploymentTarget: DeploymentTargets
     public let platform: Platform
     public let baseSetting: SettingsDictionary
 }
@@ -15,7 +15,7 @@ public let env = ProjectEnvironment(
     targetName: "JOBIS-DSM-iOS-v2",
     targetTestName: "DSM-JOBISTests",
     organizationName: "com.team.return",
-    deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone, .ipad]),
+    deploymentTarget: .iOS("15.0"),
     platform: .iOS,
-    baseSetting: ["OTHER_LDFLAGS": .array(["$(inherited)", "-ObjC"])]
+    baseSetting: ["OTHER_LDFLAGS": "$(inherited) -ObjC"]
 )

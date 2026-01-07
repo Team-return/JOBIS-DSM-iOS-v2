@@ -23,7 +23,7 @@ public extension Project {
         resources: ResourceFileElements? = nil,
         resourceSynthesizers: [ResourceSynthesizer] = .default + [],
         settings: SettingsDictionary = [:],
-        additionalPlistRows: [String: ProjectDescription.InfoPlist.Value] = [:]
+        additionalPlistRows: [String: ProjectDescription.Plist.Value] = [:]
     ) -> Project {
         let scripts: [TargetScript] = isCI ? [] : [.swiftLint]
 
@@ -41,18 +41,19 @@ public extension Project {
 
         let settings: Settings = .settings(
             base: env.baseSetting
-                .merging(.codeSign)
                 .merging(settings),
             configurations: configurations,
             defaultSettings: .recommended
         )
+        let destinations: Set<Destination> = platform == .iOS ? [.iPhone, .iPad] : [.mac]
+
         var allTargets: [Target] = [
-            Target(
+            .target(
                 name: name,
-                platform: platform,
+                destinations: destinations,
                 product: product,
                 bundleId: "\(env.organizationName).\(name)",
-                deploymentTarget: env.deploymentTarget,
+                deploymentTargets: env.deploymentTarget,
                 infoPlist: .extendingDefault(with: additionalPlistRows),
                 sources: sources,
                 resources: resources,
@@ -63,12 +64,12 @@ public extension Project {
 
         if targets.contains(.unitTest) {
             allTargets.append(
-                Target(
+                .target(
                     name: "\(name)Tests",
-                    platform: platform,
+                    destinations: destinations,
                     product: .unitTests,
                     bundleId: "\(env.organizationName).\(name)Tests",
-                    deploymentTarget: env.deploymentTarget,
+                    deploymentTargets: env.deploymentTarget,
                     infoPlist: .default,
                     sources: .unitTests,
                     scripts: scripts,
@@ -81,12 +82,12 @@ public extension Project {
         if targets.contains(.demo) {
             let demoDependencies: [TargetDependency] = [.target(name: name)]
             allTargets.append(
-                Target(
+                .target(
                     name: "\(name)DemoApp",
-                    platform: platform,
+                    destinations: destinations,
                     product: .app,
                     bundleId: "\(env.organizationName).\(name)DemoApp",
-                    deploymentTarget: env.deploymentTarget,
+                    deploymentTargets: env.deploymentTarget,
                     infoPlist: .extendingDefault(with: [
                         "UIMainStoryboardFile": "",
                         "UILaunchStoryboardName": "LaunchScreen",
@@ -118,7 +119,7 @@ public extension Project {
 
 extension Scheme {
     static func makeScheme(target: ConfigurationName, name: String) -> Scheme {
-        return Scheme(
+        return Scheme.scheme(
             name: name,
             shared: true,
             buildAction: .buildAction(targets: ["\(name)"]),
@@ -127,15 +128,15 @@ extension Scheme {
                 configuration: target,
                 options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
             ),
-            runAction: .runAction(configuration: target),
-            archiveAction: .archiveAction(configuration: target),
-            profileAction: .profileAction(configuration: target),
-            analyzeAction: .analyzeAction(configuration: target)
+            runAction: RunAction.runAction(configuration: target),
+            archiveAction: ArchiveAction.archiveAction(configuration: target),
+            profileAction: ProfileAction.profileAction(configuration: target),
+            analyzeAction: AnalyzeAction.analyzeAction(configuration: target)
         )
     }
 
     static func makeDemoScheme(target: ConfigurationName, name: String) -> Scheme {
-        return Scheme(
+        return Scheme.scheme(
             name: name,
             shared: true,
             buildAction: .buildAction(targets: ["\(name)DemoApp"]),
@@ -144,10 +145,10 @@ extension Scheme {
                 configuration: target,
                 options: .options(coverage: true, codeCoverageTargets: ["\(name)DemoApp"])
             ),
-            runAction: .runAction(configuration: target),
-            archiveAction: .archiveAction(configuration: target),
-            profileAction: .profileAction(configuration: target),
-            analyzeAction: .analyzeAction(configuration: target)
+            runAction: RunAction.runAction(configuration: target),
+            archiveAction: ArchiveAction.archiveAction(configuration: target),
+            profileAction: ProfileAction.profileAction(configuration: target),
+            analyzeAction: AnalyzeAction.analyzeAction(configuration: target)
         )
     }
 }
