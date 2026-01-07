@@ -91,4 +91,18 @@ test_output/
 .bundle/
 vendor/bundle/
 Gemfile.lock
+
+### Claude ###
 .claude/
+
+### Tuist build files ###
+.build/
+*.xcresult
+
+### Backup files ###
+*.bak
+
+### Tuist generated files ###
+*.xcodeproj
+*.xcworkspace
+.tuist-generated

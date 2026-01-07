@@ -8,9 +8,9 @@ import Foundation
 let isCI: Bool = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1"
 
 let configurations: [Configuration] = [
-    .debug(name: .dev, xcconfig: .relativeToXCConfig(type: .dev, name: env.targetName)),
-    .debug(name: .stage, xcconfig: .relativeToXCConfig(type: .stage, name: env.targetName)),
-    .release(name: .prod, xcconfig: .relativeToXCConfig(type: .prod, name: env.targetName))
+    .debug(name: "DEV", xcconfig: .relativeToXCConfig(type: .dev, name: env.targetName)),
+    .debug(name: "STAGE", xcconfig: .relativeToXCConfig(type: .stage, name: env.targetName)),
+    .release(name: "PROD", xcconfig: .relativeToXCConfig(type: .prod, name: env.targetName))
 ]
 
 let settings: Settings = .settings(
@@ -22,12 +22,12 @@ let settings: Settings = .settings(
 let scripts: [TargetScript] = isCI ? [.googleInfoPlistScripts] : [.swiftLint, .googleInfoPlistScripts]
 
 let targets: [Target] = [
-    .init(
+    .target(
         name: env.targetName,
-        platform: env.platform,
+        destinations: [.iPhone, .iPad],
         product: .app,
         bundleId: "$(APP_BUNDLE_ID)",
-        deploymentTarget: env.deploymentTarget,
+        deploymentTargets: env.deploymentTarget,
         infoPlist: .file(path: "Support/Info.plist"),
         sources: .sources,
         resources: .resources,
@@ -36,15 +36,14 @@ let targets: [Target] = [
         dependencies: [
             .Projects.flow,
             .SPM.FCM
-        ],
-        settings: .settings(base: env.baseSetting)
+        ]
     ),
-    .init(
+    .target(
         name: env.targetTestName,
-        platform: .iOS,
+        destinations: [.iPhone, .iPad],
         product: .unitTests,
-        bundleId: "\(env.organizationName).\(env.targetName)Tests",
-        deploymentTarget: env.deploymentTarget,
+        bundleId: "\(env.organizationName).\(env.targetTestName)Tests",
+        deploymentTargets: env.deploymentTarget,
         infoPlist: .default,
         sources: .unitTests,
         dependencies: [
@@ -54,7 +53,7 @@ let targets: [Target] = [
 ]
 
 let schemes: [Scheme] = [
-    .init(
+    Scheme.scheme(
       name: "\(env.targetName)-DEV",
       shared: true,
       buildAction: .buildAction(targets: ["\(env.targetName)"]),
@@ -66,30 +65,30 @@ let schemes: [Scheme] = [
               codeCoverageTargets: ["\(env.targetName)"]
           )
       ),
-      runAction: .runAction(configuration: .dev),
-      archiveAction: .archiveAction(configuration: .dev),
-      profileAction: .profileAction(configuration: .dev),
-      analyzeAction: .analyzeAction(configuration: .dev)
+      runAction: RunAction.runAction(configuration: .dev),
+      archiveAction: ArchiveAction.archiveAction(configuration: .dev),
+      profileAction: ProfileAction.profileAction(configuration: .dev),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: .dev)
     ),
-    .init(
+    Scheme.scheme(
       name: "\(env.targetName)-PROD",
       shared: true,
-      buildAction: BuildAction(targets: ["\(env.targetName)"]),
+      buildAction: .buildAction(targets: ["\(env.targetName)"]),
       testAction: nil,
-      runAction: .runAction(configuration: .prod),
-      archiveAction: .archiveAction(configuration: .prod),
-      profileAction: .profileAction(configuration: .prod),
-      analyzeAction: .analyzeAction(configuration: .prod)
+      runAction: RunAction.runAction(configuration: .prod),
+      archiveAction: ArchiveAction.archiveAction(configuration: .prod),
+      profileAction: ProfileAction.profileAction(configuration: .prod),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: .prod)
     ),
-    .init(
+    Scheme.scheme(
       name: "\(env.targetName)-STAGE",
       shared: true,
-      buildAction: BuildAction(targets: ["\(env.targetName)"]),
+      buildAction: .buildAction(targets: ["\(env.targetName)"]),
       testAction: nil,
-      runAction: .runAction(configuration: .stage),
-      archiveAction: .archiveAction(configuration: .stage),
-      profileAction: .profileAction(configuration: .stage),
-      analyzeAction: .analyzeAction(configuration: .stage)
+      runAction: RunAction.runAction(configuration: .stage),
+      archiveAction: ArchiveAction.archiveAction(configuration: .stage),
+      profileAction: ProfileAction.profileAction(configuration: .stage),
+      analyzeAction: AnalyzeAction.analyzeAction(configuration: .stage)
     )
 ]
 
