@@ -27,20 +27,10 @@ public extension Project {
     ) -> Project {
         let scripts: [TargetScript] = isCI ? [] : [.swiftLint]
 
-        let configurations: [Configuration] = isCI ?
-        [
-          .debug(name: "Debug", settings: [:]),
-          .release(name: "Release", settings: [:]),
-          .debug(name: "DEV", settings: [:]),
-          .debug(name: "STAGE", settings: [:]),
-          .release(name: "PROD", settings: [:])
-        ] :
-        [
-          .debug(name: "Debug", settings: [:]),
-          .release(name: "Release", settings: [:]),
-          .debug(name: "DEV", xcconfig: .relativeToXCConfig(type: .dev, name: name)),
-          .debug(name: "STAGE", xcconfig: .relativeToXCConfig(type: .stage, name: name)),
-          .release(name: "PROD", xcconfig: .relativeToXCConfig(type: .prod, name: name))
+        let configurations: [Configuration] = [
+          .debug(name: "DEV"),
+          .debug(name: "STAGE"),
+          .release(name: "PROD")
         ]
 
         let settings: Settings = .settings(
@@ -62,8 +52,7 @@ public extension Project {
                 sources: sources,
                 resources: resources,
                 scripts: scripts,
-                dependencies: dependencies,
-                settings: settings
+                dependencies: dependencies
             )
         ]
 
@@ -78,8 +67,7 @@ public extension Project {
                     infoPlist: .default,
                     sources: .unitTests,
                     scripts: scripts,
-                    dependencies: [],
-                    settings: settings
+                    dependencies: []
                 )
             )
         }
@@ -102,8 +90,7 @@ public extension Project {
                     sources: .demoSources,
                     resources: .demoResources,
                     scripts: scripts,
-                    dependencies: demoDependencies,
-                    settings: settings
+                    dependencies: demoDependencies
                 )
             )
         }
