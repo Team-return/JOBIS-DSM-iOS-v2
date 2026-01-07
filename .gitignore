@@ -92,3 +92,4 @@ test_output/
 vendor/bundle/
 Gemfile.lock
 .claude/
+\n# Tuist build files\n.build/\n\n# Backup files\n*.bak
