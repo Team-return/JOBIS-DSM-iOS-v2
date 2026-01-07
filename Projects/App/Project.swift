@@ -8,6 +8,8 @@ import Foundation
 let isCI: Bool = (ProcessInfo.processInfo.environment["TUIST_CI"] ?? "0") == "1"
 
 let configurations: [Configuration] = [
+    .debug(name: "Debug", settings: [:]),
+    .release(name: "Release", settings: [:]),
     .debug(name: "DEV", xcconfig: .relativeToXCConfig(type: .dev, name: env.targetName)),
     .debug(name: "STAGE", xcconfig: .relativeToXCConfig(type: .stage, name: env.targetName)),
     .release(name: "PROD", xcconfig: .relativeToXCConfig(type: .prod, name: env.targetName))
