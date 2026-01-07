@@ -58,7 +58,8 @@ public extension Project {
                 sources: sources,
                 resources: resources,
                 scripts: scripts,
-                dependencies: dependencies
+                dependencies: dependencies,
+                settings: settings
             )
         ]
 
@@ -73,7 +74,8 @@ public extension Project {
                     infoPlist: .default,
                     sources: .unitTests,
                     scripts: scripts,
-                    dependencies: []
+                    dependencies: [],
+                    settings: settings
                 )
             )
         }
@@ -96,7 +98,8 @@ public extension Project {
                     sources: .demoSources,
                     resources: .demoResources,
                     scripts: scripts,
-                    dependencies: demoDependencies
+                    dependencies: demoDependencies,
+                    settings: settings
                 )
             )
         }

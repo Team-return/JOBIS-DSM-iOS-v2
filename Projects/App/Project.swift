@@ -47,13 +47,14 @@ let targets: [Target] = [
         name: env.targetTestName,
         destinations: [.iPhone, .iPad],
         product: .unitTests,
-        bundleId: "\(env.organizationName).\(env.targetName)Tests",
+        bundleId: "\(env.organizationName).\(env.targetTestName)Tests",
         deploymentTargets: env.deploymentTarget,
         infoPlist: .default,
         sources: .unitTests,
         dependencies: [
             .target(name: env.targetName)
-        ]
+        ],
+        settings: settings
     )
 ]
 
