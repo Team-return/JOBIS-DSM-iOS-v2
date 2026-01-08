@@ -57,6 +57,11 @@ public extension Project {
         ]
 
         if targets.contains(.unitTest) {
+            let testDependencies: [TargetDependency] = [
+                .target(name: name),
+                .SPM.Quick,
+                .SPM.Nimble
+            ]
             allTargets.append(
                 .target(
                     name: "\(name)Tests",
@@ -67,7 +72,7 @@ public extension Project {
                     infoPlist: .default,
                     sources: .unitTests,
                     scripts: scripts,
-                    dependencies: []
+                    dependencies: testDependencies
                 )
             )
         }

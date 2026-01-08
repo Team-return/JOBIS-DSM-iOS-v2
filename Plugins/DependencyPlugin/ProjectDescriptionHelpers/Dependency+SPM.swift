@@ -23,6 +23,8 @@ public extension TargetDependency.SPM {
     static let PulseUI = TargetDependency.external(name: "PulseUI")
     static let Nuke = TargetDependency.external(name: "Nuke")
     static let SkeletonView = TargetDependency.external(name: "SkeletonView")
+    static let Quick = TargetDependency.external(name: "Quick")
+    static let Nimble = TargetDependency.external(name: "Nimble")
 }
 
 public extension Package {

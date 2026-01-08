@@ -19,5 +19,7 @@ let package = Package(
         .package(url: "https://github.com/kean/Pulse.git", from: "4.2.0"),
         .package(url: "https://github.com/kean/Nuke.git", from: "12.8.0"),
         .package(url: "https://github.com/Juanpe/SkeletonView.git", from: "1.31.0"),
+        .package(url: "https://github.com/Quick/Quick.git", from: "6.0.0"),
+        .package(url: "https://github.com/Quick/Nimble.git", from: "13.0.0")
     ]
 )
