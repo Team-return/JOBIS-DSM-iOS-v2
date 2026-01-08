@@ -1,3 +1,4 @@
+import ReactorKit
 import Core
 import Moya
 import RxFlow
@@ -6,7 +7,6 @@ import RxCocoa
 import Domain
 import Utility
 import DesignSystem
-import ReactorKit
 
 public final class InfoSettingReactor: BaseReactor, Reactor {
     public enum Action {
