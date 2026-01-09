@@ -68,6 +68,8 @@ Derived/
 
 ### Tuist managed dependencies ###
 Tuist/Dependencies
+!Tuist/Dependencies/SwiftPackageManager/
+!Tuist/Dependencies/SwiftPackageManager/Package.swift
 
 ### Tuist cache ###
 Tuist/Cache/
