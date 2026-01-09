@@ -1,6 +1,19 @@
 // swift-tools-version: 6.2
 import PackageDescription
 
+#if TUIST
+import ProjectDescription
+
+let packageSettings = PackageSettings(
+    productTypes: [:],
+    baseSettings: .settings(configurations: [
+        .debug(name: "DEV"),
+        .debug(name: "STAGE"),
+        .release(name: "PROD")
+    ])
+)
+#endif
+
 let package = Package(
     name: "JOBIS-DSM-iOS-v2",
     dependencies: [
