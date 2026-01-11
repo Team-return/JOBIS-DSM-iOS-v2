@@ -1,6 +1,6 @@
 generate:
 	tuist install
-	tuist generate --xcframeworks
+	tuist generate
 
 clean:
 	rm -rf **/*.xcodeproj
@@ -16,4 +16,4 @@ reset:
 
 ci_generate:
 	tuist fetch
-	TUIST_CI=1 tuist generate --xcframeworks
+	TUIST_CI=1 tuist generate
