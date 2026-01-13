@@ -209,6 +209,7 @@ public final class ReviewFilterViewController: BaseReactorViewController<ReviewF
 
     public override func bindState() {
         reactor.state.map { $0.jobList }
+            .distinctUntilChanged()
             .bind(to: jobsCollectionView.rx.items(
                 cellIdentifier: ReviewMajorCollectionViewCell.identifier,
                 cellType: ReviewMajorCollectionViewCell.self
@@ -243,6 +244,13 @@ public final class ReviewFilterViewController: BaseReactorViewController<ReviewF
     }
 
     private func handleJobSelection(at indexPath: IndexPath) {
+        if let previousIndex = selectedJobIndex, previousIndex == indexPath.item {
+            if let cell = jobsCollectionView.cellForItem(at: indexPath) as? ReviewMajorCollectionViewCell {
+                cell.isCheck = false
+            }
+            selectedJobIndex = nil
+            return
+        }
 
         if let previousIndex = selectedJobIndex,
            let previousCell = jobsCollectionView.cellForItem(at: IndexPath(item: previousIndex, section: 0)) as? ReviewMajorCollectionViewCell {
