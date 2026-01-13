@@ -33,7 +33,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case setTechList([CodeEntity])
         case toggleJobCode(String)
         case toggleYear(String)
-        case toggleStatus(String)
+        case toggleStatus(Int)
         case appendTechCode(String)
         case resetTechCode
     }
@@ -42,9 +42,19 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         var jobList: [CodeEntity] = []
         var techList: [CodeEntity] = []
         var jobCode: String = ""
-        var status: String = ""
+        var statusCode: Int?
         var years: [String] = []
         var techCode: [String] = []
+        let yearList: [CodeEntity] = {
+            let currentYear = Calendar.current.component(.year, from: Date())
+            return (2023...currentYear).reversed().map {
+                CodeEntity(code: $0, keyword: "\($0)")
+            }
+        }()
+        let stateList: [CodeEntity] = [
+            CodeEntity(code: 0, keyword: "모집중"),
+            CodeEntity(code: 1, keyword: "모집 종료")
+        ]
     }
 }
 
@@ -79,15 +89,15 @@ extension RecruitmentFilterReactor {
             return .just(.toggleYear("\(code.code)"))
 
         case let .selectStatus(code):
-            let mappedStatus = mapStatus(code: code.code)
-            return .just(.toggleStatus(mappedStatus))
+            return .just(.toggleStatus(code.code))
 
         case .filterApplyButtonDidTap:
+            let statusString = mapStatus(code: currentState.statusCode)
             steps.accept(RecruitmentFilterStep.popToRecruitment(
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
-                status: currentState.status
+                status: statusString
             ))
             return .empty()
 
@@ -122,8 +132,8 @@ extension RecruitmentFilterReactor {
                 newState.years.append(year)
             }
 
-        case let .toggleStatus(status):
-            newState.status = (newState.status == status) ? "" : status
+        case let .toggleStatus(code):
+            newState.statusCode = (newState.statusCode == code) ? nil : code
 
         case let .appendTechCode(code):
             newState.techCode.append(code)
@@ -134,7 +144,8 @@ extension RecruitmentFilterReactor {
         return newState
     }
 
-    private func mapStatus(code: Int) -> String {
+    private func mapStatus(code: Int?) -> String {
+        guard let code = code else { return "" }
         switch code {
         case 0:
             return "RECRUITING"
