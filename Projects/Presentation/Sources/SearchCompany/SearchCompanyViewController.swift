@@ -123,8 +123,6 @@ public final class SearchCompanyViewController: BaseReactorViewController<Search
             }
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() { }
 }
 
 extension SearchCompanyViewController: UITextFieldDelegate {

@@ -118,6 +118,4 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
             }
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() { }
 }

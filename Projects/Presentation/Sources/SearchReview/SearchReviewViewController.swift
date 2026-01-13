@@ -129,8 +129,6 @@ public final class SearchReviewViewController: BaseReactorViewController<SearchR
             }
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() { }
 }
 
 extension SearchReviewViewController: UITextFieldDelegate {

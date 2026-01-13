@@ -254,8 +254,6 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             })
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() {}
 }
 
 extension RecruitmentFilterViewController {

@@ -193,6 +193,4 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
             }
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() {}
 }
