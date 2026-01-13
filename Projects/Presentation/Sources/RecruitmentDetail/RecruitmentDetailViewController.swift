@@ -36,8 +36,6 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
     private let recruitmentProcessLabel = RecruitmentDetailLabel(title: "선발 절차")
     private let requiredGradeLabel = RecruitmentDetailLabel(title: "기타 자격 요건")
     private let workingHoursLabel = RecruitmentDetailLabel(title: "근무시간")
-//    private let awardedMoneyLabel = RecruitmentDetailLabel(title: "실습 수당")
-//    private let permanentEmployeeLabel = RecruitmentDetailLabel(title: "정규직 전환 시")
     private let benefitsWelfareLabel = RecruitmentDetailLabel(title: "복리후생")
     private let needThingsLabel = RecruitmentDetailLabel(title: "제출 서류")
     private let otherMattersLabel = RecruitmentDetailLabel(title: "기타 사항")
@@ -69,8 +67,6 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
             recruitmentProcessLabel,
             requiredGradeLabel,
             workingHoursLabel,
-//            awardedMoneyLabel,
-//            permanentEmployeeLabel,
             benefitsWelfareLabel,
             needThingsLabel,
             otherMattersLabel
