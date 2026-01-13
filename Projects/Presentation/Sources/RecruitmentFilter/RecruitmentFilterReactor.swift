@@ -1,3 +1,4 @@
+import Foundation
 import ReactorKit
 import RxSwift
 import RxCocoa
