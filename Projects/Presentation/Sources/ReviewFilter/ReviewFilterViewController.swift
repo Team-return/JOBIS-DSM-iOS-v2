@@ -228,12 +228,14 @@ public final class ReviewFilterViewController: BaseReactorViewController<ReviewF
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.interviewTypeList }
+            .distinctUntilChanged()
             .bind { [weak self] interviewTypes in
                 self?.interviewStackView.setTech(techList: interviewTypes)
             }
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.regionList }
+            .distinctUntilChanged()
             .bind { [weak self] regions in
                 self?.regionStackView.setTech(techList: regions)
             }
