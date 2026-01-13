@@ -30,23 +30,18 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
     }
 
     public override func addView() {
-        [
-            bookmarkTableView
-        ].forEach(self.view.addSubview(_:))
-
-        [
-            emptyBookmarkView,
-            navigateToRecruitmentButton
-        ].forEach(self.bookmarkTableView.addSubview(_:))
+        self.view.addSubview(bookmarkTableView)
+        self.view.addSubview(emptyBookmarkView)
+        self.view.addSubview(navigateToRecruitmentButton)
     }
 
     public override func setLayout() {
         bookmarkTableView.snp.makeConstraints {
-            $0.topMargin.leading.trailing.bottom.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         emptyBookmarkView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(80)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(80)
             $0.centerX.equalToSuperview()
         }
 
