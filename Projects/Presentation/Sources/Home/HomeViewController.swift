@@ -197,40 +197,25 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             }
             .disposed(by: disposeBag)
 
-        let combinedBanners = Observable.combineLatest(
-            reactor.state.map { $0.totalPassStudentInfo },
-            reactor.state.map { $0.bannerList }
-        )
-        .map { totalPass, banners -> [Any] in
-            return [totalPass] + banners
-        }
-
-        combinedBanners
+        reactor.state.map { $0.banners }
             .do(onNext: { [weak self] _ in
                 self?.cellDisposeBag = DisposeBag()
             })
-            .do(onNext: { banners in
-                self.bannerView.setPageControl(count: banners.count)
+            .do(onNext: { [weak self] banners in
+                self?.bannerView.setPageControl(count: banners.count)
             })
             .bind(to: bannerView.collectionView.rx.items(
                 cellIdentifier: BannerCollectionViewCell.identifier,
                 cellType: BannerCollectionViewCell.self
-            )) { [weak self] index, element, cell in
+            )) { [weak self] _, element, cell in
                 guard let self = self else { return }
-
-                if index == 0,
-                   let totalPassModel = element as? TotalPassStudentEntity,
-                   let cell = cell as? BannerCollectionViewCell {
-                    cell.totalPassAdapt(model: totalPassModel)
+                cell.adapt(model: element)
+                
+                if case .totalPass = element {
                     cell.employStatusButton.rx.tap
                         .map { _ in () }
                         .bind(to: self.employStatusButtonTap)
                         .disposed(by: self.cellDisposeBag)
-                } else {
-                    if let fetchBanner = element as? FetchBannerEntity,
-                       let cell = cell as? BannerCollectionViewCell {
-                        cell.adapt(model: fetchBanner)
-                    }
                 }
             }
             .disposed(by: disposeBag)

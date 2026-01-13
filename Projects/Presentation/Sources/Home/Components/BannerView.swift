@@ -75,7 +75,9 @@ final class BannerView: BaseView {
 
     public func setPageControl(count: Int) {
         self.pageControl.numberOfPages = count
-        self.pageControl.setIndicatorImage(.jobisIcon(.currentPageControl), forPage: 0)
+        if count > 0 {
+            self.pageControl.setIndicatorImage(.jobisIcon(.currentPageControl), forPage: 0)
+        }
     }
 }
 
