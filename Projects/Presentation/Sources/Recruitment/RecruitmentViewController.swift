@@ -41,7 +41,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
     public override func setLayout() {
         recruitmentTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         listEmptyView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -107,7 +107,9 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
                 if isLoading {
                     self.recruitmentTableView.reloadData()
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                        guard let self = self,
+                              self.reactor.currentState.isLoading else { return }
                         self.recruitmentTableView.showAnimatedSkeleton(
                             usingColor: .systemGray5,
                             transition: .crossDissolve(0.25)
