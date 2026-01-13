@@ -36,7 +36,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
     public override func addView() {
         self.view.addSubview(recruitmentTableView)
-        recruitmentTableView.addSubview(listEmptyView)
+        self.view.addSubview(listEmptyView)
     }
 
     public override func setLayout() {
@@ -45,7 +45,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
         }
         listEmptyView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(80)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(80)
         }
     }
 
@@ -117,6 +117,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
                     }
                 } else {
                     self.recruitmentTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.25))
+                    self.listEmptyView.isHidden = !list.isEmpty
                 }
             })
             .disposed(by: disposeBag)
