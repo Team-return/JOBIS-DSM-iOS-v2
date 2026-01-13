@@ -33,16 +33,16 @@ public final class ReviewViewController: BaseReactorViewController<ReviewReactor
 
     public override func addView() {
         self.view.addSubview(reviewTableView)
-        reviewTableView.addSubview(listEmptyView)
+        self.view.addSubview(listEmptyView)
     }
 
     public override func setLayout() {
         reviewTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         listEmptyView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(80)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(80)
         }
     }
 
