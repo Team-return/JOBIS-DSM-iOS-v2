@@ -44,11 +44,9 @@ public final class SearchReviewViewController: BaseReactorViewController<SearchR
         [
             searchTextField,
             searchImageView,
-            searchTableView
-        ].forEach(self.view.addSubview(_:))
-        [
+            searchTableView,
             emptySearchView
-        ].forEach(searchTableView.addSubview(_:))
+        ].forEach(self.view.addSubview(_:))
     }
 
     public override func setLayout() {
@@ -103,9 +101,6 @@ public final class SearchReviewViewController: BaseReactorViewController<SearchR
     public override func bindState() {
         reactor.state.map { $0.reviewList }
             .skip(1)
-            .do(onNext: { [weak self] list in
-                self?.emptySearchView.isHidden = !list.isEmpty
-            })
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: ReviewTableViewCell.identifier,
                 cellType: ReviewTableViewCell.self
