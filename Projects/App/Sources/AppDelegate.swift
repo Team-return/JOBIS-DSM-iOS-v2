@@ -37,7 +37,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // 파이어베이스 설정
         FirebaseApp.configure()
+
+        #if DEV
         URLSessionProxyDelegate.enableAutomaticRegistration()
+        #endif
 
         // 앱 실행 시 사용자에게 알림 허용 권한을 받음
         UNUserNotificationCenter.current().delegate = self
