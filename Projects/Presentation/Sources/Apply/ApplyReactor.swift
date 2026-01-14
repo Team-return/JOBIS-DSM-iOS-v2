@@ -70,13 +70,31 @@ extension ApplyReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case let .documentDidAdd(document):
-            return .just(.addDocument(document))
+            let newDocuments = currentState.documents + [document]
+            let isEnabled = !newDocuments.isEmpty || !currentState.urls.isEmpty
+            return .concat(
+                .just(.addDocument(document)),
+                .just(.updateApplyButtonEnabled(isEnabled))
+            )
 
         case .urlAddButtonDidTap:
-            return .just(.addUrl)
+            let newUrls = currentState.urls + [.init(url: "", type: .url)]
+            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            return .concat(
+                .just(.addUrl),
+                .just(.updateApplyButtonEnabled(isEnabled))
+            )
 
         case let .urlDidChange(index, url):
-            return .just(.updateUrl(index, url))
+            var newUrls = currentState.urls
+            if index < newUrls.count {
+                newUrls[index] = .init(url: url, type: .url)
+            }
+            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            return .concat(
+                .just(.updateUrl(index, url)),
+                .just(.updateApplyButtonEnabled(isEnabled))
+            )
 
         case .applyButtonDidTap:
             let attachments = currentState.documents + currentState.urls
@@ -111,10 +129,26 @@ extension ApplyReactor {
                 }
 
         case let .removeUrl(index):
-            return .just(.removeUrl(index))
+            var newUrls = currentState.urls
+            if index < newUrls.count {
+                newUrls.remove(at: index)
+            }
+            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            return .concat(
+                .just(.removeUrl(index)),
+                .just(.updateApplyButtonEnabled(isEnabled))
+            )
 
         case let .removeDocument(index):
-            return .just(.removeDocument(index))
+            var newDocuments = currentState.documents
+            if index < newDocuments.count {
+                newDocuments.remove(at: index)
+            }
+            let isEnabled = !newDocuments.isEmpty || !currentState.urls.isEmpty
+            return .concat(
+                .just(.removeDocument(index)),
+                .just(.updateApplyButtonEnabled(isEnabled))
+            )
         }
     }
 
@@ -124,7 +158,6 @@ extension ApplyReactor {
         switch mutation {
         case let .addDocument(document):
             newState.documents.append(document)
-            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case .addUrl:
             newState.urls.append(.init(url: "", type: .url))
@@ -133,19 +166,16 @@ extension ApplyReactor {
             if index < newState.urls.count {
                 newState.urls[index] = .init(url: url, type: .url)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .removeUrl(index):
             if index < newState.urls.count {
                 newState.urls.remove(at: index)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .removeDocument(index):
             if index < newState.documents.count {
                 newState.documents.remove(at: index)
             }
-            newState.applyButtonEnabled = !newState.documents.isEmpty || !newState.urls.isEmpty
 
         case let .updateApplyButtonEnabled(enabled):
             newState.applyButtonEnabled = enabled

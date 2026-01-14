@@ -115,6 +115,7 @@ extension SearchReviewReactor {
         switch mutation {
         case let .setReviewList(list):
             newState.reviewList = list
+            newState.isEmptyViewHidden = !list.isEmpty
 
         case let .appendReviewList(list):
             newState.reviewList.append(contentsOf: list)

@@ -46,12 +46,10 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
     private let docsPicker = UIDocumentPickerViewController(forOpeningContentTypes: [
         .pdf,
         .png,
-        .jpeg,
-        .init(filenameExtension: "doc")!,
-        .init(filenameExtension: "docx")!,
-        .init(filenameExtension: "hwp")!,
-        .init(filenameExtension: "pptx")!
-    ])
+        .jpeg
+    ] + [
+        "doc", "docx", "hwp", "pptx"
+    ].compactMap { .init(filenameExtension: $0) })
 
     private let documents = PublishRelay<AttachmentsRequestQuery>()
     private let urls = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
