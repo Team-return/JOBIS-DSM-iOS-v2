@@ -142,7 +142,6 @@ final class TabbarSlideAnimator: NSObject, UIViewControllerAnimatedTransitioning
             toView
         ].forEach(container.addSubview(_:))
 
-        toView.layoutIfNeeded()
         toView.center.x += distanceX
         toView.alpha = 0.0
 
