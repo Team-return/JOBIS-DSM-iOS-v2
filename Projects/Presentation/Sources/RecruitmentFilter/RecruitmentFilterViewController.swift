@@ -12,11 +12,6 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
     private let filterApplyButtonDidTap = PublishRelay<Void>()
     private var appendTechCode = PublishRelay<CodeEntity>()
     private var resetTechCode = PublishRelay<Void>()
-    private let yearList = Array((2023...RecruitmentFilterViewController.currentYear()).reversed())
-    private let stateList = [
-        CodeEntity(code: 0, keyword: "모집중"),
-        CodeEntity(code: 1, keyword: "모집 종료")
-    ]
 
     private let searchTextField = JobisSearchTextField().then {
         $0.setTextField(placeholder: "검색어를 입력해주세요")
@@ -213,8 +208,7 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             }
             .disposed(by: disposeBag)
 
-        let yearEntities = yearList.map { CodeEntity(code: $0, keyword: "\($0)") }
-        Observable.just(yearEntities)
+        reactor.state.map { $0.yearList }
             .bind(to: yearCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
@@ -225,15 +219,14 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             }
             .disposed(by: disposeBag)
 
-        Observable.just(stateList)
+        reactor.state.map { $0.stateList }
             .bind(to: stateCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
                 cellType: JobsCollectionViewCell.self
             )) { [weak self] _, element, cell in
                 guard let self = self else { return }
                 cell.adapt(model: element)
-                let mappedStatus = self.mapStatus(code: element.code)
-                cell.isCheck = self.reactor.currentState.status == mappedStatus
+                cell.isCheck = self.reactor.currentState.statusCode == element.code
             }
             .disposed(by: disposeBag)
     }
@@ -253,24 +246,5 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
                 self.filterApplyButtonDidTap.accept(())
             })
             .disposed(by: disposeBag)
-    }
-
-    public override func configureNavigation() {}
-}
-
-extension RecruitmentFilterViewController {
-    fileprivate static func currentYear() -> Int {
-        Calendar.current.component(.year, from: Date())
-    }
-
-    private func mapStatus(code: Int) -> String {
-        switch code {
-        case 0:
-            return "RECRUITING"
-        case 1:
-            return "DONE"
-        default:
-            return ""
-        }
     }
 }

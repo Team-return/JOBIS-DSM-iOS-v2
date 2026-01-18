@@ -191,6 +191,4 @@ public class WinterInternDetailViewController: BaseViewController<WinterInternDe
             }
             .disposed(by: disposeBag)
     }
-
-    public override func configureNavigation() {}
 }

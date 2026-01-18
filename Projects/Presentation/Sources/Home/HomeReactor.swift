@@ -6,6 +6,8 @@ import RxFlow
 import Core
 import Domain
 
+import Domain
+
 public final class HomeReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
@@ -56,6 +58,9 @@ public final class HomeReactor: BaseReactor, Stepper {
         var studentInfo: StudentInfoEntity?
         var applicationList: [ApplicationEntity] = []
         var bannerList: [FetchBannerEntity] = []
+        var banners: [HomeBannerItem] = [
+            .totalPass(.init(totalStudentCount: 0, passedCount: 0, approvedCount: 0))
+        ]
         var isWinterInternSeason: Bool = true
         var totalPassStudentInfo: TotalPassStudentEntity = TotalPassStudentEntity(
             totalStudentCount: 0,
@@ -163,12 +168,14 @@ extension HomeReactor {
 
         case let .setBannerList(bannerList):
             newState.bannerList = bannerList
+            newState.banners = [.totalPass(newState.totalPassStudentInfo)] + bannerList.map { .banner($0) }
 
         case let .setWinterInternSeason(isWinterIntern):
             newState.isWinterInternSeason = isWinterIntern
 
         case let .setTotalPassStudentInfo(totalPassStudent):
             newState.totalPassStudentInfo = totalPassStudent
+            newState.banners = [.totalPass(totalPassStudent)] + newState.bannerList.map { .banner($0) }
 
         case .incrementEasterEggCount:
             newState.touchedPopcatCount += 1

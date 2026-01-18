@@ -45,7 +45,6 @@ final class ReviewTechStackViewCell: BaseView {
         techCheckBox.rx.tap.asObservable()
             .bind { [weak self] in
                 guard let self = self else { return }
-                self.isCheck.toggle()
                 self.techCheckBoxDidTap?(self.code)
             }
             .disposed(by: disposeBag)
@@ -59,56 +58,6 @@ final class ReviewTechStackViewCell: BaseView {
             techLabel.setJobisText(location.koreanName, font: .body, color: .GrayScale.gray70)
         } else {
             techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
-        }
-    }
-}
-
-class ReviewTechStackView: UIStackView {
-    private let disposeBag = DisposeBag()
-    private var selectedCell: ReviewTechStackViewCell?
-    private let selectedTechRelay = PublishRelay<CodeEntity>()
-
-    var selectedTechObservable: Observable<CodeEntity> {
-        return selectedTechRelay.asObservable()
-    }
-
-    init() {
-        super.init(frame: .zero)
-        self.axis = .vertical
-        self.spacing = 0
-    }
-
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func setTech(techList: [CodeEntity]) {
-        self.subviews.forEach {
-            self.removeArrangedSubview($0)
-            $0.removeFromSuperview()
-        }
-        selectedCell = nil
-        techList.forEach { data in
-            let techStackViewCell = ReviewTechStackViewCell()
-            techStackViewCell.adapt(model: data)
-            techStackViewCell.techCheckBoxDidTap = { [weak self] code in
-                guard let self = self else { return }
-                let tappedCell = techStackViewCell
-                if self.selectedCell != tappedCell {
-                    self.selectedCell?.isCheck = false
-                    tappedCell.isCheck = true
-                    self.selectedCell = tappedCell
-                } else {
-                    tappedCell.isCheck.toggle()
-                    if !tappedCell.isCheck {
-                        self.selectedCell = nil
-                    }
-                }
-                if let code = code, tappedCell.isCheck {
-                    self.selectedTechRelay.accept(code)
-                }
-            }
-            self.addArrangedSubview(techStackViewCell)
         }
     }
 }

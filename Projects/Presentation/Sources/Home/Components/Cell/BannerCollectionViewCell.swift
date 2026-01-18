@@ -4,10 +4,9 @@ import SnapKit
 import Then
 import DesignSystem
 
-final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> {
+final class BannerCollectionViewCell: BaseCollectionViewCell<HomeBannerItem> {
     static let identifier = "BannerCollectionViewCell"
 
-    private let currentYear = Date()
     private let imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 16
@@ -15,8 +14,9 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
     }
     private lazy var passTitleLabel = UILabel().then {
         $0.numberOfLines = 0
+        let currentYear = Calendar.current.component(.year, from: Date())
         $0.setJobisText(
-            "\(Int(currentYear.toStringFormat("yyyy"))! - 2016)기 대마고\n학생들의 취업률",
+            "\(currentYear - 2016)기 대마고\n학생들의 취업률",
             font: .headLine,
             color: .GrayScale.gray90
         )
@@ -81,19 +81,42 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<FetchBannerEntity> 
         self.backgroundColor = .GrayScale.gray30
     }
 
-    override func adapt(model: FetchBannerEntity) {
-        setLayout()
-        self.imageView.setJobisImage(urlString: model.bannerURL)
-    }
+    override func adapt(model: HomeBannerItem) {
+        switch model {
+        case let .banner(entity):
+            // Reset/Setup for Banner
+            resetViews()
+            setLayout()
+            self.imageView.setJobisImage(urlString: entity.bannerURL)
+            self.imageView.isHidden = false
 
-    func totalPassAdapt(model: TotalPassStudentEntity) {
-        totalPassSetLayout()
-        let employmentRate = Double(model.passedCount) / Double(model.totalStudentCount) * 100.0
-        let passText = String(format: "%.1f", employmentRate)
-        passLabel.setJobisText(
-            "\(passText)%",
-            font: .headLine,
-            color: .Primary.blue20
-        )
+        case let .totalPass(entity):
+            // Reset/Setup for Total Pass
+            resetViews()
+            totalPassSetLayout()
+            let employmentRate = Double(entity.passedCount) / Double(entity.totalStudentCount) * 100.0
+            let passText = String(format: "%.1f", employmentRate.isNaN ? 0.0 : employmentRate)
+            passLabel.setJobisText(
+                "\(passText)%",
+                font: .headLine,
+                color: .Primary.blue20
+            )
+            
+            passTitleLabel.isHidden = false
+            passLabel.isHidden = false
+            employStatusButton.isHidden = false
+            fileImageView.isHidden = false
+        }
+    }
+    
+    private func resetViews() {
+        imageView.isHidden = true
+        passTitleLabel.isHidden = true
+        passLabel.isHidden = true
+        employStatusButton.isHidden = true
+        fileImageView.isHidden = true
+        
+        // Clear image to prevent reuse issues
+        imageView.image = nil
     }
 }

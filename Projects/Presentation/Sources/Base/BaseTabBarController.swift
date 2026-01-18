@@ -3,24 +3,30 @@ import SnapKit
 import Then
 import DesignSystem
 import SwiftUI
+
+#if DEV
 import Pulse
 import PulseUI
+#endif
 
 public class BaseTabBarController: UITabBarController,
                                    SetLayoutable,
                                    AddViewable {
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
-    private let consoleButtonSize: CGRect = CGRect(x: 0, y: 0, width: 100, height: 40)
 
     private let stroke = UIView().then {
         $0.backgroundColor = .GrayScale.gray30
     }
+
+    #if DEV
+    private let consoleButtonSize: CGRect = CGRect(x: 0, y: 0, width: 100, height: 40)
 
     private lazy var consoleButton = UIButton(frame: consoleButtonSize).then {
         $0.setJobisText("Console", font: .body, color: .GrayScale.gray10)
         $0.backgroundColor = .GrayScale.gray70
         $0.layer.cornerRadius = consoleButtonSize.height / 2
     }
+    #endif
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +43,7 @@ public class BaseTabBarController: UITabBarController,
         #endif
     }
 
+    #if DEV
     private func setConsoleButton() {
         self.view.addSubview(consoleButton)
         consoleButton.addTarget(self, action: #selector(touchConsoleButton), for: .touchUpInside)
@@ -47,6 +54,7 @@ public class BaseTabBarController: UITabBarController,
             y: UIScreen.main.bounds.height - 100
         )
     }
+    #endif
 
     public func addView() {
         self.tabBar.addSubview(stroke)
@@ -64,8 +72,8 @@ public class BaseTabBarController: UITabBarController,
         self.impactFeedbackGenerator.impactOccurred()
     }
 
+    #if DEV
     @objc func panAction(recognizer: UIPanGestureRecognizer) {
-
         let transition = recognizer.translation(in: consoleButton)
 
         if recognizer.state != .ended {
@@ -83,6 +91,7 @@ public class BaseTabBarController: UITabBarController,
 
         self.present(UIHostingController(rootView: view), animated: true)
     }
+    #endif
 }
 
 extension BaseTabBarController: UITabBarControllerDelegate {
@@ -133,7 +142,6 @@ final class TabbarSlideAnimator: NSObject, UIViewControllerAnimatedTransitioning
             toView
         ].forEach(container.addSubview(_:))
 
-        toView.layoutIfNeeded()
         toView.center.x += distanceX
         toView.alpha = 0.0
 

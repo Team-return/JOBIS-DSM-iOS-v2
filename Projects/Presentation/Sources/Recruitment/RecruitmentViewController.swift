@@ -36,16 +36,16 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
     public override func addView() {
         self.view.addSubview(recruitmentTableView)
-        recruitmentTableView.addSubview(listEmptyView)
+        self.view.addSubview(listEmptyView)
     }
 
     public override func setLayout() {
         recruitmentTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         listEmptyView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(80)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(80)
         }
     }
 
@@ -107,7 +107,9 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
                 if isLoading {
                     self.recruitmentTableView.reloadData()
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                        guard let self = self,
+                              self.reactor.currentState.isLoading else { return }
                         self.recruitmentTableView.showAnimatedSkeleton(
                             usingColor: .systemGray5,
                             transition: .crossDissolve(0.25)
@@ -115,6 +117,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
                     }
                 } else {
                     self.recruitmentTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.25))
+                    self.listEmptyView.isHidden = !list.isEmpty
                 }
             })
             .disposed(by: disposeBag)
