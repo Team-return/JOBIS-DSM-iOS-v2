@@ -35,6 +35,7 @@ public final class HomeReactor: BaseReactor, Stepper {
     public enum Action {
         case fetchInitialData
         case navigateToAlarmButtonDidTap
+        case navigateToScheduleButtonDidTap
         case navigateToEasterEggDidTap
         case navigateToCompanyButtonDidTap
         case navigateToWinterInternButtonDidTap
@@ -108,6 +109,10 @@ extension HomeReactor {
             ])
 
         case .navigateToAlarmButtonDidTap:
+            steps.accept(HomeStep.alarmIsRequired)
+            return .empty()
+
+        case .navigateToScheduleButtonDidTap:
             steps.accept(HomeStep.alarmIsRequired)
             return .empty()
 

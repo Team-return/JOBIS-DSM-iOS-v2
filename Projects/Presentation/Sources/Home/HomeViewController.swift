@@ -14,6 +14,9 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
+    private let navigateToSchedule = UIButton().then {
+        $0.setImage(.jobisIcon(.calendar).resize(size: 28), for: .normal)
+    }
     private let titleImageView = UIImageView(image: .jobisIcon(.jobisWhiteLogo))
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -118,6 +121,11 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        navigateToSchedule.rx.tap
+            .map { HomeReactor.Action.navigateToScheduleButtonDidTap}
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         titleImageView.rx.tapGesture().when(.recognized).asObservable()
             .map { _ in HomeReactor.Action.navigateToEasterEggDidTap }
             .bind(to: reactor.action)
@@ -238,7 +246,9 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
 
     public override func configureNavigation() {
         self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
+        self.navigationItem.leftBarButtonItem = .init(customView: navigateToSchedule)
         self.navigationItem.leftBarButtonItem = .init(customView: titleImageView)
+       
     }
 }
 
