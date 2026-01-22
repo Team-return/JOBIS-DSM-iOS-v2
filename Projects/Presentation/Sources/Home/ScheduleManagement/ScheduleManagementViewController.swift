@@ -7,3 +7,6 @@ import Core
 import DesignSystem
 import Domain
 
+public class ScheduleManagementViewController: BaseReactorViewController <ScheduleManagementReactor> {
+    
+}

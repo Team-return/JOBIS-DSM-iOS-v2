@@ -298,6 +298,13 @@ public final class MainPresentationAssembly: Assembly {
             EasterEggViewController()
         }
 
+        // Schedule
+        container.register(ScheduleManagementViewController.self) { resolver in
+            ScheduleManagementViewController(
+                resolver.resolve(ScheduleManagementReactor.self)!
+            )
+        }
+
         // Major Bottom Sheet
         container.register(MajorBottomSheetViewController.self) { resolver in
             MajorBottomSheetViewController(
