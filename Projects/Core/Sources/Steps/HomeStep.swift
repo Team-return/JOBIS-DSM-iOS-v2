@@ -3,6 +3,7 @@ import RxFlow
 public enum HomeStep: Step {
     case homeIsRequired
     case alarmIsRequired
+    case scheduleIsRequired
     case companyIsRequired
     case winterInternIsRequired
     case easterEggIsRequired

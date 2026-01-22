@@ -25,6 +25,9 @@ public final class HomeFlow: Flow {
         case .alarmIsRequired:
             return navigateToAlarm()
 
+        case .scheduleIsRequired:
+            return navigateToSchedule()
+
         case .companyIsRequired:
             return navigateToCompany()
 
@@ -78,6 +81,21 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: alarmFlow,
             withNextStepper: OneStepper(withSingleStep: AlarmStep.alarmIsRequired)
+        ))
+    }
+
+    func navigateToSchedule() -> FlowContributors {
+        let alarmFlow = ScheduleFlow(container: container)
+
+        Flows.use(alarmFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: alarmFlow,
+            withNextStepper: OneStepper(withSingleStep: ScheduleStep.scheduleIsRequired)
         ))
     }
 
