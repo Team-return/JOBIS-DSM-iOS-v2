@@ -245,10 +245,12 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
 
     public override func configureNavigation() {
-        self.navigationItem.rightBarButtonItem = .init(customView: navigateToAlarmButton)
-        self.navigationItem.leftBarButtonItem = .init(customView: navigateToSchedule)
+        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacer.width = 8
+        let calendarBarButton = UIBarButtonItem(customView: navigateToSchedule)
+        let alarmBarButton = UIBarButtonItem(customView: navigateToAlarmButton)
+        self.navigationItem.rightBarButtonItems = [alarmBarButton, spacer, calendarBarButton]
         self.navigationItem.leftBarButtonItem = .init(customView: titleImageView)
-       
     }
 }
 

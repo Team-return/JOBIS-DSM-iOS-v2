@@ -113,7 +113,7 @@ extension HomeReactor {
             return .empty()
 
         case .navigateToScheduleButtonDidTap:
-            steps.accept(HomeStep.alarmIsRequired)
+            steps.accept(HomeStep.scheduleIsRequired)
             return .empty()
 
         case .navigateToEasterEggDidTap:

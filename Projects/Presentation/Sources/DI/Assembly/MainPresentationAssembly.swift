@@ -299,6 +299,9 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Schedule
+        container.register(ScheduleManagementReactor.self) { resolver in
+            ScheduleManagementReactor()
+        }
         container.register(ScheduleManagementViewController.self) { resolver in
             ScheduleManagementViewController(
                 resolver.resolve(ScheduleManagementReactor.self)!
