@@ -4,7 +4,6 @@ import Then
 
 class RecruitmentDropdownView: UIButton {
     
-    // MARK: - Properties
     private let dropdownOptions = ["기본순", "매출", "직원 ↓", "직원 ↑", "공고마감 ↓", "공고마감 ↑"]
     private var selectedIndex = 0
     
@@ -29,7 +28,6 @@ class RecruitmentDropdownView: UIButton {
     
     private var isDropdownOpen = false
     
-    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
@@ -40,7 +38,6 @@ class RecruitmentDropdownView: UIButton {
         setupButton()
     }
     
-    // MARK: - Setup
     private func setupButton() {
         setTitle("기본순", for: .normal)
         setTitleColor(UIColor.GrayScale.gray60, for: .normal)
@@ -58,7 +55,6 @@ class RecruitmentDropdownView: UIButton {
         addTarget(self, action: #selector(toggleDropdown), for: .touchUpInside)
     }
     
-    // MARK: - Actions
     @objc private func toggleDropdown() {
         isDropdownOpen.toggle()
         
@@ -99,7 +95,6 @@ class RecruitmentDropdownView: UIButton {
     }
 }
 
-// MARK: - UITableViewDelegate, UITableViewDataSource
 extension RecruitmentDropdownView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -126,7 +121,6 @@ extension RecruitmentDropdownView: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - Dropdown Cell
 class DropdownCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
