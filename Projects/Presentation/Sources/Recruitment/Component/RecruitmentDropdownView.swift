@@ -15,15 +15,15 @@ class RecruitmentDropdownView: UIButton {
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.GrayScale.gray50.cgColor
         $0.backgroundColor = .GrayScale.gray10
-        $0.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         $0.isScrollEnabled = false
         $0.alpha = 0
         $0.register(DropdownCell.self, forCellReuseIdentifier: "DropdownCell")
+        $0.separatorStyle = .none
     }
     
     private let chevronImageView = UIImageView().then {
         $0.image = UIImage(systemName: "chevron.down")
-        $0.tintColor = .systemGray
+        $0.tintColor = .GrayScale.gray60
         $0.contentMode = .scaleAspectFit
     }
     
@@ -43,8 +43,8 @@ class RecruitmentDropdownView: UIButton {
     // MARK: - Setup
     private func setupButton() {
         setTitle("기본순", for: .normal)
-        setTitleColor(.systemGray, for: .normal)
-        titleLabel?.font = .systemFont(ofSize: 16)
+        setTitleColor(UIColor.GrayScale.gray60, for: .normal)
+        titleLabel?.font = .jobisFont(.description)
         contentHorizontalAlignment = .center
         
         addSubview(chevronImageView)
@@ -52,7 +52,7 @@ class RecruitmentDropdownView: UIButton {
         chevronImageView.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-8)
             $0.centerY.equalToSuperview()
-            $0.size.equalTo(20)
+            $0.size.equalTo(16)
         }
         
         addTarget(self, action: #selector(toggleDropdown), for: .touchUpInside)
@@ -71,20 +71,20 @@ class RecruitmentDropdownView: UIButton {
     
     private func showDropdown() {
         guard let window = window else { return }
-        
+
         let buttonFrame = convert(bounds, to: window)
-        
+
         window.addSubview(dropdownTableView)
-        
+
         let tableHeight: CGFloat = CGFloat(dropdownOptions.count) * 48
-        
+
         dropdownTableView.snp.makeConstraints {
             $0.top.equalTo(window.snp.top).offset(buttonFrame.maxY + 8)
             $0.leading.equalTo(window.snp.leading).offset(buttonFrame.minX)
-            $0.width.equalTo(200)
+            $0.width.equalTo(110)
             $0.height.equalTo(tableHeight)
         }
-        
+
         UIView.animate(withDuration: 0.2) {
             self.dropdownTableView.alpha = 1
         }
@@ -139,14 +139,14 @@ class DropdownCell: UITableViewCell {
     }
     
     private func setupCell() {
-        textLabel?.font = .systemFont(ofSize: 16)
+        textLabel?.font = .jobisFont(.description)
         textLabel?.textAlignment = .center
-        selectionStyle = .none
+        selectionStyle = .gray
         backgroundColor = .white
     }
     
     func configure(with text: String, isSelected: Bool) {
         textLabel?.text = text
-        textLabel?.textColor = isSelected ? .systemBlue : .black
+        textLabel?.textColor = isSelected ? .Primary.blue20 : .GrayScale.gray60
     }
 }
