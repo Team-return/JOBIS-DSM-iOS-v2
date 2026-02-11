@@ -11,10 +11,10 @@ class RecruitmentDropdownView: UIButton {
     private lazy var dropdownTableView = UITableView().then {
         $0.delegate = self
         $0.dataSource = self
-        $0.layer.cornerRadius = 12
+        $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.systemGray5.cgColor
-        $0.backgroundColor = .white
+        $0.layer.borderColor = UIColor.GrayScale.gray50.cgColor
+        $0.backgroundColor = .GrayScale.gray10
         $0.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         $0.isScrollEnabled = false
         $0.alpha = 0
@@ -87,14 +87,12 @@ class RecruitmentDropdownView: UIButton {
         
         UIView.animate(withDuration: 0.2) {
             self.dropdownTableView.alpha = 1
-            self.chevronImageView.transform = CGAffineTransform(rotationAngle: .pi)
         }
     }
     
     private func hideDropdown() {
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
-            self.chevronImageView.transform = .identity
         }) { _ in
             self.dropdownTableView.removeFromSuperview()
         }
