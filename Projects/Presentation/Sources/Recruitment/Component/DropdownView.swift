@@ -2,11 +2,11 @@ import UIKit
 import SnapKit
 import Then
 
-class RecruitmentDropdownView: UIButton {
-    
-    private let dropdownOptions = ["기본순", "매출", "직원 ↓", "직원 ↑", "공고마감 ↓", "공고마감 ↑"]
+class DropdownView: UIButton {
+
+    private let options: [String]
     private var selectedIndex = 0
-    
+
     private lazy var dropdownTableView = UITableView().then {
         $0.delegate = self
         $0.dataSource = self
@@ -19,52 +19,52 @@ class RecruitmentDropdownView: UIButton {
         $0.register(DropdownCell.self, forCellReuseIdentifier: "DropdownCell")
         $0.separatorStyle = .none
     }
-    
+
     private let chevronImageView = UIImageView().then {
         $0.image = UIImage(systemName: "chevron.down")
         $0.tintColor = .GrayScale.gray60
         $0.contentMode = .scaleAspectFit
     }
-    
+
     private var isDropdownOpen = false
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+
+    init(options: [String]) {
+        self.options = options
+        super.init(frame: .zero)
         setupButton()
     }
-    
+
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupButton()
+        fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupButton() {
-        setTitle("기본순", for: .normal)
+        setTitle(options.first, for: .normal)
         setTitleColor(UIColor.GrayScale.gray60, for: .normal)
         titleLabel?.font = .jobisFont(.description)
         contentHorizontalAlignment = .center
-        
+
         addSubview(chevronImageView)
-        
+
         chevronImageView.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-8)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(16)
         }
-        
+
         addTarget(self, action: #selector(toggleDropdown), for: .touchUpInside)
     }
-    
+
     @objc private func toggleDropdown() {
         isDropdownOpen.toggle()
-        
+
         if isDropdownOpen {
             showDropdown()
         } else {
             hideDropdown()
         }
     }
-    
+
     private func showDropdown() {
         guard let window = window else { return }
 
@@ -72,7 +72,7 @@ class RecruitmentDropdownView: UIButton {
 
         window.addSubview(dropdownTableView)
 
-        let tableHeight: CGFloat = CGFloat(dropdownOptions.count) * 48
+        let tableHeight: CGFloat = CGFloat(options.count) * 48
 
         dropdownTableView.snp.makeConstraints {
             $0.top.equalTo(window.snp.top).offset(buttonFrame.maxY + 8)
@@ -85,7 +85,7 @@ class RecruitmentDropdownView: UIButton {
             self.dropdownTableView.alpha = 1
         }
     }
-    
+
     private func hideDropdown() {
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
@@ -95,26 +95,26 @@ class RecruitmentDropdownView: UIButton {
     }
 }
 
-extension RecruitmentDropdownView: UITableViewDelegate, UITableViewDataSource {
-    
+extension DropdownView: UITableViewDelegate, UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dropdownOptions.count
+        return options.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as! DropdownCell
-        let option = dropdownOptions[indexPath.row]
+        let option = options[indexPath.row]
         cell.configure(with: option, isSelected: indexPath.row == selectedIndex)
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 48
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
-        setTitle(dropdownOptions[indexPath.row], for: .normal)
+        setTitle(options[indexPath.row], for: .normal)
         hideDropdown()
         isDropdownOpen = false
         tableView.reloadData()
