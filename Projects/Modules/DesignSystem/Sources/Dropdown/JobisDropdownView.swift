@@ -4,11 +4,15 @@ import Then
 import RxSwift
 import RxCocoa
 
-class DropdownView: UIButton {
+public class JobisDropdownView: UIButton {
 
     private let options: [String]
     private var selectedIndex = 0
     private let disposeBag = DisposeBag()
+
+    private let iconTitleSpacing: CGFloat = 12
+    private let contentWrapper = UIView()
+    private let selectedOptionLabel = UILabel()
 
     private lazy var dropdownTableView = UITableView().then {
         $0.delegate = self
@@ -19,7 +23,7 @@ class DropdownView: UIButton {
         $0.backgroundColor = .GrayScale.gray10
         $0.isScrollEnabled = false
         $0.alpha = 0
-        $0.register(DropdownCell.self, forCellReuseIdentifier: "DropdownCell")
+        $0.register(JobisDropdownCell.self, forCellReuseIdentifier: "JobisDropdownCell")
         $0.separatorStyle = .none
     }
 
@@ -31,7 +35,7 @@ class DropdownView: UIButton {
 
     private var isDropdownOpen = false
 
-    init(options: [String]) {
+    public init(options: [String]) {
         self.options = options
         super.init(frame: .zero)
         setupButton()
@@ -43,15 +47,26 @@ class DropdownView: UIButton {
     }
 
     private func setupButton() {
-        setTitle(options.first, for: .normal)
-        setTitleColor(UIColor.GrayScale.gray60, for: .normal)
-        titleLabel?.font = .jobisFont(.description)
-        contentHorizontalAlignment = .center
+        self.setTitle(nil, for: .normal)
+        
+        selectedOptionLabel.setJobisText(options.first ?? "", font: .description, color: .GrayScale.gray60)
+        selectedOptionLabel.isUserInteractionEnabled = false
 
-        addSubview(chevronImageView)
+        addSubview(contentWrapper)
+        contentWrapper.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        contentWrapper.isUserInteractionEnabled = false
+        contentWrapper.addSubview(selectedOptionLabel)
+        contentWrapper.addSubview(chevronImageView)
+
+        selectedOptionLabel.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview()
+        }
 
         chevronImageView.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-8)
+            $0.leading.equalTo(selectedOptionLabel.snp.trailing).offset(iconTitleSpacing)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(16)
         }
@@ -98,41 +113,39 @@ class DropdownView: UIButton {
 
     private func hideDropdown() {
         isDropdownOpen = false
-        
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
-        }) { _ in
+        }) {    _ in
             self.dropdownTableView.removeFromSuperview()
         }
     }
 }
 
-extension DropdownView: UITableViewDelegate, UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return options.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as! DropdownCell
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "JobisDropdownCell", for: indexPath) as! JobisDropdownCell
         let option = options[indexPath.row]
         cell.configure(with: option, isSelected: indexPath.row == selectedIndex)
         return cell
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 48
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
-        setTitle(options[indexPath.row], for: .normal)
+        self.selectedOptionLabel.text = options[indexPath.row]
         hideDropdown()
         tableView.reloadData()
     }
 }
 
-class DropdownCell: UITableViewCell {
+class JobisDropdownCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -155,5 +168,3 @@ class DropdownCell: UITableViewCell {
         textLabel?.textColor = isSelected ? .Primary.blue20 : .GrayScale.gray60
     }
 }
-
-
