@@ -1,11 +1,14 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 class DropdownView: UIButton {
 
     private let options: [String]
     private var selectedIndex = 0
+    private let disposeBag = DisposeBag()
 
     private lazy var dropdownTableView = UITableView().then {
         $0.delegate = self
@@ -32,6 +35,7 @@ class DropdownView: UIButton {
         self.options = options
         super.init(frame: .zero)
         setupButton()
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -51,11 +55,17 @@ class DropdownView: UIButton {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(16)
         }
-
-        addTarget(self, action: #selector(toggleDropdown), for: .touchUpInside)
     }
 
-    @objc private func toggleDropdown() {
+    private func bind() {
+        self.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.toggleDropdown()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func toggleDropdown() {
         isDropdownOpen.toggle()
 
         if isDropdownOpen {
@@ -87,6 +97,8 @@ class DropdownView: UIButton {
     }
 
     private func hideDropdown() {
+        isDropdownOpen = false
+        
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
         }) { _ in
@@ -116,31 +128,32 @@ extension DropdownView: UITableViewDelegate, UITableViewDataSource {
         selectedIndex = indexPath.row
         setTitle(options[indexPath.row], for: .normal)
         hideDropdown()
-        isDropdownOpen = false
         tableView.reloadData()
     }
 }
 
 class DropdownCell: UITableViewCell {
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupCell() {
         textLabel?.font = .jobisFont(.description)
         textLabel?.textAlignment = .center
         selectionStyle = .gray
         backgroundColor = .white
     }
-    
+
     func configure(with text: String, isSelected: Bool) {
         textLabel?.text = text
         textLabel?.textColor = isSelected ? .Primary.blue20 : .GrayScale.gray60
     }
 }
+
+
