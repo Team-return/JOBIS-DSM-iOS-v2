@@ -54,7 +54,9 @@ public class JobisDropdownView: UIButton {
 
         addSubview(contentWrapper)
         contentWrapper.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(24)
+                    $0.centerY.equalToSuperview()
+
         }
         contentWrapper.isUserInteractionEnabled = false
         contentWrapper.addSubview(selectedOptionLabel)
@@ -69,8 +71,7 @@ public class JobisDropdownView: UIButton {
             $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(16)
-        }
-    }
+        }    }
 
     private func bind() {
         self.rx.tap
@@ -93,15 +94,15 @@ public class JobisDropdownView: UIButton {
     private func showDropdown() {
         guard let window = window else { return }
 
-        let buttonFrame = convert(bounds, to: window)
+        let contentWrapperFrame = contentWrapper.convert(contentWrapper.bounds, to: window)
 
         window.addSubview(dropdownTableView)
 
         let tableHeight: CGFloat = CGFloat(options.count) * 48
 
         dropdownTableView.snp.makeConstraints {
-            $0.top.equalTo(window.snp.top).offset(buttonFrame.maxY + 8)
-            $0.leading.equalTo(window.snp.leading).offset(buttonFrame.minX)
+            $0.top.equalTo(window.snp.top).offset(contentWrapperFrame.maxY + 8)
+            $0.trailing.equalTo(window.snp.leading).offset(contentWrapperFrame.maxX)
             $0.width.equalTo(110)
             $0.height.equalTo(tableHeight)
         }
