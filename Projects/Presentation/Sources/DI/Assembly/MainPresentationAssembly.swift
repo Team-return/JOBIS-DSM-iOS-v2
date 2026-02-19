@@ -300,7 +300,9 @@ public final class MainPresentationAssembly: Assembly {
 
         // Schedule
         container.register(ScheduleManagementReactor.self) { resolver in
-            ScheduleManagementReactor()
+            ScheduleManagementReactor(
+                fetchInterviewScheduleListUseCase: resolver.resolve(FetchInterviewScheduleListUseCase.self)!
+            )
         }
         container.register(ScheduleManagementViewController.self) { resolver in
             ScheduleManagementViewController(

@@ -284,5 +284,12 @@ public final class UseCaseAssembly: Assembly {
                 interestsRepository: resolver.resolve(InterestsRepository.self)!
             )
         }
+
+        // Interviews
+        container.register(FetchInterviewScheduleListUseCase.self) { resolver in
+            FetchInterviewScheduleListUseCase(
+                interviewsRepository: resolver.resolve(InterviewsRepository.self)!
+            )
+        }
     }
 }
