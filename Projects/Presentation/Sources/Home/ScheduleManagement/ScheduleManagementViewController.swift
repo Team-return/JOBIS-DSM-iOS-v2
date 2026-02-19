@@ -60,11 +60,8 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         $0.backgroundColor = .white
         $0.isHidden = true
     }
-    private let changeButton = UIButton().then {
-        $0.setJobisText("수정하기 →", font: .subBody, color: .GrayScale.gray60)
-        $0.backgroundColor = .GrayScale.gray20
-        $0.layer.cornerRadius = 12
-        $0.clipsToBounds = true
+    private let changeButton = JobisButton(style: .main).then {
+        $0.setText("수정하기")
     }
 
     public override func addView() {
@@ -167,9 +164,8 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
             .disposed(by: disposeBag)
 
         scheduleTableView.rx.itemSelected
-            .bind { [weak self] indexPath in
-                self?.scheduleTableView.deselectRow(at: indexPath, animated: true)
-            }
+            .map { ScheduleManagementReactor.Action.scheduleDidSelect($0.row) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
 
@@ -205,6 +201,26 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
             .distinctUntilChanged()
             .bind { [weak self] tab in
                 self?.updateTabAppearance(tab)
+            }
+            .disposed(by: disposeBag)
+
+        state.map { $0.selectedScheduleIndex }
+            .distinctUntilChanged()
+            .bind { [weak self] index in
+                guard let self else { return }
+                if let index {
+                    self.scheduleTableView.selectRow(
+                        at: IndexPath(row: index, section: 0),
+                        animated: true,
+                        scrollPosition: .none
+                    )
+                    self.changeButton.isEnabled = true
+                } else {
+                    self.scheduleTableView.indexPathsForSelectedRows?.forEach {
+                        self.scheduleTableView.deselectRow(at: $0, animated: true)
+                    }
+                    self.changeButton.isEnabled = false
+                }
             }
             .disposed(by: disposeBag)
     }

@@ -35,6 +35,7 @@ public final class ScheduleManagementReactor: BaseReactor, Stepper {
         case prevMonthDidTap
         case nextMonthDidTap
         case dayDidSelect(Int)
+        case scheduleDidSelect(Int)
     }
 
     public enum Mutation {
@@ -42,6 +43,7 @@ public final class ScheduleManagementReactor: BaseReactor, Stepper {
         case setTab(TabType)
         case setMonth(year: Int, month: Int)
         case setSelectedDay(Int)
+        case setSelectedScheduleIndex(Int?)
     }
 
     public struct State {
@@ -51,6 +53,7 @@ public final class ScheduleManagementReactor: BaseReactor, Stepper {
         var todayDay: Int
         var selectedDay: Int?
         var scheduleList: [InterviewScheduleEntity] = []
+        var selectedScheduleIndex: Int?
     }
 }
 
@@ -65,7 +68,10 @@ extension ScheduleManagementReactor {
                 .catch { _ in .empty() }
 
         case .calendarTabDidTap:
-            return .just(.setTab(.calendar))
+            return .concat([
+                .just(.setTab(.calendar)),
+                .just(.setSelectedScheduleIndex(nil))
+            ])
 
         case .editTabDidTap:
             return .just(.setTab(.edit))
@@ -94,6 +100,10 @@ extension ScheduleManagementReactor {
 
         case let .dayDidSelect(day):
             return .just(.setSelectedDay(day))
+
+        case let .scheduleDidSelect(index):
+            let selectedIndex = currentState.selectedScheduleIndex == index ? nil : index
+            return .just(.setSelectedScheduleIndex(selectedIndex))
         }
     }
 
@@ -110,6 +120,8 @@ extension ScheduleManagementReactor {
             newState.selectedDay = nil
         case let .setSelectedDay(day):
             newState.selectedDay = day
+        case let .setSelectedScheduleIndex(index):
+            newState.selectedScheduleIndex = index
         }
         return newState
     }
