@@ -10,7 +10,8 @@ protocol RemoteRecruitmentsDataSource {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
-        status: String?
+        status: String?,
+        sortType: String?
     ) -> Single<[RecruitmentEntity]>
 }
 
@@ -28,7 +29,8 @@ final class RemoteRecruitmentsDataSourceImpl: RemoteBaseDataSource<RecruitmentsA
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
-        status: String?
+        status: String?,
+        sortType: String?
     ) -> Single<[RecruitmentEntity]> {
         request(.fetchRecruitmentList(
             page: page,
@@ -37,7 +39,8 @@ final class RemoteRecruitmentsDataSourceImpl: RemoteBaseDataSource<RecruitmentsA
             name: name,
             winterIntern: winterIntern,
             years: years,
-            status: status
+            status: status,
+            sortType: sortType
         ))
         .map(RecruitmentListResponseDTO.self)
         .map { $0.toDomain() }

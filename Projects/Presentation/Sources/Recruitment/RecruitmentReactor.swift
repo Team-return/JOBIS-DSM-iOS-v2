@@ -28,6 +28,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case searchButtonDidTap
         case filterButtonDidTap
         case updateFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
+        case updateSortOption(String)
     }
 
     public enum Mutation {
@@ -38,6 +39,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case resetPageCount
         case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
         case setLoading(Bool)
+        case setSortType(String?)
     }
 
     public struct State {
@@ -46,6 +48,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         var techCode: [String]?
         var years: [String]?
         var status: String?
+        var sortType: String?
         var pageCount: Int = 1
         var isLoading: Bool = false
     }
@@ -63,7 +66,8 @@ extension RecruitmentReactor {
                     jobCode: currentState.jobCode,
                     techCode: currentState.techCode,
                     years: currentState.years,
-                    status: currentState.status
+                    status: currentState.status,
+                    sortType: currentState.sortType
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
@@ -81,7 +85,8 @@ extension RecruitmentReactor {
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
-                status: currentState.status
+                status: currentState.status,
+                sortType: currentState.sortType
             )
             .asObservable()
             .catch { _ in .empty() }
@@ -115,6 +120,38 @@ extension RecruitmentReactor {
 
         case let .updateFilterOptions(jobCode, techCode, years, status):
             return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status))
+
+        case let .updateSortOption(option):
+            let sortType: String? = {
+                switch option {
+                case "매출": return "TAKE"
+                case "직원 ↓": return "WORKERS_COUNT_DESC"
+                case "직원 ↑": return "WORKERS_COUNT_ASC"
+                case "공고마감 ↓": return "DEADLINE_DESC"
+                case "공고마감 ↑": return "DEADLINE_ASC"
+                default: return nil
+                }
+            }()
+            return .concat([
+                .just(.setSortType(sortType)),
+                .just(.resetPageCount),
+                .just(.setLoading(true)),
+                fetchRecruitmentListUseCase.execute(
+                    page: 1,
+                    jobCode: currentState.jobCode,
+                    techCode: currentState.techCode,
+                    years: currentState.years,
+                    status: currentState.status,
+                    sortType: sortType
+                )
+                .asObservable()
+                .flatMap { list -> Observable<Mutation> in
+                    return .concat([
+                        .just(.setRecruitmentList(list)),
+                        .just(.setLoading(false))
+                    ])
+                }
+            ])
         }
     }
 
@@ -150,6 +187,9 @@ extension RecruitmentReactor {
 
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+
+        case let .setSortType(sortType):
+            newState.sortType = sortType
         }
         return newState
     }
