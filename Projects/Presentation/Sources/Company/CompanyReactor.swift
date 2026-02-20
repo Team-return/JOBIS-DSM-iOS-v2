@@ -22,6 +22,7 @@ public final class CompanyReactor: BaseReactor, Stepper {
         case loadMoreCompanies
         case companyDidSelect(Int)
         case searchButtonDidTap
+        case updateSortOption(String)
     }
 
     public enum Mutation {
@@ -29,10 +30,12 @@ public final class CompanyReactor: BaseReactor, Stepper {
         case appendCompanyList([CompanyEntity])
         case incrementPageCount
         case resetPageCount
+        case setSortType(String?)
     }
 
     public struct State {
         var companyList: [CompanyEntity] = []
+        var sortType: String?
         var pageCount: Int = 1
     }
 }
@@ -43,25 +46,31 @@ extension CompanyReactor {
         case .fetchCompanyList:
             return .concat([
                 .just(.resetPageCount),
-                fetchCompanyListUseCase.execute(page: 1)
-                    .asObservable()
-                    .flatMap { list -> Observable<Mutation> in
-                        return .just(.setCompanyList(list))
-                    }
+                fetchCompanyListUseCase.execute(
+                    page: 1,
+                    sortType: currentState.sortType
+                )
+                .asObservable()
+                .flatMap { list -> Observable<Mutation> in
+                    return .just(.setCompanyList(list))
+                }
             ])
 
         case .loadMoreCompanies:
             let nextPage = currentState.pageCount + 1
-            return fetchCompanyListUseCase.execute(page: nextPage)
-                .asObservable()
-                .catch { _ in .empty() }
-                .filter { !$0.isEmpty }
-                .flatMap { list -> Observable<Mutation> in
-                    return .concat([
-                        .just(.appendCompanyList(list)),
-                        .just(.incrementPageCount)
-                    ])
-                }
+            return fetchCompanyListUseCase.execute(
+                page: nextPage,
+                sortType: currentState.sortType
+            )
+            .asObservable()
+            .catch { _ in .empty() }
+            .filter { !$0.isEmpty }
+            .flatMap { list -> Observable<Mutation> in
+                return .concat([
+                    .just(.appendCompanyList(list)),
+                    .just(.incrementPageCount)
+                ])
+            }
 
         case let .companyDidSelect(id):
             steps.accept(CompanyStep.companyDetailIsRequired(id: id))
@@ -70,6 +79,30 @@ extension CompanyReactor {
         case .searchButtonDidTap:
             steps.accept(CompanyStep.searchCompanyIsRequired)
             return .empty()
+
+        case let .updateSortOption(option):
+            let sortType: String? = {
+                switch option {
+                case "매출": return "TAKE"
+                case "직원 ↓": return "WORKERS_COUNT_DESC"
+                case "직원 ↑": return "WORKERS_COUNT_ASC"
+                case "설립일 ↓": return "FOUNDED_AT_DESC"
+                case "설립일 ↑": return "FOUNDED_AT_ASC"
+                default: return nil
+                }
+            }()
+            return .concat([
+                .just(.setSortType(sortType)),
+                .just(.resetPageCount),
+                fetchCompanyListUseCase.execute(
+                    page: 1,
+                    sortType: sortType
+                )
+                .asObservable()
+                .flatMap { list -> Observable<Mutation> in
+                    return .just(.setCompanyList(list))
+                }
+            ])
         }
     }
 
@@ -87,6 +120,9 @@ extension CompanyReactor {
 
         case .resetPageCount:
             newState.pageCount = 1
+
+        case let .setSortType(sortType):
+            newState.sortType = sortType
         }
         return newState
     }

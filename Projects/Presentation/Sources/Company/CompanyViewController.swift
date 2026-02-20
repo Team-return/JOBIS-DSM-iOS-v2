@@ -72,6 +72,11 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
             .map { CompanyReactor.Action.searchButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+
+        jobisDropdownView.selectedOption
+            .map { CompanyReactor.Action.updateSortOption($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     public override func bindState() {

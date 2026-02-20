@@ -3,7 +3,7 @@ import Domain
 import AppNetwork
 
 enum CompaniesAPI {
-    case fetchCompanyList(page: Int, name: String?)
+    case fetchCompanyList(page: Int, name: String?, sortType: String?)
     case fetchCompanyInfoDetail(id: Int)
     case fetchWritableReviewList
 }
@@ -37,11 +37,12 @@ extension CompaniesAPI: JobisAPI {
 
     var task: Task {
         switch self {
-        case let .fetchCompanyList(page, name):
+        case let .fetchCompanyList(page, name, sortType):
             return .requestParameters(
                 parameters: [
                     "page": page,
-                    "name": name ?? ""
+                    "name": name ?? "",
+                    "sort_type": sortType ?? ""
                 ], encoding: URLEncoding.queryString)
 
         default:
