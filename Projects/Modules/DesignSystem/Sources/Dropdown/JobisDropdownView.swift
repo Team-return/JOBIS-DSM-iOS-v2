@@ -3,12 +3,14 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import RxGesture
 
 public class JobisDropdownView: UIButton {
 
     private let options: [String]
     private var selectedIndex = 0
     private let disposeBag = DisposeBag()
+    public let selectedOption = PublishRelay<String>()
 
     private let iconTitleSpacing: CGFloat = 12
     private let contentWrapper = UIView()
@@ -34,6 +36,7 @@ public class JobisDropdownView: UIButton {
     }
 
     private var isDropdownOpen = false
+    private let overlayView = UIView()
 
     public init(options: [String]) {
         self.options = options
@@ -96,6 +99,15 @@ public class JobisDropdownView: UIButton {
 
         let contentWrapperFrame = contentWrapper.convert(contentWrapper.bounds, to: window)
 
+        overlayView.frame = window.bounds
+        overlayView.backgroundColor = .clear
+        overlayView.rx.tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { [weak self] _ in
+                self?.hideDropdown()
+            })
+            .disposed(by: disposeBag)
+        window.addSubview(overlayView)
         window.addSubview(dropdownTableView)
 
         let tableHeight: CGFloat = CGFloat(options.count) * 48
@@ -114,6 +126,7 @@ public class JobisDropdownView: UIButton {
 
     private func hideDropdown() {
         isDropdownOpen = false
+        overlayView.removeFromSuperview()
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
         }) {    _ in
@@ -141,6 +154,7 @@ extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
         self.selectedOptionLabel.text = options[indexPath.row]
+        selectedOption.accept(options[indexPath.row])
         hideDropdown()
         tableView.reloadData()
     }
