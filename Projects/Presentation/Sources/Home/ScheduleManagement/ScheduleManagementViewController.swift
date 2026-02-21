@@ -107,7 +107,7 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         calendarView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(4)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(380)
+            $0.height.equalTo(260)
         }
         calendarDivider.snp.makeConstraints {
             $0.top.equalTo(calendarView.snp.bottom).offset(16)
