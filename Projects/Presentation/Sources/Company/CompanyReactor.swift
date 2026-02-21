@@ -30,12 +30,12 @@ public final class CompanyReactor: BaseReactor, Stepper {
         case appendCompanyList([CompanyEntity])
         case incrementPageCount
         case resetPageCount
-        case setSortType(String?)
+        case setSortType(CompanySortType?)
     }
 
     public struct State {
         var companyList: [CompanyEntity] = []
-        var sortType: String?
+        var sortType: CompanySortType?
         var pageCount: Int = 1
     }
 }
@@ -48,7 +48,7 @@ extension CompanyReactor {
                 .just(.resetPageCount),
                 fetchCompanyListUseCase.execute(
                     page: 1,
-                    sortType: currentState.sortType
+                    sortType: currentState.sortType?.rawValue
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
@@ -60,7 +60,7 @@ extension CompanyReactor {
             let nextPage = currentState.pageCount + 1
             return fetchCompanyListUseCase.execute(
                 page: nextPage,
-                sortType: currentState.sortType
+                sortType: currentState.sortType?.rawValue
             )
             .asObservable()
             .catch { _ in .empty() }
@@ -81,22 +81,13 @@ extension CompanyReactor {
             return .empty()
 
         case let .updateSortOption(option):
-            let sortType: String? = {
-                switch option {
-                case "매출": return "TAKE"
-                case "직원 ↓": return "WORKERS_COUNT_DESC"
-                case "직원 ↑": return "WORKERS_COUNT_ASC"
-                case "설립일 ↓": return "FOUNDED_AT_DESC"
-                case "설립일 ↑": return "FOUNDED_AT_ASC"
-                default: return nil
-                }
-            }()
+            let sortType = CompanySortType(localizedString: option)
             return .concat([
                 .just(.setSortType(sortType)),
                 .just(.resetPageCount),
                 fetchCompanyListUseCase.execute(
                     page: 1,
-                    sortType: sortType
+                    sortType: sortType?.rawValue
                 )
                 .asObservable()
                 .catch { _ in .empty() }

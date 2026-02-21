@@ -39,7 +39,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case resetPageCount
         case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
         case setLoading(Bool)
-        case setSortType(String?)
+        case setSortType(RecruitmentSortType?)
     }
 
     public struct State {
@@ -48,7 +48,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         var techCode: [String]?
         var years: [String]?
         var status: String?
-        var sortType: String?
+        var sortType: RecruitmentSortType?
         var pageCount: Int = 1
         var isLoading: Bool = false
     }
@@ -67,7 +67,7 @@ extension RecruitmentReactor {
                     techCode: currentState.techCode,
                     years: currentState.years,
                     status: currentState.status,
-                    sortType: currentState.sortType
+                    sortType: currentState.sortType?.rawValue
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
@@ -86,7 +86,7 @@ extension RecruitmentReactor {
                 techCode: currentState.techCode,
                 years: currentState.years,
                 status: currentState.status,
-                sortType: currentState.sortType
+                sortType: currentState.sortType?.rawValue
             )
             .asObservable()
             .catch { _ in .empty() }
@@ -122,16 +122,7 @@ extension RecruitmentReactor {
             return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status))
 
         case let .updateSortOption(option):
-            let sortType: String? = {
-                switch option {
-                case "매출": return "TAKE"
-                case "직원 ↓": return "WORKERS_COUNT_DESC"
-                case "직원 ↑": return "WORKERS_COUNT_ASC"
-                case "공고마감 ↓": return "DEADLINE_DESC"
-                case "공고마감 ↑": return "DEADLINE_ASC"
-                default: return nil
-                }
-            }()
+            let sortType = RecruitmentSortType(localizedString: option)
             return .concat([
                 .just(.setSortType(sortType)),
                 .just(.resetPageCount),
@@ -142,7 +133,7 @@ extension RecruitmentReactor {
                     techCode: currentState.techCode,
                     years: currentState.years,
                     status: currentState.status,
-                    sortType: sortType
+                    sortType: sortType?.rawValue
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
