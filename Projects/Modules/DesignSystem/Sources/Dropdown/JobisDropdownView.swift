@@ -27,6 +27,7 @@ public class JobisDropdownView: UIButton {
         $0.alpha = 0
         $0.register(JobisDropdownCell.self, forCellReuseIdentifier: "JobisDropdownCell")
         $0.separatorStyle = .none
+        $0.rowHeight = 48
     }
 
     private let chevronImageView = UIImageView().then {
@@ -129,11 +130,15 @@ public class JobisDropdownView: UIButton {
         isDropdownOpen = false
         overlayDisposeBag = DisposeBag()
         overlayView.removeFromSuperview()
-        UIView.animate(withDuration: 0.2, animations: {
-            self.dropdownTableView.alpha = 0
-        }) {    _ in
-            self.dropdownTableView.removeFromSuperview()
-        }
+        UIView.animate(
+            withDuration: 0.2,
+            animations: {
+                self.dropdownTableView.alpha = 0
+            },
+            completion: { _ in
+                self.dropdownTableView.removeFromSuperview()
+            }
+        )
     }
 }
 
@@ -147,10 +152,6 @@ extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
         let option = options[indexPath.row]
         cell.configure(with: option, isSelected: indexPath.row == selectedIndex)
         return cell
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 48
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
