@@ -36,6 +36,7 @@ public class JobisDropdownView: UIButton {
     }
 
     private var isDropdownOpen = false
+    private var overlayDisposeBag = DisposeBag()
     private let overlayView = UIView()
 
     public init(options: [String]) {
@@ -106,7 +107,7 @@ public class JobisDropdownView: UIButton {
             .subscribe(onNext: { [weak self] _ in
                 self?.hideDropdown()
             })
-            .disposed(by: disposeBag)
+            .disposed(by: overlayDisposeBag)
         window.addSubview(overlayView)
         window.addSubview(dropdownTableView)
 
@@ -126,6 +127,7 @@ public class JobisDropdownView: UIButton {
 
     private func hideDropdown() {
         isDropdownOpen = false
+        overlayDisposeBag = DisposeBag()
         overlayView.removeFromSuperview()
         UIView.animate(withDuration: 0.2, animations: {
             self.dropdownTableView.alpha = 0
