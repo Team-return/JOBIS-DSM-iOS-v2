@@ -113,7 +113,7 @@ public class JobisDropdownView: UIButton {
 
         let tableHeight: CGFloat = CGFloat(options.count) * 48
 
-        dropdownTableView.snp.makeConstraints {
+        dropdownTableView.snp.remakeConstraints {
             $0.top.equalTo(window.snp.top).offset(contentWrapperFrame.maxY + 8)
             $0.trailing.equalTo(window.snp.leading).offset(contentWrapperFrame.maxX)
             $0.width.equalTo(110)
