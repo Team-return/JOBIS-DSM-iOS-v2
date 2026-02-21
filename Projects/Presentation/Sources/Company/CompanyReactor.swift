@@ -99,6 +99,7 @@ extension CompanyReactor {
                     sortType: sortType
                 )
                 .asObservable()
+                .catch { _ in .empty() }
                 .flatMap { list -> Observable<Mutation> in
                     return .just(.setCompanyList(list))
                 }
