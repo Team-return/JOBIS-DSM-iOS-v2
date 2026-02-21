@@ -15,12 +15,12 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
     private let pageCount = PublishRelay<Int>()
     
     private let headerContainerView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .GrayScale.gray10
     }
     private let titleLabel = UILabel().then {
         $0.text = "모집의뢰서"
         $0.font = .jobisFont(.pageTitle)
-        $0.textColor = .black
+        $0.textColor = .GrayScale.gray90
     }
     private let dropdownView = JobisDropdownView(options: ["기본순", "매출", "직원 ↓", "직원 ↑", "공고마감 ↓", "공고마감 ↑"])
     private let listEmptyView = ListEmptyView().then {
@@ -36,7 +36,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
         $0.rowHeight = 72
         $0.showsVerticalScrollIndicator = false
         $0.isSkeletonable = true
-        $0.backgroundColor = .white
+        $0.backgroundColor = .GrayScale.gray10
     }
     private let filterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)

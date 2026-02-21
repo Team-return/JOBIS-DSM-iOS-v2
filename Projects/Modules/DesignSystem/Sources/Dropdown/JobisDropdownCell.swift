@@ -14,8 +14,7 @@ class JobisDropdownCell: UITableViewCell {
     private func setupCell() {
         textLabel?.font = .jobisFont(.description)
         textLabel?.textAlignment = .center
-        selectionStyle = .gray
-        backgroundColor = .white
+        backgroundColor = .GrayScale.gray10
     }
 
     func configure(with text: String, isSelected: Bool) {
