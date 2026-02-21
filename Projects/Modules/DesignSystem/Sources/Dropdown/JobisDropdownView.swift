@@ -157,7 +157,7 @@ extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
         selectedIndex = indexPath.row
         self.selectedOptionLabel.text = options[indexPath.row]
         selectedOption.accept(options[indexPath.row])
-        hideDropdown()
         tableView.reloadData()
+        hideDropdown()
     }
 }
