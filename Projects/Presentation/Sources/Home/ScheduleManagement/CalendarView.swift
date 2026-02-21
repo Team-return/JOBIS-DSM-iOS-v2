@@ -30,20 +30,26 @@ final class CalendarView: BaseView {
         $0.distribution = .fillEqually
     }
     private var dateButtons: [UIButton] = []
+    private var circleViews: [UIView] = []
 
     private var currentYear = 0
     private var currentMonth = 0
     private var todayDay = 0
     private var selectedDay: Int? = nil
 
+    private var hasSetupLayout = false
+
     override func addView() {
+        guard !hasSetupLayout else { return }
         [prevButton, monthLabel, nextButton, weekdayStackView, dateGridStackView]
             .forEach(self.addSubview(_:))
     }
 
     override func setLayout() {
+        guard !hasSetupLayout else { return }
+        hasSetupLayout = true
         monthLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
+            $0.top.equalToSuperview().inset(8)
             $0.centerX.equalToSuperview()
         }
         prevButton.snp.makeConstraints {
@@ -57,14 +63,14 @@ final class CalendarView: BaseView {
             $0.width.height.equalTo(28)
         }
         weekdayStackView.snp.makeConstraints {
-            $0.top.equalTo(monthLabel.snp.bottom).offset(24)
+            $0.top.equalTo(monthLabel.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview().inset(12)
             $0.height.equalTo(20)
         }
         dateGridStackView.snp.makeConstraints {
-            $0.top.equalTo(weekdayStackView.snp.bottom).offset(8)
+            $0.top.equalTo(weekdayStackView.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview().inset(12)
-            $0.bottom.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(8)
         }
     }
 
@@ -98,6 +104,7 @@ final class CalendarView: BaseView {
         for (index, button) in dateButtons.enumerated() {
             guard index < days.count else { break }
             let (day, isCurrentMonth) = days[index]
+            let circleView = circleViews[index]
             button.setTitle("\(day)", for: .normal)
             button.tag = isCurrentMonth ? day : -1
 
@@ -106,25 +113,25 @@ final class CalendarView: BaseView {
 
             if !isCurrentMonth {
                 button.setTitleColor(.GrayScale.gray40, for: .normal)
-                button.backgroundColor = .clear
-                button.layer.borderWidth = 0
+                circleView.backgroundColor = .clear
+                circleView.layer.borderWidth = 0
             } else if day == selectedDay {
                 button.setTitleColor(.white, for: .normal)
-                button.backgroundColor = .Primary.blue30
-                button.layer.borderWidth = 0
+                circleView.backgroundColor = .Primary.blue30
+                circleView.layer.borderWidth = 0
             } else if day == today {
                 button.setTitleColor(.Primary.blue30, for: .normal)
-                button.backgroundColor = .clear
-                button.layer.borderColor = UIColor.Primary.blue30.cgColor
-                button.layer.borderWidth = 1
+                circleView.backgroundColor = .clear
+                circleView.layer.borderColor = UIColor.Primary.blue30.cgColor
+                circleView.layer.borderWidth = 1
             } else if isWeekend {
                 button.setTitleColor(.GrayScale.gray40, for: .normal)
-                button.backgroundColor = .clear
-                button.layer.borderWidth = 0
+                circleView.backgroundColor = .clear
+                circleView.layer.borderWidth = 0
             } else {
                 button.setTitleColor(.GrayScale.gray60, for: .normal)
-                button.backgroundColor = .clear
-                button.layer.borderWidth = 0
+                circleView.backgroundColor = .clear
+                circleView.layer.borderWidth = 0
             }
         }
     }
@@ -142,6 +149,7 @@ final class CalendarView: BaseView {
 
     private func setupDateGrid() {
         dateButtons = []
+        circleViews = []
         for _ in 0..<5 {
             let rowStack = UIStackView().then {
                 $0.axis = .horizontal
@@ -150,8 +158,16 @@ final class CalendarView: BaseView {
             for _ in 0..<7 {
                 let button = UIButton().then {
                     $0.titleLabel?.font = .jobisFont(.subBody)
+                }
+                let circleView = UIView().then {
                     $0.layer.cornerRadius = 11
                     $0.clipsToBounds = true
+                    $0.isUserInteractionEnabled = false
+                }
+                button.insertSubview(circleView, at: 0)
+                circleView.snp.makeConstraints {
+                    $0.center.equalToSuperview()
+                    $0.width.height.equalTo(22)
                 }
                 button.rx.tap
                     .compactMap { [weak button] _ -> Int? in
@@ -162,6 +178,7 @@ final class CalendarView: BaseView {
                     .disposed(by: disposeBag)
                 rowStack.addArrangedSubview(button)
                 dateButtons.append(button)
+                circleViews.append(circleView)
             }
             dateGridStackView.addArrangedSubview(rowStack)
         }

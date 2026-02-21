@@ -64,7 +64,10 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         $0.setText("수정하기")
     }
 
+    private var hasSetupLayout = false
+
     public override func addView() {
+        guard !hasSetupLayout else { return }
         [calendarTabButton, editTabButton].forEach(tabContainerView.addSubview(_:))
         tabWrapperView.addSubview(tabContainerView)
 
@@ -79,6 +82,9 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
     }
 
     public override func setLayout() {
+        guard !hasSetupLayout else { return }
+        hasSetupLayout = true
+
         topStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
         }
@@ -99,7 +105,7 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         }
 
         calendarView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(8)
+            $0.top.equalToSuperview().inset(4)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.height.equalTo(380)
         }
