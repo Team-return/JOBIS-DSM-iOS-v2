@@ -147,8 +147,14 @@ extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
         return options.count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "JobisDropdownCell", for: indexPath) as! JobisDropdownCell
+    public func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "JobisDropdownCell",
+            for: indexPath
+        ) as! JobisDropdownCell
         let option = options[indexPath.row]
         cell.configure(with: option, isSelected: indexPath.row == selectedIndex)
         return cell
