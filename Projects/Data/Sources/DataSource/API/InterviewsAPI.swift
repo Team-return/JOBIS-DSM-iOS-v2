@@ -4,6 +4,7 @@ import Domain
 
 enum InterviewsAPI {
     case fetchInterviewScheduleList(year: Int, month: Int, interviewType: String?, companyName: String?)
+    case addInterviewSchedule(AddInterviewScheduleRequestQuery)
 }
 
 extension InterviewsAPI: JobisAPI {
@@ -18,7 +19,10 @@ extension InterviewsAPI: JobisAPI {
     }
 
     var method: Method {
-        return .get
+        switch self {
+        case .fetchInterviewScheduleList: return .get
+        case .addInterviewSchedule: return .post
+        }
     }
 
     var task: Task {
@@ -31,6 +35,8 @@ extension InterviewsAPI: JobisAPI {
             if let interviewType { params["interview_type"] = interviewType }
             if let companyName { params["company_name"] = companyName }
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
+        case let .addInterviewSchedule(req):
+            return .requestJSONEncodable(req)
         }
     }
 

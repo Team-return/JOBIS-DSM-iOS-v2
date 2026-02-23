@@ -309,8 +309,10 @@ public final class MainPresentationAssembly: Assembly {
                 resolver.resolve(ScheduleManagementReactor.self)!
             )
         }
-        container.register(AddScheduleReactor.self) { _ in
-            AddScheduleReactor()
+        container.register(AddScheduleReactor.self) { resolver in
+            AddScheduleReactor(
+                addInterviewScheduleUseCase: resolver.resolve(AddInterviewScheduleUseCase.self)!
+            )
         }
         container.register(AddScheduleViewController.self) { resolver in
             AddScheduleViewController(

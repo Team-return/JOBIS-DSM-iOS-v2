@@ -21,4 +21,8 @@ struct InterviewsRepositoryImpl: InterviewsRepository {
             companyName: companyName
         )
     }
+
+    func addInterviewSchedule(req: AddInterviewScheduleRequestQuery) -> Completable {
+        remoteInterviewsDataSource.addInterviewSchedule(req: req)
+    }
 }

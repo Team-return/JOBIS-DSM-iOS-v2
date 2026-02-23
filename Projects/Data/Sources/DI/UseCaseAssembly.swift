@@ -291,5 +291,10 @@ public final class UseCaseAssembly: Assembly {
                 interviewsRepository: resolver.resolve(InterviewsRepository.self)!
             )
         }
+        container.register(AddInterviewScheduleUseCase.self) { resolver in
+            AddInterviewScheduleUseCase(
+                interviewsRepository: resolver.resolve(InterviewsRepository.self)!
+            )
+        }
     }
 }

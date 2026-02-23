@@ -7,4 +7,5 @@ public protocol InterviewsRepository {
         interviewType: String?,
         companyName: String?
     ) -> Single<InterviewScheduleListEntity>
+    func addInterviewSchedule(req: AddInterviewScheduleRequestQuery) -> Completable
 }

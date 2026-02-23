@@ -8,6 +8,7 @@ public protocol RemoteInterviewsDataSource {
         interviewType: String?,
         companyName: String?
     ) -> Single<InterviewScheduleListEntity>
+    func addInterviewSchedule(req: AddInterviewScheduleRequestQuery) -> Completable
 }
 
 final class RemoteInterviewsDataSourceImpl: RemoteBaseDataSource<InterviewsAPI>, RemoteInterviewsDataSource {
@@ -20,5 +21,9 @@ final class RemoteInterviewsDataSourceImpl: RemoteBaseDataSource<InterviewsAPI>,
         request(.fetchInterviewScheduleList(year: year, month: month, interviewType: interviewType, companyName: companyName))
             .map(InterviewScheduleListResponseDTO.self)
             .map { $0.toDomain() }
+    }
+
+    func addInterviewSchedule(req: AddInterviewScheduleRequestQuery) -> Completable {
+        request(.addInterviewSchedule(req)).asCompletable()
     }
 }
