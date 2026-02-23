@@ -24,10 +24,12 @@ final class CalendarView: BaseView {
     private let weekdayStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
+        $0.spacing = 27.83
     }
     private let dateGridStackView = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .fillEqually
+        $0.spacing = 28
     }
     private var dateButtons: [UIButton] = []
     private var circleViews: [UIView] = []
@@ -68,14 +70,14 @@ final class CalendarView: BaseView {
             $0.height.equalTo(20)
         }
         dateGridStackView.snp.makeConstraints {
-            $0.top.equalTo(weekdayStackView.snp.bottom).offset(4)
+            $0.top.equalTo(weekdayStackView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(8)
         }
     }
 
     override func configureView() {
-        self.backgroundColor = .GrayScale.gray10
+        self.backgroundColor = .GrayScale.gray20
         self.layer.cornerRadius = 12
         self.clipsToBounds = true
 
@@ -154,6 +156,7 @@ final class CalendarView: BaseView {
             let rowStack = UIStackView().then {
                 $0.axis = .horizontal
                 $0.distribution = .fillEqually
+                $0.spacing = 27.83
             }
             for _ in 0..<7 {
                 let button = UIButton().then {
