@@ -22,6 +22,8 @@ public final class ScheduleFlow: Flow {
         switch step {
         case .scheduleIsRequired:
             return navigateToSchedule()
+        case .addScheduleIsRequired:
+            return navigateToAddSchedule()
         }
     }
 }
@@ -31,6 +33,15 @@ private extension ScheduleFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
+        ))
+    }
+
+    func navigateToAddSchedule() -> FlowContributors {
+        let addScheduleViewController = container.resolve(AddScheduleViewController.self)!
+        rootViewController.navigationController?.pushViewController(addScheduleViewController, animated: true)
+        return .one(flowContributor: .contribute(
+            withNextPresentable: addScheduleViewController,
+            withNextStepper: addScheduleViewController.reactor
         ))
     }
 }

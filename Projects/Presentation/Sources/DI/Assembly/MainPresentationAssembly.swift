@@ -309,6 +309,14 @@ public final class MainPresentationAssembly: Assembly {
                 resolver.resolve(ScheduleManagementReactor.self)!
             )
         }
+        container.register(AddScheduleReactor.self) { _ in
+            AddScheduleReactor()
+        }
+        container.register(AddScheduleViewController.self) { resolver in
+            AddScheduleViewController(
+                resolver.resolve(AddScheduleReactor.self)!
+            )
+        }
 
         // Major Bottom Sheet
         container.register(MajorBottomSheetViewController.self) { resolver in

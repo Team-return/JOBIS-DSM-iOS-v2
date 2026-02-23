@@ -36,6 +36,7 @@ public final class ScheduleManagementReactor: BaseReactor, Stepper {
         case nextMonthDidTap
         case dayDidSelect(Int)
         case scheduleDidSelect(Int)
+        case addScheduleDidTap
     }
 
     public enum Mutation {
@@ -104,6 +105,10 @@ extension ScheduleManagementReactor {
         case let .scheduleDidSelect(index):
             let selectedIndex = currentState.selectedScheduleIndex == index ? nil : index
             return .just(.setSelectedScheduleIndex(selectedIndex))
+
+        case .addScheduleDidTap:
+            steps.accept(ScheduleStep.addScheduleIsRequired)
+            return .empty()
         }
     }
 

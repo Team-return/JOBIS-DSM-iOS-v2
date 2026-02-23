@@ -56,6 +56,14 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         $0.showsVerticalScrollIndicator = false
     }
 
+    private let addScheduleButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.tintColor = .white
+        $0.backgroundColor = .Primary.blue20
+        $0.layer.cornerRadius = 26
+        $0.clipsToBounds = true
+    }
+
     private let changeButtonContainerView = UIView().then {
         $0.backgroundColor = .white
         $0.isHidden = true
@@ -78,7 +86,7 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
             .forEach(topStackView.addArrangedSubview(_:))
 
         changeButtonContainerView.addSubview(changeButton)
-        [topStackView, scheduleTableView, changeButtonContainerView].forEach(view.addSubview(_:))
+        [topStackView, scheduleTableView, changeButtonContainerView, addScheduleButton].forEach(view.addSubview(_:))
     }
 
     public override func setLayout() {
@@ -129,7 +137,14 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
 
         scheduleTableView.snp.makeConstraints {
             $0.top.equalTo(topStackView.snp.bottom)
-            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview()
+        }
+
+        addScheduleButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(28)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(18)
+            $0.width.height.equalTo(52)
         }
 
         changeButtonContainerView.snp.makeConstraints {
@@ -171,6 +186,11 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
 
         scheduleTableView.rx.itemSelected
             .map { ScheduleManagementReactor.Action.scheduleDidSelect($0.row) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        addScheduleButton.rx.tap
+            .map { ScheduleManagementReactor.Action.addScheduleDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
@@ -254,6 +274,7 @@ public final class ScheduleManagementViewController: BaseReactorViewController<S
         calendarSectionView.isHidden = !isCalendar
         editSectionView.isHidden = isCalendar
         changeButtonContainerView.isHidden = isCalendar
+        addScheduleButton.isHidden = !isCalendar
         scheduleTableView.contentInset.bottom = isCalendar ? 0 : 84
 
         UIView.animate(withDuration: 0.2) {
