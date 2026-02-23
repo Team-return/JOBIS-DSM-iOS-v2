@@ -11,7 +11,8 @@ enum RecruitmentsAPI {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
-        status: String?
+        status: String?,
+        sortType: String?
     )
 }
 
@@ -41,7 +42,7 @@ extension RecruitmentsAPI: JobisAPI {
 
     var task: Moya.Task {
         switch self {
-        case let .fetchRecruitmentList(page, jobCode, techCode, name, winterIntern, years, status):
+        case let .fetchRecruitmentList(page, jobCode, techCode, name, winterIntern, years, status, sortType):
             return .requestParameters(parameters: [
                 "page": page,
                 "job_code": jobCode ?? " ",
@@ -49,7 +50,8 @@ extension RecruitmentsAPI: JobisAPI {
                 "name": name ?? "",
                 "winter_intern": winterIntern ?? false,
                 "years": years?.joined(separator: ",") ?? "",
-                "status": status ?? ""
+                "status": status ?? "",
+                "sort_type": sortType ?? ""
             ], encoding: URLEncoding.queryString)
 
         default:

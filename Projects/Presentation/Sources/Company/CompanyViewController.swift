@@ -23,6 +23,8 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
 
+    private let jobisDropdownView = JobisDropdownView(options: ["기본순", "매출", "직원 ↓", "직원 ↑", "설립일 ↓", "설립일 ↑"])
+
     public override func addView() {
         [
             companyTableView
@@ -70,6 +72,11 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
             .map { CompanyReactor.Action.searchButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+
+        jobisDropdownView.selectedOption
+            .map { CompanyReactor.Action.updateSortOption($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     public override func bindState() {
@@ -83,6 +90,10 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
     public override func configureViewController() {
         companyTableView.dataSource = self
+        companyTableView.tableHeaderView = jobisDropdownView
+        jobisDropdownView.frame = CGRect(x: 0, y: 0, width: companyTableView.bounds.width, height: 28)
+        companyTableView.tableHeaderView = jobisDropdownView
+
 
         viewWillAppearPublisher.asObservable()
             .bind {
