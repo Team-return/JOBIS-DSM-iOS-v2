@@ -4,10 +4,17 @@ import RxSwift
 import RxCocoa
 import RxFlow
 import Core
+import Domain
 
 public final class AddScheduleReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State = .init()
+
+    private let addInterviewScheduleUseCase: AddInterviewScheduleUseCase
+
+    public init(addInterviewScheduleUseCase: AddInterviewScheduleUseCase) {
+        self.addInterviewScheduleUseCase = addInterviewScheduleUseCase
+    }
 
     public enum Action {
         case backButtonDidTap
@@ -19,6 +26,7 @@ public final class AddScheduleReactor: BaseReactor, Stepper {
         case endDateChanged(String)
         case timeChanged(String)
         case periodToggled(Bool)
+        case addScheduleDidTap
     }
 
     public enum Mutation {
@@ -30,6 +38,7 @@ public final class AddScheduleReactor: BaseReactor, Stepper {
         case setEndDate(String)
         case setTime(String)
         case setIsPeriod(Bool)
+        case setIsLoading(Bool)
     }
 
     public struct State {
@@ -42,6 +51,7 @@ public final class AddScheduleReactor: BaseReactor, Stepper {
         var time: String = ""
         var isPeriod: Bool = false
         var isAddButtonEnabled: Bool = false
+        var isLoading: Bool = false
     }
 
     public func mutate(action: Action) -> Observable<Mutation> {
@@ -57,6 +67,31 @@ public final class AddScheduleReactor: BaseReactor, Stepper {
         case let .endDateChanged(value): return .just(.setEndDate(value))
         case let .timeChanged(value): return .just(.setTime(value))
         case let .periodToggled(isPeriod): return .just(.setIsPeriod(isPeriod))
+        case .addScheduleDidTap:
+            let state = currentState
+            let startDate = state.isPeriod
+                ? state.startDate.replacingOccurrences(of: ".", with: "-")
+                : state.singleDate.replacingOccurrences(of: ".", with: "-")
+            let endDate = state.isPeriod
+                ? state.endDate.replacingOccurrences(of: ".", with: "-")
+                : nil
+            let req = AddInterviewScheduleRequestQuery(
+                interviewType: state.type,
+                startDate: startDate,
+                endDate: endDate,
+                interviewTime: state.time,
+                companyName: state.company,
+                location: state.location
+            )
+            return Observable.concat([
+                .just(.setIsLoading(true)),
+                addInterviewScheduleUseCase.execute(req: req)
+                    .andThen(Observable<Mutation>.empty())
+                    .do(onCompleted: { [weak self] in
+                        self?.steps.accept(ScheduleStep.scheduleIsRequired)
+                    }),
+                .just(.setIsLoading(false))
+            ])
         }
     }
 
@@ -71,6 +106,7 @@ public final class AddScheduleReactor: BaseReactor, Stepper {
         case let .setEndDate(ver): newState.endDate = ver
         case let .setTime(ver): newState.time = ver
         case let .setIsPeriod(ver): newState.isPeriod = ver
+        case let .setIsLoading(ver): newState.isLoading = ver
         }
         let base = !newState.company.isEmpty && !newState.type.isEmpty
             && !newState.location.isEmpty && !newState.time.isEmpty

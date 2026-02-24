@@ -46,6 +46,7 @@ public final class AddScheduleViewController: BaseReactorViewController<AddSched
     private var calendarMonth = Calendar.current.component(.month, from: Date())
     private var activeCalendarField: UITextField?
     private var isPickerShowing = false
+    private var lastTimeText = ""
     private let periodRowView = UIStackView().then {
         $0.axis = .horizontal; $0.spacing = 8; $0.alignment = .center
     }
@@ -131,7 +132,28 @@ public final class AddScheduleViewController: BaseReactorViewController<AddSched
             .bind(to: typePlaceholderLabel.rx.isHidden).disposed(by: disposeBag)
         locationTextField.setPlaceholder("면접 장소를 입력해주세요")
         [singleDateField, startDateField, endDateField].forEach { $0.setPlaceholder("YYYY.MM.DD") }
-        timeTextField.setPlaceholder("hh.mm")
+        timeTextField.setPlaceholder("hh:mm")
+        timeTextField.rx.controlEvent(.editingChanged)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                let current = self.timeTextField.text ?? ""
+                let isDeleting = current.count < self.lastTimeText.count
+                let digits = current.filter { $0.isNumber }
+                let limited = String(digits.prefix(4))
+                let formatted: String
+                if limited.count >= 3 {
+                    formatted = String(limited.prefix(2)) + ":" + String(limited.dropFirst(2))
+                } else if limited.count == 2 && !isDeleting {
+                    formatted = limited + ":"
+                } else {
+                    formatted = limited
+                }
+                self.lastTimeText = formatted
+                if self.timeTextField.text != formatted {
+                    self.timeTextField.text = formatted
+                }
+            })
+            .disposed(by: disposeBag)
         bindCalendar()
     }
 
@@ -153,6 +175,11 @@ public final class AddScheduleViewController: BaseReactorViewController<AddSched
 
         timeTextField.rx.text.orEmpty
             .map { AddScheduleReactor.Action.timeChanged($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        addButton.rx.tap
+            .map { AddScheduleReactor.Action.addScheduleDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }

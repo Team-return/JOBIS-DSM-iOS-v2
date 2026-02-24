@@ -97,6 +97,7 @@ Gemfile.lock
 
 ### Claude ###
 .claude/
+.omc/
 
 ### Tuist build files ###
 .build/
