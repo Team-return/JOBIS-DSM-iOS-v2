@@ -151,10 +151,12 @@ extension JobisDropdownView: UITableViewDelegate, UITableViewDataSource {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: "JobisDropdownCell",
             for: indexPath
-        ) as! JobisDropdownCell
+        ) as? JobisDropdownCell else {
+            return UITableViewCell()
+        }
         let option = options[indexPath.row]
         cell.configure(with: option, isSelected: indexPath.row == selectedIndex)
         return cell
