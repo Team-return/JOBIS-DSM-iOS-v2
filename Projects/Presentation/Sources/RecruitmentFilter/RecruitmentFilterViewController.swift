@@ -37,6 +37,22 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
         )
     }
+    private let regionLabel = UILabel().then {
+        $0.setJobisText("지역", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private let regionLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
+    }
+    private lazy var regionCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: regionLayout
+    ).then {
+        $0.isScrollEnabled = false
+        $0.register(
+            JobsCollectionViewCell.self,
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+        )
+    }
     private let stateLabel = UILabel().then {
         $0.setJobisText("모집 상태", font: .subHeadLine, color: .GrayScale.gray70)
     }
@@ -115,6 +131,14 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
 
         yearCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(yearCollectionView.contentSize.height)
+        }
+
+        regionLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
+        regionCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(regionCollectionView.contentSize.height)
         }
 
         stateLabel.snp.makeConstraints {
