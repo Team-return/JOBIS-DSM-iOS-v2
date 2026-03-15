@@ -35,6 +35,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case setTechList([CodeEntity])
         case toggleJobCode(String)
         case toggleYear(String)
+        case toggleRegion(String)
         case toggleStatus(Int)
         case appendTechCode(String)
         case resetTechCode
@@ -48,7 +49,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         var years: [String] = []
         var techCode: [String] = []
         var regionCode: String = ""
-        let regionList : [CodeEntity] = LocationType.allCases.enumerated().map {
+        let regionList: [CodeEntity] = LocationType.allCases.enumerated().map {
             CodeEntity(code: $0.offset, keyword: $0.element.koreanName)
         }
         let yearList: [CodeEntity] = {
@@ -94,6 +95,9 @@ extension RecruitmentFilterReactor {
         case let .selectYear(code):
             return .just(.toggleYear("\(code.code)"))
 
+        case let .selectRegion(code):
+            return .just(.toggleRegion("\(code.code)"))
+
         case let .selectStatus(code):
             return .just(.toggleStatus(code.code))
 
@@ -138,6 +142,9 @@ extension RecruitmentFilterReactor {
             } else {
                 newState.years.append(year)
             }
+
+        case let .toggleRegion(code):
+            newState.regionCode = (newState.regionCode == code) ? "" : code
 
         case let .toggleStatus(code):
             newState.statusCode = (newState.statusCode == code) ? nil : code
