@@ -47,6 +47,10 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         var statusCode: Int?
         var years: [String] = []
         var techCode: [String] = []
+        var regionCode: String = ""
+        let regionList : [CodeEntity] = LocationType.allCases.enumerated().map {
+            CodeEntity(code: $0.offset, keyword: $0.element.koreanName)
+        }
         let yearList: [CodeEntity] = {
             let currentYear = Calendar.current.component(.year, from: Date())
             return (2023...currentYear).reversed().map {
@@ -99,6 +103,7 @@ extension RecruitmentFilterReactor {
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
+                region: currentState.regionCode,
                 status: statusString
             ))
             return .empty()
