@@ -23,6 +23,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case fetchCodeLists
         case selectJobCode(CodeEntity)
         case selectYear(CodeEntity)
+        case selectRegion(CodeEntity)
         case selectStatus(CodeEntity)
         case filterApplyButtonDidTap
         case appendTechCode(CodeEntity)

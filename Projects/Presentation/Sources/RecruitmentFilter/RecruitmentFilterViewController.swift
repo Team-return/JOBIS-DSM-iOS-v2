@@ -186,6 +186,14 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        regionCollectionView.rx.modelSelected(CodeEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.regionCollectionView.reloadData()
+            })
+            .map { RecruitmentFilterReactor.Action.selectRegion($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         stateCollectionView.rx.modelSelected(CodeEntity.self)
             .do(onNext: { [weak self] _ in
                 self?.stateCollectionView.reloadData()
