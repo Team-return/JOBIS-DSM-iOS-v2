@@ -100,6 +100,8 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
         [
             yearLabel,
             yearCollectionView,
+            regionLabel,
+            regionCollectionView,
             stateLabel,
             stateCollectionView,
             jobsLabel,
