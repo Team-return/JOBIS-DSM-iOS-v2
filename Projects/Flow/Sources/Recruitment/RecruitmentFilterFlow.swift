@@ -23,8 +23,8 @@ public final class RecruitmentFilterFlow: Flow {
         case .recruitmentFilterIsRequired:
             return navigateToRecruitmentFilter()
 
-        case let .popToRecruitment(jobCode, techCode, years, status):
-            return popToRecruitment(jobCode: jobCode ?? "", techCode: techCode, years: years, status: status)
+        case let .popToRecruitment(jobCode, techCode, years, region, status):
+            return popToRecruitment(jobCode: jobCode ?? "", techCode: techCode, years: years, region: region, status: status)
         }
     }
 }
@@ -37,13 +37,13 @@ private extension RecruitmentFilterFlow {
         ))
     }
 
-    func popToRecruitment(jobCode: String, techCode: [String]?, years: [String]?, status: String?) -> FlowContributors {
+    func popToRecruitment(jobCode: String, techCode: [String]?, years: [String]?, region: String?, status: String?) -> FlowContributors {
         let recruitmentPopView = self.rootViewController.navigationController?.viewControllers.first as? RecruitmentViewController
         let winterInternPopView = self.rootViewController.navigationController?.viewControllers.first(where: { $0 is WinterInternViewController}) as? WinterInternViewController
 
         // Update filter options via reactor action
         recruitmentPopView?.reactor.action.onNext(
-            .updateFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status)
+            .updateFilterOptions(jobCode: jobCode, techCode: techCode, years: years, region: region, status: status)
         )
         recruitmentPopView?.reactor.action.onNext(.fetchRecruitmentList)
 

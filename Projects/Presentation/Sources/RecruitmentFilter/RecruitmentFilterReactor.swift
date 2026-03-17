@@ -23,6 +23,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case fetchCodeLists
         case selectJobCode(CodeEntity)
         case selectYear(CodeEntity)
+        case selectRegion(CodeEntity)
         case selectStatus(CodeEntity)
         case filterApplyButtonDidTap
         case appendTechCode(CodeEntity)
@@ -34,6 +35,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case setTechList([CodeEntity])
         case toggleJobCode(String)
         case toggleYear(String)
+        case toggleRegion(String)
         case toggleStatus(Int)
         case appendTechCode(String)
         case resetTechCode
@@ -46,6 +48,10 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         var statusCode: Int?
         var years: [String] = []
         var techCode: [String] = []
+        var regionCode: String = ""
+        let regionList: [CodeEntity] = LocationType.allCases.enumerated().map {
+            CodeEntity(code: $0.offset, keyword: $0.element.koreanName)
+        }
         let yearList: [CodeEntity] = {
             let currentYear = Calendar.current.component(.year, from: Date())
             return (2023...currentYear).reversed().map {
@@ -89,6 +95,9 @@ extension RecruitmentFilterReactor {
         case let .selectYear(code):
             return .just(.toggleYear("\(code.code)"))
 
+        case let .selectRegion(code):
+            return .just(.toggleRegion("\(code.code)"))
+
         case let .selectStatus(code):
             return .just(.toggleStatus(code.code))
 
@@ -98,6 +107,7 @@ extension RecruitmentFilterReactor {
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
+                region: mapRegion(code: currentState.regionCode),
                 status: statusString
             ))
             return .empty()
@@ -133,6 +143,9 @@ extension RecruitmentFilterReactor {
                 newState.years.append(year)
             }
 
+        case let .toggleRegion(code):
+            newState.regionCode = (newState.regionCode == code) ? "" : code
+
         case let .toggleStatus(code):
             newState.statusCode = (newState.statusCode == code) ? nil : code
 
@@ -155,5 +168,12 @@ extension RecruitmentFilterReactor {
         default:
             return ""
         }
+    }
+
+    private func mapRegion(code: String) -> String {
+        guard let code = Int(code) else { return "" }
+        let allCases = LocationType.allCases
+        guard code < allCases.count else { return "" }
+        return allCases[code].rawValue
     }
 }

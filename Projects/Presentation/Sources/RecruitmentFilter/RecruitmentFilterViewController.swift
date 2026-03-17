@@ -37,6 +37,22 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
         )
     }
+    private let regionLabel = UILabel().then {
+        $0.setJobisText("지역", font: .subHeadLine, color: .GrayScale.gray70)
+    }
+    private let regionLayout = LeftAlignedCollectionViewFlowLayout().then {
+        $0.applyDefaultLayout()
+    }
+    private lazy var regionCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: regionLayout
+    ).then {
+        $0.isScrollEnabled = false
+        $0.register(
+            JobsCollectionViewCell.self,
+            forCellWithReuseIdentifier: JobsCollectionViewCell.identifier
+        )
+    }
     private let stateLabel = UILabel().then {
         $0.setJobisText("모집 상태", font: .subHeadLine, color: .GrayScale.gray70)
     }
@@ -84,6 +100,8 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
         [
             yearLabel,
             yearCollectionView,
+            regionLabel,
+            regionCollectionView,
             stateLabel,
             stateCollectionView,
             jobsLabel,
@@ -115,6 +133,14 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
 
         yearCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(yearCollectionView.contentSize.height)
+        }
+
+        regionLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+
+        regionCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(regionCollectionView.contentSize.height)
         }
 
         stateLabel.snp.makeConstraints {
@@ -159,6 +185,14 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
                 self?.yearCollectionView.reloadData()
             })
             .map { RecruitmentFilterReactor.Action.selectYear($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        regionCollectionView.rx.modelSelected(CodeEntity.self)
+            .do(onNext: { [weak self] _ in
+                self?.regionCollectionView.reloadData()
+            })
+            .map { RecruitmentFilterReactor.Action.selectRegion($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
@@ -216,6 +250,17 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
                 guard let self = self else { return }
                 cell.adapt(model: element)
                 cell.isCheck = self.reactor.currentState.years.contains("\(element.code)")
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.regionList }
+            .bind(to: regionCollectionView.rx.items(
+                cellIdentifier: JobsCollectionViewCell.identifier,
+                cellType: JobsCollectionViewCell.self
+            )) { [weak self] _, element, cell in
+                guard let self = self else { return }
+                cell.adapt(model: element)
+                cell.isCheck = self.reactor.currentState.regionCode == "\(element.code)"
             }
             .disposed(by: disposeBag)
 

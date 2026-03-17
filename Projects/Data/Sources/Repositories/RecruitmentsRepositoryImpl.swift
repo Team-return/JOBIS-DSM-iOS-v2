@@ -19,6 +19,7 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
+        region: String?,
         status: String?,
         sortType: String?
     ) -> Single<[RecruitmentEntity]> {
@@ -29,6 +30,7 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
             name: name,
             winterIntern: winterIntern,
             years: years,
+            region: region,
             status: status,
             sortType: sortType
         )

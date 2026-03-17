@@ -10,6 +10,7 @@ protocol RemoteRecruitmentsDataSource {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
+        region: String?,
         status: String?,
         sortType: String?
     ) -> Single<[RecruitmentEntity]>
@@ -29,6 +30,7 @@ final class RemoteRecruitmentsDataSourceImpl: RemoteBaseDataSource<RecruitmentsA
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
+        region: String?,
         status: String?,
         sortType: String?
     ) -> Single<[RecruitmentEntity]> {
@@ -39,6 +41,7 @@ final class RemoteRecruitmentsDataSourceImpl: RemoteBaseDataSource<RecruitmentsA
             name: name,
             winterIntern: winterIntern,
             years: years,
+            region: region,
             status: status,
             sortType: sortType
         ))
