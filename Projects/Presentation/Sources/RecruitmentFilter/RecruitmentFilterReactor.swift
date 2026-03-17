@@ -107,7 +107,7 @@ extension RecruitmentFilterReactor {
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
-                region: currentState.regionCode,
+                region: mapRegion(code: currentState.regionCode),
                 status: statusString
             ))
             return .empty()
@@ -168,5 +168,12 @@ extension RecruitmentFilterReactor {
         default:
             return ""
         }
+    }
+
+    private func mapRegion(code: String) -> String {
+        guard let code = Int(code) else { return "" }
+        let allCases = LocationType.allCases
+        guard code < allCases.count else { return "" }
+        return allCases[code].rawValue
     }
 }
