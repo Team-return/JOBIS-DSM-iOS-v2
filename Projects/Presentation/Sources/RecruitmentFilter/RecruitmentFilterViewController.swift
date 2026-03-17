@@ -253,6 +253,17 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             }
             .disposed(by: disposeBag)
 
+        reactor.state.map { $0.regionList }
+            .bind(to: regionCollectionView.rx.items(
+                cellIdentifier: JobsCollectionViewCell.identifier,
+                cellType: JobsCollectionViewCell.self
+            )) { [weak self] _, element, cell in
+                guard let self = self else { return }
+                cell.adapt(model: element)
+                cell.isCheck = self.reactor.currentState.regionCode == "\(element.code)"
+            }
+            .disposed(by: disposeBag)
+
         reactor.state.map { $0.stateList }
             .bind(to: stateCollectionView.rx.items(
                 cellIdentifier: JobsCollectionViewCell.identifier,
