@@ -14,6 +14,7 @@ public struct FetchRecruitmentListUseCase {
         name: String? = nil,
         winterIntern: Bool? = nil,
         years: [String]? = nil,
+        region: String? = nil,
         status: String? = nil,
         sortType: String? = nil
     ) -> Single<[RecruitmentEntity]> {
@@ -24,6 +25,7 @@ public struct FetchRecruitmentListUseCase {
             name: name,
             winterIntern: winterIntern,
             years: years,
+            region: region,
             status: status,
             sortType: sortType
         )

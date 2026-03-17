@@ -43,7 +43,7 @@ private extension RecruitmentFilterFlow {
 
         // Update filter options via reactor action
         recruitmentPopView?.reactor.action.onNext(
-            .updateFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status)
+            .updateFilterOptions(jobCode: jobCode, techCode: techCode, years: years, region: region, status: status)
         )
         recruitmentPopView?.reactor.action.onNext(.fetchRecruitmentList)
 

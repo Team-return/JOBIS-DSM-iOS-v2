@@ -9,6 +9,7 @@ public protocol RecruitmentsRepository {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
+        region: String?,
         status: String?,
         sortType: String?
     ) -> Single<[RecruitmentEntity]>
