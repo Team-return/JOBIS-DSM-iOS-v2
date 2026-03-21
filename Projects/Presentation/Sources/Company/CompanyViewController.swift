@@ -33,7 +33,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
     public override func setLayout() {
         companyTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
