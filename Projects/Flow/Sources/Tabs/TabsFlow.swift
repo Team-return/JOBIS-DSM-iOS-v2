@@ -33,30 +33,30 @@ private extension TabsFlow {
     private func navigateToTabs() -> FlowContributors {
         let homeFlow = HomeFlow(container: container)
         let recruitmentFlow = RecruitmentFlow(container: container)
+        let companyFlow = CompanyFlow(container: container)
         let reviewFlow = ReviewFlow(container: container)
-        let bookmarkFlow = BookmarkFlow(container: container)
         let myPageFlow = MyPageFlow(container: container)
 
         Flows.use(
             homeFlow,
             recruitmentFlow,
+            companyFlow,
             reviewFlow,
-            bookmarkFlow,
             myPageFlow,
             when: .created
-        ) { [weak self] home, recruitment, review, bookmark, mypage in
+        ) { [weak self] home, recruitment, company, review, mypage in
             home.tabBarItem = JobisTabBarItem(.home)
             recruitment.tabBarItem = JobisTabBarItem(.recruitment)
+            company.tabBarItem = JobisTabBarItem(.company)
             review.tabBarItem = JobisTabBarItem(.review)
-            bookmark.tabBarItem = JobisTabBarItem(.bookmark)
             mypage.tabBarItem = JobisTabBarItem(.myPage)
 
             self?.rootViewController.setViewControllers(
                 [
                     home,
                     recruitment,
+                    company,
                     review,
-                    bookmark,
                     mypage
                 ],
                 animated: false
@@ -77,8 +77,8 @@ private extension TabsFlow {
                 withNextStepper: OneStepper(withSingleStep: ReviewStep.reviewIsRequired)
             ),
             .contribute(
-                withNextPresentable: bookmarkFlow,
-                withNextStepper: OneStepper(withSingleStep: BookmarkStep.bookmarkIsRequired)
+                withNextPresentable: companyFlow,
+                withNextStepper: OneStepper(withSingleStep: CompanyStep.companyIsRequired)
             ),
             .contribute(
                 withNextPresentable: myPageFlow,
