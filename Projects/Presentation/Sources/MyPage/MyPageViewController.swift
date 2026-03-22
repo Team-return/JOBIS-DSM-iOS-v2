@@ -18,6 +18,7 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
     }
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let notificationSettingSectionView = NotificationSettingSectionView()
+    private let bookmarkSectionView = BookmarkSectionView()
     private let accountSectionView = AccountSectionView()
     private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
