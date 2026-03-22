@@ -35,6 +35,7 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
             editButton,
             reviewNavigateStackView,
             notificationSettingSectionView,
+            bookmarkSectionView,
             helpSectionView,
             accountSectionView,
             bugSectionView
@@ -72,8 +73,13 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
             $0.leading.trailing.equalToSuperview()
         }
 
-        helpSectionView.snp.makeConstraints {
+        bookmarkSectionView.snp.makeConstraints {
             $0.top.equalTo(notificationSettingSectionView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        helpSectionView.snp.makeConstraints {
+            $0.top.equalTo(bookmarkSectionView.snp.bottom)
 //            $0.top.equalTo(studentInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
