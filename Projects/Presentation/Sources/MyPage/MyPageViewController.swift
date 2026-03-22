@@ -117,6 +117,11 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        bookmarkSectionView.getSelectedItem(type: .bookmark)
+            .map { _ in MyPageReactor.Action.bookmarkDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         helpSectionView.getSelectedItem(type: .announcement)
             .map { _ in MyPageReactor.Action.helpDidTap }
             .bind(to: reactor.action)
