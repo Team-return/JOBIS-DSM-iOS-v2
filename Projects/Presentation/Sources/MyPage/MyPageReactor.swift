@@ -12,6 +12,7 @@ public final class MyPageReactor: BaseReactor, Stepper {
         case reviewNavigateButtonDidTap(Int)
         case profileImageSelected(UploadFileModel)
         case notificationSettingDidTap
+        case bookmarkDidTap
         case helpDidTap
         case bugReportDidTap
         case interestFieldDidTap
