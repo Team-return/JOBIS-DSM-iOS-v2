@@ -111,6 +111,10 @@ public final class MyPageReactor: BaseReactor, Stepper {
             steps.accept(MyPageStep.notificationSettingIsRequired)
             return .empty()
 
+        case .bookmarkDidTap:
+            steps.accept(MyPageStep.bookmarkIsRequired)
+            return .empty()
+
         case .helpDidTap:
             steps.accept(MyPageStep.noticeIsRequired)
             return .empty()
