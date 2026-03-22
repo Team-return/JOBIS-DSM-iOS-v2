@@ -17,6 +17,15 @@ public final class MyPageFlow: Flow {
     }
 
     public func navigate(to step: Step) -> FlowContributors {
+        if let bookmarkStep = step as? BookmarkStep {
+            switch bookmarkStep {
+            case let .recruitmentDetailIsRequired(id):
+                return navigateToRecruitmentDetail(id)
+            default:
+                return .none
+            }
+        }
+
         guard let step = step as? MyPageStep else { return .none }
 
         switch step {
@@ -163,6 +172,25 @@ extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: confirmPasswordFlow,
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
+        ))
+    }
+
+    func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
+
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 
