@@ -109,17 +109,15 @@ extension MyPageFlow {
     }
 
     func navigateToBookmark() -> FlowContributors {
-        let bookmarkFlow = BookmarkFlow(container: container)
+        let bookmarkViewController = container.resolve(BookmarkViewController.self)!
 
-        Flows.use(bookmarkFlow, when: .created) { root in
-            self.rootViewController.pushViewController(
-                root, animated: true
-            )
-        }
+        self.rootViewController.pushViewController(
+            bookmarkViewController, animated: true
+        )
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: bookmarkFlow,
-            withNextStepper: OneStepper(withSingleStep: BookmarkStep.bookmarkIsRequired)
+            withNextPresentable: bookmarkViewController,
+            withNextStepper: bookmarkViewController.reactor
         ))
     }
 
