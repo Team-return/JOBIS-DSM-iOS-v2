@@ -32,6 +32,9 @@ public final class MyPageFlow: Flow {
         case .notificationSettingIsRequired:
             return navigateToNotification()
 
+        case .bookmarkIsRequired:
+            return navigateToBookmark()
+
         case .noticeIsRequired:
             return navigateToNotice()
 
@@ -102,6 +105,21 @@ extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: notificationSettingFlow,
             withNextStepper: OneStepper(withSingleStep: NotificationSettingStep.notificationSettingIsRequired)
+        ))
+    }
+
+    func navigateToBookmark() -> FlowContributors {
+        let bookmarkFlow = BookmarkFlow(container: container)
+
+        Flows.use(bookmarkFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: bookmarkFlow,
+            withNextStepper: OneStepper(withSingleStep: BookmarkStep.bookmarkIsRequired)
         ))
     }
 
