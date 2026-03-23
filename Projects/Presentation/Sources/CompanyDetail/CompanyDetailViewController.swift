@@ -159,7 +159,13 @@ public class CompanyDetailViewController: BaseReactorViewController<CompanyDetai
             .disposed(by: disposeBag)
     }
 
-    public override func configureViewController() { }
+    public override func configureViewController() {
+        viewWillAppearPublisher.asObservable()
+            .bind { [weak self] in
+                self?.hideTabbar()
+            }
+            .disposed(by: disposeBag)
+    }
 
     public override func configureNavigation() {
         self.setSmallTitle(title: "기업 상세")

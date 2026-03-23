@@ -19,6 +19,7 @@ public enum JobisIcon {
     case code
     case bookmarkOn
     case bookmarkOff
+    case bookmark
     case searchIcon
     case filterIcon
     case profile
@@ -168,6 +169,9 @@ public enum JobisIcon {
 
         case .check:
             return dsIcons.check.image
+
+        case .bookmark:
+            return dsIcons.bookmark.image
         }
     }
 }

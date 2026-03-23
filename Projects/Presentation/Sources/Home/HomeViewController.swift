@@ -210,7 +210,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             )) { [weak self] _, element, cell in
                 guard let self = self else { return }
                 cell.adapt(model: element)
-                
                 if case .totalPass = element {
                     cell.employStatusButton.rx.tap
                         .map { _ in () }
@@ -223,6 +222,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         reactor.state.map { $0.isWinterInternSeason }
             .bind { [weak self] in
                 self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
+                self?.findCompanysCard.isEnabled = false
                 self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
                 self?.findWinterRecruitmentsCard.isHidden = !$0
             }

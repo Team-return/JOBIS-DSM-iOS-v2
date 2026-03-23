@@ -18,6 +18,7 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
     }
     private let reviewNavigateStackView = ReviewNavigateStackView()
     private let notificationSettingSectionView = NotificationSettingSectionView()
+    private let bookmarkSectionView = BookmarkSectionView()
     private let accountSectionView = AccountSectionView()
     private let bugSectionView = BugSectionView()
     private let helpSectionView = HelpSectionView()
@@ -34,6 +35,7 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
             editButton,
             reviewNavigateStackView,
             notificationSettingSectionView,
+            bookmarkSectionView,
             helpSectionView,
             accountSectionView,
             bugSectionView
@@ -71,8 +73,13 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
             $0.leading.trailing.equalToSuperview()
         }
 
-        helpSectionView.snp.makeConstraints {
+        bookmarkSectionView.snp.makeConstraints {
             $0.top.equalTo(notificationSettingSectionView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        helpSectionView.snp.makeConstraints {
+            $0.top.equalTo(bookmarkSectionView.snp.bottom)
 //            $0.top.equalTo(studentInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
@@ -107,6 +114,11 @@ public final class MyPageViewController: BaseReactorViewController<MyPageReactor
 
         notificationSettingSectionView.getSelectedItem(type: .notificationSetting)
             .map { _ in MyPageReactor.Action.notificationSettingDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        bookmarkSectionView.getSelectedItem(type: .bookmark)
+            .map { _ in MyPageReactor.Action.bookmarkDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

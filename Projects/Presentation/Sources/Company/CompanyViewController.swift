@@ -33,7 +33,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
     public override func setLayout() {
         companyTableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
@@ -97,7 +97,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
         viewWillAppearPublisher.asObservable()
             .bind {
-                self.hideTabbar()
+                self.showTabbar()
                 self.setSmallTitle(title: "기업 탐색")
                 if self.isTabNavigation {
                     self.viewWillAppearWithTap?()
