@@ -20,6 +20,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
     private let contentView = UIView()
     private let bannerView = BannerView()
+    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업")
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
     private let applicationStatusMenuLabel = JobisMenuLabel(
         text: "지원 현황",
@@ -56,6 +57,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         ].forEach(careerStackView.addArrangedSubview(_:))
         [
             bannerView,
+            recentCompanyMenuLabel,
             careerMenuLabel,
             careerStackView,
             applicationStatusMenuLabel,
@@ -79,8 +81,12 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.leading.trailing.equalToSuperview()
         }
 
+        recentCompanyMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(bannerView.snp.bottom).offset(16)
+        }
+
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(bannerView.snp.bottom).offset(12)
+            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(12)
         }
 
         careerStackView.snp.makeConstraints {
