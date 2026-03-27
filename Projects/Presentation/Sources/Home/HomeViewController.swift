@@ -20,7 +20,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
     private let contentView = UIView()
     private let bannerView = BannerView()
-    private let studentInfoView = StudentInfoView()
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
     private let applicationStatusMenuLabel = JobisMenuLabel(
         text: "지원 현황",
@@ -57,7 +56,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         ].forEach(careerStackView.addArrangedSubview(_:))
         [
             bannerView,
-            studentInfoView,
             careerMenuLabel,
             careerStackView,
             applicationStatusMenuLabel,
@@ -81,12 +79,8 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.leading.trailing.equalToSuperview()
         }
 
-        studentInfoView.snp.makeConstraints {
-            $0.top.equalTo(bannerView.snp.bottom)
-        }
-
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(studentInfoView.snp.bottom).offset(12)
+            $0.top.equalTo(bannerView.snp.bottom).offset(12)
         }
 
         careerStackView.snp.makeConstraints {
@@ -158,17 +152,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
 
     public override func bindState() {
-        reactor.state.compactMap { $0.studentInfo }
-            .bind { [weak self] studentInfo in
-                self?.studentInfoView.setStudentInfo(
-                    profileImageUrl: studentInfo.profileImageUrl,
-                    gcn: studentInfo.studentGcn,
-                    name: studentInfo.studentName,
-                    department: studentInfo.department.localizedString()
-                )
-            }
-            .disposed(by: disposeBag)
-
         reactor.state.map { $0.applicationList }
             .do(onNext: { [weak self] applicationList in
                 if applicationList.isEmpty {
