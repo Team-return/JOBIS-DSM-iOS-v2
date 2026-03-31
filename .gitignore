@@ -99,6 +99,10 @@ Gemfile.lock
 .claude/*
 !.claude/agents/
 !.claude/skills/
+.claude/skills/my-skill/
+
+### OMC ###
+.omc/
 
 ### Tuist build files ###
 .build/
