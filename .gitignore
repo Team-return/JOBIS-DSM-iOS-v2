@@ -96,7 +96,13 @@ vendor/bundle/
 Gemfile.lock
 
 ### Claude ###
-.claude/
+.claude/*
+!.claude/agents/
+!.claude/skills/
+.claude/skills/my-skill/
+
+### OMC ###
+.omc/
 
 ### Tuist build files ###
 .build/
