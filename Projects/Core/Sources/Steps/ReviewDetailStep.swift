@@ -1,5 +1,5 @@
 import RxFlow
 
 public enum ReviewDetailStep: Step {
-    case reviewDetailIsRequired
+    case reviewDetailIsRequired(reviewId: String)
 }
