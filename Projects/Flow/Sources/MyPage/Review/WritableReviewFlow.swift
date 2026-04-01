@@ -87,8 +87,8 @@ private extension WritableReviewFlow {
             withNextStepper: OneStepper(
                 withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired(
                     companyID: rootViewController.viewModel.companyID,
-                    interviewType: rootViewController.viewModel.interviewType,
-                    location: rootViewController.viewModel.location,
+                    interviewType: rootViewController.viewModel.interviewType.rawValue,
+                    location: rootViewController.viewModel.location.rawValue,
                     jobCode: rootViewController.viewModel.jobCode,
                     interviewerCount: rootViewController.viewModel.interviewerCount
                 )

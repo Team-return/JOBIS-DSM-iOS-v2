@@ -1,11 +1,10 @@
 import RxFlow
-import Domain
 
 public enum InterviewAtmosphereStep: Step {
     case interviewAtmosphereIsRequired(
         companyID: Int,
-        interviewType: InterviewFormat,
-        location: LocationType,
+        interviewType: String,
+        location: String,
         jobCode: Int,
         interviewerCount: Int
     )

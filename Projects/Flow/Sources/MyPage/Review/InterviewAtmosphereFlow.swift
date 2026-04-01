@@ -60,14 +60,14 @@ public final class InterviewAtmosphereFlow: Flow {
 private extension InterviewAtmosphereFlow {
     func navigateToInterviewAtmosphere(
         companyID: Int,
-        interviewType: InterviewFormat,
-        location: LocationType,
+        interviewType: String,
+        location: String,
         jobCode: Int,
         interviewerCount: Int
     ) -> FlowContributors {
         self.companyID = companyID
-        self.interviewType = interviewType
-        self.location = location
+        self.interviewType = InterviewFormat(rawValue: interviewType) ?? .individual
+        self.location = LocationType(rawValue: location) ?? .daejeon
         self.jobCode = jobCode
         self.interviewerCount = interviewerCount
         rootViewController = container.resolve(InterviewAtmosphereViewController.self)!
