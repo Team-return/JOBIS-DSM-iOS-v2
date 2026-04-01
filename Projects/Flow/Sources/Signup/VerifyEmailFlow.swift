@@ -6,15 +6,13 @@ import Core
 
 public final class VerifyEmailFlow: Flow {
     public let container: Container
-    private let rootViewController: VerifyEmailViewController
+    private var rootViewController: VerifyEmailViewController!
     public var root: Presentable {
         return rootViewController
     }
 
-    public init(container: Container, name: String, gcn: Int) {
+    public init(container: Container) {
         self.container = container
-        let reactor = container.resolve(VerifyEmailReactor.self, arguments: name, gcn)!
-        self.rootViewController = VerifyEmailViewController(reactor)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -35,6 +33,8 @@ public final class VerifyEmailFlow: Flow {
 
 private extension VerifyEmailFlow {
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
+        let reactor = container.resolve(VerifyEmailReactor.self, arguments: name, gcn)!
+        rootViewController = VerifyEmailViewController(reactor)
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -42,7 +42,7 @@ private extension VerifyEmailFlow {
     }
 
     func navigateToPasswordSetting(name: String, gcn: Int, email: String) -> FlowContributors {
-        let passwordSettingFlow = PasswordSettingFlow(container: container, name: name, gcn: gcn, email: email)
+        let passwordSettingFlow = PasswordSettingFlow(container: container)
 
         Flows.use(passwordSettingFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
