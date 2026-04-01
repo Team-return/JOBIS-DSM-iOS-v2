@@ -7,32 +7,17 @@ import Domain
 
 public final class InterviewAtmosphereFlow: Flow {
     public let container: Container
-    private let rootViewController: InterviewAtmosphereViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: InterviewAtmosphereViewController!
+    public var root: Presentable { rootViewController! }
 
-    private let companyID: Int
-    private let interviewType: InterviewFormat
-    private let location: LocationType
-    private let jobCode: Int
-    private let interviewerCount: Int
+    private var companyID: Int = 0
+    private var interviewType: InterviewFormat = .individual
+    private var location: LocationType = .seoul
+    private var jobCode: Int = 0
+    private var interviewerCount: Int = 0
 
-    public init(
-        container: Container,
-        companyID: Int,
-        interviewType: InterviewFormat,
-        location: LocationType,
-        jobCode: Int,
-        interviewerCount: Int
-    ) {
+    public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(InterviewAtmosphereViewController.self)!
-        self.companyID = companyID
-        self.interviewType = interviewType
-        self.location = location
-        self.jobCode = jobCode
-        self.interviewerCount = interviewerCount
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -48,8 +33,14 @@ public final class InterviewAtmosphereFlow: Flow {
         guard let step = step as? InterviewAtmosphereStep else { return .none }
 
         switch step {
-        case .interviewAtmosphereIsRequired:
-            return navigateToInterviewAtmosphere()
+        case let .interviewAtmosphereIsRequired(companyID, interviewType, location, jobCode, interviewerCount):
+            return navigateToInterviewAtmosphere(
+                companyID: companyID,
+                interviewType: interviewType,
+                location: location,
+                jobCode: jobCode,
+                interviewerCount: interviewerCount
+            )
 
         case let .addQuestionIsRequired(qnas):
             return navigateToAddQuestion(qnas: qnas as? [QnaRequestQuery] ?? [])
@@ -67,7 +58,19 @@ public final class InterviewAtmosphereFlow: Flow {
 }
 
 private extension InterviewAtmosphereFlow {
-    func navigateToInterviewAtmosphere() -> FlowContributors {
+    func navigateToInterviewAtmosphere(
+        companyID: Int,
+        interviewType: InterviewFormat,
+        location: LocationType,
+        jobCode: Int,
+        interviewerCount: Int
+    ) -> FlowContributors {
+        self.companyID = companyID
+        self.interviewType = interviewType
+        self.location = location
+        self.jobCode = jobCode
+        self.interviewerCount = interviewerCount
+        rootViewController = container.resolve(InterviewAtmosphereViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel
