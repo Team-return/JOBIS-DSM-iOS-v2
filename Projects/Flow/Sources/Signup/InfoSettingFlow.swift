@@ -6,14 +6,11 @@ import Core
 
 public final class InfoSettingFlow: Flow {
     public let container: Container
-    private let rootViewController: InfoSettingViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: InfoSettingViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(InfoSettingViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -34,6 +31,7 @@ public final class InfoSettingFlow: Flow {
 
 private extension InfoSettingFlow {
     func navigateToInfoSetting() -> FlowContributors {
+        rootViewController = container.resolve(InfoSettingViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
