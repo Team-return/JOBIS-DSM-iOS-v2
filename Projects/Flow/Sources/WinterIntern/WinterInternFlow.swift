@@ -49,8 +49,6 @@ private extension WinterInternFlow {
         Flows.use(winterInternDetailFlow, when: .created) { (root) in
             let view = root as? WinterInternDetailViewController
             view?.isPopViewController = { id, bookmark in
-                // In ReactorKit, state is immutable
-                // The list will be refreshed on viewWillAppear if needed
                 let popView = self.rootViewController
                 popView.isTabNavigation = false
             }

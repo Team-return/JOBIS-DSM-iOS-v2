@@ -98,11 +98,16 @@ public final class SettingPresentationAssembly: Assembly {
         }
 
         // Change Password
-        container.register(ChangePasswordViewModel.self) { resolver in
-            ChangePasswordViewModel(changePasswordUseCase: resolver.resolve(ChangePasswordUseCase.self)!)
+        container.register(ChangePasswordReactor.self) { (resolver, currentPassword: String) in
+            ChangePasswordReactor(
+                changePasswordUseCase: resolver.resolve(ChangePasswordUseCase.self)!,
+                currentPassword: currentPassword
+            )
         }
-        container.register(ChangePasswordViewController.self) { resolver in
-            ChangePasswordViewController(resolver.resolve(ChangePasswordViewModel.self)!)
+        container.register(ChangePasswordViewController.self) { (resolver, currentPassword: String) in
+            ChangePasswordViewController(
+                resolver.resolve(ChangePasswordReactor.self, argument: currentPassword)!
+            )
         }
 
         // Interest Field

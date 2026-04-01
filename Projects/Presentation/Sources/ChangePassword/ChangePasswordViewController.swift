@@ -6,8 +6,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class ChangePasswordViewController: BaseViewController<ChangePasswordViewModel> {
-    public var currentPassword: String?
+public final class ChangePasswordViewController: BaseReactorViewController<ChangePasswordReactor> {
     private let titleLabel = UILabel().then {
         $0.setJobisText(
             "새로 사용할\n비밀번호를 입력해주세요",
@@ -35,6 +34,7 @@ public final class ChangePasswordViewController: BaseViewController<ChangePasswo
         $0.setText("완료")
         $0.isEnabled = false
     }
+
     public override func addView() {
         [
             titleLabel,
@@ -66,31 +66,40 @@ public final class ChangePasswordViewController: BaseViewController<ChangePasswo
         }
     }
 
-    public override func bind() {
-        guard let currentPassword else { return }
-        let input = ChangePasswordViewModel.Input(
-            currentPassword: currentPassword,
-            newPassword: newPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            checkNewPassword: checkNewPasswordTextField.textField.rx.text.orEmpty.asDriver(),
-            changePasswordButtonDidTap: changePasswordButtonDidTap.rx.tap.asSignal()
-        )
+    public override func bindAction() {
+        newPasswordTextField.textField.rx.text.orEmpty
+            .skip(1)
+            .map { ChangePasswordReactor.Action.updateNewPassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
-        let output = viewModel.transform(input)
-        output.passwordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.newPasswordTextField.setDescription(description)
+        checkNewPasswordTextField.textField.rx.text.orEmpty
+            .skip(1)
+            .map { ChangePasswordReactor.Action.updateCheckNewPassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        changePasswordButtonDidTap.rx.tap
+            .map { ChangePasswordReactor.Action.changePasswordButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.compactMap { $0.passwordErrorDescription }
+            .bind { [weak self] description in
+                self?.newPasswordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
-        output.checkingPasswordErrorDescription
-            .asObservable()
-            .bind { description in
-                self.checkNewPasswordTextField.setDescription(description)
+        reactor.state.compactMap { $0.checkingPasswordErrorDescription }
+            .bind { [weak self] description in
+                self?.checkNewPasswordTextField.setDescription(description)
             }
             .disposed(by: disposeBag)
 
-        output.changePasswordButtonIsEnable.asObservable()
+        reactor.state.map { $0.changePasswordButtonIsEnable }
+            .distinctUntilChanged()
             .bind { [weak self] isEnable in
                 self?.changePasswordButtonDidTap.isEnabled = isEnable
             }

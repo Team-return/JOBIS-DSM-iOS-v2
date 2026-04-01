@@ -83,11 +83,11 @@ extension MyPageFlow {
 
         Flows.use(writableReviewFlow, when: .created) { (root) in
             let view = root as? WritableReviewViewController
-            view?.viewModel.companyID = id
+            view?.reactor.companyID = id
             if let useCase = self.container.resolve(FetchCompanyInfoDetailUseCase.self) {
                 _ = useCase.execute(id: id)
                     .subscribe(onSuccess: { entity in
-                        view?.viewModel.companyName = entity.companyName
+                        view?.reactor.companyName = entity.companyName
                         view?.navigationItem.title = entity.companyName
                     }, onFailure: { _ in })
             }

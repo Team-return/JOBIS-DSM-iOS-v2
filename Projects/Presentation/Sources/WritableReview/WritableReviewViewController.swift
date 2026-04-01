@@ -7,10 +7,7 @@ import Then
 import Core
 import DesignSystem
 
-public final class WritableReviewViewController: BaseViewController<WritableReviewViewModel> {
-    private let addQuestionButtonDidTap = PublishRelay<Void>()
-    private let writableReviewButtonDidTap = PublishRelay<Void>()
-
+public final class WritableReviewViewController: BaseReactorViewController<WritableReviewReactor> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -87,13 +84,15 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
         }
     }
 
-    public override func bind() {
-        let input = WritableReviewViewModel.Input(
-            viewWillAppear: self.viewWillAppearPublisher,
-            addQuestionButtonDidTap: addQuestionButtonDidTap
-        )
-        let output = viewModel.transform(input)
-        output.qnaInfoList.asObservable()
+    public override func bindAction() {
+        addQuestionButton.rx.tap
+            .map { WritableReviewReactor.Action.addQuestionButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+
+    public override func bindState() {
+        reactor.state.map { $0.qnaInfoList }
             .bind(onNext: { [weak self] list in
                 guard let self = self else { return }
                 let validList = list.filter { !$0.question.isEmpty && !$0.answer.isEmpty }
@@ -111,20 +110,14 @@ public final class WritableReviewViewController: BaseViewController<WritableRevi
 
     public override func configureViewController() {
         self.viewWillAppearPublisher.asObservable()
-            .subscribe(onNext: {
-                self.hideTabbar()
-            })
-            .disposed(by: disposeBag)
-
-        addQuestionButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                self.addQuestionButtonDidTap.accept(())
+            .subscribe(onNext: { [weak self] in
+                self?.hideTabbar()
             })
             .disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
         self.navigationController?.navigationBar.prefersLargeTitles = false
-        self.navigationItem.title = viewModel.companyName
+        self.navigationItem.title = reactor.companyName
     }
 }
