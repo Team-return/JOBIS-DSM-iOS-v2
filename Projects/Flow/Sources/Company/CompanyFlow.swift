@@ -40,11 +40,7 @@ private extension CompanyFlow {
     }
 
     func navigateToCompanyDetail(_ id: Int) -> FlowContributors {
-        let companyDetailFlow = CompanyDetailFlow(
-            container: container,
-            companyId: id,
-            type: .searchCompany
-        )
+        let companyDetailFlow = CompanyDetailFlow(container: container)
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             self.rootViewController.pushViewController(
@@ -54,7 +50,12 @@ private extension CompanyFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: companyDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: CompanyDetailStep.companyDetailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: CompanyDetailStep.companyDetailIsRequired(
+                    companyId: id,
+                    type: .searchCompany
+                )
+            )
         ))
     }
 

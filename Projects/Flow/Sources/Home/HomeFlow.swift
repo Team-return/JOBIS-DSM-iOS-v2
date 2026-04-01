@@ -163,14 +163,7 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let applyFlow = ApplyFlow(
-            container: container,
-            recruitmentId: recruitmentID,
-            applicationId: applicationID,
-            companyName: companyName,
-            companyImageURL: companyImageUrl,
-            applyType: .reApply
-        )
+        let applyFlow = ApplyFlow(container: container)
         Flows.use(applyFlow, when: .created) { root in
             self.rootViewController.pushViewController(
                 root,
@@ -191,10 +184,7 @@ private extension HomeFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(
-            container: container,
-            recruitmentID: recruitmentID
-        )
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -209,7 +199,13 @@ private extension HomeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
+                    id: recruitmentID,
+                    companyId: nil,
+                    type: .recruitmentList
+                )
+            )
         ))
     }
 
