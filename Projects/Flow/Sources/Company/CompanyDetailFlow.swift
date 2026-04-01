@@ -6,32 +6,25 @@ import Core
 
 public final class CompanyDetailFlow: Flow {
     public let container: Container
-    private let rootViewController: CompanyDetailViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: CompanyDetailViewController!
+    public var root: Presentable { rootViewController! }
 
-    public init(
-        container: Container,
-        companyId: Int,
-        type: CompanyDetailPreviousViewType = .recruitmentDetail
-    ) {
+    public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(CompanyDetailViewController.self, arguments: companyId, type)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? CompanyDetailStep else { return .none }
 
         switch step {
-        case .companyDetailIsRequired:
-            return navigateToCompanyDetail()
+        case let .companyDetailIsRequired(companyId, type):
+            return navigateToCompanyDetail(companyId: companyId, type: type)
 
         case .popIsRequired:
             return popCompanyDetail()
 
-        case let.recruitmentDetailIsRequired(id):
-            return navigateToRecruimtentDetail(recruitmentID: id)
+        case let .recruitmentDetailIsRequired(id):
+            return navigateToRecruitmentDetail(recruitmentID: id)
 
         case let .interviewReviewDetailIsRequired(id, name):
             return navigateToInterviewReviewDetail(id, name)
@@ -40,7 +33,14 @@ public final class CompanyDetailFlow: Flow {
 }
 
 private extension CompanyDetailFlow {
-    func navigateToCompanyDetail() -> FlowContributors {
+    func navigateToCompanyDetail(
+        companyId: Int,
+        type: CompanyDetailPreviousViewType
+    ) -> FlowContributors {
+        rootViewController = container.resolve(
+            CompanyDetailViewController.self,
+            arguments: companyId, type
+        )!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -52,12 +52,8 @@ private extension CompanyDetailFlow {
         return .none
     }
 
-    func navigateToRecruimtentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(
-            container: container,
-            recruitmentID: recruitmentID,
-            type: .companyDetail
-        )
+    func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -68,15 +64,18 @@ private extension CompanyDetailFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
+                    id: recruitmentID,
+                    companyId: nil,
+                    type: .companyDetail
+                )
+            )
         ))
     }
 
     func navigateToInterviewReviewDetail(_ id: Int, _ name: String) -> FlowContributors {
-        let interviewReviewDetailFlow = InterviewReviewDetailFlow(
-            container: container,
-            reviewId: String(id)
-        )
+        let interviewReviewDetailFlow = InterviewReviewDetailFlow(container: container)
 
         Flows.use(interviewReviewDetailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
@@ -87,7 +86,11 @@ private extension CompanyDetailFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: interviewReviewDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: InterviewReviewDetailStep.interviewReviewDetailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: InterviewReviewDetailStep.interviewReviewDetailIsRequired(
+                    reviewId: String(id)
+                )
+            )
         ))
     }
 }

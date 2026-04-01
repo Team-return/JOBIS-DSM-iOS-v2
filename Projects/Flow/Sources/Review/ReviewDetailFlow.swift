@@ -6,28 +6,26 @@ import Core
 
 public final class ReviewDetailFlow: Flow {
     public let container: Container
-    private let rootViewController: ReviewDetailViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: ReviewDetailViewController!
+    public var root: Presentable { rootViewController! }
 
-    public init(container: Container, reviewId: String) {
+    public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ReviewDetailViewController.self, argument: reviewId)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? ReviewDetailStep else { return .none }
 
         switch step {
-        case .reviewDetailIsRequired:
-            return navigateToReviewDetail()
+        case let .reviewDetailIsRequired(reviewId):
+            return navigateToReviewDetail(reviewId: reviewId)
         }
     }
 }
 
 private extension ReviewDetailFlow {
-    func navigateToReviewDetail() -> FlowContributors {
+    func navigateToReviewDetail(reviewId: String) -> FlowContributors {
+        rootViewController = container.resolve(ReviewDetailViewController.self, argument: reviewId)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

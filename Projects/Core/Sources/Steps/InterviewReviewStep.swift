@@ -1,5 +1,5 @@
 import RxFlow
 
 public enum InterviewReviewDetailStep: Step {
-    case interviewReviewDetailIsRequired
+    case interviewReviewDetailIsRequired(reviewId: String)
 }

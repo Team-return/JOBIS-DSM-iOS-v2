@@ -44,12 +44,9 @@ private extension WinterInternFlow {
     }
 
     func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = WinterInternDetailFlow(
-            container: container,
-            recruitmentID: recruitmentID
-        )
+        let winterInternDetailFlow = WinterInternDetailFlow(container: container)
 
-        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+        Flows.use(winterInternDetailFlow, when: .created) { (root) in
             let view = root as? WinterInternDetailViewController
             view?.isPopViewController = { id, bookmark in
                 let popView = self.rootViewController
@@ -61,8 +58,14 @@ private extension WinterInternFlow {
         }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+            withNextPresentable: winterInternDetailFlow,
+            withNextStepper: OneStepper(
+                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
+                    id: recruitmentID,
+                    companyId: nil,
+                    type: .recruitmentList
+                )
+            )
         ))
     }
 

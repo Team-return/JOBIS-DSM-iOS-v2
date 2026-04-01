@@ -6,22 +6,19 @@ import Core
 
 public final class NoticeDetailFlow: Flow {
     public let container: Container
-    private let rootViewController: NoticeDetailViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: NoticeDetailViewController!
+    public var root: Presentable { rootViewController! }
 
-    public init(container: Container, noticeID: Int) {
+    public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(NoticeDetailViewController.self, argument: noticeID)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? NoticeDetailStep else { return .none }
 
         switch step {
-        case .noticeDetailIsRequired:
-            return navigateToNoticeDetail()
+        case let .noticeDetailIsRequired(noticeID):
+            return navigateToNoticeDetail(noticeID: noticeID)
         case .noticeListIsRequired:
             return popNoticeList()
         }
@@ -29,7 +26,8 @@ public final class NoticeDetailFlow: Flow {
 }
 
 private extension NoticeDetailFlow {
-    func navigateToNoticeDetail() -> FlowContributors {
+    func navigateToNoticeDetail(noticeID: Int) -> FlowContributors {
+        rootViewController = container.resolve(NoticeDetailViewController.self, argument: noticeID)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

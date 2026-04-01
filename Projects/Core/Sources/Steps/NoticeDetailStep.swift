@@ -1,6 +1,6 @@
 import RxFlow
 
 public enum NoticeDetailStep: Step {
-    case noticeDetailIsRequired
+    case noticeDetailIsRequired(noticeID: Int)
     case noticeListIsRequired
 }

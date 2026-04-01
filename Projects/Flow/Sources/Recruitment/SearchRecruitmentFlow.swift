@@ -38,10 +38,7 @@ private extension SearchRecruitmentFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentId: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(
-            container: container,
-            recruitmentID: recruitmentId
-        )
+        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -52,7 +49,13 @@ private extension SearchRecruitmentFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+            withNextStepper: OneStepper(
+                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
+                    id: recruitmentId,
+                    companyId: nil,
+                    type: .recruitmentList
+                )
+            )
         ))
     }
 }

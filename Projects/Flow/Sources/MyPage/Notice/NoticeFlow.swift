@@ -38,7 +38,7 @@ private extension NoticeFlow {
     }
 
     func navigateToNoticeDetail(_ id: Int) -> FlowContributors {
-        let noticeDetailFlow = NoticeDetailFlow(container: container, noticeID: id)
+        let noticeDetailFlow = NoticeDetailFlow(container: container)
 
         Flows.use(noticeDetailFlow, when: .created) { (root) in
             let view = root as? NoticeDetailViewController
@@ -49,7 +49,7 @@ private extension NoticeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: noticeDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: NoticeDetailStep.noticeDetailIsRequired)
+            withNextStepper: OneStepper(withSingleStep: NoticeDetailStep.noticeDetailIsRequired(noticeID: id))
         ))
     }
 }

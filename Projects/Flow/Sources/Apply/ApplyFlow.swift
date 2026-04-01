@@ -6,38 +6,37 @@ import Core
 
 public final class ApplyFlow: Flow {
     public let container: Container
-    private let rootViewController: ApplyViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: ApplyViewController!
+    public var root: Presentable { rootViewController! }
 
-    public init(
-        container: Container,
-        recruitmentId: Int? = nil,
-        applicationId: Int? = nil,
-        companyName: String,
-        companyImageURL: String,
-        applyType: ApplyType
-    ) {
+    public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(
-            ApplyViewController.self,
-            arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType
-        )!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? ApplyStep else { return .none }
 
         switch step {
-        case let .applyIsRequired(id, name, imageURL):
-            return navigateToApply(id: id, name: name, imageURL: imageURL)
+        case let .applyIsRequired(recruitmentId, name, imageURL):
+            return navigateToApply(
+                recruitmentId: recruitmentId,
+                applicationId: nil,
+                name: name,
+                imageURL: imageURL,
+                applyType: .apply
+            )
+
+        case let .reApplyIsRequired(applicationId, name, imageURL):
+            return navigateToApply(
+                recruitmentId: nil,
+                applicationId: applicationId,
+                name: name,
+                imageURL: imageURL,
+                applyType: .reApply
+            )
 
         case .popToRecruitmentDetail:
             return popToRecruitmentDetail()
-
-        case let .reApplyIsRequired(id, name, imageURL):
-            return navigateToReApply(id: id, name: name, imageURL: imageURL)
 
         case let .errorToast(message):
             return errorToast(message: message)
@@ -46,14 +45,17 @@ public final class ApplyFlow: Flow {
 }
 
 private extension ApplyFlow {
-    func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        return .one(flowContributor: .contribute(
-            withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.reactor
-        ))
-    }
-
-    func navigateToReApply(id: Int, name: String, imageURL: String) -> FlowContributors {
+    func navigateToApply(
+        recruitmentId: Int?,
+        applicationId: Int?,
+        name: String,
+        imageURL: String,
+        applyType: ApplyType
+    ) -> FlowContributors {
+        rootViewController = container.resolve(
+            ApplyViewController.self,
+            arguments: recruitmentId, applicationId, name, imageURL, applyType
+        )!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

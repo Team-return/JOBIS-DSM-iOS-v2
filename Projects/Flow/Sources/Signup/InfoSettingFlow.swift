@@ -41,7 +41,7 @@ private extension InfoSettingFlow {
     }
 
     func navigateToVerifyEmail(name: String, gcn: Int) -> FlowContributors {
-        let verifyEmailFlow = VerifyEmailFlow(container: container, name: name, gcn: gcn)
+        let verifyEmailFlow = VerifyEmailFlow(container: container)
 
         Flows.use(verifyEmailFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
