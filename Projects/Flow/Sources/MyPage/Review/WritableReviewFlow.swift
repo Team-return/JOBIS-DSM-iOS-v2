@@ -75,9 +75,8 @@ private extension WritableReviewFlow {
     func navigateToInterviewAtmosphere() -> FlowContributors {
         let interviewAtmosphereFlow = InterviewAtmosphereFlow(container: container)
         Flows.use(interviewAtmosphereFlow, when: .created) { root in
-            guard let viewController = root as? UIViewController else { return }
             self.rootViewController.navigationController?.pushViewController(
-                viewController,
+                root,
                 animated: true
             )
         }
@@ -86,11 +85,11 @@ private extension WritableReviewFlow {
             withNextPresentable: interviewAtmosphereFlow,
             withNextStepper: OneStepper(
                 withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired(
-                    companyID: rootViewController.viewModel.companyID,
-                    interviewType: rootViewController.viewModel.interviewType.rawValue,
-                    location: rootViewController.viewModel.location.rawValue,
-                    jobCode: rootViewController.viewModel.jobCode,
-                    interviewerCount: rootViewController.viewModel.interviewerCount
+                    companyID: rootViewController.reactor.companyID,
+                    interviewType: rootViewController.reactor.interviewType.rawValue,
+                    location: rootViewController.reactor.location.rawValue,
+                    jobCode: rootViewController.reactor.jobCode,
+                    interviewerCount: rootViewController.reactor.interviewerCount
                 )
             )
         ))
