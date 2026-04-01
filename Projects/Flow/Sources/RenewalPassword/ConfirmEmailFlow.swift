@@ -6,14 +6,11 @@ import Core
 
 public final class ConfirmEmailFlow: Flow {
     public let container: Container
-    private let rootViewController: ConfirmEmailViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: ConfirmEmailViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = ConfirmEmailViewController(container.resolve(ConfirmEmailReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -31,6 +28,7 @@ public final class ConfirmEmailFlow: Flow {
 
 private extension ConfirmEmailFlow {
     func navigateToConfirmEmail() -> FlowContributors {
+        rootViewController = container.resolve(ConfirmEmailViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -40,7 +38,7 @@ private extension ConfirmEmailFlow {
     func navigateToRenewalPassword(
         email: String
     ) -> FlowContributors {
-        let renewalPasswordFlow = RenewalPasswordFlow(container: container, email: email)
+        let renewalPasswordFlow = RenewalPasswordFlow(container: container)
 
         Flows.use(renewalPasswordFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(
@@ -52,7 +50,7 @@ private extension ConfirmEmailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: renewalPasswordFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RenewalPasswordStep.renewalPasswordIsRequired
+                withSingleStep: RenewalPasswordStep.renewalPasswordIsRequired(email: email)
             )
         ))
     }

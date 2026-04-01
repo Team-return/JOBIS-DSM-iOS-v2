@@ -6,14 +6,11 @@ import Core
 
 public final class ConfirmPasswordFlow: Flow {
     public let container: Container
-    private let rootViewController: ConfirmPasswordViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: ConfirmPasswordViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = ConfirmPasswordViewController(container.resolve(ConfirmPasswordReactor.self)!)
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -31,6 +28,7 @@ public final class ConfirmPasswordFlow: Flow {
 
 private extension ConfirmPasswordFlow {
     func navigateToConfirmPassword() -> FlowContributors {
+        rootViewController = container.resolve(ConfirmPasswordViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

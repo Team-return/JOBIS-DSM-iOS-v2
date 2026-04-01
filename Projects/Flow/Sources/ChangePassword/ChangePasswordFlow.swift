@@ -6,14 +6,13 @@ import Core
 
 public final class ChangePasswordFlow: Flow {
     public let container: Container
-    private let rootViewController: ChangePasswordViewController
+    private var rootViewController: ChangePasswordViewController!
     public var root: Presentable {
-        return rootViewController
+        return rootViewController!
     }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(ChangePasswordViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -31,11 +30,11 @@ public final class ChangePasswordFlow: Flow {
 
 private extension ChangePasswordFlow {
     func navigateToChangePassword(currentPassword: String) -> FlowContributors {
-        rootViewController.currentPassword = currentPassword
+        rootViewController = container.resolve(ChangePasswordViewController.self, argument: currentPassword)!
 
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
