@@ -6,14 +6,11 @@ import Core
 
 public final class SearchRecruitmentFlow: Flow {
     public let container: Container
-    private let rootViewController: SearchRecruitmentViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: SearchRecruitmentViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(SearchRecruitmentViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -31,6 +28,7 @@ public final class SearchRecruitmentFlow: Flow {
 
 private extension SearchRecruitmentFlow {
     func navigateToSearchRecruitment() -> FlowContributors {
+        rootViewController = container.resolve(SearchRecruitmentViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

@@ -6,14 +6,11 @@ import Core
 
 public final class AlarmFlow: Flow {
     public let container: Container
-    private let rootViewController: AlarmViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: AlarmViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(AlarmViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,6 +25,7 @@ public final class AlarmFlow: Flow {
 
 private extension AlarmFlow {
     func navigateToAlarm() -> FlowContributors {
+        rootViewController = container.resolve(AlarmViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

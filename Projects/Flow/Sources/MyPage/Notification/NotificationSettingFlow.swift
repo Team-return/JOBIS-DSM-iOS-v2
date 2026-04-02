@@ -6,14 +6,11 @@ import Core
 
 public final class NotificationSettingFlow: Flow {
     public let container: Container
-    private let rootViewController: NotificationSettingViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: NotificationSettingViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(NotificationSettingViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,6 +25,7 @@ public final class NotificationSettingFlow: Flow {
 
 private extension NotificationSettingFlow {
     func navigateToNotificationSetting() -> FlowContributors {
+        rootViewController = container.resolve(NotificationSettingViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

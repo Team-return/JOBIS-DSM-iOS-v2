@@ -6,15 +6,11 @@ import Core
 
 public final class InterestFieldFlow: Flow {
     public let container: Container
-    private let rootViewController: InterestFieldViewController
-
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: InterestFieldViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(InterestFieldViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -40,6 +36,7 @@ public final class InterestFieldFlow: Flow {
 
 private extension InterestFieldFlow {
     func navigateToInterestField() -> FlowContributors {
+        rootViewController = container.resolve(InterestFieldViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

@@ -7,14 +7,11 @@ import Domain
 
 public final class WritableReviewFlow: Flow {
     public let container: Container
-    private let rootViewController: WritableReviewViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: WritableReviewViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(WritableReviewViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -41,6 +38,7 @@ public final class WritableReviewFlow: Flow {
 
 private extension WritableReviewFlow {
     func navigateToWritableReview() -> FlowContributors {
+        rootViewController = container.resolve(WritableReviewViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -77,9 +75,8 @@ private extension WritableReviewFlow {
     func navigateToInterviewAtmosphere() -> FlowContributors {
         let interviewAtmosphereFlow = InterviewAtmosphereFlow(container: container)
         Flows.use(interviewAtmosphereFlow, when: .created) { root in
-            guard let viewController = root as? UIViewController else { return }
             self.rootViewController.navigationController?.pushViewController(
-                viewController,
+                root,
                 animated: true
             )
         }
@@ -88,11 +85,11 @@ private extension WritableReviewFlow {
             withNextPresentable: interviewAtmosphereFlow,
             withNextStepper: OneStepper(
                 withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired(
-                    companyID: rootViewController.viewModel.companyID,
-                    interviewType: rootViewController.viewModel.interviewType,
-                    location: rootViewController.viewModel.location,
-                    jobCode: rootViewController.viewModel.jobCode,
-                    interviewerCount: rootViewController.viewModel.interviewerCount
+                    companyID: rootViewController.reactor.companyID,
+                    interviewType: rootViewController.reactor.interviewType.rawValue,
+                    location: rootViewController.reactor.location.rawValue,
+                    jobCode: rootViewController.reactor.jobCode,
+                    interviewerCount: rootViewController.reactor.interviewerCount
                 )
             )
         ))

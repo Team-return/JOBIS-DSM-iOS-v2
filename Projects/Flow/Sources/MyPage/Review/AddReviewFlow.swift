@@ -6,17 +6,11 @@ import Core
 
 public final class AddReviewFlow: Flow {
     public let container: Container
-    private let rootViewController: AddReviewViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: AddReviewViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = AddReviewViewController(
-            container.resolve(AddReviewViewModel.self)!,
-            state: .custom(height: 500)
-        )
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -37,6 +31,7 @@ public final class AddReviewFlow: Flow {
 
 private extension AddReviewFlow {
     func navigateToAddReview() -> FlowContributors {
+        rootViewController = container.resolve(AddReviewViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel

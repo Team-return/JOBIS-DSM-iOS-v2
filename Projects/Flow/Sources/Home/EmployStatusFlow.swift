@@ -6,14 +6,11 @@ import Core
 
 public final class EmployStatusFlow: Flow {
     public let container: Container
-    private let rootViewController: EmployStatusViewController
-    public var root: Presentable {
-        return rootViewController
-    }
+    private var rootViewController: EmployStatusViewController!
+    public var root: Presentable { rootViewController! }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(EmployStatusViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -37,6 +34,7 @@ public final class EmployStatusFlow: Flow {
 
 private extension EmployStatusFlow {
     func navigateToEmployStatus() -> FlowContributors {
+        rootViewController = container.resolve(EmployStatusViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
