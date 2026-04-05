@@ -13,7 +13,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
     public var isTabNavigation: Bool = true
     private let bookmarkButtonDidClicked = PublishRelay<Int>()
     private let pageCount = PublishRelay<Int>()
-    
+
     private let headerContainerView = UIView().then {
         $0.backgroundColor = .GrayScale.gray10
     }
@@ -44,24 +44,24 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
     private let searchButton = UIButton().then {
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
-    
+
     public override func addView() {
         [
             headerContainerView,
             recruitmentTableView,
             listEmptyView
         ].forEach(view.addSubview(_:))
-        
+
         self.headerContainerView.addSubview(titleLabel)
         self.headerContainerView.addSubview(dropdownView)
     }
-    
+
     public override func setLayout() {
         headerContainerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
         }
-        
+
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(20)
             $0.leading.equalToSuperview().inset(24)
@@ -74,24 +74,24 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             $0.width.equalTo(100)
             $0.height.equalTo(40)
         }
-        
+
         recruitmentTableView.snp.makeConstraints {
             $0.top.equalTo(headerContainerView.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        
+
         listEmptyView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(headerContainerView.snp.bottom).offset(80)
         }
     }
-    
+
     public override func bindAction() {
         viewDidLoadPublisher
             .map { RecruitmentReactor.Action.fetchRecruitmentList }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         recruitmentTableView.rx.willDisplayCell
             .filter {
                 return !self.reactor.currentState.isLoading &&
@@ -102,12 +102,12 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .map { _ in RecruitmentReactor.Action.loadMoreRecruitments }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         bookmarkButtonDidClicked
             .map { RecruitmentReactor.Action.bookmarkButtonDidTap($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         recruitmentTableView.rx.itemSelected
             .do(onNext: { _ in
                 self.isTabNavigation = false
@@ -139,7 +139,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
-    
+
     public override func bindState() {
         reactor.state.map { ($0.recruitmentList, $0.isLoading) }
             .skip(1)
@@ -164,8 +164,8 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             })
             .disposed(by: disposeBag)
     }
-    
-    
+
+
     public override func configureViewController() {
         recruitmentTableView.dataSource = self
         
@@ -186,7 +186,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             }
             .disposed(by: disposeBag)
     }
-    
+
     public override func configureNavigation() {
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: searchButton),
@@ -199,15 +199,15 @@ extension RecruitmentViewController: SkeletonTableViewDataSource {
     public func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
         return RecruitmentTableViewCell.identifier
     }
-    
+
     public func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
-    
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return reactor.currentState.isLoading ? 8 : reactor.currentState.recruitmentList.count
     }
-    
+
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: RecruitmentTableViewCell.identifier,
@@ -224,7 +224,7 @@ extension RecruitmentViewController: SkeletonTableViewDataSource {
                 self?.bookmarkButtonDidClicked.accept(recruitment.recruitID)
             }
         }
-        
+
         return cell
     }
 }
