@@ -21,6 +21,22 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let contentView = UIView()
     private let bannerView = BannerView()
     private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업")
+    private let recentCompanyCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout().then {
+            $0.scrollDirection = .horizontal
+            $0.minimumLineSpacing = 20
+            $0.sectionInset = .init(top: 7, left: 24, bottom: 7, right: 24)
+            $0.itemSize = CGSize(width: 184, height: 163)
+        }
+    ).then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.backgroundColor = .clear
+        $0.register(
+            RecentCompanyCollectionViewCell.self,
+            forCellWithReuseIdentifier: RecentCompanyCollectionViewCell.identifier
+        )
+    }
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
     private let applicationStatusMenuLabel = JobisMenuLabel(
         text: "지원 현황",
@@ -58,6 +74,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         [
             bannerView,
             recentCompanyMenuLabel,
+            recentCompanyCollectionView,
             careerMenuLabel,
             careerStackView,
             applicationStatusMenuLabel,
@@ -85,8 +102,14 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.top.equalTo(bannerView.snp.bottom).offset(16)
         }
 
+        recentCompanyCollectionView.snp.makeConstraints {
+            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(24)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(177)
+        }
+
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(12)
+            $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(12)
         }
 
         careerStackView.snp.makeConstraints {
@@ -214,6 +237,16 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
                 self?.findCompanysCard.isEnabled = false
                 self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
                 self?.findWinterRecruitmentsCard.isHidden = !$0
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.recentCompanyList }
+            .distinctUntilChanged()
+            .bind(to: recentCompanyCollectionView.rx.items(
+                cellIdentifier: RecentCompanyCollectionViewCell.identifier,
+                cellType: RecentCompanyCollectionViewCell.self
+            )) { _, item, cell in
+                cell.adapt(model: item)
             }
             .disposed(by: disposeBag)
     }
