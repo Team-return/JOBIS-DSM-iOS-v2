@@ -38,7 +38,7 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
     override func setLayout() {
         companyLogoImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(snp.width).multipliedBy(0.613)
+            $0.height.equalTo(snp.width).multipliedBy(0.55)
         }
 
         recruitingStatusLabel.snp.makeConstraints {

@@ -3,7 +3,7 @@ import Then
 import UIKit
 
 public final class JobisRecruitingStatusLabel: UILabel {
-    private var padding = UIEdgeInsets(top: 3, left: 5, bottom: 3, right: 5)
+    private var padding = UIEdgeInsets(top: 2.5, left: 5, bottom: 2.5, right: 5)
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
