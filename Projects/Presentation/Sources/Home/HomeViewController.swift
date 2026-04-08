@@ -103,7 +103,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         }
 
         recentCompanyCollectionView.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(24)
+            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(177)
         }
@@ -176,6 +176,11 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
 
         employStatusButtonTap.asObservable()
             .map { HomeReactor.Action.employStatusButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        viewWillAppearPublisher.asObservable()
+            .map { _ in HomeReactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
