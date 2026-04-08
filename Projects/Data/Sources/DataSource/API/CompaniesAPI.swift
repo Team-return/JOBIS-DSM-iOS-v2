@@ -6,6 +6,7 @@ enum CompaniesAPI {
     case fetchCompanyList(page: Int, name: String?, sortType: String?)
     case fetchCompanyInfoDetail(id: Int)
     case fetchWritableReviewList
+    case fetchRecentCompanyList
 }
 
 extension CompaniesAPI: JobisAPI {
@@ -25,12 +26,15 @@ extension CompaniesAPI: JobisAPI {
 
         case .fetchWritableReviewList:
             return "/review"
+
+        case .fetchRecentCompanyList:
+            return "/student/recent"
         }
     }
 
     var method: Method {
         switch self {
-        case .fetchCompanyList, .fetchCompanyInfoDetail, .fetchWritableReviewList:
+        case .fetchCompanyList, .fetchCompanyInfoDetail, .fetchWritableReviewList, .fetchRecentCompanyList:
             return .get
         }
     }
@@ -63,6 +67,9 @@ extension CompaniesAPI: JobisAPI {
             return [:]
 
         case .fetchWritableReviewList:
+            return [:]
+
+        case .fetchRecentCompanyList:
             return [:]
         }
     }
