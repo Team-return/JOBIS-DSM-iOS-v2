@@ -19,4 +19,8 @@ struct CompaniesRepositoryImpl: CompaniesRepository {
     func fetchCompanyList(page: Int, name: String?, sortType: String?) -> Single<[CompanyEntity]> {
         remoteCompaniesDataSource.fetchCompanyList(page: page, name: name, sortType: sortType)
     }
+
+    func fetchRecentCompanyList() -> Single<[RecentCompanyEntity]> {
+        return remoteCompaniesDataSource.fetchRecentCompanyList()
+    }
 }
