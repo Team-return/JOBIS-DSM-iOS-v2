@@ -6,11 +6,14 @@ import Core
 
 public final class AddQuestionFlow: Flow {
     public let container: Container
-    private var rootViewController: AddQuestionViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: AddQuestionViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(AddQuestionViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -31,7 +34,6 @@ public final class AddQuestionFlow: Flow {
 
 private extension AddQuestionFlow {
     func navigateToAddQuestion() -> FlowContributors {
-        rootViewController = container.resolve(AddQuestionViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel

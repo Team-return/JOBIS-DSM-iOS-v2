@@ -6,11 +6,14 @@ import Core
 
 public final class SearchRecruitmentFlow: Flow {
     public let container: Container
-    private var rootViewController: SearchRecruitmentViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: SearchRecruitmentViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(SearchRecruitmentViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +31,6 @@ public final class SearchRecruitmentFlow: Flow {
 
 private extension SearchRecruitmentFlow {
     func navigateToSearchRecruitment() -> FlowContributors {
-        rootViewController = container.resolve(SearchRecruitmentViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -36,7 +38,10 @@ private extension SearchRecruitmentFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentId: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentId
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -47,13 +52,7 @@ private extension SearchRecruitmentFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(
-                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
-                    id: recruitmentId,
-                    companyId: nil,
-                    type: .recruitmentList
-                )
-            )
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 }

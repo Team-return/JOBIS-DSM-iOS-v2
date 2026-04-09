@@ -6,11 +6,14 @@ import Core
 
 public final class BugReportFlow: Flow {
     public let container: Container
-    private var rootViewController: BugReportViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: BugReportViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(BugReportViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +31,6 @@ public final class BugReportFlow: Flow {
 
 private extension BugReportFlow {
     func navigateToBugReport() -> FlowContributors {
-        rootViewController = container.resolve(BugReportViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

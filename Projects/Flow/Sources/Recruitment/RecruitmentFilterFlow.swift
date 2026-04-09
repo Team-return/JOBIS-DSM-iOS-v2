@@ -6,11 +6,14 @@ import Core
 
 public final class RecruitmentFilterFlow: Flow {
     public let container: Container
-    private var rootViewController: RecruitmentFilterViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: RecruitmentFilterViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(RecruitmentFilterViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +31,6 @@ public final class RecruitmentFilterFlow: Flow {
 
 private extension RecruitmentFilterFlow {
     func navigateToRecruitmentFilter() -> FlowContributors {
-        rootViewController = container.resolve(RecruitmentFilterViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

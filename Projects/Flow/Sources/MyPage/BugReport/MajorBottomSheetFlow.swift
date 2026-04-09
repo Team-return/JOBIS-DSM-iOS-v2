@@ -6,11 +6,17 @@ import Core
 
 public final class MajorBottomSheetFlow: Flow {
     public let container: Container
-    private var rootViewController: MajorBottomSheetViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: MajorBottomSheetViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = MajorBottomSheetViewController(
+            container.resolve(MajorBottomSheetViewModel.self)!,
+            state: .custom(height: 300)
+        )
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +34,6 @@ public final class MajorBottomSheetFlow: Flow {
 
 private extension MajorBottomSheetFlow {
     func navigateToMajorBottomSheet() -> FlowContributors {
-        rootViewController = container.resolve(MajorBottomSheetViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.viewModel

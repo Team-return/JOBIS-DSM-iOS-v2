@@ -43,7 +43,10 @@ private extension BookmarkFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -54,13 +57,7 @@ private extension BookmarkFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(
-                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
-                    id: recruitmentID,
-                    companyId: nil,
-                    type: .recruitmentList
-                )
-            )
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 }

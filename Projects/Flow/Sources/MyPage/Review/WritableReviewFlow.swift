@@ -7,11 +7,14 @@ import Domain
 
 public final class WritableReviewFlow: Flow {
     public let container: Container
-    private var rootViewController: WritableReviewViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: WritableReviewViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(WritableReviewViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -38,7 +41,6 @@ public final class WritableReviewFlow: Flow {
 
 private extension WritableReviewFlow {
     func navigateToWritableReview() -> FlowContributors {
-        rootViewController = container.resolve(WritableReviewViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -73,10 +75,18 @@ private extension WritableReviewFlow {
     }
 
     func navigateToInterviewAtmosphere() -> FlowContributors {
-        let interviewAtmosphereFlow = InterviewAtmosphereFlow(container: container)
+        let interviewAtmosphereFlow = InterviewAtmosphereFlow(
+            container: container,
+            companyID: rootViewController.reactor.companyID,
+            interviewType: rootViewController.reactor.interviewType,
+            location: rootViewController.reactor.location,
+            jobCode: rootViewController.reactor.jobCode,
+            interviewerCount: rootViewController.reactor.interviewerCount
+        )
         Flows.use(interviewAtmosphereFlow, when: .created) { root in
+            guard let viewController = root as? UIViewController else { return }
             self.rootViewController.navigationController?.pushViewController(
-                root,
+                viewController,
                 animated: true
             )
         }
@@ -84,13 +94,7 @@ private extension WritableReviewFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: interviewAtmosphereFlow,
             withNextStepper: OneStepper(
-                withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired(
-                    companyID: rootViewController.reactor.companyID,
-                    interviewType: rootViewController.reactor.interviewType.rawValue,
-                    location: rootViewController.reactor.location.rawValue,
-                    jobCode: rootViewController.reactor.jobCode,
-                    interviewerCount: rootViewController.reactor.interviewerCount
-                )
+                withSingleStep: InterviewAtmosphereStep.interviewAtmosphereIsRequired
             )
         ))
     }

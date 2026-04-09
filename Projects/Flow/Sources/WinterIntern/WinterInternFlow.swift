@@ -6,11 +6,14 @@ import Core
 
 public final class WinterInternFlow: Flow {
     public let container: Container
-    private var rootViewController: WinterInternViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: WinterInternViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(WinterInternViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -34,7 +37,6 @@ public final class WinterInternFlow: Flow {
 
 private extension WinterInternFlow {
     func navigateToRecruitment() -> FlowContributors {
-        rootViewController = container.resolve(WinterInternViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -42,12 +44,16 @@ private extension WinterInternFlow {
     }
 
     func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
-        let winterInternDetailFlow = WinterInternDetailFlow(container: container)
+        let recruitmentDetailFlow = WinterInternDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
-        Flows.use(winterInternDetailFlow, when: .created) { (root) in
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? WinterInternDetailViewController
-            view?.isPopViewController = { _, _ in
-                self.rootViewController.isTabNavigation = false
+            view?.isPopViewController = { id, bookmark in
+                let popView = self.rootViewController
+                popView.isTabNavigation = false
             }
             self.rootViewController.navigationController?.pushViewController(
                 view!, animated: true
@@ -55,14 +61,8 @@ private extension WinterInternFlow {
         }
 
         return .one(flowContributor: .contribute(
-            withNextPresentable: winterInternDetailFlow,
-            withNextStepper: OneStepper(
-                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
-                    id: recruitmentID,
-                    companyId: nil,
-                    type: .recruitmentList
-                )
-            )
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 
