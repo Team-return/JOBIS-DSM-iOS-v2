@@ -84,7 +84,7 @@ private extension WinterInternDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: applyFlow,
             withNextStepper: OneStepper(
-                withSingleStep: ApplyStep.applyIsRequired(recruitmentId: id, name: name, imageURL: imageURL)
+                withSingleStep: ApplyStep.applyIsRequired
             )
         ))
     }
