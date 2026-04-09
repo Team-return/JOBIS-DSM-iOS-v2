@@ -36,6 +36,7 @@ public final class HomeReactor: BaseReactor, Stepper {
     public enum Action {
         case fetchInitialData
         case viewWillAppear
+        case recentCompanyDidTap(id: Int)
         case navigateToAlarmButtonDidTap
         case navigateToEasterEggDidTap
         case navigateToCompanyButtonDidTap
