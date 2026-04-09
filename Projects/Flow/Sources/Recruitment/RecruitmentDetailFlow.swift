@@ -6,19 +6,30 @@ import Core
 
 public final class RecruitmentDetailFlow: Flow {
     public let container: Container
-    private var rootViewController: RecruitmentDetailViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: RecruitmentDetailViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
-    public init(container: Container) {
+    public init(
+        container: Container,
+        recruitmentID: Int? = nil,
+        companyId: Int? = nil,
+        type: RecruitmentDetailPreviousViewType = .recruitmentList
+    ) {
         self.container = container
+        self.rootViewController = container.resolve(
+            RecruitmentDetailViewController.self,
+            arguments: recruitmentID, companyId, type
+        )!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? RecruitmentDetailStep else { return .none }
 
         switch step {
-        case let .recruitmentDetailIsRequired(id, companyId, type):
-            return navigateToRecruitmentDetail(id: id, companyId: companyId, type: type)
+        case .recruitmentDetailIsRequired:
+            return navigateToRecruitmentDetail()
 
         case let .companyDetailIsRequired(id):
             return navigateToCompanyDetail(id)
@@ -30,15 +41,7 @@ public final class RecruitmentDetailFlow: Flow {
 }
 
 private extension RecruitmentDetailFlow {
-    func navigateToRecruitmentDetail(
-        id: Int?,
-        companyId: Int?,
-        type: RecruitmentDetailPreviousViewType
-    ) -> FlowContributors {
-        rootViewController = container.resolve(
-            RecruitmentDetailViewController.self,
-            arguments: id, companyId, type
-        )!
+    func navigateToRecruitmentDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -46,7 +49,11 @@ private extension RecruitmentDetailFlow {
     }
 
     func navigateToCompanyDetail(_ companyDetailId: Int) -> FlowContributors {
-        let companyDetailFlow = CompanyDetailFlow(container: container)
+        let companyDetailFlow = CompanyDetailFlow(
+            container: container,
+            companyId: companyDetailId,
+            type: .recruitmentDetail
+        )
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             self.rootViewController.navigationController?.pushViewController(
@@ -57,16 +64,20 @@ private extension RecruitmentDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: companyDetailFlow,
             withNextStepper: OneStepper(
-                withSingleStep: CompanyDetailStep.companyDetailIsRequired(
-                    companyId: companyDetailId,
-                    type: .recruitmentDetail
-                )
+                withSingleStep: CompanyDetailStep.companyDetailIsRequired
             )
         ))
     }
 
     func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: id,
+            applicationId: nil,
+            companyName: name,
+            companyImageURL: imageURL,
+            applyType: .apply
+        )
 
         Flows.use(applyFlow, when: .created) { (root) in
             self.rootViewController.navigationController?.pushViewController(
@@ -78,11 +89,7 @@ private extension RecruitmentDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: applyFlow,
             withNextStepper: OneStepper(
-                withSingleStep: ApplyStep.applyIsRequired(
-                    recruitmentId: id,
-                    name: name,
-                    imageURL: imageURL
-                )
+                withSingleStep: ApplyStep.applyIsRequired
             )
         ))
     }

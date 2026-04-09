@@ -6,11 +6,14 @@ import Core
 
 public final class SearchCompanyFlow: Flow {
     public let container: Container
-    private var rootViewController: SearchCompanyViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: SearchCompanyViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(SearchCompanyViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +31,6 @@ public final class SearchCompanyFlow: Flow {
 
 private extension SearchCompanyFlow {
     func navigateToSearchCompany() -> FlowContributors {
-        rootViewController = container.resolve(SearchCompanyViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -36,7 +38,11 @@ private extension SearchCompanyFlow {
     }
 
     func navigateToCompanyDetail(_ companyId: Int) -> FlowContributors {
-        let companyDetailFlow = CompanyDetailFlow(container: container)
+        let companyDetailFlow = CompanyDetailFlow(
+            container: container,
+            companyId: companyId,
+            type: .searchCompany
+        )
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
             self.rootViewController.navigationController?.pushViewController(
@@ -46,12 +52,7 @@ private extension SearchCompanyFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: companyDetailFlow,
-            withNextStepper: OneStepper(
-                withSingleStep: CompanyDetailStep.companyDetailIsRequired(
-                    companyId: companyId,
-                    type: .searchCompany
-                )
-            )
+            withNextStepper: OneStepper(withSingleStep: CompanyDetailStep.companyDetailIsRequired)
         ))
     }
 }

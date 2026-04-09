@@ -6,26 +6,31 @@ import Core
 
 public final class RejectReasonFlow: Flow {
     public let container: Container
-    private var rootViewController: RejectReasonViewController!
+    private let rootViewController: RejectReasonViewController
     public var root: Presentable {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(
+        container: Container,
+        applicationID: Int,
+        recruitmentID: Int,
+        companyName: String,
+        companyImageUrl: String
+    ) {
         self.container = container
+        self.rootViewController = container.resolve(
+            RejectReasonViewController.self,
+            arguments: applicationID, recruitmentID, companyName, companyImageUrl
+        )!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? RejectReasonStep else { return .none }
 
         switch step {
-        case let .rejectReasonIsRequired(applicationID, recruitmentID, companyName, companyImageUrl):
-            return navigateToRejectReason(
-                applicationID: applicationID,
-                recruitmentID: recruitmentID,
-                companyName: companyName,
-                companyImageUrl: companyImageUrl
-            )
+        case .rejectReasonIsRequired:
+            return navigateToRejectReason()
         case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
             return navigateToReApply(recruitmentID, applicationID, companyName, companyImageUrl)
         }
@@ -33,17 +38,7 @@ public final class RejectReasonFlow: Flow {
 }
 
 private extension RejectReasonFlow {
-    func navigateToRejectReason(
-        applicationID: Int,
-        recruitmentID: Int,
-        companyName: String,
-        companyImageUrl: String
-    ) -> FlowContributors {
-        rootViewController = container.resolve(
-            RejectReasonViewController.self,
-            arguments: applicationID, recruitmentID, companyName, companyImageUrl
-        )!
-
+    func navigateToRejectReason() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

@@ -6,11 +6,14 @@ import Core
 
 public final class SearchReviewFlow: Flow {
     public let container: Container
-    private var rootViewController: SearchReviewViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: SearchReviewViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(SearchReviewViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -25,7 +28,6 @@ public final class SearchReviewFlow: Flow {
 
 private extension SearchReviewFlow {
     func navigateToSearchReview() -> FlowContributors {
-        rootViewController = container.resolve(SearchReviewViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

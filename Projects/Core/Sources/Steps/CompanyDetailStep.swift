@@ -1,7 +1,7 @@
 import RxFlow
 
 public enum CompanyDetailStep: Step {
-    case companyDetailIsRequired(companyId: Int, type: CompanyDetailPreviousViewType)
+    case companyDetailIsRequired
     case popIsRequired
     case recruitmentDetailIsRequired(id: Int)
     case interviewReviewDetailIsRequired(

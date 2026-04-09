@@ -136,7 +136,13 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let rejectReasonFlow = RejectReasonFlow(container: container)
+        let rejectReasonFlow = RejectReasonFlow(
+            container: container,
+            applicationID: applicationID,
+            recruitmentID: recruitmentID,
+            companyName: companyName,
+            companyImageUrl: companyImageUrl
+        )
         Flows.use(rejectReasonFlow, when: .created) { root in
             self.rootViewController.present(
                 root,
@@ -147,12 +153,7 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rejectReasonFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RejectReasonStep.rejectReasonIsRequired(
-                    applicationID: applicationID,
-                    recruitmentID: recruitmentID,
-                    companyName: companyName,
-                    companyImageUrl: companyImageUrl
-                )
+                withSingleStep: RejectReasonStep.rejectReasonIsRequired
             )
         ))
     }
@@ -163,7 +164,14 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let applyFlow = ApplyFlow(container: container)
+        let applyFlow = ApplyFlow(
+            container: container,
+            recruitmentId: recruitmentID,
+            applicationId: applicationID,
+            companyName: companyName,
+            companyImageURL: companyImageUrl,
+            applyType: .reApply
+        )
         Flows.use(applyFlow, when: .created) { root in
             self.rootViewController.pushViewController(
                 root,
@@ -184,7 +192,10 @@ private extension HomeFlow {
     }
 
     func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = RecruitmentDetailFlow(container: container)
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
@@ -199,13 +210,7 @@ private extension HomeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
-            withNextStepper: OneStepper(
-                withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired(
-                    id: recruitmentID,
-                    companyId: nil,
-                    type: .recruitmentList
-                )
-            )
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 

@@ -6,11 +6,14 @@ import Core
 
 public final class NoticeFlow: Flow {
     public let container: Container
-    private var rootViewController: NoticeViewController!
-    public var root: Presentable { rootViewController! }
+    private let rootViewController: NoticeViewController
+    public var root: Presentable {
+        return rootViewController
+    }
 
     public init(container: Container) {
         self.container = container
+        self.rootViewController = container.resolve(NoticeViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -28,7 +31,6 @@ public final class NoticeFlow: Flow {
 
 private extension NoticeFlow {
     func navigateToNotice() -> FlowContributors {
-        rootViewController = container.resolve(NoticeViewController.self)!
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor
@@ -36,7 +38,7 @@ private extension NoticeFlow {
     }
 
     func navigateToNoticeDetail(_ id: Int) -> FlowContributors {
-        let noticeDetailFlow = NoticeDetailFlow(container: container)
+        let noticeDetailFlow = NoticeDetailFlow(container: container, noticeID: id)
 
         Flows.use(noticeDetailFlow, when: .created) { (root) in
             let view = root as? NoticeDetailViewController
@@ -47,7 +49,7 @@ private extension NoticeFlow {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: noticeDetailFlow,
-            withNextStepper: OneStepper(withSingleStep: NoticeDetailStep.noticeDetailIsRequired(noticeID: id))
+            withNextStepper: OneStepper(withSingleStep: NoticeDetailStep.noticeDetailIsRequired)
         ))
     }
 }
