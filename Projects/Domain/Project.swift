@@ -8,5 +8,6 @@ let project = Project.makeModule(
     targets: [.unitTest],
     dependencies: [
         .Modules.utility
-    ]
+    ],
+    sources: ["Sources/**", "Documentation/**/*.docc"]
 )
