@@ -1,0 +1,13 @@
+@Tutorials(name: "JOBIS iOS 개발 가이드") {
+    @Intro(title: "JOBIS iOS 개발 가이드") {
+        JOBIS는 Clean Architecture + ReactorKit + RxFlow 패턴을 사용합니다.
+        이 가이드에서는 새로운 기능 화면을 처음부터 추가하는 전체 과정을 다룹니다.
+    }
+
+    @Chapter(name: "새 화면 추가하기") {
+        Core → Domain → Data → Presentation → Flow 순서로
+        8단계에 걸쳐 공지사항 기능을 직접 만들어봅니다.
+
+        @TutorialReference(tutorial: "doc:AddNewFeature")
+    }
+}
