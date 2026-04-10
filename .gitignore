@@ -100,6 +100,7 @@ Gemfile.lock
 !.claude/agents/
 !.claude/skills/
 !.claude/docs/
+!.claude/settings.json
 .claude/skills/my-skill/
 
 ### OMC ###
