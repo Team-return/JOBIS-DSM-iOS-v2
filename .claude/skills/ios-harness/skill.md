@@ -41,16 +41,24 @@ TaskCreate([
 ])
 ```
 
-### Phase 3: 개발-검증 사이클
+### Phase 3: TDD 개발-검증 사이클
 
-**개발 (ios-developer):**
+**RED (ios-developer):**
 - `_workspace/01_spec_{feature}.md`를 읽고 피처 명세 파악
 - 기존 유사 코드를 읽어 패턴 파악
-- 레이어 전반 코드 생성 (Reactor, VC, UseCase, Repository, Flow)
+- **테스트 파일 먼저 작성** (`{Feature}ReactorTests.swift`, `{Feature}UseCaseTests.swift`)
+  - Mock UseCase/Repository 포함
+  - 아직 구현이 없으므로 컴파일 에러 상태가 정상 (RED)
+- 테스트 완료 후 `_workspace/01a_tests_{feature}.md`에 테스트 케이스 목록 기록
+
+**GREEN (ios-developer):**
+- 레이어 전반 구현 코드 생성 (Reactor, VC, UseCase, Repository, Flow)
+- 테스트가 통과하는 최소한의 구현에 집중
 - 생성 완료 후 ios-reviewer에게 SendMessage로 리뷰 요청
 
 **검증 (ios-reviewer):**
-- 생성된 코드를 모두 읽은 뒤 ios-code-review 체크리스트 적용
+- 구현 코드 + 테스트 코드를 모두 읽은 뒤 ios-code-review 체크리스트 적용
+- **테스트 검증 추가**: 각 Action/Mutation에 대한 테스트 케이스가 존재하는지, Mock이 올바른지 확인
 - 결과를 `_workspace/02_review_{feature}.md`에 저장
 - `APPROVED`: 오케스트레이터에게 완료 보고
 - `NEEDS_REVISION`: ios-developer에게 SendMessage로 수정 지침 전달

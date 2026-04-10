@@ -18,7 +18,56 @@ JOBIS-DSM-iOS-v2 프로젝트의 피처 개발을 담당한다. 요구사항을 
 - UI: SnapKit + Then 패턴으로 programmatic layout
 - DisposeBag은 ViewController 인스턴스 변수로 선언, `bind(reactor:)`에서 모든 구독 처리
 
-## 피처별 생성 파일 목록
+## TDD 사이클 (필수)
+
+코드 생성 순서: **테스트 먼저(RED) → 구현(GREEN)**
+
+### RED 단계 — 테스트 파일 먼저 작성
+
+**`Projects/Presentation/Tests/{Feature}/`**
+- `{Feature}ReactorTests.swift`
+  - `mutate()` 테스트: Action 입력 → Mutation 시퀀스 검증 (RxBlocking 사용)
+  - `reduce()` 테스트: Mutation 입력 → State 변화 검증 (순수 함수이므로 동기)
+  - Mock UseCase 주입: `class Mock{Feature}UseCase: {Feature}UseCase`
+
+**`Projects/Domain/Tests/{Feature}/`**
+- `{Feature}UseCaseTests.swift`
+  - UseCase 비즈니스 로직 테스트
+  - Mock Repository 주입: `class Mock{Feature}Repository: {Feature}Repository`
+
+```swift
+// Reactor 테스트 템플릿
+import XCTest
+import RxSwift
+import RxBlocking
+@testable import Presentation
+
+final class {Feature}ReactorTests: XCTestCase {
+    var sut: {Feature}Reactor!
+    var mockUseCase: Mock{Feature}UseCase!
+    var disposeBag: DisposeBag!
+
+    override func setUp() {
+        mockUseCase = Mock{Feature}UseCase()
+        sut = {Feature}Reactor({feature}UseCase: mockUseCase)
+        disposeBag = DisposeBag()
+    }
+
+    func test_viewDidLoad_성공시_데이터가_state에_설정됨() {
+        // Given
+        mockUseCase.fetchResult = .just([{Feature}Entity.stub()])
+
+        // When
+        sut.action.onNext(.viewDidLoad)
+
+        // Then
+        let state = try! sut.state.map { $0.data }.toBlocking(timeout: 1).first()
+        XCTAssertFalse(state!.isEmpty)
+    }
+}
+```
+
+### GREEN 단계 — 구현 파일 작성 (테스트 통과 목표)
 
 **Presentation 레이어** (`Projects/Presentation/Sources/{Feature}/`)
 - `{Feature}Reactor.swift` — Action, Mutation, State + `reduce()` + `mutate()`
@@ -34,6 +83,15 @@ JOBIS-DSM-iOS-v2 프로젝트의 피처 개발을 담당한다. 요구사항을 
 
 **Flow 레이어** (`Projects/Flow/Sources/`)
 - 기존 Step에 case 추가 또는 `{Feature}Flow.swift` (독립 플로우인 경우)
+
+### 테스트 커버리지 기준
+
+| 대상 | 필수 케이스 |
+|------|------------|
+| `mutate()` | 각 Action별 정상/에러 경로 |
+| `reduce()` | 각 Mutation별 State 변화 |
+| UseCase | 비즈니스 로직 분기 전체 |
+| ViewController | 테스트 불필요 (UI는 ios-reviewer가 코드 리뷰로 검증) |
 
 ## 입력 프로토콜
 
