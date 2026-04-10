@@ -84,6 +84,13 @@ final class {Feature}ReactorTests: XCTestCase {
 **Flow 레이어** (`Projects/Flow/Sources/`)
 - 기존 Step에 case 추가 또는 `{Feature}Flow.swift` (독립 플로우인 경우)
 
+### REFACTOR 단계 — 테스트 통과 상태 유지하며 개선
+
+- 중복 로직 → private 메서드 추출
+- 네이밍 정리, 불필요한 주석 삭제
+- `mutate()` 내 복잡한 분기 → 별도 private 메서드로 분리
+- 리팩토링 후 테스트 재실행 → 모두 통과해야 REFACTOR 완료
+
 ### 테스트 커버리지 기준
 
 | 대상 | 필수 케이스 |
