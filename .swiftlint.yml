@@ -1,0 +1,47 @@
+excluded:
+  - .build
+  - Tuist
+  - Projects/App/Resources
+  - "**/.build"
+  - "**/Derived"
+
+disabled_rules:
+  - trailing_whitespace         # Xcode 자동 처리
+  - todo                        # TODO 허용
+  - file_length                 # 대형 ViewController/Reactor 허용
+
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - unused_import
+  - force_unwrapping
+
+force_unwrapping:
+  severity: warning
+
+line_length:
+  warning: 130
+  error: 200
+  ignores_urls: true
+  ignores_comments: true
+
+type_body_length:
+  warning: 300
+  error: 500
+
+function_body_length:
+  warning: 80
+  error: 150
+
+identifier_name:
+  min_length:
+    warning: 1
+    error: 1
+  excluded:
+    - id
+    - x
+    - y
+
+nesting:
+  type_level:
+    warning: 3
