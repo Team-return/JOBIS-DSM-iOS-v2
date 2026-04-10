@@ -5,7 +5,7 @@ description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer와 
 
 ## 실행 모드
 
-**에이전트 팀 모드** — ios-developer와 ios-reviewer가 TeamCreate로 구성된 팀에서 직접 통신(SendMessage)하며 협업한다.
+**에이전트 팀 모드** — ios-developer, ios-critic, ios-reviewer가 TeamCreate로 구성된 팀에서 직접 통신(SendMessage)하며 협업한다.
 
 ## 워크플로우
 
@@ -55,25 +55,32 @@ description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer와 
 ```
 TeamCreate(
   team_name: "ios-feature-team",
-  members: ["ios-developer", "ios-reviewer"]
+  members: ["ios-developer", "ios-critic", "ios-reviewer"]
 )
 ```
 
 작업 목록을 생성한다:
 ```
 TaskCreate([
-  { id: "dev", title: "피처 코드 생성", assignee: "ios-developer" },
-  { id: "review", title: "코드 검증", assignee: "ios-reviewer", depends_on: ["dev"] }
+  { id: "dev",    title: "피처 코드 생성",   assignee: "ios-developer" },
+  { id: "critic", title: "설계 반박 검토",   assignee: "ios-critic",   depends_on: ["dev"] },
+  { id: "review", title: "패턴 검증",        assignee: "ios-reviewer", depends_on: ["critic"] }
 ])
 ```
 
-### Phase 3: 개발-검증 사이클
+### Phase 3: 개발-반박-검증 사이클
 
 **개발 (ios-developer):**
 - `_workspace/01_spec_{feature}.md`를 읽고 피처 명세 파악
 - 기존 유사 코드를 읽어 패턴 파악
 - 레이어 전반 코드 생성 (Reactor, VC, UseCase, Repository, Flow)
-- 생성 완료 후 ios-reviewer에게 SendMessage로 리뷰 요청
+- 생성 완료 후 ios-critic에게 SendMessage로 반박 요청
+
+**반박 (ios-critic):**
+- 생성된 코드를 읽고 설계 의도/엣지케이스/대안을 의도적으로 반박
+- 결과를 `_workspace/03_critic_{feature}.md`에 저장
+- `CHALLENGE`: ios-developer에게 SendMessage로 반박 내용 전달 → developer가 수용 여부 결정 후 ios-reviewer에게 진행
+- `ACCEPT`: ios-reviewer에게 SendMessage로 검증 요청
 
 **검증 (ios-reviewer):**
 - 생성된 코드를 모두 읽은 뒤 ios-code-review 체크리스트 적용
@@ -91,14 +98,27 @@ TaskCreate([
 - 최종 생성 파일 목록을 사용자에게 보고
 - 팀 정리
 
+## 파일 소유권 (One file, one owner)
+
+멀티에이전트 충돌 방지를 위해 에이전트별 파일 쓰기 권한을 명시한다.
+
+| 에이전트 | 쓰기 가능 | 읽기 전용 |
+|----------|-----------|-----------|
+| ios-developer | `Projects/` Swift 소스 전체, `_workspace/01_*.md` | — |
+| ios-critic | `_workspace/03_critic_*.md` | `Projects/` 전체, `_workspace/01_*.md` |
+| ios-reviewer | `_workspace/02_review_*.md` | `Projects/` 전체, `_workspace/01_*.md`, `_workspace/03_*.md` |
+
+**원칙**: `Projects/` 내 Swift 파일은 ios-developer만 수정한다. critic/reviewer는 절대 소스 파일을 직접 수정하지 않는다.
+
 ## 데이터 전달 프로토콜
 
 | 데이터 | 전달 방식 | 경로 |
 |--------|---------|------|
 | 피처 명세 | 파일 | `_workspace/01_spec_{feature}.md` |
 | 생성 코드 | 직접 작성 | `Projects/{Layer}/Sources/{Feature}/` |
+| 반박 결과 | 파일 + SendMessage | `_workspace/03_critic_{feature}.md` |
 | 리뷰 결과 | 파일 + SendMessage | `_workspace/02_review_{feature}.md` |
-| 수정 지침 | SendMessage | ios-reviewer → ios-developer |
+| 수정 지침 | SendMessage | ios-reviewer/critic → ios-developer |
 | 최종 보고 | 텍스트 | 사용자에게 직접 |
 
 ## 에러 핸들링
