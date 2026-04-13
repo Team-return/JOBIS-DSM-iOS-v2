@@ -8,6 +8,7 @@ import Domain
 public enum CompanyDetailPreviousViewType {
     case searchCompany
     case recruitmentDetail
+    case home
 }
 
 public final class CompanyDetailReactor: BaseReactor, Stepper {

@@ -120,6 +120,10 @@ extension HomeReactor {
                 .asObservable()
                 .map { Mutation.setRecentCompanyList($0) }
 
+        case let .recentCompanyDidTap(id):
+            steps.accept(HomeStep.companyDetailIsRequired(id: id))
+            return .empty()
+
         case .navigateToAlarmButtonDidTap:
             steps.accept(HomeStep.alarmIsRequired)
             return .empty()

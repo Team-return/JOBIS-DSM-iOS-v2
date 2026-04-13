@@ -183,6 +183,11 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .map { _ in HomeReactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+
+        recentCompanyCollectionView.rx.modelSelected(RecentCompanyItem.self)
+            .map { HomeReactor.Action.recentCompanyDidTap(id: $0.entity.companyID) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     public override func bindState() {
