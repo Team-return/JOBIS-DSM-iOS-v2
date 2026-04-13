@@ -109,10 +109,7 @@ extension HomeReactor {
                     .asObservable()
                     .flatMap { totalPassStudent -> Observable<Mutation> in
                         .just(.setTotalPassStudentInfo(totalPassStudent))
-                    },
-                fetchRecentCompanyListUseCase.execute()
-                    .asObservable()
-                    .map { Mutation.setRecentCompanyList($0) }
+                    }
             ])
 
         case .viewWillAppear:
