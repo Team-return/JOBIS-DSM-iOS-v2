@@ -117,3 +117,4 @@ Gemfile.lock
 *.xcodeproj
 *.xcworkspace
 .tuist-generated
+.omx/

@@ -1,4 +1,7 @@
-# JOBIS iOS — Claude 가이드
+# JOBIS iOS — Agent Guide
+
+이 문서는 특정 모델 전용이 아니다.
+Codex, Claude, 기타 코딩 에이전트가 공통으로 참조하는 루트 가이드다.
 
 이 파일은 지도(map)다. 세부 내용은 각 링크 문서를 참조한다.
 
@@ -18,6 +21,7 @@ Clean Architecture + ReactorKit + RxFlow + Swinject.
 | 에이전트 | 역할 | 문서 |
 |----------|------|------|
 | ios-developer | 피처 개발 (Reactor + VC + UseCase + Flow) | [→](.claude/agents/ios-developer.md) |
+| ios-critic | 설계 반박, 엣지케이스 발굴, 대안 제시 | [→](.claude/agents/ios-critic.md) |
 | ios-reviewer | 아키텍처·패턴 코드 리뷰 | [→](.claude/agents/ios-reviewer.md) |
 | ios-gc | 미사용 import·데드코드·고아 파일 제거 | [→](.claude/agents/ios-gc.md) |
 
