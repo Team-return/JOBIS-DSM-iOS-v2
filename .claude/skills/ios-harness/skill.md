@@ -124,6 +124,56 @@ TaskCreate([
 - 최종 생성 파일 목록을 사용자에게 보고
 - 팀 정리
 
+## Definition of Done
+
+아래 조건을 모두 만족해야 피처를 완료로 판단한다.
+
+1. PRD 또는 작업 명세가 `_workspace/01_spec_{feature}.md`에 정리되어 있다.
+2. `_workspace/progress.md`가 현재 상태를 반영하도록 갱신되어 있다.
+3. ios-critic / ios-reviewer 결과가 각각 기록되어 있거나, 해당 단계가 생략된 이유가 명시되어 있다.
+4. 테스트 또는 검증 근거가 남아 있다.
+   - 실행한 명령, 수동 검증 항목, 실행 불가 사유 중 최소 하나 이상
+5. known issue가 남아 있으면 사용자에게 보고할 수 있는 수준으로 명시되어 있다.
+6. 최종 보고에 아래 항목이 포함된다.
+   - 생성/수정 파일 목록
+   - 검증 결과 요약
+   - 남은 리스크 또는 후속 작업
+
+완료 조건을 만족하지 못하면 `done`으로 마감하지 않는다.
+
+## Human Approval Gate
+
+아래 항목은 오케스트레이터가 사용자 승인 없이 진행하지 않는다.
+
+- API 스펙을 추정해서 구현해야 하는 경우
+- 화면 흐름 / UX 동작을 기존과 다르게 바꾸는 경우
+- public interface, DI 구성, 라우팅 규칙을 깨는 구조 변경
+- 새 dependency 추가 또는 기존 dependency 제거
+- 다수 파일 이동 / 이름 변경 / 폴더 구조 재편
+- 브랜치 생성, 커밋, PR 생성, 원격 push
+- reviewer/critic가 Critical 이슈를 남긴 상태에서 강행 종료
+
+원칙:
+- 확실하면 진행하고, 사용자 의도를 추정해야 하면 멈추고 승인받는다.
+- 승인 필요 항목이 하나라도 있으면 `_workspace/progress.md`의 `open_questions`에 남긴다.
+
+## Verification Evidence
+
+검증 완료라고 보고할 때는 반드시 아래 근거를 남긴다.
+
+- 실행한 명령
+  - 예: `xcodebuild test`, `swift test`, `swiftlint`
+- 수동 검증 항목
+  - 예: 진입 화면, 탭 동작, 에러 토스트, 네비게이션
+- 실행하지 못한 검증과 그 이유
+  - 예: 인증 토큰 부재, 시뮬레이터 미구성, 권한 제한
+- reviewer가 실제로 읽은 핵심 파일 집합
+  - 예: Reactor, ViewController, UseCase, Repository, Flow, Tests
+- 남은 리스크
+  - 예: E2E 미검증, mock 기반 검증만 완료, 빈 상태 UX 미확정
+
+최종 보고와 `_workspace/02_review_{feature}.md`에는 위 근거가 요약되어야 한다.
+
 ## 세션 인계 파일 규칙
 
 - 경로: `_workspace/progress.md`
@@ -180,6 +230,7 @@ TaskCreate([
 | 생성 코드 | 직접 작성 | `Projects/{Layer}/Sources/{Feature}/` |
 | 반박 결과 | 파일 + SendMessage | `_workspace/03_critic_{feature}.md` |
 | 리뷰 결과 | 파일 + SendMessage | `_workspace/02_review_{feature}.md` |
+| 검증 근거 | 리뷰 문서 내 섹션 | `_workspace/02_review_{feature}.md` |
 | 수정 지침 | SendMessage | ios-reviewer/critic → ios-developer |
 | 최종 보고 | 텍스트 | 사용자에게 직접 |
 
@@ -188,6 +239,7 @@ TaskCreate([
 | 상황 | 처리 방법 |
 |------|---------|
 | 피처 명세 불완전 | 개발 시작 전 사용자에게 명확화 요청 |
+| 사용자 승인 필요 항목 발생 | 승인 전까지 구현 보류, `open_questions`에 기록 |
 | 3회 반복 후 Critical 이슈 잔존 | 오케스트레이터가 직접 개입, 근본 원인 분석 |
 | 기존 파일과 충돌 | ios-developer가 기존 코드 읽기 후 판단, 필요시 오케스트레이터 승인 |
 | 에이전트 응답 없음 | 1회 재시도 후 실패 시 해당 Phase 건너뛰고 보고서에 명시 |
