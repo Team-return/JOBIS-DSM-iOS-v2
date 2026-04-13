@@ -180,6 +180,9 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .disposed(by: disposeBag)
 
         viewWillAppearPublisher.asObservable()
+            .do(onNext: { [weak self] _ in
+                self?.recentCompanyCollectionView.setContentOffset(.zero, animated: false)
+            })
             .map { _ in HomeReactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -252,6 +255,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
 
         reactor.state.map { $0.recentCompanyList }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(to: recentCompanyCollectionView.rx.items(
                 cellIdentifier: RecentCompanyCollectionViewCell.identifier,
                 cellType: RecentCompanyCollectionViewCell.self
