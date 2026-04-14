@@ -59,7 +59,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         $0.distribution = .fillEqually
         $0.spacing = 12
     }
-    private var findCompanysCard = CareerNavigationCard()
     private var findWinterRecruitmentsCard = CareerNavigationCard()
     private var navigateToEasterEggDidTap = PublishRelay<Void>()
     private let employStatusButtonTap = PublishRelay<Void>()
@@ -67,10 +66,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
-        [
-            findCompanysCard,
-            findWinterRecruitmentsCard
-        ].forEach(careerStackView.addArrangedSubview(_:))
+        careerStackView.addArrangedSubview(findWinterRecruitmentsCard)
         [
             bannerView,
             recentCompanyMenuLabel,
@@ -143,11 +139,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
 
         titleImageView.rx.tapGesture().when(.recognized).asObservable()
             .map { _ in HomeReactor.Action.navigateToEasterEggDidTap }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        findCompanysCard.rx.tap
-            .map { HomeReactor.Action.navigateToCompanyButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
@@ -246,8 +237,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
 
         reactor.state.map { $0.isWinterInternSeason }
             .bind { [weak self] in
-                self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
-                self?.findCompanysCard.isEnabled = false
                 self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
                 self?.findWinterRecruitmentsCard.isHidden = !$0
             }
