@@ -223,7 +223,8 @@ private extension HomeFlow {
             type: .home
         )
 
-        Flows.use(companyDetailFlow, when: .created) { root in            self.rootViewController.pushViewController(
+        Flows.use(companyDetailFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
                 root, animated: true
             )
         }
