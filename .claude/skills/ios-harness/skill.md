@@ -1,6 +1,6 @@
 ---
 name: ios-harness
-description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer와 ios-reviewer 에이전트 팀을 조율하여 피처를 개발하고 검증한다. "피처 개발해줘", "화면 만들어줘", "기능 추가해줘" 등 새 기능 구현 요청 시 반드시 사용. 단순 코드 수정이 아닌 새 Reactor/ViewController/UseCase/Repository를 포함하는 작업에 트리거.
+description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer, ios-critic, ios-reviewer 에이전트 팀을 조율하여 피처를 개발하고 검증한다. "피처 개발해줘", "화면 만들어줘", "기능 추가해줘" 등 새 기능 구현 요청 시 반드시 사용. 단순 코드 수정이 아닌 새 Reactor/ViewController/UseCase/Repository를 포함하는 작업에 트리거.
 ---
 
 ## 실행 모드
@@ -10,6 +10,15 @@ description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer와 
 ## 워크플로우
 
 ### Phase 1: PRD 인터뷰 및 명세 작성
+
+`_workspace/progress.md`는 컨텍스트 압축/재시작 이후에도 현재 상태를 복구하는 단일 진실 공급원으로 취급한다.
+
+**시작 절차 (세션 인계 파일 로드):**
+
+1. Phase 1 시작 전에 `_workspace/progress.md` 존재 여부를 먼저 확인한다.
+2. 파일이 있으면 현재 phase, 최근 결정사항, 열린 질문, 다음 액션을 먼저 읽고 이어서 진행한다.
+3. 이전 작업을 이어받는 경우 progress 내용을 기준으로 누락된 인터뷰/검증 단계만 수행한다.
+4. 새로운 작업으로 전환하는 경우 기존 progress와 무관함을 사용자에게 한 줄로 알리고, 이번 작업 기준으로 `_workspace/progress.md`를 갱신한다.
 
 자유 텍스트 요청을 그대로 사용하지 않는다. 아래 PRD 양식에 따라 사용자에게 항목별로 확인한다.
 
@@ -49,6 +58,7 @@ description: JOBIS iOS 개발 하네스 오케스트레이터. ios-developer와 
 
 4. 인터뷰 완료 후 `_workspace/01_spec_{feature}.md`에 PRD 저장.
 5. 사용자에게 PRD 요약 보여주고 확인 받은 뒤 Phase 2 진행.
+6. Phase 1 종료 시 `_workspace/progress.md`를 갱신한다.
 
 ### Phase 2: 팀 구성
 
@@ -110,8 +120,93 @@ TaskCreate([
 ### Phase 4: 완료 및 정리
 
 - `_workspace/` 내 중간 파일 보존 (감사 추적용)
+- `_workspace/progress.md`를 최종 상태로 갱신 (`done`, 생성 파일, 남은 후속 작업 유무)
 - 최종 생성 파일 목록을 사용자에게 보고
 - 팀 정리
+
+## Definition of Done
+
+아래 조건을 모두 만족해야 피처를 완료로 판단한다.
+
+1. PRD 또는 작업 명세가 `_workspace/01_spec_{feature}.md`에 정리되어 있다.
+2. `_workspace/progress.md`가 현재 상태를 반영하도록 갱신되어 있다.
+3. ios-critic / ios-reviewer 결과가 각각 기록되어 있거나, 해당 단계가 생략된 이유가 명시되어 있다.
+4. 테스트 또는 검증 근거가 남아 있다.
+   - 실행한 명령, 수동 검증 항목, 실행 불가 사유 중 최소 하나 이상
+5. known issue가 남아 있으면 사용자에게 보고할 수 있는 수준으로 명시되어 있다.
+6. 최종 보고에 아래 항목이 포함된다.
+   - 생성/수정 파일 목록
+   - 검증 결과 요약
+   - 남은 리스크 또는 후속 작업
+
+완료 조건을 만족하지 못하면 `done`으로 마감하지 않는다.
+
+## Human Approval Gate
+
+아래 항목은 오케스트레이터가 사용자 승인 없이 진행하지 않는다.
+
+- API 스펙을 추정해서 구현해야 하는 경우
+- 화면 흐름 / UX 동작을 기존과 다르게 바꾸는 경우
+- public interface, DI 구성, 라우팅 규칙을 깨는 구조 변경
+- 새 dependency 추가 또는 기존 dependency 제거
+- 다수 파일 이동 / 이름 변경 / 폴더 구조 재편
+- 브랜치 생성, 커밋, PR 생성, 원격 push
+- reviewer/critic가 Critical 이슈를 남긴 상태에서 강행 종료
+
+원칙:
+- 확실하면 진행하고, 사용자 의도를 추정해야 하면 멈추고 승인받는다.
+- 승인 필요 항목이 하나라도 있으면 `_workspace/progress.md`의 `open_questions`에 남긴다.
+
+## Verification Evidence
+
+검증 완료라고 보고할 때는 반드시 아래 근거를 남긴다.
+
+- 실행한 명령
+  - 예: `xcodebuild test`, `swift test`, `swiftlint`
+- 수동 검증 항목
+  - 예: 진입 화면, 탭 동작, 에러 토스트, 네비게이션
+- 실행하지 못한 검증과 그 이유
+  - 예: 인증 토큰 부재, 시뮬레이터 미구성, 권한 제한
+- reviewer가 실제로 읽은 핵심 파일 집합
+  - 예: Reactor, ViewController, UseCase, Repository, Flow, Tests
+- 남은 리스크
+  - 예: E2E 미검증, mock 기반 검증만 완료, 빈 상태 UX 미확정
+
+최종 보고와 `_workspace/02_review_{feature}.md`에는 위 근거가 요약되어야 한다.
+
+## 세션 인계 파일 규칙
+
+- 경로: `_workspace/progress.md`
+- 목적: 컨텍스트 압축/재시작 후에도 현재 진행 상황을 즉시 복구
+- 소유자: 오케스트레이터가 읽기/쓰기 책임을 가진다. 에이전트는 progress 변경이 필요하면 SendMessage로 상태 변경을 보고한다.
+- 갱신 시점: PRD 확정 직후, 테스트 케이스 작성 직후, critic/reviewer 결과 수신 직후, 최종 완료 직후
+- 최소 기록 항목:
+  - `current_phase`
+  - `feature`
+  - `completed`
+  - `next_action`
+  - `open_questions`
+  - `artifacts`
+
+예시:
+
+```markdown
+# Progress
+
+- current_phase: review_requested
+- feature: BookmarkList
+- completed:
+  - `_workspace/01_spec_bookmark-list.md` 작성
+  - `_workspace/01a_tests_bookmark-list.md` 작성
+  - GREEN 구현 완료
+- next_action: ios-reviewer 검증 대기
+- open_questions:
+  - 없음
+- artifacts:
+  - `_workspace/01_spec_bookmark-list.md`
+  - `_workspace/01a_tests_bookmark-list.md`
+  - `_workspace/03_critic_bookmark-list.md`
+```
 
 ## 파일 소유권 (One file, one owner)
 
@@ -124,15 +219,18 @@ TaskCreate([
 | ios-reviewer | `_workspace/02_review_*.md` | `Projects/` 전체, `_workspace/01_*.md`, `_workspace/03_*.md` |
 
 **원칙**: `Projects/` 내 Swift 파일은 ios-developer만 수정한다. critic/reviewer는 절대 소스 파일을 직접 수정하지 않는다.
+`_workspace/progress.md`는 에이전트 파일 소유권 대상이 아니며, 오케스트레이터만 갱신한다.
 
 ## 데이터 전달 프로토콜
 
 | 데이터 | 전달 방식 | 경로 |
 |--------|---------|------|
 | 피처 명세 | 파일 | `_workspace/01_spec_{feature}.md` |
+| 진행 상태 | 파일 | `_workspace/progress.md` |
 | 생성 코드 | 직접 작성 | `Projects/{Layer}/Sources/{Feature}/` |
 | 반박 결과 | 파일 + SendMessage | `_workspace/03_critic_{feature}.md` |
 | 리뷰 결과 | 파일 + SendMessage | `_workspace/02_review_{feature}.md` |
+| 검증 근거 | 리뷰 문서 내 섹션 | `_workspace/02_review_{feature}.md` |
 | 수정 지침 | SendMessage | ios-reviewer/critic → ios-developer |
 | 최종 보고 | 텍스트 | 사용자에게 직접 |
 
@@ -141,6 +239,7 @@ TaskCreate([
 | 상황 | 처리 방법 |
 |------|---------|
 | 피처 명세 불완전 | 개발 시작 전 사용자에게 명확화 요청 |
+| 사용자 승인 필요 항목 발생 | 승인 전까지 구현 보류, `open_questions`에 기록 |
 | 3회 반복 후 Critical 이슈 잔존 | 오케스트레이터가 직접 개입, 근본 원인 분석 |
 | 기존 파일과 충돌 | ios-developer가 기존 코드 읽기 후 판단, 필요시 오케스트레이터 승인 |
 | 에이전트 응답 없음 | 1회 재시도 후 실패 시 해당 Phase 건너뛰고 보고서에 명시 |
@@ -149,13 +248,22 @@ TaskCreate([
 
 ### 정상 흐름
 1. 사용자: "북마크 목록 화면 만들어줘 (GET /bookmarks API)"
-2. 오케스트레이터가 명세 파일 작성 후 팀 구성
-3. ios-developer: BookmarkListReactor, BookmarkListViewController, BookmarkUseCase, BookmarkRepository 생성
-4. ios-reviewer: 검증 후 APPROVED
-5. 사용자에게 생성 파일 목록 보고
+2. 오케스트레이터가 `_workspace/progress.md` 확인 후 PRD 인터뷰 진행, `_workspace/01_spec_bookmark-list.md` 작성
+3. ios-developer가 RED 단계에서 테스트 파일과 `_workspace/01a_tests_bookmark-list.md` 작성
+4. ios-developer가 GREEN 단계에서 BookmarkListReactor, BookmarkListViewController, BookmarkUseCase, BookmarkRepository 생성
+5. ios-critic이 설계 반박 수행 후 ACCEPT 또는 경미한 CHALLENGE 전달
+6. ios-reviewer가 테스트/패턴 검증 후 APPROVED
+7. ios-developer가 REFACTOR 후 테스트 재확인, `_workspace/progress.md`를 `done`으로 갱신
+8. 사용자에게 생성 파일 목록과 검증 결과 보고
 
 ### 에러 흐름
-1. ios-reviewer가 NEEDS_REVISION (Reactor의 reduce()에서 네트워크 호출 발견)
-2. ios-developer가 mutate()로 이동 후 재제출
-3. ios-reviewer APPROVED
-4. 완료 보고
+1. ios-critic이 CHALLENGE (중복 요청 처리 누락, State 과도 설계) 전달
+2. ios-developer가 구조를 단순화하고 progress를 `critic_resolved`로 갱신
+3. ios-reviewer가 NEEDS_REVISION (Reactor의 reduce()에서 side effect 발견)
+4. ios-developer가 `mutate()`로 이동하고 테스트 보강 후 재제출
+5. ios-reviewer APPROVED, ios-developer가 REFACTOR 및 최종 progress 갱신
+
+### 세션 복구 흐름
+1. 컨텍스트 압축 또는 세션 재시작 발생
+2. 오케스트레이터가 `_workspace/progress.md`를 읽고 마지막 phase와 artifact를 복구
+3. 누락된 단계만 이어서 수행하고 중복 인터뷰/중복 리뷰는 생략
