@@ -236,9 +236,26 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.isWinterInternSeason }
-            .bind { [weak self] in
-                self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
-                self?.findWinterRecruitmentsCard.isHidden = !$0
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] isSeason in
+                guard let self = self,
+                      self.contentView.subviews.contains(self.applicationStatusMenuLabel) else { return }
+                self.careerMenuLabel.isHidden = !isSeason
+                self.careerStackView.isHidden = !isSeason
+
+                self.applicationStatusMenuLabel.snp.remakeConstraints {
+                    if isSeason {
+                        $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    } else {
+                        $0.top.equalTo(self.recentCompanyCollectionView.snp.bottom).offset(24)
+                    }
+                    $0.leading.trailing.equalToSuperview()
+                }
+
+                if isSeason {
+                    self.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
+                }
             }
             .disposed(by: disposeBag)
 
