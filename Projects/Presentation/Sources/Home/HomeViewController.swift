@@ -262,6 +262,10 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         reactor.state.map { $0.recentCompanyList }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
+            .do(onNext: { [weak self] list in
+                self?.recentCompanyMenuLabel.isHidden = list.isEmpty
+                self?.recentCompanyCollectionView.isHidden = list.isEmpty
+            })
             .bind(to: recentCompanyCollectionView.rx.items(
                 cellIdentifier: RecentCompanyCollectionViewCell.identifier,
                 cellType: RecentCompanyCollectionViewCell.self
