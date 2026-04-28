@@ -25,8 +25,5 @@
 - 레이어 역방향 import 금지.
 - 모든 의존성은 Assembly를 통해 등록한다.
 
-## Current Structural Baseline
-- [x] `CompanyDetailPreviousViewType` 를 `Presentation` 에서 제거하고 `Core/Sources/Steps` 단일 정의를 기준으로 정리한다.
-
 ## Test Queue
 - [ ] 다음 기능 작업이 정해지면 첫 failing test 를 여기에 추가한다.
