@@ -27,7 +27,8 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case recruitmentDidSelect(Int)
         case searchButtonDidTap
         case filterButtonDidTap
-        case updateFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
+        case updateFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, region: String?,  status: String?)
+        case updateSortOption(String)
     }
 
     public enum Mutation {
@@ -36,8 +37,9 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case updateBookmark(Int)
         case incrementPageCount
         case resetPageCount
-        case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, status: String?)
+        case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, region: String?, status: String?)
         case setLoading(Bool)
+        case setSortType(RecruitmentSortType?)
     }
 
     public struct State {
@@ -45,7 +47,9 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         var jobCode: String = ""
         var techCode: [String]?
         var years: [String]?
+        var region: String?
         var status: String?
+        var sortType: RecruitmentSortType?
         var pageCount: Int = 1
         var isLoading: Bool = false
     }
@@ -63,7 +67,9 @@ extension RecruitmentReactor {
                     jobCode: currentState.jobCode,
                     techCode: currentState.techCode,
                     years: currentState.years,
-                    status: currentState.status
+                    region: currentState.region,
+                    status: currentState.status,
+                    sortType: currentState.sortType?.rawValue
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
@@ -81,7 +87,9 @@ extension RecruitmentReactor {
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
-                status: currentState.status
+                region: currentState.region,
+                status: currentState.status,
+                sortType: currentState.sortType?.rawValue
             )
             .asObservable()
             .catch { _ in .empty() }
@@ -113,8 +121,33 @@ extension RecruitmentReactor {
             steps.accept(RecruitmentStep.recruitmentFilterIsRequired)
             return .empty()
 
-        case let .updateFilterOptions(jobCode, techCode, years, status):
-            return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, status: status))
+        case let .updateFilterOptions(jobCode, techCode, years, region, status):
+            return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, region: region, status: status))
+
+        case let .updateSortOption(option):
+            let sortType = RecruitmentSortType(localizedString: option)
+            return .concat([
+                .just(.setSortType(sortType)),
+                .just(.resetPageCount),
+                .just(.setLoading(true)),
+                fetchRecruitmentListUseCase.execute(
+                    page: 1,
+                    jobCode: currentState.jobCode,
+                    techCode: currentState.techCode,
+                    years: currentState.years,
+                    region: currentState.region,
+                    status: currentState.status,
+                    sortType: sortType?.rawValue
+                )
+                .asObservable()
+                .flatMap { list -> Observable<Mutation> in
+                    return .concat([
+                        .just(.setRecruitmentList(list)),
+                        .just(.setLoading(false))
+                    ])
+                }
+                .catch { _ in .just(.setLoading(false)) }
+            ])
         }
     }
 
@@ -142,14 +175,18 @@ extension RecruitmentReactor {
         case .resetPageCount:
             newState.pageCount = 1
 
-        case let .setFilterOptions(jobCode, techCode, years, status):
+        case let .setFilterOptions(jobCode, techCode, years, region, status):
             newState.jobCode = jobCode
             newState.techCode = techCode
             newState.years = years
+            newState.region = region
             newState.status = status
 
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+
+        case let .setSortType(sortType):
+            newState.sortType = sortType
         }
         return newState
     }

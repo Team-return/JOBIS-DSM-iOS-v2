@@ -19,7 +19,9 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
         name: String?,
         winterIntern: Bool?,
         years: [String]?,
-        status: String?
+        region: String?,
+        status: String?,
+        sortType: String?
     ) -> Single<[RecruitmentEntity]> {
         remoteRecruitmentsDataSource.fetchRecruitmentList(
             page: page,
@@ -28,7 +30,9 @@ struct RecruitmentsRepositoryImpl: RecruitmentsRepository {
             name: name,
             winterIntern: winterIntern,
             years: years,
-            status: status
+            region: region,
+            status: status,
+            sortType: sortType
         )
     }
 }

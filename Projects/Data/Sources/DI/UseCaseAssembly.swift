@@ -93,6 +93,11 @@ public final class UseCaseAssembly: Assembly {
                 companiesRepository: resolver.resolve(CompaniesRepository.self)!
             )
         }
+        container.register(FetchRecentCompanyListUseCase.self) { resolver in
+            FetchRecentCompanyListUseCase(
+                companiesRepository: resolver.resolve(CompaniesRepository.self)!
+            )
+        }
 
         // Reviews
         container.register(PostReviewUseCase.self) { resolver in

@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# pre-commit hook: SwiftLint
+# staged Swift 파일에 대해서만 SwiftLint를 실행한다.
+#
+
+set -e
+
+SWIFTLINT=$(which swiftlint 2>/dev/null || echo "")
+
+if [ -z "$SWIFTLINT" ]; then
+    echo "⚠️  SwiftLint가 설치되어 있지 않습니다."
+    echo "   brew install swiftlint 으로 설치하세요."
+    exit 1
+fi
+
+# staged Swift 파일 목록 추출
+STAGED_SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep "\.swift$" || true)
+
+if [ -z "$STAGED_SWIFT_FILES" ]; then
+    exit 0
+fi
+
+echo "🔍 SwiftLint 검사 중..."
+
+# 임시 파일 목록 생성
+TMPFILE=$(mktemp)
+echo "$STAGED_SWIFT_FILES" > "$TMPFILE"
+
+# SwiftLint 실행 (lint only — autocorrect 하지 않음)
+EXIT_CODE=0
+while IFS= read -r file; do
+    if [ -f "$file" ]; then
+        "$SWIFTLINT" lint --quiet "$file" || EXIT_CODE=$?
+    fi
+done < "$TMPFILE"
+
+rm -f "$TMPFILE"
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ SwiftLint 위반이 발견되었습니다. 커밋이 차단됩니다."
+    echo "   swiftlint --fix 로 자동 수정하거나 위반 사항을 수동으로 수정하세요."
+    exit 1
+fi
+
+echo "✅ SwiftLint 검사 통과"
+exit 0

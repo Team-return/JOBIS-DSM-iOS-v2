@@ -102,7 +102,7 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
 
         viewWillAppearPublisher.asObservable()
             .bind { [weak self] in
-                self?.showTabbar()
+                self?.hideTabbar()
                 self?.setLargeTitle(title: "북마크")
             }
             .disposed(by: disposeBag)

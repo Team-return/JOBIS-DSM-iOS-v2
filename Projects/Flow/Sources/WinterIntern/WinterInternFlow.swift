@@ -44,14 +44,14 @@ private extension WinterInternFlow {
     }
 
     func navigateToRecruitmentDetail(recruitmentID: Int) -> FlowContributors {
-        let recruitmentDetailFlow = WinterInternDetailFlow(container: container)
+        let recruitmentDetailFlow = WinterInternDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? WinterInternDetailViewController
-            view?.viewModel.recruitmentID = recruitmentID
             view?.isPopViewController = { id, bookmark in
-                // In ReactorKit, state is immutable
-                // The list will be refreshed on viewWillAppear if needed
                 let popView = self.rootViewController
                 popView.isTabNavigation = false
             }

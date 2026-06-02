@@ -3,9 +3,10 @@ import Domain
 import AppNetwork
 
 enum CompaniesAPI {
-    case fetchCompanyList(page: Int, name: String?)
+    case fetchCompanyList(page: Int, name: String?, sortType: String?)
     case fetchCompanyInfoDetail(id: Int)
     case fetchWritableReviewList
+    case fetchRecentCompanyList
 }
 
 extension CompaniesAPI: JobisAPI {
@@ -25,23 +26,27 @@ extension CompaniesAPI: JobisAPI {
 
         case .fetchWritableReviewList:
             return "/review"
+
+        case .fetchRecentCompanyList:
+            return "/student/recent"
         }
     }
 
     var method: Method {
         switch self {
-        case .fetchCompanyList, .fetchCompanyInfoDetail, .fetchWritableReviewList:
+        case .fetchCompanyList, .fetchCompanyInfoDetail, .fetchWritableReviewList, .fetchRecentCompanyList:
             return .get
         }
     }
 
     var task: Task {
         switch self {
-        case let .fetchCompanyList(page, name):
+        case let .fetchCompanyList(page, name, sortType):
             return .requestParameters(
                 parameters: [
                     "page": page,
-                    "name": name ?? ""
+                    "name": name ?? "",
+                    "sort_type": sortType ?? ""
                 ], encoding: URLEncoding.queryString)
 
         default:
@@ -62,6 +67,9 @@ extension CompaniesAPI: JobisAPI {
             return [:]
 
         case .fetchWritableReviewList:
+            return [:]
+
+        case .fetchRecentCompanyList:
             return [:]
         }
     }

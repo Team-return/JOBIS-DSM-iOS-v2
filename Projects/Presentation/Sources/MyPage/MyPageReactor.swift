@@ -12,6 +12,7 @@ public final class MyPageReactor: BaseReactor, Stepper {
         case reviewNavigateButtonDidTap(Int)
         case profileImageSelected(UploadFileModel)
         case notificationSettingDidTap
+        case bookmarkDidTap
         case helpDidTap
         case bugReportDidTap
         case interestFieldDidTap
@@ -108,6 +109,10 @@ public final class MyPageReactor: BaseReactor, Stepper {
 
         case .notificationSettingDidTap:
             steps.accept(MyPageStep.notificationSettingIsRequired)
+            return .empty()
+
+        case .bookmarkDidTap:
+            steps.accept(MyPageStep.bookmarkIsRequired)
             return .empty()
 
         case .helpDidTap:

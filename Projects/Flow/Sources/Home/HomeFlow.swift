@@ -43,6 +43,9 @@ public final class HomeFlow: Flow {
         case let .recruitmentDetailIsRequired(id):
             return navigateToRecruitmentDetail(id)
 
+        case let .companyDetailIsRequired(id):
+            return navigateToCompanyDetail(id)
+
         case .employStatusIsRequired:
             return navigateToEmployStatus()
         case .none:
@@ -136,7 +139,13 @@ private extension HomeFlow {
         _ companyName: String,
         _ companyImageUrl: String
     ) -> FlowContributors {
-        let rejectReasonFlow = RejectReasonFlow(container: container)
+        let rejectReasonFlow = RejectReasonFlow(
+            container: container,
+            applicationID: applicationID,
+            recruitmentID: recruitmentID,
+            companyName: companyName,
+            companyImageUrl: companyImageUrl
+        )
         Flows.use(rejectReasonFlow, when: .created) { root in
             self.rootViewController.present(
                 root,
@@ -147,12 +156,7 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: rejectReasonFlow,
             withNextStepper: OneStepper(
-                withSingleStep: RejectReasonStep.rejectReasonIsRequired(
-                    applicationID: applicationID,
-                    recruitmentID: recruitmentID,
-                    companyName: companyName,
-                    companyImageUrl: companyImageUrl
-                )
+                withSingleStep: RejectReasonStep.rejectReasonIsRequired
             )
         ))
     }
@@ -210,6 +214,25 @@ private extension HomeFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: recruitmentDetailFlow,
             withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
+        ))
+    }
+
+    func navigateToCompanyDetail(_ companyID: Int) -> FlowContributors {
+        let companyDetailFlow = CompanyDetailFlow(
+            container: container,
+            companyId: companyID,
+            type: .home
+        )
+
+        Flows.use(companyDetailFlow, when: .created) { root in
+            self.rootViewController.pushViewController(
+                root, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: companyDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: CompanyDetailStep.companyDetailIsRequired)
         ))
     }
 

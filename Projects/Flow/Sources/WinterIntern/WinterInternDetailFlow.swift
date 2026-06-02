@@ -11,9 +11,12 @@ public final class WinterInternDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container) {
+    public init(container: Container, recruitmentID: Int? = nil, companyId: Int? = nil, type: RecruitmentDetailPreviousViewType = .recruitmentList) {
         self.container = container
-        self.rootViewController = container.resolve(WinterInternDetailViewController.self)!
+        self.rootViewController = container.resolve(
+            WinterInternDetailViewController.self,
+            arguments: recruitmentID, companyId, type
+        )!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -36,7 +39,7 @@ private extension WinterInternDetailFlow {
     func navigateToRecruitmentDetail() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -81,7 +84,7 @@ private extension WinterInternDetailFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: applyFlow,
             withNextStepper: OneStepper(
-                withSingleStep: ApplyStep.applyIsRequired(recruitmentId: id, name: name, imageURL: imageURL)
+                withSingleStep: ApplyStep.applyIsRequired
             )
         ))
     }

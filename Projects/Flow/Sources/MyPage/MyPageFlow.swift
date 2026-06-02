@@ -17,6 +17,15 @@ public final class MyPageFlow: Flow {
     }
 
     public func navigate(to step: Step) -> FlowContributors {
+        if let bookmarkStep = step as? BookmarkStep {
+            switch bookmarkStep {
+            case let .recruitmentDetailIsRequired(id):
+                return navigateToRecruitmentDetail(id)
+            default:
+                return .none
+            }
+        }
+
         guard let step = step as? MyPageStep else { return .none }
 
         switch step {
@@ -31,6 +40,9 @@ public final class MyPageFlow: Flow {
 
         case .notificationSettingIsRequired:
             return navigateToNotification()
+
+        case .bookmarkIsRequired:
+            return navigateToBookmark()
 
         case .noticeIsRequired:
             return navigateToNotice()
@@ -71,11 +83,11 @@ extension MyPageFlow {
 
         Flows.use(writableReviewFlow, when: .created) { (root) in
             let view = root as? WritableReviewViewController
-            view?.viewModel.companyID = id
+            view?.reactor.companyID = id
             if let useCase = self.container.resolve(FetchCompanyInfoDetailUseCase.self) {
                 _ = useCase.execute(id: id)
                     .subscribe(onSuccess: { entity in
-                        view?.viewModel.companyName = entity.companyName
+                        view?.reactor.companyName = entity.companyName
                         view?.navigationItem.title = entity.companyName
                     }, onFailure: { _ in })
             }
@@ -102,6 +114,19 @@ extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: notificationSettingFlow,
             withNextStepper: OneStepper(withSingleStep: NotificationSettingStep.notificationSettingIsRequired)
+        ))
+    }
+
+    func navigateToBookmark() -> FlowContributors {
+        let bookmarkViewController = container.resolve(BookmarkViewController.self)!
+
+        self.rootViewController.pushViewController(
+            bookmarkViewController, animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: bookmarkViewController,
+            withNextStepper: bookmarkViewController.reactor
         ))
     }
 
@@ -147,6 +172,25 @@ extension MyPageFlow {
         return .one(flowContributor: .contribute(
             withNextPresentable: confirmPasswordFlow,
             withNextStepper: OneStepper(withSingleStep: ConfirmPasswordStep.confirmPasswordIsRequired)
+        ))
+    }
+
+    func navigateToRecruitmentDetail(_ recruitmentID: Int) -> FlowContributors {
+        let recruitmentDetailFlow = RecruitmentDetailFlow(
+            container: container,
+            recruitmentID: recruitmentID
+        )
+
+        Flows.use(recruitmentDetailFlow, when: .created) { (root) in
+            let view = root as? RecruitmentDetailViewController
+            self.rootViewController.pushViewController(
+                view!, animated: true
+            )
+        }
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: recruitmentDetailFlow,
+            withNextStepper: OneStepper(withSingleStep: RecruitmentDetailStep.recruitmentDetailIsRequired)
         ))
     }
 

@@ -2,14 +2,15 @@ import RxSwift
 import Domain
 
 protocol RemoteCompaniesDataSource {
-    func fetchCompanyList(page: Int, name: String?) -> Single<[CompanyEntity]>
+    func fetchCompanyList(page: Int, name: String?, sortType: String?) -> Single<[CompanyEntity]>
     func fetchCompanyInfoDetail(id: Int) -> Single<CompanyInfoDetailEntity>
     func fetchWritableReviewList() -> Single<[WritableReviewCompanyEntity]>
+    func fetchRecentCompanyList() -> Single<[RecentCompanyEntity]>
 }
 
 final class RemoteCompaniesDataSourceImpl: RemoteBaseDataSource<CompaniesAPI>, RemoteCompaniesDataSource {
-    func fetchCompanyList(page: Int, name: String?) -> Single<[CompanyEntity]> {
-        request(.fetchCompanyList(page: page, name: name))
+    func fetchCompanyList(page: Int, name: String?, sortType: String?) -> Single<[CompanyEntity]> {
+        request(.fetchCompanyList(page: page, name: name, sortType: sortType))
             .map(CompanyListResponseDTO.self)
             .map { $0.toDomain() }
     }
@@ -24,5 +25,11 @@ final class RemoteCompaniesDataSourceImpl: RemoteBaseDataSource<CompaniesAPI>, R
         request(.fetchWritableReviewList)
             .map(WritableReviewListResponseDTO.self)
             .map { $0.toDomain() }
+    }
+
+    func fetchRecentCompanyList() -> Single<[RecentCompanyEntity]> {
+        request(.fetchRecentCompanyList)
+            .map(RecentCompanyListResponseDTO.self)
+            .map { $0.companies.map { $0.toDomain() } }
     }
 }

@@ -40,7 +40,7 @@ private extension ConfirmPasswordFlow {
     func navigateToChangePassword(
         currentPassword: String
     ) -> FlowContributors {
-        let changePasswordFlow = ChangePasswordFlow(container: container)
+        let changePasswordFlow = ChangePasswordFlow(container: container, currentPassword: currentPassword)
 
         Flows.use(changePasswordFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

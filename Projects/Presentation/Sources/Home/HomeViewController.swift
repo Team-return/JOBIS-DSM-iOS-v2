@@ -20,7 +20,23 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     }
     private let contentView = UIView()
     private let bannerView = BannerView()
-    private let studentInfoView = StudentInfoView()
+    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업")
+    private let recentCompanyCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout().then {
+            $0.scrollDirection = .horizontal
+            $0.minimumLineSpacing = 20
+            $0.sectionInset = .init(top: 7, left: 24, bottom: 7, right: 24)
+            $0.itemSize = CGSize(width: 184, height: 163)
+        }
+    ).then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.backgroundColor = .clear
+        $0.register(
+            RecentCompanyCollectionViewCell.self,
+            forCellWithReuseIdentifier: RecentCompanyCollectionViewCell.identifier
+        )
+    }
     private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
     private let applicationStatusMenuLabel = JobisMenuLabel(
         text: "지원 현황",
@@ -43,7 +59,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         $0.distribution = .fillEqually
         $0.spacing = 12
     }
-    private var findCompanysCard = CareerNavigationCard()
     private var findWinterRecruitmentsCard = CareerNavigationCard()
     private var navigateToEasterEggDidTap = PublishRelay<Void>()
     private let employStatusButtonTap = PublishRelay<Void>()
@@ -51,13 +66,11 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     public override func addView() {
         self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
-        [
-            findCompanysCard,
-            findWinterRecruitmentsCard
-        ].forEach(careerStackView.addArrangedSubview(_:))
+        careerStackView.addArrangedSubview(findWinterRecruitmentsCard)
         [
             bannerView,
-            studentInfoView,
+            recentCompanyMenuLabel,
+            recentCompanyCollectionView,
             careerMenuLabel,
             careerStackView,
             applicationStatusMenuLabel,
@@ -81,12 +94,18 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.leading.trailing.equalToSuperview()
         }
 
-        studentInfoView.snp.makeConstraints {
-            $0.top.equalTo(bannerView.snp.bottom)
+        recentCompanyMenuLabel.snp.makeConstraints {
+            $0.top.equalTo(bannerView.snp.bottom).offset(16)
+        }
+
+        recentCompanyCollectionView.snp.makeConstraints {
+            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(177)
         }
 
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(studentInfoView.snp.bottom).offset(12)
+            $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(12)
         }
 
         careerStackView.snp.makeConstraints {
@@ -123,11 +142,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        findCompanysCard.rx.tap
-            .map { HomeReactor.Action.navigateToCompanyButtonDidTap }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
         findWinterRecruitmentsCard.rx.tap
             .map { HomeReactor.Action.navigateToWinterInternButtonDidTap }
             .bind(to: reactor.action)
@@ -155,20 +169,22 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .map { HomeReactor.Action.employStatusButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+
+        viewWillAppearPublisher.asObservable()
+            .do(onNext: { [weak self] _ in
+                self?.recentCompanyCollectionView.setContentOffset(.zero, animated: false)
+            })
+            .map { _ in HomeReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        recentCompanyCollectionView.rx.modelSelected(RecentCompanyItem.self)
+            .map { HomeReactor.Action.recentCompanyDidTap(id: $0.entity.companyID) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     public override func bindState() {
-        reactor.state.compactMap { $0.studentInfo }
-            .bind { [weak self] studentInfo in
-                self?.studentInfoView.setStudentInfo(
-                    profileImageUrl: studentInfo.profileImageUrl,
-                    gcn: studentInfo.studentGcn,
-                    name: studentInfo.studentName,
-                    department: studentInfo.department.localizedString()
-                )
-            }
-            .disposed(by: disposeBag)
-
         reactor.state.map { $0.applicationList }
             .do(onNext: { [weak self] applicationList in
                 if applicationList.isEmpty {
@@ -210,7 +226,6 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             )) { [weak self] _, element, cell in
                 guard let self = self else { return }
                 cell.adapt(model: element)
-                
                 if case .totalPass = element {
                     cell.employStatusButton.rx.tap
                         .map { _ in () }
@@ -221,10 +236,41 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.isWinterInternSeason }
-            .bind { [weak self] in
-                self?.findCompanysCard.setCard(style: $0 ? .small(type: .findCompanys) : .large)
-                self?.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
-                self?.findWinterRecruitmentsCard.isHidden = !$0
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] isSeason in
+                guard let self = self,
+                      self.contentView.subviews.contains(self.applicationStatusMenuLabel) else { return }
+                self.careerMenuLabel.isHidden = !isSeason
+                self.careerStackView.isHidden = !isSeason
+
+                self.applicationStatusMenuLabel.snp.remakeConstraints {
+                    if isSeason {
+                        $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    } else {
+                        $0.top.equalTo(self.recentCompanyCollectionView.snp.bottom).offset(24)
+                    }
+                    $0.leading.trailing.equalToSuperview()
+                }
+
+                if isSeason {
+                    self.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
+                }
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.recentCompanyList }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .do(onNext: { [weak self] list in
+                self?.recentCompanyMenuLabel.isHidden = list.isEmpty
+                self?.recentCompanyCollectionView.isHidden = list.isEmpty
+            })
+            .bind(to: recentCompanyCollectionView.rx.items(
+                cellIdentifier: RecentCompanyCollectionViewCell.identifier,
+                cellType: RecentCompanyCollectionViewCell.self
+            )) { _, item, cell in
+                cell.adapt(model: item)
             }
             .disposed(by: disposeBag)
     }

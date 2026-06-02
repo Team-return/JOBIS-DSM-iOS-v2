@@ -6,14 +6,13 @@ import Core
 
 public final class CompanyFlow: Flow {
     public let container: Container
-    private let rootViewController: CompanyViewController
+    private let rootViewController = BaseNavigationController()
     public var root: Presentable {
         return rootViewController
     }
 
     public init(container: Container) {
         self.container = container
-        self.rootViewController = container.resolve(CompanyViewController.self)!
     }
 
     public func navigate(to step: Step) -> FlowContributors {
@@ -32,9 +31,11 @@ public final class CompanyFlow: Flow {
 
 private extension CompanyFlow {
     func navigateToCompany() -> FlowContributors {
+        let companyViewController = container.resolve(CompanyViewController.self)!
+        self.rootViewController.setViewControllers([companyViewController], animated: false)
         return .one(flowContributor: .contribute(
-            withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.reactor
+            withNextPresentable: companyViewController,
+            withNextStepper: companyViewController.reactor
         ))
     }
 
@@ -46,7 +47,7 @@ private extension CompanyFlow {
         )
 
         Flows.use(companyDetailFlow, when: .created) { (root) in
-            self.rootViewController.navigationController?.pushViewController(
+            self.rootViewController.pushViewController(
                 root, animated: true
             )
         }
@@ -62,7 +63,7 @@ private extension CompanyFlow {
 
         Flows.use(searchCompanyFlow, when: .created) { (root) in
             let view = root as? SearchCompanyViewController
-            self.rootViewController.navigationController?.pushViewController(
+            self.rootViewController.pushViewController(
                 view!, animated: true
             )
         }

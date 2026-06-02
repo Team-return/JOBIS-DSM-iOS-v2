@@ -5,11 +5,6 @@ import RxFlow
 import Core
 import Domain
 
-public enum RecruitmentDetailPreviousViewType {
-    case companyDetail
-    case recruitmentList
-}
-
 public final class RecruitmentDetailReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State

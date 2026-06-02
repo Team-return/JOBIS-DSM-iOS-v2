@@ -101,21 +101,21 @@ final class BannerCollectionViewCell: BaseCollectionViewCell<HomeBannerItem> {
                 font: .headLine,
                 color: .Primary.blue20
             )
-            
+
             passTitleLabel.isHidden = false
             passLabel.isHidden = false
             employStatusButton.isHidden = false
             fileImageView.isHidden = false
         }
     }
-    
+
     private func resetViews() {
         imageView.isHidden = true
         passTitleLabel.isHidden = true
         passLabel.isHidden = true
         employStatusButton.isHidden = true
         fileImageView.isHidden = true
-        
+
         // Clear image to prevent reuse issues
         imageView.image = nil
     }

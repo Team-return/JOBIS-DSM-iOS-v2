@@ -1,0 +1,191 @@
+@Tutorial(time: 40) {
+    @Intro(title: "공지사항 기능으로 알아보는 튜토리얼") {
+        JOBIS 아키텍처에서 새 기능을 추가할 때 거쳐야 하는 8단계를 공지사항(Notice) 기능을 예시로 설명합니다.
+
+        전체 흐름: **Core → Domain → Data → Presentation → Flow**
+    }
+
+    @Section(title: "1단계: Step 정의 (Core)") {
+        @ContentAndMedia {
+            `Core` 모듈의 `Steps/` 폴더에 화면 전환용 Step enum을 추가합니다.
+
+            Step은 RxFlow에서 화면 전환 의도를 표현하는 타입입니다.
+            각 화면마다 별도 파일로 분리합니다.
+
+            > Important: 데이터가 필요한 경우 연관값으로 전달합니다.
+            > `rootViewController`를 `init`에서 resolve해야 하므로
+            > Flow 생성 시점에 필요한 데이터는 Step 연관값이 아닌
+            > **Flow의 `init`에 직접 전달**해야 합니다.
+        }
+
+        @Steps {
+            @Step {
+                `Core/Sources/Steps/` 폴더에 `NoticeStep.swift`를 생성합니다.
+                목록 화면과 상세 화면 두 개의 케이스를 정의합니다.
+
+                @Code(name: "NoticeStep.swift", file: "01-notice-step.swift")
+            }
+
+            @Step {
+                상세 화면처럼 ID가 필요한 경우, 해당 ID를 **Flow의 `init`에 전달**하기 위해
+                별도 Step 파일에 연관값 없이 정의합니다.
+
+                @Code(name: "NoticeDetailStep.swift", file: "02-notice-detail-step.swift")
+            }
+        }
+    }
+
+    @Section(title: "2단계: Entity 및 Repository 프로토콜 정의 (Domain)") {
+        @ContentAndMedia {
+            `Domain` 모듈에 비즈니스 데이터 모델(Entity)과 Repository 프로토콜을 추가합니다.
+
+            Domain은 외부 레이어(Data, Presentation)에 의존하지 않으며,
+            순수한 비즈니스 로직만 포함합니다.
+        }
+
+        @Steps {
+            @Step {
+                `Domain/Sources/Entities/Notice/` 폴더에 Entity를 정의합니다.
+
+                @Code(name: "NoticeDetailEntity.swift", file: "03-notice-detail-entity.swift")
+            }
+
+            @Step {
+                `Domain/Sources/Repositories/` 폴더에 Repository 프로토콜을 정의합니다.
+                구현체는 Data 레이어에 있습니다.
+
+                @Code(name: "NoticesRepository.swift", file: "04-notices-repository.swift")
+            }
+        }
+    }
+
+    @Section(title: "3단계: UseCase 추가 (Domain)") {
+        @ContentAndMedia {
+            `Domain/Sources/UseCases/` 폴더에 UseCase를 추가합니다.
+
+            UseCase는 Repository 프로토콜을 주입받아 단일 비즈니스 동작을 `execute()`로 노출합니다.
+            Reactor에서 직접 이 UseCase를 호출합니다.
+        }
+
+        @Steps {
+            @Step {
+                `Domain/Sources/UseCases/Notice/` 폴더에 UseCase 파일을 만듭니다.
+
+                @Code(name: "FetchNoticeDetailUseCase.swift", file: "05-fetch-notice-detail-usecase.swift")
+            }
+        }
+    }
+
+    @Section(title: "4단계: API, DTO, DataSource, Repository 구현 (Data)") {
+        @ContentAndMedia {
+            `Data` 모듈에서 실제 네트워크 통신을 구현합니다.
+
+            - **API**: Moya `TargetType` 기반 엔드포인트 정의
+            - **DTO**: 서버 응답 JSON → Swift 구조체 디코딩
+            - **DataSource**: API 호출 및 DTO → Entity 변환
+            - **Repository**: DataSource를 감싸는 구현체
+        }
+
+        @Steps {
+            @Step {
+                `Data/Sources/DataSource/API/` 폴더에 API enum을 만듭니다.
+                `JobisAPI` 프로토콜을 채택하면 `baseURL`이 자동으로 `Info.plist`의 `API_BASE_URL`을 사용합니다.
+
+                @Code(name: "NoticeAPI.swift", file: "06-notice-api.swift")
+            }
+
+            @Step {
+                `Data/Sources/DTO/Notice/` 폴더에 응답 DTO를 만듭니다.
+                `toDomain()` 메서드로 Entity로 변환합니다.
+
+                @Code(name: "NoticeDetailResponseDTO.swift", file: "07-notice-detail-dto.swift")
+            }
+
+            @Step {
+                `Data/Sources/DataSource/Remote/` 폴더에 DataSource 프로토콜과 구현체를 만듭니다.
+
+                @Code(name: "RemoteNoticesDataSource.swift", file: "08-remote-notices-datasource.swift")
+            }
+        }
+    }
+
+    @Section(title: "5단계: Reactor + ViewController 추가 (Presentation)") {
+        @ContentAndMedia {
+            `Presentation` 모듈에 화면 로직(Reactor)과 UI(ViewController)를 추가합니다.
+
+            - **Reactor**: Action → Mutation → State 단방향 데이터 흐름
+            - **ViewController**: State를 구독해 UI 업데이트, Action을 Reactor로 전달
+        }
+
+        @Steps {
+            @Step {
+                `Presentation/Sources/Notice/` 폴더에 `NoticeDetailReactor.swift`를 만듭니다.
+                `Stepper`를 채택해 화면 전환 이벤트를 방출합니다.
+
+                @Code(name: "NoticeDetailReactor.swift", file: "09-notice-detail-reactor.swift")
+            }
+
+            @Step {
+                같은 폴더에 `NoticeDetailViewController.swift`를 만듭니다.
+                `BaseReactorViewController<NoticeDetailReactor>`를 상속합니다.
+
+                @Code(name: "NoticeDetailViewController.swift", file: "10-notice-detail-viewcontroller.swift")
+            }
+        }
+    }
+
+    @Section(title: "6단계: DI Assembly 등록 (Presentation)") {
+        @ContentAndMedia {
+            `Presentation/Sources/DI/Assembly/` 폴더에 있는 Assembly에
+            Reactor와 ViewController를 등록합니다.
+
+            > Important: Reactor와 ViewController 모두 등록해야 합니다.
+            > ViewController에 주입되는 Reactor도 반드시 같은 Assembly 내에 등록되어 있어야 합니다.
+        }
+
+        @Steps {
+            @Step {
+                기능과 관련된 Assembly 파일(예: `SettingPresentationAssembly.swift`)을 찾아
+                Reactor와 ViewController를 `container.register`로 추가합니다.
+
+                @Code(name: "SettingPresentationAssembly.swift", file: "11-assembly-registration.swift")
+            }
+        }
+    }
+
+    @Section(title: "7단계: Flow 추가 (Flow)") {
+        @ContentAndMedia {
+            `Flow` 모듈에 화면의 네비게이션을 담당하는 Flow를 추가합니다.
+
+            > Important: `rootViewController`는 반드시 **`init`에서** `container.resolve()`로 초기화해야 합니다.
+            > `navigate(to:)` 안에서 초기화하면 RxFlow Coordinator가 `flow.root`에 먼저 접근할 때 nil 크래시가 발생합니다.
+            >
+            > ID 등 데이터가 필요한 경우에도 Flow의 `init(container:data:)` 파라미터로 받아 즉시 resolve하세요.
+        }
+
+        @Steps {
+            @Step {
+                `Flow/Sources/MyPage/Notice/` 폴더에 `NoticeDetailFlow.swift`를 만듭니다.
+                `rootViewController`를 `init`에서 resolve합니다.
+
+                @Code(name: "NoticeDetailFlow.swift", file: "12-notice-detail-flow.swift")
+            }
+        }
+    }
+
+    @Section(title: "8단계: 부모 Flow에서 연결") {
+        @ContentAndMedia {
+            자식 Flow를 부모 Flow의 `navigate(to:)` 안에서 생성하고,
+            `Flows.use`로 실제 화면 전환을 처리합니다.
+        }
+
+        @Steps {
+            @Step {
+                부모 Flow(`NoticeFlow.swift`)에서 Step을 받아 `NoticeDetailFlow`를 생성합니다.
+                데이터(`id`)는 Flow `init`에 직접 전달합니다.
+
+                @Code(name: "NoticeFlow.swift", file: "13-notice-flow-parent.swift")
+            }
+        }
+    }
+}

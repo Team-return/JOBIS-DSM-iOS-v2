@@ -43,7 +43,7 @@ private extension WritableReviewFlow {
     func navigateToWritableReview() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
-            withNextStepper: rootViewController.viewModel
+            withNextStepper: rootViewController.reactor
         ))
     }
 
@@ -52,15 +52,15 @@ private extension WritableReviewFlow {
 
         Flows.use(addReviewFlow, when: .created) { root in
             let view = root as? AddReviewViewController
-            view?.companyName = self.rootViewController.viewModel.companyName
+            view?.companyName = self.rootViewController.reactor.companyName
             view?.dismiss = { (techCode: CodeEntity, interviewFormat: InterviewFormat?, locationType: LocationType?) in
 
-                self.rootViewController.viewModel.jobCode = techCode.code
-                self.rootViewController.viewModel.interviewType = interviewFormat ?? .individual
-                self.rootViewController.viewModel.location = locationType ?? .seoul
+                self.rootViewController.reactor.jobCode = techCode.code
+                self.rootViewController.reactor.interviewType = interviewFormat ?? .individual
+                self.rootViewController.reactor.location = locationType ?? .seoul
                 view?.dismissBottomSheet()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.rootViewController.viewModel.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
+                    self.rootViewController.reactor.steps.accept(WritableReviewStep.navigateToInterviewAtmosphere)
                 }
             }
             self.rootViewController.present(root, animated: false)
@@ -77,11 +77,11 @@ private extension WritableReviewFlow {
     func navigateToInterviewAtmosphere() -> FlowContributors {
         let interviewAtmosphereFlow = InterviewAtmosphereFlow(
             container: container,
-            companyID: rootViewController.viewModel.companyID,
-            interviewType: rootViewController.viewModel.interviewType,
-            location: rootViewController.viewModel.location,
-            jobCode: rootViewController.viewModel.jobCode,
-            interviewerCount: rootViewController.viewModel.interviewerCount
+            companyID: rootViewController.reactor.companyID,
+            interviewType: rootViewController.reactor.interviewType,
+            location: rootViewController.reactor.location,
+            jobCode: rootViewController.reactor.jobCode,
+            interviewerCount: rootViewController.reactor.interviewerCount
         )
         Flows.use(interviewAtmosphereFlow, when: .created) { root in
             guard let viewController = root as? UIViewController else { return }

@@ -6,14 +6,13 @@ import RxFlow
 import Core
 import Domain
 
-import Domain
-
 public final class HomeReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
     private let fetchStudentInfoUseCase: FetchStudentInfoUseCase
     private let fetchApplicationUseCase: FetchApplicationUseCase
     private let fetchBannerListUseCase: FetchBannerListUseCase
+    private let fetchRecentCompanyListUseCase: FetchRecentCompanyListUseCase
     private let fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
     private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
 
@@ -21,6 +20,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
         fetchApplicationUseCase: FetchApplicationUseCase,
         fetchBannerListUseCase: FetchBannerListUseCase,
+        fetchRecentCompanyListUseCase: FetchRecentCompanyListUseCase,
         fetchWinterInternUseCase: FetchWinterInternSeasonUseCase,
         fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
     ) {
@@ -28,12 +28,15 @@ public final class HomeReactor: BaseReactor, Stepper {
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
         self.fetchApplicationUseCase = fetchApplicationUseCase
         self.fetchBannerListUseCase = fetchBannerListUseCase
+        self.fetchRecentCompanyListUseCase = fetchRecentCompanyListUseCase
         self.fetchWinterInternUseCase = fetchWinterInternUseCase
         self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
     }
 
     public enum Action {
         case fetchInitialData
+        case viewWillAppear
+        case recentCompanyDidTap(id: Int)
         case navigateToAlarmButtonDidTap
         case navigateToEasterEggDidTap
         case navigateToCompanyButtonDidTap
@@ -48,6 +51,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         case setStudentInfo(StudentInfoEntity)
         case setApplicationList([ApplicationEntity])
         case setBannerList([FetchBannerEntity])
+        case setRecentCompanyList([RecentCompanyEntity])
         case setWinterInternSeason(Bool)
         case setTotalPassStudentInfo(TotalPassStudentEntity)
         case incrementEasterEggCount
@@ -61,6 +65,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         var banners: [HomeBannerItem] = [
             .totalPass(.init(totalStudentCount: 0, passedCount: 0, approvedCount: 0))
         ]
+        var recentCompanyList: [RecentCompanyItem] = []
         var isWinterInternSeason: Bool = true
         var totalPassStudentInfo: TotalPassStudentEntity = TotalPassStudentEntity(
             totalStudentCount: 0,
@@ -106,6 +111,15 @@ extension HomeReactor {
                         .just(.setTotalPassStudentInfo(totalPassStudent))
                     }
             ])
+
+        case .viewWillAppear:
+            return fetchRecentCompanyListUseCase.execute()
+                .asObservable()
+                .map { Mutation.setRecentCompanyList($0) }
+
+        case let .recentCompanyDidTap(id):
+            steps.accept(HomeStep.companyDetailIsRequired(id: id))
+            return .empty()
 
         case .navigateToAlarmButtonDidTap:
             steps.accept(HomeStep.alarmIsRequired)
@@ -182,6 +196,9 @@ extension HomeReactor {
 
         case .resetEasterEggCount:
             newState.touchedPopcatCount = 0
+
+        case let .setRecentCompanyList(list):
+            newState.recentCompanyList = list.map { RecentCompanyItem(entity: $0) }
         }
         return newState
     }

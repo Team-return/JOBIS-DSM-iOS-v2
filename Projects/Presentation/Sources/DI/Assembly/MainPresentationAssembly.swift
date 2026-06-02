@@ -15,6 +15,7 @@ public final class MainPresentationAssembly: Assembly {
                 fetchStudentInfoUseCase: resolver.resolve(FetchStudentInfoUseCase.self)!,
                 fetchApplicationUseCase: resolver.resolve(FetchApplicationUseCase.self)!,
                 fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
+                fetchRecentCompanyListUseCase: resolver.resolve(FetchRecentCompanyListUseCase.self)!,
                 fetchWinterInternUseCase: resolver.resolve(FetchWinterInternSeasonUseCase.self)!,
                 fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
             )
@@ -195,11 +196,11 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Review
-        container.register(WritableReviewViewModel.self) { resolver in
-            WritableReviewViewModel()
+        container.register(WritableReviewReactor.self) { resolver in
+            WritableReviewReactor()
         }
         container.register(WritableReviewViewController.self) { resolver in
-            WritableReviewViewController(resolver.resolve(WritableReviewViewModel.self)!)
+            WritableReviewViewController(resolver.resolve(WritableReviewReactor.self)!)
         }
 
         // Add Review
@@ -245,15 +246,18 @@ public final class MainPresentationAssembly: Assembly {
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
-        container.register(WinterInternDetailViewController.self) { resolver in
-            WinterInternDetailViewController(
-                resolver.resolve(WinterInternDetailViewModel.self)!
+        container.register(WinterInternDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+            WinterInternDetailReactor(
+                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                recruitmentID: recruitmentID,
+                companyId: companyId,
+                type: type
             )
         }
-        container.register(WinterInternDetailViewModel.self) { resolver in
-            WinterInternDetailViewModel(
-                fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+        container.register(WinterInternDetailViewController.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+            WinterInternDetailViewController(
+                resolver.resolve(WinterInternDetailReactor.self, arguments: recruitmentID, companyId, type)!
             )
         }
 

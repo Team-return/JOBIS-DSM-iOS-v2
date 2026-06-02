@@ -96,7 +96,15 @@ vendor/bundle/
 Gemfile.lock
 
 ### Claude ###
-.claude/
+.claude/*
+!.claude/agents/
+!.claude/skills/
+!.claude/docs/
+!.claude/settings.json
+.claude/skills/my-skill/
+
+### OMC ###
+.omc/
 
 ### Tuist build files ###
 .build/
@@ -109,3 +117,4 @@ Gemfile.lock
 *.xcodeproj
 *.xcworkspace
 .tuist-generated
+.omx/

@@ -30,8 +30,8 @@ public final class ApplyFlow: Flow {
         guard let step = step as? ApplyStep else { return .none }
 
         switch step {
-        case let .applyIsRequired(id, name, imageURL):
-            return navigateToApply(id: id, name: name, imageURL: imageURL)
+        case .applyIsRequired:
+            return navigateToApply()
 
         case .popToRecruitmentDetail:
             return popToRecruitmentDetail()
@@ -46,7 +46,7 @@ public final class ApplyFlow: Flow {
 }
 
 private extension ApplyFlow {
-    func navigateToApply(id: Int, name: String, imageURL: String) -> FlowContributors {
+    func navigateToApply() -> FlowContributors {
         return .one(flowContributor: .contribute(
             withNextPresentable: rootViewController,
             withNextStepper: rootViewController.reactor

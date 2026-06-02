@@ -7,7 +7,7 @@ public struct FetchCompanyListUseCase {
 
     private let companiesRepository: CompaniesRepository
 
-    public func execute(page: Int, name: String? = nil) -> Single<[CompanyEntity]> {
-        return companiesRepository.fetchCompanyList(page: page, name: name)
+    public func execute(page: Int, name: String? = nil, sortType: String? = nil) -> Single<[CompanyEntity]> {
+        return companiesRepository.fetchCompanyList(page: page, name: name, sortType: sortType)
     }
 }
