@@ -28,7 +28,8 @@ public final class MainPresentationAssembly: Assembly {
         container.register(RecruitmentReactor.self) { resolver in
             RecruitmentReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                loadRecruitmentFilterUseCase: resolver.resolve(LoadRecruitmentFilterUseCase.self)!
             )
         }
 
@@ -69,7 +70,8 @@ public final class MainPresentationAssembly: Assembly {
         }
         container.register(RecruitmentFilterReactor.self) { resolver in
             RecruitmentFilterReactor(
-                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
+                saveRecruitmentFilterUseCase: resolver.resolve(SaveRecruitmentFilterUseCase.self)!
             )
         }
 
@@ -243,7 +245,8 @@ public final class MainPresentationAssembly: Assembly {
         container.register(WinterInternReactor.self) { resolver in
             WinterInternReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                loadRecruitmentFilterUseCase: resolver.resolve(LoadRecruitmentFilterUseCase.self)!
             )
         }
         container.register(WinterInternDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in

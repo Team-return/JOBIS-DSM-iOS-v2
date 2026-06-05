@@ -10,14 +10,17 @@ public final class WinterInternReactor: BaseReactor, Stepper {
     public let initialState: State
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
+    private let loadRecruitmentFilterUseCase: LoadRecruitmentFilterUseCase
 
     public init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
-        bookmarkUseCase: BookmarkUseCase
+        bookmarkUseCase: BookmarkUseCase,
+        loadRecruitmentFilterUseCase: LoadRecruitmentFilterUseCase
     ) {
         self.initialState = .init()
         self.fetchRecruitmentListUseCase = fetchRecruitmentListUseCase
         self.bookmarkUseCase = bookmarkUseCase
+        self.loadRecruitmentFilterUseCase = loadRecruitmentFilterUseCase
     }
 
     public enum Action {
@@ -27,7 +30,6 @@ public final class WinterInternReactor: BaseReactor, Stepper {
         case recruitmentDidSelect(Int)
         case searchButtonDidTap
         case filterButtonDidTap
-        case updateFilterOptions(jobCode: String, techCode: [String]?)
     }
 
     public enum Mutation {
@@ -51,17 +53,19 @@ extension WinterInternReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchRecruitmentList:
+            let filter = loadRecruitmentFilterUseCase.execute()
             return .concat([
+                .just(.setFilterOptions(jobCode: filter.jobCode, techCode: filter.techCode)),
                 .just(.resetPageCount),
                 fetchRecruitmentListUseCase.execute(
                     page: 1,
-                    jobCode: currentState.jobCode,
-                    techCode: currentState.techCode,
+                    jobCode: filter.jobCode,
+                    techCode: filter.techCode,
                     winterIntern: true
                 )
                 .asObservable()
                 .flatMap { list -> Observable<Mutation> in
-                    return .just(.setRecruitmentList(list))
+                    .just(.setRecruitmentList(list))
                 }
             ])
 
@@ -102,9 +106,6 @@ extension WinterInternReactor {
         case .filterButtonDidTap:
             steps.accept(RecruitmentStep.recruitmentFilterIsRequired)
             return .empty()
-
-        case let .updateFilterOptions(jobCode, techCode):
-            return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode))
         }
     }
 
