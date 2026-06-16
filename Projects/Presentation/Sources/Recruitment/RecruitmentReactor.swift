@@ -10,17 +10,17 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
     public let initialState: State
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
-    private let loadRecruitmentFilterUseCase: LoadRecruitmentFilterUseCase
+    private let fetchRecruitmentFilterUseCase: FetchRecruitmentFilterUseCase
 
     public init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
         bookmarkUseCase: BookmarkUseCase,
-        loadRecruitmentFilterUseCase: LoadRecruitmentFilterUseCase
+        fetchRecruitmentFilterUseCase: FetchRecruitmentFilterUseCase
     ) {
         self.initialState = .init()
         self.fetchRecruitmentListUseCase = fetchRecruitmentListUseCase
         self.bookmarkUseCase = bookmarkUseCase
-        self.loadRecruitmentFilterUseCase = loadRecruitmentFilterUseCase
+        self.fetchRecruitmentFilterUseCase = fetchRecruitmentFilterUseCase
     }
 
     public enum Action {
@@ -62,11 +62,11 @@ extension RecruitmentReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchRecruitmentList:
-            let filter = loadRecruitmentFilterUseCase.execute()
+            let filter = fetchRecruitmentFilterUseCase.execute()
             return fetchListMutations(filter: filter)
 
         case .viewWillAppear:
-            let filter = loadRecruitmentFilterUseCase.execute()
+            let filter = fetchRecruitmentFilterUseCase.execute()
             let currentFilter = RecruitmentFilterEntity(
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,

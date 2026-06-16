@@ -208,8 +208,8 @@ public final class UseCaseAssembly: Assembly {
                 recruitmentFilterRepository: resolver.resolve(RecruitmentFilterRepository.self)!
             )
         }
-        container.register(LoadRecruitmentFilterUseCase.self) { resolver in
-            LoadRecruitmentFilterUseCase(
+        container.register(FetchRecruitmentFilterUseCase.self) { resolver in
+            FetchRecruitmentFilterUseCase(
                 recruitmentFilterRepository: resolver.resolve(RecruitmentFilterRepository.self)!
             )
         }

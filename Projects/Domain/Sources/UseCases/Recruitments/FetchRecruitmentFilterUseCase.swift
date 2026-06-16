@@ -1,4 +1,4 @@
-public struct LoadRecruitmentFilterUseCase {
+public struct FetchRecruitmentFilterUseCase {
     public init(recruitmentFilterRepository: RecruitmentFilterRepository) {
         self.recruitmentFilterRepository = recruitmentFilterRepository
     }
