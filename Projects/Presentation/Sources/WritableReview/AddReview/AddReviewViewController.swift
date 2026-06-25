@@ -238,4 +238,3 @@ extension AddReviewViewController: UITextFieldDelegate {
         return true
     }
 }
-

@@ -1,13 +1,13 @@
-//import UIKit
-//import RxSwift
-//import RxCocoa
-//import SnapKit
-//import Then
-//import Core
-//import Kingfisher
-//import DesignSystem
+// import UIKit
+// import RxSwift
+// import RxCocoa
+// import SnapKit
+// import Then
+// import Core
+// import Kingfisher
+// import DesignSystem
 //
-//public final class BugReportListViewController: BaseViewController<BugReportListViewModel> {
+// public final class BugReportListViewController: BaseViewController<BugReportListViewModel> {
 //
 //    private let bugReportMajorView = BugReportMajorView()
 //    private let bugReportTitleTextField = JobisTextField().then {
@@ -74,16 +74,17 @@
 //    public override func configureNavigation() {
 //        setLargeTitle(title: "버그 제보하기")
 //    }
-//}
+// }
 //
-//extension BugReportListViewController: UITableViewDelegate, UITableViewDataSource {
+// extension BugReportListViewController: UITableViewDelegate, UITableViewDataSource {
 //    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        return 3
 //    }
 //
 //    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: BugReportListTableViewCell.identifier, for: indexPath)
+//        let cell = tableView.dequeueReusableCell(
+//            withIdentifier: BugReportListTableViewCell.identifier, for: indexPath)
 //
 //        return cell
 //    }
-//}
+// }

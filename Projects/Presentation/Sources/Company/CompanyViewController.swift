@@ -94,7 +94,6 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
         jobisDropdownView.frame = CGRect(x: 0, y: 0, width: companyTableView.bounds.width, height: 28)
         companyTableView.tableHeaderView = jobisDropdownView
 
-
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()

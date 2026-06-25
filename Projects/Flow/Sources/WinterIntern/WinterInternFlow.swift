@@ -51,7 +51,7 @@ private extension WinterInternFlow {
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? WinterInternDetailViewController
-            view?.isPopViewController = { id, bookmark in
+            view?.isPopViewController = { _, _ in
                 let popView = self.rootViewController
                 popView.isTabNavigation = false
             }

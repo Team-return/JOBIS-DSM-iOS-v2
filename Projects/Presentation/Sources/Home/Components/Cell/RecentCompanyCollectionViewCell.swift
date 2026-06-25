@@ -56,7 +56,7 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
     override func configureView() {
         self.contentView.backgroundColor = .GrayScale.gray10
         self.contentView.layer.cornerRadius = 12
-        
+
         self.layer.shadowColor = UIColor.GrayScale.gray90.cgColor
         self.layer.shadowOpacity = 0.05
         self.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -66,7 +66,7 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
 
     override func adapt(model: RecentCompanyItem) {
         super.adapt(model: model)
-        
+
         companyNameLabel.text = model.entity.companyName
         companyLogoImageView.setJobisImage(urlString: model.entity.companyLogoURL)
         recruitingStatusLabel.setStatus(isRecruiting: model.entity.isRecruiting)

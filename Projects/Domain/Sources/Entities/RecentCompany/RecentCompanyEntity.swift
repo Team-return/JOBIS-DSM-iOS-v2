@@ -5,7 +5,7 @@ public struct RecentCompanyEntity: Equatable {
     public let companyName: String
     public let companyLogoURL: String
     public let isRecruiting: Bool
-    
+
     public init(
         companyID: Int,
         companyName: String,

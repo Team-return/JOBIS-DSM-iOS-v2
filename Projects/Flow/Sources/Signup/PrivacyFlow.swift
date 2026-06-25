@@ -11,9 +11,14 @@ public final class PrivacyFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container, name: String, gcn: Int, email: String, password: String, isMan: Bool, profileImageURL: String?) {
+    public init(
+        container: Container, name: String, gcn: Int, email: String,
+        password: String, isMan: Bool, profileImageURL: String?
+    ) {
         self.container = container
-        let reactor = container.resolve(PrivacyReactor.self, arguments: name, gcn, email, password, isMan, profileImageURL)!
+        let reactor = container.resolve(
+            PrivacyReactor.self, arguments: name, gcn, email, password, isMan, profileImageURL
+        )!
         self.rootViewController = PrivacyViewController(reactor)
     }
 
