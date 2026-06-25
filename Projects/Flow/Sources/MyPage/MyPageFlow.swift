@@ -2,12 +2,14 @@ import UIKit
 import Presentation
 import Swinject
 import RxFlow
+import RxSwift
 import Domain
 import Core
 
 public final class MyPageFlow: Flow {
     public let container: Container
     private let rootViewController = BaseNavigationController()
+    private let disposeBag = DisposeBag()
     public var root: Presentable {
         return rootViewController
     }
@@ -85,11 +87,13 @@ extension MyPageFlow {
             let view = root as? WritableReviewViewController
             view?.reactor.companyID = id
             if let useCase = self.container.resolve(FetchCompanyInfoDetailUseCase.self) {
-                _ = useCase.execute(id: id)
+                useCase.execute(id: id)
+                    .observe(on: MainScheduler.instance)
                     .subscribe(onSuccess: { entity in
                         view?.reactor.companyName = entity.companyName
                         view?.navigationItem.title = entity.companyName
                     }, onFailure: { _ in })
+                    .disposed(by: self.disposeBag)
             }
             self.rootViewController.pushViewController(
                 view!, animated: true
