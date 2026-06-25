@@ -101,9 +101,7 @@ extension RecruitmentReactor {
         case let .bookmarkButtonDidTap(id):
             return .concat([
                 .just(.updateBookmark(id)),
-                bookmarkUseCase.execute(id: id)
-                    .asObservable()
-                    .flatMap { _ in Observable<Mutation>.empty() }
+                bookmarkUseCase.execute(id: id).andThen(.empty())
             ])
 
         case let .recruitmentDidSelect(id):

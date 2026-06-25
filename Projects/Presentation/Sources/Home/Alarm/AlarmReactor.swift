@@ -57,10 +57,7 @@ extension AlarmReactor {
                 new: false
             )
             return readNotificationUseCase.execute(id: notification.notificationID)
-                .asObservable()
-                .flatMap { _ -> Observable<Mutation> in
-                    .just(.updateNotification(index: index, notification: updatedNotification))
-                }
+                .andThen(.just(.updateNotification(index: index, notification: updatedNotification)))
         }
     }
 

@@ -71,9 +71,7 @@ extension SearchRecruitmentReactor {
             ])
 
         case let .bookmarkButtonDidTap(id):
-            return bookmarkUseCase.execute(id: id)
-                .asObservable()
-                .flatMap { _ in Observable<Mutation>.empty() }
+            return bookmarkUseCase.execute(id: id).andThen(.empty())
 
         case let .recruitmentDidSelect(id):
             steps.accept(SearchRecruitmentStep.recruitmentDetailIsRequired(id: id))

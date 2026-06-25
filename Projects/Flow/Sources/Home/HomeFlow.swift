@@ -202,7 +202,7 @@ private extension HomeFlow {
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.isPopViewController = { id, bookmark in
+            view?.isPopViewController = { _, _ in
                 let popView = self.rootViewController.topViewController as? RecruitmentViewController
                 popView?.isTabNavigation = false
             }

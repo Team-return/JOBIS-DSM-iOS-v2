@@ -68,7 +68,10 @@ private extension ProfileSettingFlow {
         isMan: Bool,
         profileImageURL: String?
     ) -> FlowContributors {
-        let privacyFlow = PrivacyFlow(container: container, name: name, gcn: gcn, email: email, password: password, isMan: isMan, profileImageURL: profileImageURL)
+        let privacyFlow = PrivacyFlow(
+            container: container, name: name, gcn: gcn, email: email,
+            password: password, isMan: isMan, profileImageURL: profileImageURL
+        )
 
         Flows.use(privacyFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

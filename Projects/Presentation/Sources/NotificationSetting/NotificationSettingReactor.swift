@@ -75,14 +75,12 @@ extension NotificationSettingReactor {
                 token: Messaging.messaging().fcmToken ?? "",
                 notificationType: notificationType
             )
-            .asObservable()
-            .map { _ in .toggleNotificationState(notificationType) }
+            .andThen(.just(.toggleNotificationState(notificationType)))
 
         case .toggleAllNotifications:
             let newState = !currentState.isAllNotificationEnabled
             return subscribeAllNotificationUseCase.execute()
-                .asObservable()
-                .map { _ in .setAllNotificationStates(newState) }
+                .andThen(.just(.setAllNotificationStates(newState)))
         }
     }
 

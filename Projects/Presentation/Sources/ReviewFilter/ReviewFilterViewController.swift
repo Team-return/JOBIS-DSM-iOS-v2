@@ -253,7 +253,9 @@ public final class ReviewFilterViewController: BaseReactorViewController<ReviewF
         }
 
         if let previousIndex = selectedJobIndex,
-           let previousCell = jobsCollectionView.cellForItem(at: IndexPath(item: previousIndex, section: 0)) as? ReviewMajorCollectionViewCell {
+           let previousCell = jobsCollectionView.cellForItem(
+               at: IndexPath(item: previousIndex, section: 0)
+           ) as? ReviewMajorCollectionViewCell {
             previousCell.isCheck = false
         }
 

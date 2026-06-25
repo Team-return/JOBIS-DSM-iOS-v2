@@ -13,10 +13,6 @@ public class BaseCollectionViewCell<Model>: UICollectionViewCell,
         setLayout()
     }
 
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

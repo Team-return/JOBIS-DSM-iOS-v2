@@ -1,12 +1,12 @@
-//import UIKit
-//import Domain
-//import DesignSystem
-//import SnapKit
-//import Then
-//import RxSwift
-//import RxCocoa
+// import UIKit
+// import Domain
+// import DesignSystem
+// import SnapKit
+// import Then
+// import RxSwift
+// import RxCocoa
 //
-//final class BugReportListTableViewCell: BaseTableViewCell<Any> {
+// final class BugReportListTableViewCell: BaseTableViewCell<Any> {
 //    static let identifier = "BugReportListTableViewCell"
 //    private var disposeBag = DisposeBag()
 //
@@ -68,4 +68,4 @@
 ////        benefitsLabel.text = "병역특례 \(militarySupport)"
 ////        isBookmarked = model.bookmarked
 ////    }
-//}
+// }

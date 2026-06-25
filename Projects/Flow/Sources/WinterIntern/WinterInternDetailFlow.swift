@@ -11,7 +11,12 @@ public final class WinterInternDetailFlow: Flow {
         return rootViewController
     }
 
-    public init(container: Container, recruitmentID: Int? = nil, companyId: Int? = nil, type: RecruitmentDetailPreviousViewType = .recruitmentList) {
+    public init(
+        container: Container,
+        recruitmentID: Int? = nil,
+        companyId: Int? = nil,
+        type: RecruitmentDetailPreviousViewType = .recruitmentList
+    ) {
         self.container = container
         self.rootViewController = container.resolve(
             WinterInternDetailViewController.self,

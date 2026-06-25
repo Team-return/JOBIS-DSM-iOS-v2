@@ -67,7 +67,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             $0.leading.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(20)
         }
-        
+
         dropdownView.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(20)
             $0.trailing.equalToSuperview()
@@ -128,17 +128,17 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .map { RecruitmentReactor.Action.recruitmentDidSelect($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         searchButton.rx.tap
             .map { RecruitmentReactor.Action.searchButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         filterButton.rx.tap
             .map { RecruitmentReactor.Action.filterButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
         dropdownView.selectedOption
             .map { RecruitmentReactor.Action.updateSortOption($0) }
             .bind(to: reactor.action)
@@ -151,7 +151,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(onNext: { [weak self] list, isLoading in
                 guard let self = self else { return }
                 self.listEmptyView.isHidden = isLoading || !list.isEmpty
-                
+
                 if isLoading {
                     self.recruitmentTableView.reloadData()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
@@ -170,21 +170,20 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .disposed(by: disposeBag)
     }
 
-
     public override func configureViewController() {
         recruitmentTableView.dataSource = self
-        
+
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
-                
+
                 if self.isTabNavigation {
                     self.viewWillappearWithTap?()
                 }
                 self.isTabNavigation = true
             }
             .disposed(by: disposeBag)
-        
+
         viewWillDisappearPublisher.asObservable()
             .bind {
                 self.setSmallTitle(title: "")
@@ -201,7 +200,10 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 }
 
 extension RecruitmentViewController: SkeletonTableViewDataSource {
-    public func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+    public func collectionSkeletonView(
+        _ skeletonView: UITableView,
+        cellIdentifierForRowAt indexPath: IndexPath
+    ) -> ReusableCellIdentifier {
         return RecruitmentTableViewCell.identifier
     }
 
@@ -220,7 +222,7 @@ extension RecruitmentViewController: SkeletonTableViewDataSource {
         ) as? RecruitmentTableViewCell else {
             return UITableViewCell()
         }
-        
+
         if !reactor.currentState.isLoading {
             guard indexPath.row < reactor.currentState.recruitmentList.count else { return cell }
             let recruitment = reactor.currentState.recruitmentList[indexPath.row]
