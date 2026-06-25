@@ -70,11 +70,10 @@ extension InterestFieldReactor {
         case .selectButtonDidTap:
             let codeIDs = currentState.selectedInterests.map { $0.code }
             return changeInterestsUseCase.execute(codeIDs: codeIDs)
-                .asObservable()
                 .do(onCompleted: { [weak self] in
                     self?.steps.accept(InterestFieldStep.interestFieldCheckIsRequired)
                 })
-                .flatMap { _ in Observable<Mutation>.empty() }
+                .andThen(.empty())
         }
     }
 

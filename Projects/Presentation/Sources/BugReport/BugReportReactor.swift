@@ -79,8 +79,7 @@ extension BugReportReactor {
                 developmentArea: DevelopmentType(localizedString: currentState.majorType) ?? .all,
                 attachmentUrls: currentState.imageList
             ))
-            .asObservable()
-            .map { _ in Mutation.setBugReportCompleted }
+            .andThen(.just(.setBugReportCompleted))
         }
     }
 
