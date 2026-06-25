@@ -37,10 +37,8 @@ public final class WritableReviewReactor: BaseReactor, Stepper {
 extension WritableReviewReactor {
     public func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let interviewReviewMutation = interviewReviewInfo
-            .withLatestFrom(state.map { $0.qnaInfoList }) { newInfo, oldList -> [QnAEntity] in
-                var newList = oldList
-                newList.append(newInfo)
-                return newList
+            .scan([QnAEntity]()) { oldList, newInfo in
+                oldList + [newInfo]
             }
             .map { Mutation.setQnAInfoList($0) }
 
