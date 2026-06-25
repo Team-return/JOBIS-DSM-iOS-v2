@@ -111,5 +111,11 @@ public final class RepositoryAssembly: Assembly {
                 remoteInterestsDataSource: resolver.resolve(RemoteInterestsDataSource.self)!
             )
         }
+
+        container.register(RecruitmentFilterRepository.self) { resolver in
+            RecruitmentFilterRepositoryImpl(
+                localRecruitmentFilterDataSource: resolver.resolve(LocalRecruitmentFilterDataSource.self)!
+            )
+        }
     }
 }

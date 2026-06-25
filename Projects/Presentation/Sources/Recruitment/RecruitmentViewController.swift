@@ -92,6 +92,11 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        viewWillAppearPublisher
+            .map { RecruitmentReactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         recruitmentTableView.rx.willDisplayCell
             .filter {
                 return !self.reactor.currentState.isLoading &&

@@ -11,12 +11,15 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
     public let initialState: State
     private let disposeBag = DisposeBag()
     private let fetchCodeListUseCase: FetchCodeListUseCase
+    private let saveRecruitmentFilterUseCase: SaveRecruitmentFilterUseCase
 
     public init(
-        fetchCodeListUseCase: FetchCodeListUseCase
+        fetchCodeListUseCase: FetchCodeListUseCase,
+        saveRecruitmentFilterUseCase: SaveRecruitmentFilterUseCase
     ) {
         self.initialState = .init()
         self.fetchCodeListUseCase = fetchCodeListUseCase
+        self.saveRecruitmentFilterUseCase = saveRecruitmentFilterUseCase
     }
 
     public enum Action {
@@ -102,14 +105,15 @@ extension RecruitmentFilterReactor {
             return .just(.toggleStatus(code.code))
 
         case .filterApplyButtonDidTap:
-            let statusString = mapStatus(code: currentState.statusCode)
-            steps.accept(RecruitmentFilterStep.popToRecruitment(
+            let filter = RecruitmentFilterEntity(
                 jobCode: currentState.jobCode,
                 techCode: currentState.techCode,
                 years: currentState.years,
                 region: mapRegion(code: currentState.regionCode),
-                status: statusString
-            ))
+                status: mapStatus(code: currentState.statusCode)
+            )
+            saveRecruitmentFilterUseCase.execute(filter: filter)
+            steps.accept(RecruitmentFilterStep.popToRecruitment)
             return .empty()
 
         case let .appendTechCode(code):

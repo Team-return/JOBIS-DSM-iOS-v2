@@ -10,24 +10,27 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
     public let initialState: State
     private let fetchRecruitmentListUseCase: FetchRecruitmentListUseCase
     private let bookmarkUseCase: BookmarkUseCase
+    private let fetchRecruitmentFilterUseCase: FetchRecruitmentFilterUseCase
 
     public init(
         fetchRecruitmentListUseCase: FetchRecruitmentListUseCase,
-        bookmarkUseCase: BookmarkUseCase
+        bookmarkUseCase: BookmarkUseCase,
+        fetchRecruitmentFilterUseCase: FetchRecruitmentFilterUseCase
     ) {
         self.initialState = .init()
         self.fetchRecruitmentListUseCase = fetchRecruitmentListUseCase
         self.bookmarkUseCase = bookmarkUseCase
+        self.fetchRecruitmentFilterUseCase = fetchRecruitmentFilterUseCase
     }
 
     public enum Action {
         case fetchRecruitmentList
+        case viewWillAppear
         case loadMoreRecruitments
         case bookmarkButtonDidTap(Int)
         case recruitmentDidSelect(Int)
         case searchButtonDidTap
         case filterButtonDidTap
-        case updateFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, region: String?,  status: String?)
         case updateSortOption(String)
     }
 
@@ -59,26 +62,20 @@ extension RecruitmentReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchRecruitmentList:
-            return .concat([
-                .just(.resetPageCount),
-                .just(.setLoading(true)),
-                fetchRecruitmentListUseCase.execute(
-                    page: 1,
-                    jobCode: currentState.jobCode,
-                    techCode: currentState.techCode,
-                    years: currentState.years,
-                    region: currentState.region,
-                    status: currentState.status,
-                    sortType: currentState.sortType?.rawValue
-                )
-                .asObservable()
-                .flatMap { list -> Observable<Mutation> in
-                    return .concat([
-                        .just(.setRecruitmentList(list)),
-                        .just(.setLoading(false))
-                    ])
-                }
-            ])
+            let filter = fetchRecruitmentFilterUseCase.execute()
+            return fetchListMutations(filter: filter)
+
+        case .viewWillAppear:
+            let filter = fetchRecruitmentFilterUseCase.execute()
+            let currentFilter = RecruitmentFilterEntity(
+                jobCode: currentState.jobCode,
+                techCode: currentState.techCode,
+                years: currentState.years,
+                region: currentState.region,
+                status: currentState.status
+            )
+            guard filter != currentFilter else { return .empty() }
+            return fetchListMutations(filter: filter)
 
         case .loadMoreRecruitments:
             let nextPage = currentState.pageCount + 1
@@ -121,9 +118,6 @@ extension RecruitmentReactor {
             steps.accept(RecruitmentStep.recruitmentFilterIsRequired)
             return .empty()
 
-        case let .updateFilterOptions(jobCode, techCode, years, region, status):
-            return .just(.setFilterOptions(jobCode: jobCode, techCode: techCode, years: years, region: region, status: status))
-
         case let .updateSortOption(option):
             let sortType = RecruitmentSortType(localizedString: option)
             return .concat([
@@ -149,6 +143,36 @@ extension RecruitmentReactor {
                 .catch { _ in .just(.setLoading(false)) }
             ])
         }
+    }
+
+    private func fetchListMutations(filter: RecruitmentFilterEntity) -> Observable<Mutation> {
+        return .concat([
+            .just(.setFilterOptions(
+                jobCode: filter.jobCode,
+                techCode: filter.techCode,
+                years: filter.years,
+                region: filter.region,
+                status: filter.status
+            )),
+            .just(.resetPageCount),
+            .just(.setLoading(true)),
+            fetchRecruitmentListUseCase.execute(
+                page: 1,
+                jobCode: filter.jobCode,
+                techCode: filter.techCode,
+                years: filter.years,
+                region: filter.region,
+                status: filter.status,
+                sortType: currentState.sortType?.rawValue
+            )
+            .asObservable()
+            .flatMap { list -> Observable<Mutation> in
+                .concat([
+                    .just(.setRecruitmentList(list)),
+                    .just(.setLoading(false))
+                ])
+            }
+        ])
     }
 
     public func reduce(state: State, mutation: Mutation) -> State {

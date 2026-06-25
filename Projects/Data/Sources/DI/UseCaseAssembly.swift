@@ -203,6 +203,16 @@ public final class UseCaseAssembly: Assembly {
                 recruitmentsRepository: resolver.resolve(RecruitmentsRepository.self)!
             )
         }
+        container.register(SaveRecruitmentFilterUseCase.self) { resolver in
+            SaveRecruitmentFilterUseCase(
+                recruitmentFilterRepository: resolver.resolve(RecruitmentFilterRepository.self)!
+            )
+        }
+        container.register(FetchRecruitmentFilterUseCase.self) { resolver in
+            FetchRecruitmentFilterUseCase(
+                recruitmentFilterRepository: resolver.resolve(RecruitmentFilterRepository.self)!
+            )
+        }
 
         // Codes
         container.register(FetchCodeListUseCase.self) { resolver in
