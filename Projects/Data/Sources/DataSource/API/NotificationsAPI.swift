@@ -52,11 +52,7 @@ extension NotificationsAPI: JobisAPI {
     public var task: Task {
         switch self {
         case .fetchNotificationList:
-            return .requestParameters(
-                parameters:
-//                  // TODO: 추후 읽음와 안읽음 분기처리 필요
-                    ["is_new": ""],
-                encoding: URLEncoding.queryString)
+            return .requestPlain
 
         case let .subscribeNotification(token, notificationType):
             return .requestParameters(
