@@ -21,7 +21,9 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let careerMenuLabel = JobisMenuLabel(text: "현장실습")
     private let contentView = UIView()
     private let bannerView = BannerView()
-    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업")
+    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업").then {
+        $0.isHidden = true
+    }
     private let recentCompanyCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -33,6 +35,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     ).then {
         $0.showsHorizontalScrollIndicator = false
         $0.backgroundColor = .clear
+        $0.isHidden = true
         $0.register(
             RecentCompanyCollectionViewCell.self,
             forCellWithReuseIdentifier: RecentCompanyCollectionViewCell.identifier
@@ -60,6 +63,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         $0.spacing = 12
     }
     private var findWinterRecruitmentsCard = CareerNavigationCard()
+    private var didSetupRecentCompanyLayout = false
     private var navigateToEasterEggDidTap = PublishRelay<Void>()
     private let employStatusButtonTap = PublishRelay<Void>()
     private var cellDisposeBag = DisposeBag()
@@ -104,19 +108,25 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.height.equalTo(154)
         }
 
-        recentCompanyMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
-        }
+        if !didSetupRecentCompanyLayout {
+            didSetupRecentCompanyLayout = true
 
-        recentCompanyCollectionView.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(177)
-        }
+            recentCompanyMenuLabel.snp.makeConstraints {
+                $0.top.equalTo(careerStackView.snp.bottom).offset(24)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(0)
+            }
 
-        applicationStatusMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview()
+            recentCompanyCollectionView.snp.makeConstraints {
+                $0.top.equalTo(recentCompanyMenuLabel.snp.bottom)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(0)
+            }
+
+            applicationStatusMenuLabel.snp.makeConstraints {
+                $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(15)
+                $0.leading.trailing.equalToSuperview()
+            }
         }
 
         applicationStatusTableView.snp.makeConstraints {
@@ -239,8 +249,23 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .do(onNext: { [weak self] list in
-                self?.recentCompanyMenuLabel.isHidden = list.isEmpty
-                self?.recentCompanyCollectionView.isHidden = list.isEmpty
+                guard let self else { return }
+                self.recentCompanyMenuLabel.isHidden = list.isEmpty
+                self.recentCompanyCollectionView.isHidden = list.isEmpty
+
+                guard self.recentCompanyCollectionView.superview != nil else { return }
+                self.recentCompanyMenuLabel.snp.remakeConstraints {
+                    $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    $0.leading.trailing.equalToSuperview()
+                    if list.isEmpty {
+                        $0.height.equalTo(0)
+                    }
+                }
+                self.recentCompanyCollectionView.snp.remakeConstraints {
+                    $0.top.equalTo(self.recentCompanyMenuLabel.snp.bottom)
+                    $0.leading.trailing.equalToSuperview()
+                    $0.height.equalTo(list.isEmpty ? 0 : 177)
+                }
             })
             .bind(to: recentCompanyCollectionView.rx.items(
                 cellIdentifier: RecentCompanyCollectionViewCell.identifier,
