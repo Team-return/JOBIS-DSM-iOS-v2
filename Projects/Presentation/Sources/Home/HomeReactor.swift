@@ -138,7 +138,11 @@ extension HomeReactor {
             return .empty()
 
         case .navigateToWinterInternButtonDidTap:
-            steps.accept(HomeStep.winterInternIsRequired)
+            steps.accept(
+                currentState.isWinterInternSeason
+                ? HomeStep.winterInternIsRequired
+                : HomeStep.winterInternOffSeasonIsRequired
+            )
             return .empty()
 
         case let .rejectButtonDidTap(application):
