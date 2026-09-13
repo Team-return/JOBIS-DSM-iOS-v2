@@ -64,7 +64,9 @@ private extension GenderSettingFlow {
         password: String,
         isMan: Bool
     ) -> FlowContributors {
-        let profileSettingFlow = ProfileSettingFlow(container: container, name: name, gcn: gcn, email: email, password: password, isMan: isMan)
+        let profileSettingFlow = ProfileSettingFlow(
+            container: container, name: name, gcn: gcn, email: email, password: password, isMan: isMan
+        )
 
         Flows.use(profileSettingFlow, when: .created) { root in
             self.rootViewController.navigationController?.pushViewController(

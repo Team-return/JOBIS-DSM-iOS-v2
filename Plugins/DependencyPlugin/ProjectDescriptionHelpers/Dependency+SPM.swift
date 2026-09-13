@@ -18,13 +18,9 @@ public extension TargetDependency.SPM {
     static let ReactorKit = TargetDependency.external(name: "ReactorKit")
     static let RxGesture = TargetDependency.external(name: "RxGesture")
     static let DGCharts = TargetDependency.external(name: "DGCharts")
-    static let FCM = TargetDependency.package(product: "FirebaseMessaging")
+    static let FCM = TargetDependency.external(name: "FirebaseMessaging")
     static let Pulse = TargetDependency.external(name: "Pulse")
     static let PulseUI = TargetDependency.external(name: "PulseUI")
     static let Nuke = TargetDependency.external(name: "Nuke")
     static let SkeletonView = TargetDependency.external(name: "SkeletonView")
-}
-
-public extension Package {
-    static let FCM = Package.remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.5.0"))
 }

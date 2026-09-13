@@ -30,4 +30,3 @@ final class BookmarkSectionView: BaseView {
         self.bookmarkSectionView.getSelectedItem(index: type.rawValue)
     }
 }
-

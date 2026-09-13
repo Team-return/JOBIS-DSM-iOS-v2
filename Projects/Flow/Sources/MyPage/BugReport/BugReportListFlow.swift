@@ -1,10 +1,10 @@
-//import UIKit
-//import Presentation
-//import Swinject
-//import RxFlow
-//import Core
+// import UIKit
+// import Presentation
+// import Swinject
+// import RxFlow
+// import Core
 //
-//public final class BugReportListFlow: Flow {
+// public final class BugReportListFlow: Flow {
 //    public let container: Container
 //    private let rootViewController: BugReportListViewController
 //    public var root: Presentable {
@@ -27,9 +27,9 @@
 //            return navigateToMajorBottomSheet()
 //        }
 //    }
-//}
+// }
 //
-//private extension BugReportListFlow {
+// private extension BugReportListFlow {
 //    func navigateToBugReportList() -> FlowContributors {
 //        return .one(flowContributor: .contribute(
 //            withNextPresentable: rootViewController,
@@ -53,4 +53,4 @@
 //            withNextStepper: OneStepper(withSingleStep: MajorBottomSheetStep.majorBottomSheetIsRequired)
 //        ))
 //    }
-//}
+// }

@@ -86,8 +86,7 @@ public final class OnboardingReactor: BaseReactor {
             .catch { _ in .just(.setShowNavigationButton) }
 
         let serverStatusCheck = fetchServerStatusUseCase.execute()
-            .asObservable()
-            .flatMap { _ in Observable<Mutation>.empty() }
+            .andThen(Observable<Mutation>.empty())
             .catch { _ in .just(.setServerStatusError) }
 
         return .merge(tokenCheck, serverStatusCheck)

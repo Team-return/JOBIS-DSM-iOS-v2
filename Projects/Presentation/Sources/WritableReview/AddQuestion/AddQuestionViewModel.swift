@@ -71,7 +71,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                         onCompleted: {
                             self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
                         },
-                        onError: { error in
+                        onError: { _ in
                             self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
                         }
                     )
@@ -99,7 +99,7 @@ public final class AddQuestionViewModel: BaseViewModel, Stepper {
                         onCompleted: {
                             self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
                         },
-                        onError: { error in
+                        onError: { _ in
                             self.steps.accept(WritableReviewStep.reviewCompleteIsRequired)
                         }
                     )

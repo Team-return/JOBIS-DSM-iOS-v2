@@ -162,9 +162,11 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
                     self.applyButton.isEnabled = false
                     self.applyButton.setText("3학년만 지원할 수 있어요")
                 } else {
-                    detail.isApplicable ?
-                    self.applyButton.setText("지원하기") :
-                    self.applyButton.setText("이미 지원한 기업이에요")
+                    if detail.isApplicable {
+                        self.applyButton.setText("지원하기")
+                    } else {
+                        self.applyButton.setText("이미 지원한 기업이에요")
+                    }
 
                     self.applyButton.isEnabled = detail.isApplicable
                 }

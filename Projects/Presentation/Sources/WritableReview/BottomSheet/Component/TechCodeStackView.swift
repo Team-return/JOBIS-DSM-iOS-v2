@@ -29,7 +29,7 @@ public class TechCodeStackView: UIStackView {
             $0.removeFromSuperview()
         }
 
-        techList.enumerated().forEach { index, data in
+        techList.forEach { data in
             let techCodeStackViewCell = TechCodeStackViewCell()
             techCodeStackViewCell.adapt(model: data)
 

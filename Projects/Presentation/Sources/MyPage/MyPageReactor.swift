@@ -88,23 +88,19 @@ public final class MyPageReactor: BaseReactor, Stepper {
                 guard let self = self,
                       let url = presignedURLs.first else { return .empty() }
 
-                return Observable.zip(
+                return Completable.zip(
                     self.uploadImageToS3UseCase.execute(
                         presignedURL: url.presignedUrl,
                         data: file.file
-                    )
-                    .asObservable(),
+                    ),
                     self.changeProfileImageUseCase.execute(url: url.filePath)
-                        .asObservable()
                 )
-                .flatMap { _ in
-                    Observable.concat([
-                        .just(.updateProfileImage),
-                        self.fetchStudentInfoUseCase.execute()
-                            .asObservable()
-                            .map { Mutation.setStudentInfo($0) }
-                    ])
-                }
+                .andThen(Observable.concat([
+                    .just(.updateProfileImage),
+                    self.fetchStudentInfoUseCase.execute()
+                        .asObservable()
+                        .map { Mutation.setStudentInfo($0) }
+                ]))
             }
 
         case .notificationSettingDidTap:

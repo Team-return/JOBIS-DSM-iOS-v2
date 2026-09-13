@@ -1,11 +1,11 @@
-//import UIKit
-//import RxSwift
-//import RxCocoa
-//import RxFlow
-//import Core
-//import Domain
+// import UIKit
+// import RxSwift
+// import RxCocoa
+// import RxFlow
+// import Core
+// import Domain
 //
-//public final class BugReportListViewModel: BaseViewModel, Stepper {
+// public final class BugReportListViewModel: BaseViewModel, Stepper {
 //    public let steps = PublishRelay<Step>()
 //    private let disposeBag = DisposeBag()
 //    public var majorType: String = "전체"
@@ -47,4 +47,4 @@
 ////            bugReportList: bugReportList
 //        )
 //    }
-//}
+// }

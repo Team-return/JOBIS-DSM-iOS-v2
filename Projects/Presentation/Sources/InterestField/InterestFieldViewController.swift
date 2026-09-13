@@ -106,9 +106,11 @@ public final class InterestFieldViewController: BaseReactorViewController<Intere
             .bind(to: majorCollectionView.rx.items(
                 cellIdentifier: MajorCollectionViewCell.identifier,
                 cellType: MajorCollectionViewCell.self
-            )) { [weak self] index, codeEntity, cell in
+            )) { [weak self] _, codeEntity, cell in
                 guard let self = self else { return }
-                let isSelected = self.reactor.currentState.selectedInterests.contains(where: { $0.code == codeEntity.code })
+                let isSelected = self.reactor.currentState.selectedInterests.contains(
+                    where: { $0.code == codeEntity.code }
+                )
 
                 cell.adapt(model: codeEntity)
                 cell.isCheck = isSelected
