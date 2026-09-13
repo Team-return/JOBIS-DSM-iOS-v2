@@ -3,70 +3,64 @@ import SnapKit
 import Then
 import DesignSystem
 
-enum CardSize {
-    case small(type: CardType)
-    case large
-
-    enum CardType {
-        case findCompanys
-        case findWinterRecruitments
-    }
-}
-
 final class CareerNavigationCard: UIButton {
-    private let headerLabel = UILabel().then {
+    private let textStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 6
+        $0.isUserInteractionEnabled = false
+    }
+    private let cardTitleLabel = UILabel().then {
         $0.numberOfLines = 0
     }
-    private let iconView = UIView().then {
-        $0.backgroundColor = .GrayScale.gray10
-        $0.layer.cornerRadius = 32
-        $0.clipsToBounds = true
+    private let descriptionLabel = UILabel().then {
+        $0.numberOfLines = 0
     }
-    private let iconImageView = UIImageView()
+    private let iconImageView = UIImageView().then {
+        $0.transform = CGAffineTransform(rotationAngle: -.pi * 13.38 / 180)
+    }
+    private var didSetupLayout = false
 
     public init() {
         super.init(frame: .zero)
         self.backgroundColor = .GrayScale.gray30
         self.layer.cornerRadius = 12
-
-//        setCard(style: style)
+        self.clipsToBounds = true
+        self.layer.borderWidth = 1.0
+        self.layer.borderColor = UIColor.GrayScale.gray40.cgColor
+        setupCard()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override func layoutSubviews() {
-        [iconView, headerLabel].forEach(addSubview(_:))
-        iconView.addSubview(iconImageView)
+        super.layoutSubviews()
+        guard !didSetupLayout else { return }
+        didSetupLayout = true
 
-        headerLabel.snp.makeConstraints {
-            $0.leading.top.equalToSuperview().inset(20)
+        [iconImageView, textStackView].forEach(addSubview(_:))
+        [cardTitleLabel, descriptionLabel].forEach(textStackView.addArrangedSubview(_:))
+
+        textStackView.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+            $0.top.equalToSuperview().inset(54)
         }
         iconImageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        iconView.snp.makeConstraints {
-            $0.bottom.trailing.equalToSuperview().inset(20)
-            $0.width.height.equalTo(64)
+            $0.trailing.equalToSuperview().inset(15)
+            $0.centerY.equalToSuperview()
         }
     }
 
-    public func setCard(style: CardSize) {
-        var info: (text: String, icon: JobisIcon) {
-            switch style {
-            case let .small(type):
-                switch type {
-                case .findCompanys:
-                    return ("다른 기업들\n탐색 하기 →", .officeBuilding)
-                case .findWinterRecruitments:
-                    return ("체험형\n현장실습 →", .snowman)
-                }
-            case .large:
-                return ("다른 기업들은 어떨까?\n다른 기업들 둘러 보러 가기 →", .officeBuilding)
-            }
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            self.layer.borderColor = UIColor.GrayScale.gray40.cgColor
         }
+    }
 
-        self.headerLabel.setJobisText(info.text, font: .headLine, color: .GrayScale.gray90)
-        self.iconImageView.image = .jobisIcon(info.icon).resize(size: 40)
+    private func setupCard() {
+        cardTitleLabel.setJobisText("겨울인턴", font: .headLine, color: .GrayScale.gray90)
+        descriptionLabel.setJobisText("체험형 현장실습 보러가기 →", font: .body, color: .GrayScale.gray60)
+        iconImageView.image = .jobisIcon(.snowman).resize(size: 120)
     }
 }

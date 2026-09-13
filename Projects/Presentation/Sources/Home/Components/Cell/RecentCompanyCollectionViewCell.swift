@@ -10,10 +10,11 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
 
     private let companyLogoImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
+        $0.backgroundColor = .white
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.Primary.blue10.cgColor
+        $0.layer.borderColor = UIColor.GrayScale.gray40.cgColor
     }
 
     private let companyNameLabel = UILabel().then {
@@ -56,12 +57,20 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
     override func configureView() {
         self.contentView.backgroundColor = .GrayScale.gray10
         self.contentView.layer.cornerRadius = 12
-        
+
         self.layer.shadowColor = UIColor.GrayScale.gray90.cgColor
         self.layer.shadowOpacity = 0.05
         self.layer.shadowOffset = CGSize(width: 0, height: 4)
         self.layer.shadowRadius = 4
         self.layer.masksToBounds = false
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            companyLogoImageView.layer.borderColor = UIColor.GrayScale.gray40.cgColor
+            self.layer.shadowColor = UIColor.GrayScale.gray90.cgColor
+        }
     }
 
     override func adapt(model: RecentCompanyItem) {

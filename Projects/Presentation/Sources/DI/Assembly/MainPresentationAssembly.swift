@@ -246,6 +246,14 @@ public final class MainPresentationAssembly: Assembly {
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
             )
         }
+        container.register(WinterInternOffSeasonViewController.self) { resolver in
+            WinterInternOffSeasonViewController(
+                resolver.resolve(WinterInternOffSeasonReactor.self)!
+            )
+        }
+        container.register(WinterInternOffSeasonReactor.self) { _ in
+            WinterInternOffSeasonReactor()
+        }
         container.register(WinterInternDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
             WinterInternDetailReactor(
                 fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,

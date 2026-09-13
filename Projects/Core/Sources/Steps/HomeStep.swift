@@ -5,6 +5,7 @@ public enum HomeStep: Step {
     case alarmIsRequired
     case companyIsRequired
     case winterInternIsRequired
+    case winterInternOffSeasonIsRequired
     case easterEggIsRequired
     case rejectReasonIsRequired(
         recruitmentID: Int,

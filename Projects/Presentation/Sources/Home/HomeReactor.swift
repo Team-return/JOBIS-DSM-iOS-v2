@@ -66,7 +66,7 @@ public final class HomeReactor: BaseReactor, Stepper {
             .totalPass(.init(totalStudentCount: 0, passedCount: 0, approvedCount: 0))
         ]
         var recentCompanyList: [RecentCompanyItem] = []
-        var isWinterInternSeason: Bool = true
+        var isWinterInternSeason: Bool?
         var totalPassStudentInfo: TotalPassStudentEntity = TotalPassStudentEntity(
             totalStudentCount: 0,
             passedCount: 0,
@@ -138,7 +138,14 @@ extension HomeReactor {
             return .empty()
 
         case .navigateToWinterInternButtonDidTap:
-            steps.accept(HomeStep.winterInternIsRequired)
+            guard let isWinterInternSeason = currentState.isWinterInternSeason else {
+                return .empty()
+            }
+            steps.accept(
+                isWinterInternSeason
+                ? HomeStep.winterInternIsRequired
+                : HomeStep.winterInternOffSeasonIsRequired
+            )
             return .empty()
 
         case let .rejectButtonDidTap(application):
