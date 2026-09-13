@@ -31,6 +31,9 @@ public final class HomeFlow: Flow {
         case .winterInternIsRequired:
             return navigateToWinterIntern()
 
+        case .winterInternOffSeasonIsRequired:
+            return navigateToWinterInternOffSeason()
+
         case .easterEggIsRequired:
             return navigateToEasterEgg()
 
@@ -130,6 +133,19 @@ private extension HomeFlow {
             withNextStepper: OneStepper(
                 withSingleStep: RecruitmentStep.recruitmentIsRequired
             )
+        ))
+    }
+
+    func navigateToWinterInternOffSeason() -> FlowContributors {
+        let viewController = container.resolve(WinterInternOffSeasonViewController.self)!
+        self.rootViewController.pushViewController(
+            viewController,
+            animated: true
+        )
+
+        return .one(flowContributor: .contribute(
+            withNextPresentable: viewController,
+            withNextStepper: viewController.reactor
         ))
     }
 

@@ -29,4 +29,11 @@ final class EmptyApplicationView: BaseView {
             $0.centerX.equalToSuperview()
         }
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            containerView.layer.borderColor = UIColor.GrayScale.gray40.cgColor
+        }
+    }
 }

@@ -18,9 +18,12 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
+    private let careerMenuLabel = JobisMenuLabel(text: "현장실습")
     private let contentView = UIView()
     private let bannerView = BannerView()
-    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업")
+    private let recentCompanyMenuLabel = JobisMenuLabel(text: "최근 본 기업").then {
+        $0.isHidden = true
+    }
     private let recentCompanyCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -32,12 +35,12 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     ).then {
         $0.showsHorizontalScrollIndicator = false
         $0.backgroundColor = .clear
+        $0.isHidden = true
         $0.register(
             RecentCompanyCollectionViewCell.self,
             forCellWithReuseIdentifier: RecentCompanyCollectionViewCell.identifier
         )
     }
-    private let careerMenuLabel = JobisMenuLabel(text: "정보 조회")
     private let applicationStatusMenuLabel = JobisMenuLabel(
         text: "지원 현황",
         subText: "승인요청 및 반려 상태엔 재지원 가능"
@@ -60,6 +63,7 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         $0.spacing = 12
     }
     private var findWinterRecruitmentsCard = CareerNavigationCard()
+    private var didSetupRecentCompanyLayout = false
     private var navigateToEasterEggDidTap = PublishRelay<Void>()
     private let employStatusButtonTap = PublishRelay<Void>()
     private var cellDisposeBag = DisposeBag()
@@ -69,10 +73,10 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
         careerStackView.addArrangedSubview(findWinterRecruitmentsCard)
         [
             bannerView,
-            recentCompanyMenuLabel,
-            recentCompanyCollectionView,
             careerMenuLabel,
             careerStackView,
+            recentCompanyMenuLabel,
+            recentCompanyCollectionView,
             applicationStatusMenuLabel,
             applicationStatusTableView
         ].forEach(contentView.addSubview(_:))
@@ -94,29 +98,35 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             $0.leading.trailing.equalToSuperview()
         }
 
-        recentCompanyMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(bannerView.snp.bottom).offset(16)
-        }
-
-        recentCompanyCollectionView.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyMenuLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(177)
-        }
-
         careerMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(12)
+            $0.top.equalTo(bannerView.snp.bottom).offset(16)
         }
 
         careerStackView.snp.makeConstraints {
             $0.top.equalTo(careerMenuLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(24)
-            $0.height.equalTo(176)
+            $0.height.equalTo(154)
         }
 
-        applicationStatusMenuLabel.snp.makeConstraints {
-            $0.top.equalTo(careerStackView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview()
+        if !didSetupRecentCompanyLayout {
+            didSetupRecentCompanyLayout = true
+
+            recentCompanyMenuLabel.snp.makeConstraints {
+                $0.top.equalTo(careerStackView.snp.bottom).offset(24)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(0)
+            }
+
+            recentCompanyCollectionView.snp.makeConstraints {
+                $0.top.equalTo(recentCompanyMenuLabel.snp.bottom)
+                $0.leading.trailing.equalToSuperview()
+                $0.height.equalTo(0)
+            }
+
+            applicationStatusMenuLabel.snp.makeConstraints {
+                $0.top.equalTo(recentCompanyCollectionView.snp.bottom).offset(15)
+                $0.leading.trailing.equalToSuperview()
+            }
         }
 
         applicationStatusTableView.snp.makeConstraints {
@@ -235,36 +245,35 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             }
             .disposed(by: disposeBag)
 
-        reactor.state.map { $0.isWinterInternSeason }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .bind { [weak self] isSeason in
-                guard let self = self,
-                      self.contentView.subviews.contains(self.applicationStatusMenuLabel) else { return }
-                self.careerMenuLabel.isHidden = !isSeason
-                self.careerStackView.isHidden = !isSeason
-
-                self.applicationStatusMenuLabel.snp.remakeConstraints {
-                    if isSeason {
-                        $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
-                    } else {
-                        $0.top.equalTo(self.recentCompanyCollectionView.snp.bottom).offset(24)
-                    }
-                    $0.leading.trailing.equalToSuperview()
-                }
-
-                if isSeason {
-                    self.findWinterRecruitmentsCard.setCard(style: .small(type: .findWinterRecruitments))
-                }
-            }
-            .disposed(by: disposeBag)
-
         reactor.state.map { $0.recentCompanyList }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .do(onNext: { [weak self] list in
-                self?.recentCompanyMenuLabel.isHidden = list.isEmpty
-                self?.recentCompanyCollectionView.isHidden = list.isEmpty
+                guard let self else { return }
+                self.recentCompanyMenuLabel.isHidden = list.isEmpty
+                self.recentCompanyCollectionView.isHidden = list.isEmpty
+
+                guard self.recentCompanyCollectionView.superview != nil else { return }
+                self.recentCompanyMenuLabel.snp.remakeConstraints {
+                    $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    $0.leading.trailing.equalToSuperview()
+                    if list.isEmpty {
+                        $0.height.equalTo(0)
+                    }
+                }
+                self.recentCompanyCollectionView.snp.remakeConstraints {
+                    $0.top.equalTo(self.recentCompanyMenuLabel.snp.bottom)
+                    $0.leading.trailing.equalToSuperview()
+                    $0.height.equalTo(list.isEmpty ? 0 : 177)
+                }
+                self.applicationStatusMenuLabel.snp.remakeConstraints {
+                    if list.isEmpty {
+                        $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    } else {
+                        $0.top.equalTo(self.recentCompanyCollectionView.snp.bottom).offset(15)
+                    }
+                    $0.leading.trailing.equalToSuperview()
+                }
             })
             .bind(to: recentCompanyCollectionView.rx.items(
                 cellIdentifier: RecentCompanyCollectionViewCell.identifier,

@@ -275,6 +275,14 @@ public final class MainPresentationAssembly: Assembly {
                 fetchRecruitmentFilterUseCase: resolver.resolve(FetchRecruitmentFilterUseCase.self)!
             )
         }
+        container.register(WinterInternOffSeasonViewController.self) { resolver in
+            WinterInternOffSeasonViewController(
+                resolver.resolve(WinterInternOffSeasonReactor.self)!
+            )
+        }
+        container.register(WinterInternOffSeasonReactor.self) { _ in
+            WinterInternOffSeasonReactor()
+        }
         container.register(WinterInternDetailReactor.self) { (
             resolver,
             recruitmentID: Int?,
