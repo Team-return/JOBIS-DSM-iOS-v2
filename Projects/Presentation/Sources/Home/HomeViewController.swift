@@ -266,6 +266,14 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
                     $0.leading.trailing.equalToSuperview()
                     $0.height.equalTo(list.isEmpty ? 0 : 177)
                 }
+                self.applicationStatusMenuLabel.snp.remakeConstraints {
+                    if list.isEmpty {
+                        $0.top.equalTo(self.careerStackView.snp.bottom).offset(24)
+                    } else {
+                        $0.top.equalTo(self.recentCompanyCollectionView.snp.bottom).offset(15)
+                    }
+                    $0.leading.trailing.equalToSuperview()
+                }
             })
             .bind(to: recentCompanyCollectionView.rx.items(
                 cellIdentifier: RecentCompanyCollectionViewCell.identifier,
