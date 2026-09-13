@@ -3,7 +3,6 @@ import RxSwift
 import RxCocoa
 import SnapKit
 import Then
-import Core
 import DesignSystem
 import ReactorKit
 
