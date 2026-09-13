@@ -53,7 +53,7 @@ public class JobisDropdownView: UIButton {
 
     private func setupButton() {
         self.setTitle(nil, for: .normal)
-        
+
         selectedOptionLabel.setJobisText(options.first ?? "", font: .description, color: .GrayScale.gray60)
         selectedOptionLabel.isUserInteractionEnabled = false
 

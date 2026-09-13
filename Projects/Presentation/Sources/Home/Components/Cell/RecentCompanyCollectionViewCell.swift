@@ -75,7 +75,7 @@ final class RecentCompanyCollectionViewCell: BaseCollectionViewCell<RecentCompan
 
     override func adapt(model: RecentCompanyItem) {
         super.adapt(model: model)
-        
+
         companyNameLabel.text = model.entity.companyName
         companyLogoImageView.setJobisImage(urlString: model.entity.companyLogoURL)
         recruitingStatusLabel.setStatus(isRecruiting: model.entity.isRecruiting)

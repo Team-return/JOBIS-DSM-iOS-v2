@@ -52,7 +52,9 @@ final class MajorCollectionViewCell: BaseCollectionViewCell<CodeEntity> {
         invalidateIntrinsicContentSize()
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(
+        _ layoutAttributes: UICollectionViewLayoutAttributes
+    ) -> UICollectionViewLayoutAttributes {
         let targetSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: 31)
         let fittingSize = contentView.systemLayoutSizeFitting(
             targetSize,

@@ -69,9 +69,8 @@ extension WinterInternDetailReactor {
                 return .empty()
             }
             return bookmarkUseCase.execute(id: recruitmentID)
-                .asObservable()
                 .catch { _ in .empty() }
-                .flatMap { _ in Observable<Mutation>.empty() }
+                .andThen(.empty())
 
         case .applyButtonDidTap:
             guard let detail = currentState.recruitmentDetail else {

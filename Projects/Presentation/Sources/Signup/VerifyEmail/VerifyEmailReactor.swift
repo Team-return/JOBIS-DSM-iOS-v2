@@ -85,7 +85,9 @@ public final class VerifyEmailReactor: BaseReactor, Reactor {
                 verifyAuthCodeUseCase.execute(email: email.dsmEmail(), authCode: authCode)
                     .andThen(Observable<Mutation>.empty())
                     .do(onCompleted: { [weak self] in
-                        self?.steps.accept(VerifyEmailStep.passwordSettingIsRequired(name: name, gcn: gcn, email: email))
+                        self?.steps.accept(
+                            VerifyEmailStep.passwordSettingIsRequired(name: name, gcn: gcn, email: email)
+                        )
                     })
                     .catch { _ in
                         return .just(.setAuthCodeError(.error(description: "인증코드가 잘못되었어요.")))

@@ -3,10 +3,13 @@ import Swinject
 import Core
 import Domain
 
+// swiftlint:disable:next type_body_length
 public final class MainPresentationAssembly: Assembly {
     public init() {}
 
+    // swiftlint:disable:next function_body_length
     public func assemble(container: Container) {
+        // swiftlint:disable closure_parameter_position
         container.register(HomeViewController.self) { resolver in
             HomeViewController(resolver.resolve(HomeReactor.self)!)
         }
@@ -28,12 +31,18 @@ public final class MainPresentationAssembly: Assembly {
         container.register(RecruitmentReactor.self) { resolver in
             RecruitmentReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                fetchRecruitmentFilterUseCase: resolver.resolve(FetchRecruitmentFilterUseCase.self)!
             )
         }
 
         // Recruitment Detail
-        container.register(RecruitmentDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+        container.register(RecruitmentDetailReactor.self) { (
+            resolver,
+            recruitmentID: Int?,
+            companyId: Int?,
+            type: RecruitmentDetailPreviousViewType
+        ) in
             RecruitmentDetailReactor(
                 fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
@@ -42,7 +51,12 @@ public final class MainPresentationAssembly: Assembly {
                 type: type
             )
         }
-        container.register(RecruitmentDetailViewController.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+        container.register(RecruitmentDetailViewController.self) { (
+            resolver,
+            recruitmentID: Int?,
+            companyId: Int?,
+            type: RecruitmentDetailPreviousViewType
+        ) in
             RecruitmentDetailViewController(
                 resolver.resolve(RecruitmentDetailReactor.self, arguments: recruitmentID, companyId, type)!
             )
@@ -69,7 +83,8 @@ public final class MainPresentationAssembly: Assembly {
         }
         container.register(RecruitmentFilterReactor.self) { resolver in
             RecruitmentFilterReactor(
-                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!
+                fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
+                saveRecruitmentFilterUseCase: resolver.resolve(SaveRecruitmentFilterUseCase.self)!
             )
         }
 
@@ -159,7 +174,10 @@ public final class MainPresentationAssembly: Assembly {
             companyImageURL: String,
             applyType: ApplyType
         ) in
-            ApplyViewController(resolver.resolve(ApplyReactor.self, arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType)!)
+            ApplyViewController(resolver.resolve(
+                ApplyReactor.self,
+                arguments: recruitmentId, applicationId, companyName, companyImageURL, applyType
+            )!)
         }
 
         // Company
@@ -173,7 +191,11 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Company Detail
-        container.register(CompanyDetailReactor.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+        container.register(CompanyDetailReactor.self) { (
+            resolver,
+            companyId: Int,
+            type: CompanyDetailPreviousViewType
+        ) in
             CompanyDetailReactor(
                 fetchCompanyInfoDetailUseCase: resolver.resolve(FetchCompanyInfoDetailUseCase.self)!,
                 fetchReviewListUseCase: resolver.resolve(FetchReviewListUseCase.self)!,
@@ -181,7 +203,11 @@ public final class MainPresentationAssembly: Assembly {
                 type: type
             )
         }
-        container.register(CompanyDetailViewController.self) { (resolver, companyId: Int, type: CompanyDetailPreviousViewType) in
+        container.register(CompanyDetailViewController.self) { (
+            resolver,
+            companyId: Int,
+            type: CompanyDetailPreviousViewType
+        ) in
             CompanyDetailViewController(resolver.resolve(CompanyDetailReactor.self, arguments: companyId, type)!)
         }
 
@@ -196,7 +222,7 @@ public final class MainPresentationAssembly: Assembly {
         }
 
         // Review
-        container.register(WritableReviewReactor.self) { resolver in
+        container.register(WritableReviewReactor.self) { _ in
             WritableReviewReactor()
         }
         container.register(WritableReviewViewController.self) { resolver in
@@ -231,7 +257,9 @@ public final class MainPresentationAssembly: Assembly {
             )
         }
         container.register(InterviewReviewDetailViewController.self) { (resolver, reviewId: String) in
-            InterviewReviewDetailViewController(resolver.resolve(InterviewReviewDetailReactor.self, argument: reviewId)!)
+            InterviewReviewDetailViewController(
+                resolver.resolve(InterviewReviewDetailReactor.self, argument: reviewId)!
+            )
         }
 
         // Winter Intern
@@ -243,7 +271,8 @@ public final class MainPresentationAssembly: Assembly {
         container.register(WinterInternReactor.self) { resolver in
             WinterInternReactor(
                 fetchRecruitmentListUseCase: resolver.resolve(FetchRecruitmentListUseCase.self)!,
-                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!
+                bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
+                fetchRecruitmentFilterUseCase: resolver.resolve(FetchRecruitmentFilterUseCase.self)!
             )
         }
         container.register(WinterInternOffSeasonViewController.self) { resolver in
@@ -254,7 +283,12 @@ public final class MainPresentationAssembly: Assembly {
         container.register(WinterInternOffSeasonReactor.self) { _ in
             WinterInternOffSeasonReactor()
         }
-        container.register(WinterInternDetailReactor.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+        container.register(WinterInternDetailReactor.self) { (
+            resolver,
+            recruitmentID: Int?,
+            companyId: Int?,
+            type: RecruitmentDetailPreviousViewType
+        ) in
             WinterInternDetailReactor(
                 fetchRecruitmentDetailUseCase: resolver.resolve(FetchRecruitmentDetailUseCase.self)!,
                 bookmarkUseCase: resolver.resolve(BookmarkUseCase.self)!,
@@ -263,7 +297,12 @@ public final class MainPresentationAssembly: Assembly {
                 type: type
             )
         }
-        container.register(WinterInternDetailViewController.self) { (resolver, recruitmentID: Int?, companyId: Int?, type: RecruitmentDetailPreviousViewType) in
+        container.register(WinterInternDetailViewController.self) { (
+            resolver,
+            recruitmentID: Int?,
+            companyId: Int?,
+            type: RecruitmentDetailPreviousViewType
+        ) in
             WinterInternDetailViewController(
                 resolver.resolve(WinterInternDetailReactor.self, arguments: recruitmentID, companyId, type)!
             )
@@ -301,12 +340,12 @@ public final class MainPresentationAssembly: Assembly {
                 resolver.resolve(EmploymentFilterReactor.self)!
             )
         }
-        container.register(EmploymentFilterReactor.self) { resolver in
+        container.register(EmploymentFilterReactor.self) { _ in
             EmploymentFilterReactor()
         }
 
         // Easter Egg
-        container.register(EasterEggViewController.self) { resolver in
+        container.register(EasterEggViewController.self) { _ in
             EasterEggViewController()
         }
 
@@ -316,7 +355,7 @@ public final class MainPresentationAssembly: Assembly {
                 resolver.resolve(MajorBottomSheetViewModel.self)!
             )
         }
-        container.register(MajorBottomSheetViewModel.self) { resolver in
+        container.register(MajorBottomSheetViewModel.self) { _ in
             MajorBottomSheetViewModel()
         }
 
@@ -351,5 +390,6 @@ public final class MainPresentationAssembly: Assembly {
                 state: .custom(height: 280)
             )
         }
+        // swiftlint:enable closure_parameter_position
     }
 }

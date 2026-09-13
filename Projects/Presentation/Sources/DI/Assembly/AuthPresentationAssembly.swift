@@ -7,6 +7,7 @@ public final class AuthPresentationAssembly: Assembly {
     public init() {}
 
     public func assemble(container: Container) {
+        // swiftlint:disable closure_parameter_position
         // Onboarding
         container.register(OnboardingReactor.self) { resolver in
             OnboardingReactor(
@@ -37,7 +38,7 @@ public final class AuthPresentationAssembly: Assembly {
                 verifyAuthCodeUseCase: resolver.resolve(VerifyAuthCodeUseCase.self)!
             )
         }
-        container.register(VerifyEmailViewController.self) { (resolver, reactor: VerifyEmailReactor) in
+        container.register(VerifyEmailViewController.self) { (_, reactor: VerifyEmailReactor) in
             VerifyEmailViewController(reactor)
         }
 
@@ -67,7 +68,14 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Profile Setting
-        container.register(ProfileSettingReactor.self) { (resolver, name: String, gcn: Int, email: String, password: String, isMan: Bool) in
+        container.register(ProfileSettingReactor.self) { (
+            resolver,
+            name: String,
+            gcn: Int,
+            email: String,
+            password: String,
+            isMan: Bool
+        ) in
             ProfileSettingReactor(
                 name: name,
                 gcn: gcn,
@@ -83,7 +91,15 @@ public final class AuthPresentationAssembly: Assembly {
         }
 
         // Privacy
-        container.register(PrivacyReactor.self) { (resolver, name: String, gcn: Int, email: String, password: String, isMan: Bool, profileImageURL: String?) in
+        container.register(PrivacyReactor.self) { (
+            resolver,
+            name: String,
+            gcn: Int,
+            email: String,
+            password: String,
+            isMan: Bool,
+            profileImageURL: String?
+        ) in
             PrivacyReactor(
                 name: name,
                 gcn: gcn,
@@ -124,5 +140,6 @@ public final class AuthPresentationAssembly: Assembly {
                 email: email
             )
         }
+        // swiftlint:enable closure_parameter_position
     }
 }

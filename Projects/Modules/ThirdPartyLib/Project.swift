@@ -6,7 +6,6 @@ let project = Project.makeModule(
     name: "ThirdPartyLib",
     product: .staticFramework,
     targets: [],
-    packages: [.FCM],
     dependencies: [
         .SPM.RxCocoa,
         .SPM.RxFlow,

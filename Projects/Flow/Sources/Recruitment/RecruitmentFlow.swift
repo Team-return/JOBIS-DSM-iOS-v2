@@ -60,7 +60,7 @@ private extension RecruitmentFlow {
 
         Flows.use(recruitmentDetailFlow, when: .created) { (root) in
             let view = root as? RecruitmentDetailViewController
-            view?.isPopViewController = { id, bookmark in
+            view?.isPopViewController = { _, _ in
                 // In ReactorKit, state is immutable
                 // The list will be refreshed on viewWillAppear if needed
                 let popView = self.rootViewController.topViewController as? RecruitmentViewController
