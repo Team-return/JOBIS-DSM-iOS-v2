@@ -6,6 +6,10 @@ import RxFlow
 import Core
 import Domain
 
+public enum NotificationFilter {
+    case all, unread, read
+}
+
 public final class AlarmReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
@@ -24,15 +28,25 @@ public final class AlarmReactor: BaseReactor, Stepper {
     public enum Action {
         case fetchNotificationList
         case readNotification(NotificationEntity, Int)
+        case filterChanged(NotificationFilter)
     }
 
     public enum Mutation {
         case setNotificationList([NotificationEntity])
         case updateNotification(index: Int, notification: NotificationEntity)
+        case setFilter(NotificationFilter)
     }
 
     public struct State {
         var notificationList: [NotificationEntity] = []
+        var filter: NotificationFilter = .all
+        var filteredList: [NotificationEntity] {
+            switch filter {
+            case .all:    return notificationList
+            case .unread: return notificationList.filter { $0.new }
+            case .read:   return notificationList.filter { !$0.new }
+            }
+        }
     }
 }
 
@@ -58,6 +72,9 @@ extension AlarmReactor {
             )
             return readNotificationUseCase.execute(id: notification.notificationID)
                 .andThen(.just(.updateNotification(index: index, notification: updatedNotification)))
+
+        case .filterChanged(let filter):
+            return .just(.setFilter(filter))
         }
     }
 
@@ -71,6 +88,9 @@ extension AlarmReactor {
             if index < newState.notificationList.count {
                 newState.notificationList[index] = notification
             }
+
+        case let .setFilter(filter):
+            newState.filter = filter
         }
         return newState
     }
