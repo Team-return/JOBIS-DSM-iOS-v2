@@ -98,6 +98,9 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
             .bind {
                 self.showTabbar()
                 self.setSmallTitle(title: "기업 탐색")
+                if let indexPath = self.companyTableView.indexPathForSelectedRow {
+                    self.companyTableView.deselectRow(at: indexPath, animated: true)
+                }
                 if self.isTabNavigation {
                     self.viewWillAppearWithTap?()
                 }
