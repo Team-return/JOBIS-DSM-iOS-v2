@@ -119,6 +119,10 @@ public final class SearchCompanyViewController: BaseReactorViewController<Search
         viewWillAppearPublisher.asObservable()
             .bind { [weak self] in
                 self?.hideTabbar()
+                if let tableView = self?.searchTableView,
+                   let indexPath = tableView.indexPathForSelectedRow {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                }
                 self?.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)

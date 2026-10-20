@@ -83,6 +83,13 @@ public final class SearchRecruitmentViewController: BaseReactorViewController<Se
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        searchTextField.rx.text.orEmpty
+            .skip(1)
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .bind(to: searchButtonDidTap)
+            .disposed(by: disposeBag)
+
         searchButtonDidTap
             .map { SearchRecruitmentReactor.Action.searchButtonDidTap($0) }
             .bind(to: reactor.action)
@@ -103,11 +110,12 @@ public final class SearchRecruitmentViewController: BaseReactorViewController<Se
     }
 
     public override func bindState() {
-        reactor.state.map { $0.recruitmentList }
+        reactor.state.map { ($0.recruitmentList, $0.searchText) }
             .skip(1)
-            .do(onNext: { [weak self] in
-                self?.emptySearchView.isHidden = !$0.isEmpty
+            .do(onNext: { [weak self] list, searchText in
+                self?.emptySearchView.isHidden = !list.isEmpty || searchText == nil
             })
+            .map { $0.0 }
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: RecruitmentTableViewCell.identifier,
                 cellType: RecruitmentTableViewCell.self
@@ -125,6 +133,9 @@ public final class SearchRecruitmentViewController: BaseReactorViewController<Se
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.hideTabbar()
+                if let indexPath = self.searchTableView.indexPathForSelectedRow {
+                    self.searchTableView.deselectRow(at: indexPath, animated: true)
+                }
                 self.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)

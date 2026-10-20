@@ -60,7 +60,11 @@ extension SearchRecruitmentReactor {
 
         case let .searchButtonDidTap(text):
             guard !text.isEmpty else {
-                return .empty()
+                return .from([
+                    .setSearchText(nil),
+                    .resetPageCount,
+                    .setRecruitmentList([])
+                ])
             }
             return .concat([
                 .just(.setSearchText(text)),
