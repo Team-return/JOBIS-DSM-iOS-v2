@@ -176,6 +176,9 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.showTabbar()
+                if let indexPath = self.recruitmentTableView.indexPathForSelectedRow {
+                    self.recruitmentTableView.deselectRow(at: indexPath, animated: true)
+                }
 
                 if self.isTabNavigation {
                     self.viewWillappearWithTap?()

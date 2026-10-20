@@ -61,6 +61,7 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.alwaysBounceVertical = true
+        $0.keyboardDismissMode = .onDrag
     }
     private let contentView = UIView()
 
@@ -192,6 +193,11 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
         bugImageCollectionView.delegate = self
         bugImageCollectionView.dataSource = self
 
+        let dismissKeyboardTap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        dismissKeyboardTap.cancelsTouchesInView = false
+        dismissKeyboardTap.delegate = self
+        scrollView.addGestureRecognizer(dismissKeyboardTap)
+
         self.emptyImageButton.isHidden = !imageList.isEmpty
         emptyImageButton.rx.tap.asObservable()
             .subscribe(onNext: {
@@ -217,6 +223,23 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
     public override func configureNavigation() {
         setLargeTitle(title: "버그 제보하기")
         self.hideTabbar()
+    }
+}
+
+extension BugReportViewController: UIGestureRecognizerDelegate {
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        var target = touch.view
+        while let current = target {
+            if current is UITextField || current is UITextView || current is UIControl {
+                return false
+            }
+            target = current.superview
+        }
+        return true
     }
 }
 

@@ -133,6 +133,9 @@ public final class SearchRecruitmentViewController: BaseReactorViewController<Se
         viewWillAppearPublisher.asObservable()
             .bind {
                 self.hideTabbar()
+                if let indexPath = self.searchTableView.indexPathForSelectedRow {
+                    self.searchTableView.deselectRow(at: indexPath, animated: true)
+                }
                 self.navigationController?.navigationBar.prefersLargeTitles = false
             }
             .disposed(by: disposeBag)
