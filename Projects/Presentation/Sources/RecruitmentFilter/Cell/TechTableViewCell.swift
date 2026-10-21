@@ -50,8 +50,9 @@ final class TechStackViewCell: BaseView {
             .disposed(by: disposeBag)
     }
 
-    func adapt(model: CodeEntity) {
+    func adapt(model: CodeEntity, isChecked: Bool = false) {
         self.code = model
         self.techLabel.setJobisText(model.keyword, font: .body, color: .GrayScale.gray70)
+        self.isCheck = isChecked
     }
 }
