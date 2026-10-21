@@ -62,7 +62,6 @@ extension CompanyReactor {
         case .refreshCompanyList:
             return .concat([
                 .just(.setRefreshing(true)),
-                .just(.resetPageCount),
                 fetchCompanyListUseCase.execute(
                     page: 1,
                     sortType: currentState.sortType?.rawValue
@@ -71,6 +70,7 @@ extension CompanyReactor {
                 .flatMap { list -> Observable<Mutation> in
                     return .concat([
                         .just(.setCompanyList(list)),
+                        .just(.resetPageCount),
                         .just(.setRefreshing(false))
                     ])
                 }

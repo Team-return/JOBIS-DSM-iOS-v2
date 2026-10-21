@@ -51,6 +51,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
         companyTableView.rx.willDisplayCell
             .filter {
+                !self.reactor.currentState.isRefreshing &&
                 $0.indexPath.row == self.companyTableView.numberOfRows(
                     inSection: $0.indexPath.section
                 ) - 1
