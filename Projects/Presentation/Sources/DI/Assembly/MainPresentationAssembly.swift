@@ -84,7 +84,8 @@ public final class MainPresentationAssembly: Assembly {
         container.register(RecruitmentFilterReactor.self) { resolver in
             RecruitmentFilterReactor(
                 fetchCodeListUseCase: resolver.resolve(FetchCodeListUseCase.self)!,
-                saveRecruitmentFilterUseCase: resolver.resolve(SaveRecruitmentFilterUseCase.self)!
+                saveRecruitmentFilterUseCase: resolver.resolve(SaveRecruitmentFilterUseCase.self)!,
+                fetchRecruitmentFilterUseCase: resolver.resolve(FetchRecruitmentFilterUseCase.self)!
             )
         }
 
