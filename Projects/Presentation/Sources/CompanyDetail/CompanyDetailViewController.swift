@@ -141,7 +141,11 @@ public class CompanyDetailViewController: BaseReactorViewController<CompanyDetai
                 self?.startedDayLabel.setContent(contentText: detail.foundedAt)
                 self?.workersNumbersLabel.setContent(contentText: detail.workerNumber)
                 self?.annualSalesLabel.setContent(contentText: detail.take)
-                self?.headAddressLabel.setContent(contentText: detail.mainAddress)
+                self?.headAddressLabel.setContent(
+                    contentText: [detail.mainAddress, detail.mainAddressDetail]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: " ")
+                )
                 self?.businessAreaLabel.setContent(contentText: detail.businessArea)
                 self?.recruitmentButton.isHidden = detail.recruitmentID == nil
             })
