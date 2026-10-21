@@ -32,12 +32,14 @@ public final class NotificationSettingReactor: BaseReactor, Stepper {
 
     public enum Mutation {
         case setSubscribeStates([NotificationType: Bool])
-        case toggleNotificationState(NotificationType)
-        case setAllNotificationStates(Bool)
+        case setLoading(Bool)
+        case setFetching(Bool)
     }
 
     public struct State {
         var subscribeStates: [NotificationType: Bool] = [:]
+        var isLoading = false
+        var isFetching = false
 
         var isNoticeEnabled: Bool {
             subscribeStates[.notice] ?? false
@@ -52,7 +54,11 @@ public final class NotificationSettingReactor: BaseReactor, Stepper {
             subscribeStates[.winterIntern] ?? false
         }
         var isAllNotificationEnabled: Bool {
-            isNoticeEnabled && isApplicationEnabled && isRecruitmentEnabled && isWinterInternEnabled
+            Self.isAllEnabled(subscribeStates)
+        }
+
+        static func isAllEnabled(_ states: [NotificationType: Bool]) -> Bool {
+            NotificationType.allCases.allSatisfy { states[$0] == true }
         }
     }
 }
@@ -61,27 +67,68 @@ extension NotificationSettingReactor {
     public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .fetchNotificationSettings:
-            return fetchSubscribeStateUseCase.execute()
-                .asObservable()
-                .map { entities -> [NotificationType: Bool] in
-                    var states: [NotificationType: Bool] = [:]
-                    entities.forEach { states[$0.topic] = $0.isSubscribed }
-                    return states
-                }
-                .map { .setSubscribeStates($0) }
+            return .concat(
+                .just(.setLoading(true)),
+                .just(.setFetching(true)),
+                fetchStates()
+                    .asObservable()
+                    .map { Mutation.setSubscribeStates($0) }
+                    .catch { _ in .empty() },
+                .just(.setFetching(false)),
+                .just(.setLoading(false))
+            )
 
         case let .toggleNotification(notificationType):
-            return subscribeNotificationUseCase.execute(
-                token: Messaging.messaging().fcmToken ?? "",
-                notificationType: notificationType
+            return refreshAfter(
+                subscribeNotificationUseCase.execute(
+                    token: Messaging.messaging().fcmToken ?? "",
+                    notificationType: notificationType
+                )
             )
-            .andThen(.just(.toggleNotificationState(notificationType)))
 
         case .toggleAllNotifications:
-            let newState = !currentState.isAllNotificationEnabled
-            return subscribeAllNotificationUseCase.execute()
-                .andThen(.just(.setAllNotificationStates(newState)))
+            let shouldEnable = !currentState.isAllNotificationEnabled
+            return refreshAfter(
+                subscribeAllNotificationUseCase.execute(),
+                retryEnableAll: shouldEnable
+            )
         }
+    }
+
+    private func fetchStates() -> Single<[NotificationType: Bool]> {
+        fetchSubscribeStateUseCase.execute()
+            .map { entities in
+                Dictionary(
+                    entities.map { ($0.topic, $0.isSubscribed) },
+                    uniquingKeysWith: { _, latest in latest }
+                )
+            }
+    }
+
+    private func refreshAfter(
+        _ request: Completable,
+        retryEnableAll: Bool = false
+    ) -> Observable<Mutation> {
+        let refreshed = request
+            .catch { _ in .empty() }
+            .andThen(fetchStates())
+            .flatMap { [weak self] states -> Single<[NotificationType: Bool]> in
+                guard let self, retryEnableAll, !State.isAllEnabled(states) else {
+                    return .just(states)
+                }
+                return self.subscribeAllNotificationUseCase.execute()
+                    .catch { _ in .empty() }
+                    .andThen(self.fetchStates())
+            }
+            .asObservable()
+            .map { Mutation.setSubscribeStates($0) }
+            .catch { _ in .empty() }
+
+        return .concat(
+            .just(.setLoading(true)),
+            refreshed,
+            .just(.setLoading(false))
+        )
     }
 
     public func reduce(state: State, mutation: Mutation) -> State {
@@ -91,15 +138,11 @@ extension NotificationSettingReactor {
         case let .setSubscribeStates(states):
             newState.subscribeStates = states
 
-        case let .toggleNotificationState(notificationType):
-            let currentValue = newState.subscribeStates[notificationType] ?? false
-            newState.subscribeStates[notificationType] = !currentValue
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
 
-        case let .setAllNotificationStates(isEnabled):
-            newState.subscribeStates[.notice] = isEnabled
-            newState.subscribeStates[.application] = isEnabled
-            newState.subscribeStates[.recruitment] = isEnabled
-            newState.subscribeStates[.winterIntern] = isEnabled
+        case let .setFetching(isFetching):
+            newState.isFetching = isFetching
         }
 
         return newState
