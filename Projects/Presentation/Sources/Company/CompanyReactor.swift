@@ -19,6 +19,7 @@ public final class CompanyReactor: BaseReactor, Stepper {
 
     public enum Action {
         case fetchCompanyList
+        case refreshCompanyList
         case loadMoreCompanies
         case companyDidSelect(Int)
         case searchButtonDidTap
@@ -30,6 +31,7 @@ public final class CompanyReactor: BaseReactor, Stepper {
         case appendCompanyList([CompanyEntity])
         case incrementPageCount
         case resetPageCount
+        case setRefreshing(Bool)
         case setSortType(CompanySortType?)
     }
 
@@ -37,6 +39,7 @@ public final class CompanyReactor: BaseReactor, Stepper {
         var companyList: [CompanyEntity] = []
         var sortType: CompanySortType?
         var pageCount: Int = 1
+        var isRefreshing: Bool = false
     }
 }
 
@@ -54,6 +57,24 @@ extension CompanyReactor {
                 .flatMap { list -> Observable<Mutation> in
                     return .just(.setCompanyList(list))
                 }
+            ])
+
+        case .refreshCompanyList:
+            return .concat([
+                .just(.setRefreshing(true)),
+                .just(.resetPageCount),
+                fetchCompanyListUseCase.execute(
+                    page: 1,
+                    sortType: currentState.sortType?.rawValue
+                )
+                .asObservable()
+                .flatMap { list -> Observable<Mutation> in
+                    return .concat([
+                        .just(.setCompanyList(list)),
+                        .just(.setRefreshing(false))
+                    ])
+                }
+                .catch { _ in .just(.setRefreshing(false)) }
             ])
 
         case .loadMoreCompanies:
@@ -112,6 +133,9 @@ extension CompanyReactor {
 
         case .resetPageCount:
             newState.pageCount = 1
+
+        case let .setRefreshing(isRefreshing):
+            newState.isRefreshing = isRefreshing
 
         case let .setSortType(sortType):
             newState.sortType = sortType
