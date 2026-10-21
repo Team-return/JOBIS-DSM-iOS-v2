@@ -25,6 +25,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
 
     public enum Action {
         case fetchRecruitmentList
+        case refreshRecruitmentList
         case viewWillAppear
         case loadMoreRecruitments
         case bookmarkButtonDidTap(Int)
@@ -42,6 +43,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         case resetPageCount
         case setFilterOptions(jobCode: String, techCode: [String]?, years: [String]?, region: String?, status: String?)
         case setLoading(Bool)
+        case setRefreshing(Bool)
         case setSortType(RecruitmentSortType?)
     }
 
@@ -55,6 +57,7 @@ public final class RecruitmentReactor: BaseReactor, Stepper {
         var sortType: RecruitmentSortType?
         var pageCount: Int = 1
         var isLoading: Bool = false
+        var isRefreshing: Bool = false
     }
 }
 
@@ -64,6 +67,9 @@ extension RecruitmentReactor {
         case .fetchRecruitmentList:
             let filter = fetchRecruitmentFilterUseCase.execute()
             return fetchListMutations(filter: filter)
+
+        case .refreshRecruitmentList:
+            return refreshListMutations()
 
         case .viewWillAppear:
             let filter = fetchRecruitmentFilterUseCase.execute()
@@ -143,6 +149,30 @@ extension RecruitmentReactor {
         }
     }
 
+    private func refreshListMutations() -> Observable<Mutation> {
+        return .concat([
+            .just(.setRefreshing(true)),
+            .just(.resetPageCount),
+            fetchRecruitmentListUseCase.execute(
+                page: 1,
+                jobCode: currentState.jobCode,
+                techCode: currentState.techCode,
+                years: currentState.years,
+                region: currentState.region,
+                status: currentState.status,
+                sortType: currentState.sortType?.rawValue
+            )
+            .asObservable()
+            .flatMap { list -> Observable<Mutation> in
+                return .concat([
+                    .just(.setRecruitmentList(list)),
+                    .just(.setRefreshing(false))
+                ])
+            }
+            .catch { _ in .just(.setRefreshing(false)) }
+        ])
+    }
+
     private func fetchListMutations(filter: RecruitmentFilterEntity) -> Observable<Mutation> {
         return .concat([
             .just(.setFilterOptions(
@@ -206,6 +236,9 @@ extension RecruitmentReactor {
 
         case let .setLoading(isLoading):
             newState.isLoading = isLoading
+
+        case let .setRefreshing(isRefreshing):
+            newState.isRefreshing = isRefreshing
 
         case let .setSortType(sortType):
             newState.sortType = sortType

@@ -38,6 +38,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
         $0.isSkeletonable = true
         $0.backgroundColor = .GrayScale.gray10
     }
+    private let refreshControl = UIRefreshControl()
     private let filterButton = UIButton().then {
         $0.setImage(.jobisIcon(.filterIcon), for: .normal)
     }
@@ -97,6 +98,11 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        refreshControl.rx.controlEvent(.valueChanged)
+            .map { RecruitmentReactor.Action.refreshRecruitmentList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         recruitmentTableView.rx.willDisplayCell
             .filter {
                 return !self.reactor.currentState.isLoading &&
@@ -146,6 +152,11 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
     }
 
     public override func bindState() {
+        reactor.state.map { $0.isRefreshing }
+            .distinctUntilChanged()
+            .bind(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+
         reactor.state.map { ($0.recruitmentList, $0.isLoading) }
             .skip(1)
             .bind(onNext: { [weak self] list, isLoading in
@@ -172,6 +183,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
 
     public override func configureViewController() {
         recruitmentTableView.dataSource = self
+        recruitmentTableView.refreshControl = refreshControl
 
         viewWillAppearPublisher.asObservable()
             .bind {
