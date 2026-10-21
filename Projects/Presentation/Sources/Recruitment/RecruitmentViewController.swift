@@ -106,6 +106,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
         recruitmentTableView.rx.willDisplayCell
             .filter {
                 return !self.reactor.currentState.isLoading &&
+                !self.reactor.currentState.isRefreshing &&
                 $0.indexPath.row == self.recruitmentTableView.numberOfRows(
                     inSection: $0.indexPath.section
                 ) - 1

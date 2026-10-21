@@ -152,7 +152,6 @@ extension RecruitmentReactor {
     private func refreshListMutations() -> Observable<Mutation> {
         return .concat([
             .just(.setRefreshing(true)),
-            .just(.resetPageCount),
             fetchRecruitmentListUseCase.execute(
                 page: 1,
                 jobCode: currentState.jobCode,
@@ -166,6 +165,7 @@ extension RecruitmentReactor {
             .flatMap { list -> Observable<Mutation> in
                 return .concat([
                     .just(.setRecruitmentList(list)),
+                    .just(.resetPageCount),
                     .just(.setRefreshing(false))
                 ])
             }
