@@ -19,6 +19,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
         $0.rowHeight = 104
         $0.showsVerticalScrollIndicator = false
     }
+    private let refreshControl = UIRefreshControl()
     private let searchButton = UIButton().then {
         $0.setImage(.jobisIcon(.searchIcon), for: .normal)
     }
@@ -43,8 +44,14 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        refreshControl.rx.controlEvent(.valueChanged)
+            .map { CompanyReactor.Action.refreshCompanyList }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         companyTableView.rx.willDisplayCell
             .filter {
+                !self.reactor.currentState.isRefreshing &&
                 $0.indexPath.row == self.companyTableView.numberOfRows(
                     inSection: $0.indexPath.section
                 ) - 1
@@ -80,6 +87,11 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
     }
 
     public override func bindState() {
+        reactor.state.map { $0.isRefreshing }
+            .distinctUntilChanged()
+            .bind(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+
         reactor.state.map { $0.companyList }
             .skip(1)
             .bind(onNext: { [weak self] _ in
@@ -90,6 +102,7 @@ public final class CompanyViewController: BaseReactorViewController<CompanyReact
 
     public override func configureViewController() {
         companyTableView.dataSource = self
+        companyTableView.refreshControl = refreshControl
         companyTableView.tableHeaderView = jobisDropdownView
         jobisDropdownView.frame = CGRect(x: 0, y: 0, width: companyTableView.bounds.width, height: 28)
         companyTableView.tableHeaderView = jobisDropdownView
