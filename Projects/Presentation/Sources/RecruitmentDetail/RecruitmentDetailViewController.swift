@@ -165,7 +165,9 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
                     if detail.isApplicable {
                         self.applyButton.setText("지원하기")
                     } else {
-                        self.applyButton.setText("이미 지원한 기업이에요")
+                        self.applyButton.setText(
+                            (detail.unapplicableReason ?? .unknown).localizedString()
+                        )
                     }
 
                     self.applyButton.isEnabled = detail.isApplicable
