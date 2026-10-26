@@ -47,6 +47,7 @@ public final class NotificationSettingViewController: BaseReactorViewController<
     private lazy var switchViewStackView = UIStackView(arrangedSubviews: switchViewArray).then {
         $0.axis = .vertical
     }
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
 
     public override func addView() {
         [
@@ -54,7 +55,8 @@ public final class NotificationSettingViewController: BaseReactorViewController<
             allNotificationSwitchView,
             lineView,
             detailMenuLabel,
-            switchViewStackView
+            switchViewStackView,
+            loadingIndicator
         ].forEach(self.view.addSubview(_:))
     }
 
@@ -84,6 +86,10 @@ public final class NotificationSettingViewController: BaseReactorViewController<
         switchViewStackView.snp.makeConstraints {
             $0.top.equalTo(detailMenuLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview()
+        }
+
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
 
@@ -125,50 +131,58 @@ public final class NotificationSettingViewController: BaseReactorViewController<
     }
 
     public override func bindState() {
-        reactor.state.map { $0.isNoticeEnabled }
+        reactor.state.map { !$0.isLoading }
             .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.allNotificationSwitchView.notificationSwitchButton.isEnabled = isEnabled
+                self?.switchViewArray.forEach { $0.notificationSwitchButton.isEnabled = isEnabled }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isFetching }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isFetching in
+                self?.allNotificationSwitchView.notificationSwitchButton.isHidden = isFetching
+                self?.switchViewArray.forEach { $0.notificationSwitchButton.isHidden = isFetching }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isLoading }
+            .distinctUntilChanged()
+            .bind(to: loadingIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+
+        let settledState = reactor.state.filter { !$0.isLoading }
+
+        settledState.map { $0.isNoticeEnabled }
             .bind(onNext: { [weak self] isEnabled in
                 self?.noticeSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map { $0.isApplicationEnabled }
-            .distinctUntilChanged()
+        settledState.map { $0.isApplicationEnabled }
             .bind(onNext: { [weak self] isEnabled in
                 self?.applicationSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map { $0.isRecruitmentEnabled }
-            .distinctUntilChanged()
+        settledState.map { $0.isRecruitmentEnabled }
             .bind(onNext: { [weak self] isEnabled in
                 self?.recruitmentSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map { $0.isWinterInternEnabled }
-            .distinctUntilChanged()
+        settledState.map { $0.isWinterInternEnabled }
             .bind(onNext: { [weak self] isEnabled in
                 self?.winterInternSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map { $0.isAllNotificationEnabled }
-            .distinctUntilChanged()
+        settledState.map { $0.isAllNotificationEnabled }
             .bind(onNext: { [weak self] isEnabled in
                 self?.allNotificationSwitchView.setup(isOn: isEnabled)
             })
             .disposed(by: disposeBag)
-    }
-
-    public override func configureViewController() {
-        allNotificationSwitchView.clickSwitchButton
-            .asObservable()
-            .bind(onNext: { [weak self] isOn in
-                self?.switchViewArray.forEach {
-                    $0.setup(isOn: isOn)
-                }
-            }).disposed(by: disposeBag)
     }
 
     public override func configureNavigation() {
