@@ -6,6 +6,10 @@ import RxFlow
 import Core
 import Domain
 
+public enum NotificationFilter {
+    case all, unread, read
+}
+
 public final class AlarmReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
@@ -23,16 +27,26 @@ public final class AlarmReactor: BaseReactor, Stepper {
 
     public enum Action {
         case fetchNotificationList
-        case readNotification(NotificationEntity, Int)
+        case readNotification(NotificationEntity)
+        case filterChanged(NotificationFilter)
     }
 
     public enum Mutation {
         case setNotificationList([NotificationEntity])
-        case updateNotification(index: Int, notification: NotificationEntity)
+        case updateNotification(NotificationEntity)
+        case setFilter(NotificationFilter)
     }
 
     public struct State {
         var notificationList: [NotificationEntity] = []
+        var filter: NotificationFilter = .all
+        var filteredList: [NotificationEntity] {
+            switch filter {
+            case .all:    return notificationList
+            case .unread: return notificationList.filter { $0.new }
+            case .read:   return notificationList.filter { !$0.new }
+            }
+        }
     }
 }
 
@@ -46,7 +60,7 @@ extension AlarmReactor {
                     .just(.setNotificationList(list))
                 }
 
-        case let .readNotification(notification, index):
+        case let .readNotification(notification):
             let updatedNotification = NotificationEntity(
                 notificationID: notification.notificationID,
                 title: notification.title,
@@ -57,7 +71,10 @@ extension AlarmReactor {
                 new: false
             )
             return readNotificationUseCase.execute(id: notification.notificationID)
-                .andThen(.just(.updateNotification(index: index, notification: updatedNotification)))
+                .andThen(.just(.updateNotification(updatedNotification)))
+
+        case .filterChanged(let filter):
+            return .just(.setFilter(filter))
         }
     }
 
@@ -67,10 +84,15 @@ extension AlarmReactor {
         case let .setNotificationList(list):
             newState.notificationList = list
 
-        case let .updateNotification(index, notification):
-            if index < newState.notificationList.count {
+        case let .updateNotification(notification):
+            if let index = newState.notificationList.firstIndex(
+                where: { $0.notificationID == notification.notificationID }
+            ) {
                 newState.notificationList[index] = notification
             }
+
+        case let .setFilter(filter):
+            newState.filter = filter
         }
         return newState
     }
