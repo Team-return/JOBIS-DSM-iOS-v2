@@ -42,13 +42,10 @@ public final class AlarmViewController: BaseReactorViewController<AlarmReactor> 
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        Observable.zip(
-            alarmTableView.rx.modelSelected(NotificationEntity.self),
-            alarmTableView.rx.itemSelected
-        )
-        .map { AlarmReactor.Action.readNotification($0.0, $0.1.row) }
-        .bind(to: reactor.action)
-        .disposed(by: disposeBag)
+        alarmTableView.rx.modelSelected(NotificationEntity.self)
+            .map { AlarmReactor.Action.readNotification($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
         filterSegment.rx.selectedSegmentIndex
             .skip(1)
