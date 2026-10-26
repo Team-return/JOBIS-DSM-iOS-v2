@@ -18,6 +18,7 @@ public struct RecruitmentDetailEntity: Equatable {
     public let period: String
     public let etc: String
     public let isApplicable: Bool
+    public let unapplicableReason: UnapplicableReasonType?
     public let winterIntern: Bool?
     public let hireConvertible: Bool?
     public let bookmarked: Bool
@@ -41,6 +42,7 @@ public struct RecruitmentDetailEntity: Equatable {
         period: String,
         etc: String,
         isApplicable: Bool,
+        unapplicableReason: UnapplicableReasonType?,
         winterIntern: Bool?,
         hireConvertible: Bool?,
         bookmarked: Bool,
@@ -63,6 +65,7 @@ public struct RecruitmentDetailEntity: Equatable {
         self.period = period
         self.etc = etc
         self.isApplicable = isApplicable
+        self.unapplicableReason = unapplicableReason
         self.winterIntern = winterIntern
         self.hireConvertible = hireConvertible
         self.bookmarked = bookmarked
