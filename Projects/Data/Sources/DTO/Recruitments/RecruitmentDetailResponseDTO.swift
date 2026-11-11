@@ -19,6 +19,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
     let startDate, endDate: String?
     let etc: String?
     let isApplicable: Bool
+    let unapplicableReason: String?
     let winterIntern: Bool?
     let hireConvertible: Bool?
     let bookmarked: Bool
@@ -43,6 +44,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
         endDate: String?,
         etc: String?,
         isApplicable: Bool,
+        unapplicableReason: String?,
         winterIntern: Bool?,
         hireConvertible: Bool?,
         bookmarked: Bool,
@@ -66,6 +68,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
         self.endDate = endDate
         self.etc = etc
         self.isApplicable = isApplicable
+        self.unapplicableReason = unapplicableReason
         self.winterIntern = winterIntern
         self.hireConvertible = hireConvertible
         self.bookmarked = bookmarked
@@ -90,6 +93,7 @@ struct RecruitmentDetailResponseDTO: Decodable {
         case endDate = "end_date"
         case etc
         case isApplicable = "is_applicable"
+        case unapplicableReason = "unapplicable_reason"
         case winterIntern = "winter_intern"
         case hireConvertible = "hire_convertible"
         case bookmarked
@@ -124,6 +128,7 @@ extension RecruitmentDetailResponseDTO {
             period: recruitmentPeriod,
             etc: etc ?? "없음",
             isApplicable: isApplicable,
+            unapplicableReason: unapplicableReason.map { UnapplicableReasonType(rawValue: $0) ?? .unknown },
             winterIntern: winterIntern,
             hireConvertible: hireConvertible,
             bookmarked: bookmarked,

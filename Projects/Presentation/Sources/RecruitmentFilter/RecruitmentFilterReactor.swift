@@ -15,9 +15,10 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
 
     public init(
         fetchCodeListUseCase: FetchCodeListUseCase,
-        saveRecruitmentFilterUseCase: SaveRecruitmentFilterUseCase
+        saveRecruitmentFilterUseCase: SaveRecruitmentFilterUseCase,
+        fetchRecruitmentFilterUseCase: FetchRecruitmentFilterUseCase
     ) {
-        self.initialState = .init()
+        self.initialState = Self.makeInitialState(filter: fetchRecruitmentFilterUseCase.execute())
         self.fetchCodeListUseCase = fetchCodeListUseCase
         self.saveRecruitmentFilterUseCase = saveRecruitmentFilterUseCase
     }
@@ -76,9 +77,13 @@ extension RecruitmentFilterReactor {
                 fetchCodeListUseCase.execute(keyword: nil, type: .job, parentCode: nil)
                     .asObservable()
                     .map { Mutation.setJobList($0) },
-                fetchCodeListUseCase.execute(keyword: nil, type: .tech, parentCode: nil)
-                    .asObservable()
-                    .map { Mutation.setTechList($0) }
+                fetchCodeListUseCase.execute(
+                    keyword: nil,
+                    type: .tech,
+                    parentCode: currentState.jobCode.isEmpty ? nil : currentState.jobCode
+                )
+                .asObservable()
+                .map { Mutation.setTechList($0) }
             ])
 
         case let .selectJobCode(code):
@@ -160,6 +165,25 @@ extension RecruitmentFilterReactor {
             newState.techCode = []
         }
         return newState
+    }
+
+    private static func makeInitialState(filter: RecruitmentFilterEntity) -> State {
+        var state = State()
+        state.jobCode = filter.jobCode
+        state.techCode = filter.techCode ?? []
+        state.years = filter.years ?? []
+        state.regionCode = LocationType.allCases
+            .firstIndex { $0.rawValue == filter.region }
+            .map { "\($0)" } ?? ""
+        switch filter.status {
+        case "RECRUITING":
+            state.statusCode = 0
+        case "DONE":
+            state.statusCode = 1
+        default:
+            state.statusCode = nil
+        }
+        return state
     }
 
     private func mapStatus(code: Int?) -> String {

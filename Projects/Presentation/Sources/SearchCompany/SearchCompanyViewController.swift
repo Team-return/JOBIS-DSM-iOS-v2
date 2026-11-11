@@ -75,6 +75,14 @@ public final class SearchCompanyViewController: BaseReactorViewController<Search
     }
 
     public override func bindAction() {
+        searchTextField.rx.text.orEmpty
+            .skip(1)
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .map { SearchCompanyReactor.Action.searchTextDidSubmit($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         searchTableView.rx.willDisplayCell
             .filter { [weak self] event in
                 guard let self = self else { return false }
@@ -95,11 +103,12 @@ public final class SearchCompanyViewController: BaseReactorViewController<Search
     }
 
     public override func bindState() {
-        reactor.state.map { $0.companyList }
+        reactor.state.map { ($0.companyList, $0.searchText) }
             .skip(1)
-            .do(onNext: { [weak self] list in
-                self?.emptySearchView.isHidden = !list.isEmpty
+            .do(onNext: { [weak self] list, searchText in
+                self?.emptySearchView.isHidden = !list.isEmpty || searchText == nil
             })
+            .map { $0.0 }
             .bind(to: searchTableView.rx.items(
                 cellIdentifier: CompanyTableViewCell.identifier,
                 cellType: CompanyTableViewCell.self

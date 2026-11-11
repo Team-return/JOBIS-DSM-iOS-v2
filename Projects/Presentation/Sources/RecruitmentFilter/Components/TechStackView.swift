@@ -20,7 +20,7 @@ class TechStackView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setTech(techList: [CodeEntity]) {
+    func setTech(techList: [CodeEntity], selectedCodes: [String] = []) {
         self.subviews.forEach {
             self.removeArrangedSubview($0)
             $0.removeFromSuperview()
@@ -28,7 +28,7 @@ class TechStackView: UIStackView {
 
         techList.forEach { data in
             let techStackViewCell = TechStackViewCell()
-            techStackViewCell.adapt(model: data)
+            techStackViewCell.adapt(model: data, isChecked: selectedCodes.contains("\(data.code)"))
 
             techStackViewCell.techCheckBoxDidTap = {
                 self.techDidTap?($0 ?? CodeEntity(code: 0, keyword: ""))

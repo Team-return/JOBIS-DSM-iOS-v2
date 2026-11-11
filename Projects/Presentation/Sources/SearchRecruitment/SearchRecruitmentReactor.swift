@@ -51,12 +51,16 @@ extension SearchRecruitmentReactor {
             guard let searchText = currentState.searchText else {
                 return .empty()
             }
-            return .concat([
-                .just(.incrementPageCount),
-                fetchRecruitmentListUseCase.execute(page: nextPage, name: searchText)
-                    .asObservable()
-                    .map { Mutation.appendRecruitmentList($0) }
-            ])
+            return fetchRecruitmentListUseCase.execute(page: nextPage, name: searchText)
+                .asObservable()
+                .catch { _ in .empty() }
+                .filter { !$0.isEmpty }
+                .flatMap { list -> Observable<Mutation> in
+                    return .concat([
+                        .just(.appendRecruitmentList(list)),
+                        .just(.incrementPageCount)
+                    ])
+                }
 
         case let .searchButtonDidTap(text):
             guard !text.isEmpty else {

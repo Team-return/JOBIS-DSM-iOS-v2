@@ -90,11 +90,6 @@ extension HomeReactor {
                     .flatMap { studentInfo -> Observable<Mutation> in
                         .just(.setStudentInfo(studentInfo))
                     },
-                fetchApplicationUseCase.execute()
-                    .asObservable()
-                    .flatMap { applicationList -> Observable<Mutation> in
-                        .just(.setApplicationList(applicationList))
-                    },
                 fetchBannerListUseCase.execute()
                     .asObservable()
                     .flatMap { bannerList -> Observable<Mutation> in
@@ -113,9 +108,15 @@ extension HomeReactor {
             ])
 
         case .viewWillAppear:
-            return fetchRecentCompanyListUseCase.execute()
-                .asObservable()
-                .map { Mutation.setRecentCompanyList($0) }
+            return .merge([
+                fetchRecentCompanyListUseCase.execute()
+                    .asObservable()
+                    .map { Mutation.setRecentCompanyList($0) },
+                fetchApplicationUseCase.execute()
+                    .asObservable()
+                    .map { Mutation.setApplicationList($0) }
+                    .catch { _ in .empty() }
+            ])
 
         case let .recentCompanyDidTap(id):
             steps.accept(HomeStep.companyDetailIsRequired(id: id))

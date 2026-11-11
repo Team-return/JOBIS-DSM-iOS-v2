@@ -6,7 +6,7 @@ struct SubscribeStateListResponseDTO: Codable {
 }
 
 public struct SubscribeStateResponseDTO: Codable {
-    let topic: NotificationType
+    let topic: String
     let isSubscribed: Bool
 
     enum CodingKeys: String, CodingKey {
@@ -17,9 +17,10 @@ public struct SubscribeStateResponseDTO: Codable {
 
 extension SubscribeStateListResponseDTO {
         func toDomain() -> [SubscribeStateEntity] {
-            topics.map {
+            topics.compactMap {
+                guard let topic = NotificationType(rawValue: $0.topic) else { return nil }
                 return SubscribeStateEntity.init(
-                    topic: $0.topic,
+                    topic: topic,
                     isSubscribed: $0.isSubscribed
                 )
             }

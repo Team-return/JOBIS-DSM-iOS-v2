@@ -45,7 +45,12 @@ extension SearchCompanyReactor {
         switch action {
         case let .searchTextDidSubmit(text):
             guard !text.isEmpty else {
-                return .just(.setEmptyViewHidden(false))
+                return .from([
+                    .setEmptyViewHidden(true),
+                    .setSearchText(nil),
+                    .resetPageCount,
+                    .setCompanyList([])
+                ])
             }
             return .concat([
                 .just(.setEmptyViewHidden(true)),
