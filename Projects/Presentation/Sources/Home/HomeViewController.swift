@@ -240,6 +240,19 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             }
             .disposed(by: disposeBag)
 
+        reactor.pulse(\.$cancelApplyFailed)
+            .compactMap { $0 }
+            .bind(with: self, onNext: { owner, _ in
+                AlertBuilder(viewController: owner)
+                    .setTitle("지원 취소에 실패했어요")
+                    .setMessage("일시적인 문제가 발생했어요.\n잠시 후 다시 시도해주세요.")
+                    .setAlertType(.positive)
+                    .setPlainStyle()
+                    .addActionConfirm("확인")
+                    .show()
+            })
+            .disposed(by: disposeBag)
+
         reactor.state.map { $0.banners }
             .do(onNext: { [weak self] _ in
                 self?.cellDisposeBag = DisposeBag()

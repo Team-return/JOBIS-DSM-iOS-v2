@@ -60,6 +60,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         case setTotalPassStudentInfo(TotalPassStudentEntity)
         case incrementEasterEggCount
         case resetEasterEggCount
+        case setCancelApplyFailed
     }
 
     public struct State {
@@ -77,6 +78,7 @@ public final class HomeReactor: BaseReactor, Stepper {
             approvedCount: 0
         )
         var touchedPopcatCount: Int = 0
+        @Pulse var cancelApplyFailed: Void?
     }
 }
 
@@ -179,7 +181,7 @@ extension HomeReactor {
                         .map { Mutation.setApplicationList($0) }
                         .catch { _ in .empty() }
                 )
-                .catch { _ in .empty() }
+                .catch { _ in .just(.setCancelApplyFailed) }
 
         case let .applicationStatusTableViewDidTap(recruitmentID, status):
             if status == .pass || status == .fieldTrain {
@@ -218,6 +220,9 @@ extension HomeReactor {
 
         case .resetEasterEggCount:
             newState.touchedPopcatCount = 0
+
+        case .setCancelApplyFailed:
+            newState.cancelApplyFailed = ()
 
         case let .setRecentCompanyList(list):
             newState.recentCompanyList = list.map { RecentCompanyItem(entity: $0) }
