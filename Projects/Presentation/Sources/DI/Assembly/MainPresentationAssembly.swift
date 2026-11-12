@@ -20,7 +20,8 @@ public final class MainPresentationAssembly: Assembly {
                 fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
                 fetchRecentCompanyListUseCase: resolver.resolve(FetchRecentCompanyListUseCase.self)!,
                 fetchWinterInternUseCase: resolver.resolve(FetchWinterInternSeasonUseCase.self)!,
-                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!,
+                cancelApplyUseCase: resolver.resolve(CancelApplyUseCase.self)!
             )
         }
 

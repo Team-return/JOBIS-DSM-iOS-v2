@@ -75,7 +75,7 @@ extension ApplicationsAPI: JobisAPI {
 
     var jwtTokenType: JwtTokenType {
         switch self {
-        case .fetchApplication, .applyCompany, .reApplyCompany, .fetchRejectionReason:
+        case .fetchApplication, .applyCompany, .reApplyCompany, .cancelApply, .fetchRejectionReason:
             return .accessToken
         default:
             return .none
@@ -99,7 +99,12 @@ extension ApplicationsAPI: JobisAPI {
             ]
 
         case .cancelApply:
-            return [:]
+            return [
+                400: .badRequest,
+                403: .invalidStatus,
+                404: .badRequest,
+                500: .internalServerError
+            ]
 
         case .fetchApplication:
             return [:]

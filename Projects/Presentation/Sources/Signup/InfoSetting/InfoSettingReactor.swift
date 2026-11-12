@@ -77,7 +77,7 @@ public final class InfoSettingReactor: BaseReactor, Reactor {
                             case .badRequest:
                                 return .just(.setGCNError(.error(description: "학번이나 이름을 확인해주세요.")))
 
-                            case .internalServerError:
+                            case .internalServerError, .invalidStatus:
                                 return .just(.setGCNError(.error(description: "서버 오류가 발생했어요.")))
                             }
                         }

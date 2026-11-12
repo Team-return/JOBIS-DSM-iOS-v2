@@ -11,6 +11,7 @@ import ReactorKit
 public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let rejectButtonDidTap = PublishRelay<ApplicationEntity>()
     private let reApplyButtonDidTap = PublishRelay<ApplicationEntity>()
+    private let cancelApplyButtonDidTap = PublishRelay<ApplicationEntity>()
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
@@ -167,6 +168,11 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        cancelApplyButtonDidTap.asObservable()
+            .map { HomeReactor.Action.cancelApplyConfirmed($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         applicationStatusTableView.rx.modelSelected(ApplicationEntity.self)
             .map { HomeReactor.Action.applicationStatusTableViewDidTap(
                 recruitmentID: $0.recruitmentID,
@@ -219,6 +225,9 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
                 }
                 cell.reApplyButtonDidTap = {
                     self.reApplyButtonDidTap.accept($0)
+                }
+                cell.cancelApplyButtonDidTap = {
+                    self.cancelApplyButtonDidTap.accept($0)
                 }
             }
             .disposed(by: disposeBag)
