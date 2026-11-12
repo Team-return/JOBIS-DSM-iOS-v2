@@ -17,6 +17,7 @@ final class JobisAlertViewController: UIViewController {
     var addActionConfirm: AddAction?
     var alertType: AlertType?
     var cancelText: String?
+    var isPlainStyle = false
 
     private lazy var alertView = UIView().then {
         $0.layer.cornerRadius = 12
@@ -40,13 +41,13 @@ final class JobisAlertViewController: UIViewController {
         $0.numberOfLines = 0
     }
 
-    private lazy var cancelButton = AlertButton(style: .cancel).then {
+    private lazy var cancelButton = AlertButton(style: .cancel, showsArrow: !isPlainStyle).then {
         $0.setText(cancelText ?? "취소")
     }
-    private lazy var negativeButton = AlertButton(style: .negative).then {
+    private lazy var negativeButton = AlertButton(style: .negative, showsArrow: !isPlainStyle).then {
         $0.setText(addActionConfirm?.text ?? "")
     }
-    private lazy var positiveButton = AlertButton(style: .positive).then {
+    private lazy var positiveButton = AlertButton(style: .positive, showsArrow: !isPlainStyle).then {
         $0.setText(addActionConfirm?.text ?? "")
     }
 
@@ -107,7 +108,9 @@ final class JobisAlertViewController: UIViewController {
             if alertType == .positive {
                 return [positiveButton]
             }
-            return [negativeButton, cancelButton]
+            return isPlainStyle
+                ? [cancelButton, negativeButton]
+                : [negativeButton, cancelButton]
         }
         views.forEach(buttonStackView.addArrangedSubview(_:))
         buttonStackView.snp.makeConstraints {

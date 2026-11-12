@@ -168,9 +168,17 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        cancelApplyButtonDidTap.asObservable()
-            .map { HomeReactor.Action.cancelApplyConfirmed($0) }
-            .bind(to: reactor.action)
+        cancelApplyButtonDidTap
+            .bind(with: self, onNext: { owner, application in
+                AlertBuilder(viewController: owner)
+                    .setTitle("지원을 취소할까요?")
+                    .setMessage("취소한 지원은 되돌릴 수 없어요.")
+                    .setPlainStyle()
+                    .addActionConfirm("확인") {
+                        owner.reactor.action.onNext(.cancelApplyConfirmed(application))
+                    }
+                    .show()
+            })
             .disposed(by: disposeBag)
 
         applicationStatusTableView.rx.modelSelected(ApplicationEntity.self)
