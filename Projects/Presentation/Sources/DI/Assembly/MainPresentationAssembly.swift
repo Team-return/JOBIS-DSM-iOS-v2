@@ -388,7 +388,7 @@ public final class MainPresentationAssembly: Assembly {
                     RejectReasonReactor.self,
                     arguments: applicationID, recruitmentID, companyName, companyImageUrl
                 )!,
-                state: .custom(height: 280)
+                state: .custom(height: 360)
             )
         }
         // swiftlint:enable closure_parameter_position

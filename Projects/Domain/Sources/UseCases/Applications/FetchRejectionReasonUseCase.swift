@@ -7,7 +7,7 @@ public struct FetchRejectionReasonUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    public func execute(id: Int) -> Single<String> {
+    public func execute(id: Int) -> Single<RejectionEntity> {
         applicationsRepository.fetchRejectionReason(id: id)
     }
 }
