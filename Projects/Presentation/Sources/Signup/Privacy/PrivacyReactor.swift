@@ -95,7 +95,7 @@ public final class PrivacyReactor: BaseReactor, Reactor {
                         case .badRequest:
                             return .just(.setSignupError("입력 정보를 확인해주세요."))
 
-                        case .internalServerError:
+                        case .internalServerError, .invalidStatus:
                             return .just(.setSignupError("서버 오류가 발생했어요."))
                         }
                     }

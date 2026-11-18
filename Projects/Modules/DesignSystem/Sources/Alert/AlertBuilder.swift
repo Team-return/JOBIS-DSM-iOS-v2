@@ -14,6 +14,7 @@ public final class AlertBuilder {
     private var addActionConfirm: AddAction?
     private var alertType: AlertType?
     private var cancelText: String?
+    private var isPlainStyle = false
 
     public init(viewController: UIViewController) {
         baseViewController = viewController
@@ -44,6 +45,11 @@ public final class AlertBuilder {
         return self
     }
 
+    public func setPlainStyle() -> AlertBuilder {
+        isPlainStyle = true
+        return self
+    }
+
     @discardableResult
     public func show() -> Self {
         alertViewController.modalPresentationStyle = .overFullScreen
@@ -54,6 +60,7 @@ public final class AlertBuilder {
         alertViewController.addActionConfirm = addActionConfirm
         alertViewController.alertType = alertType
         alertViewController.cancelText = cancelText
+        alertViewController.isPlainStyle = isPlainStyle
 
         baseViewController.present(alertViewController, animated: true)
         return self

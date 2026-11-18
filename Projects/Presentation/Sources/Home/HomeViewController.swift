@@ -11,6 +11,7 @@ import ReactorKit
 public final class HomeViewController: BaseReactorViewController<HomeReactor> {
     private let rejectButtonDidTap = PublishRelay<ApplicationEntity>()
     private let reApplyButtonDidTap = PublishRelay<ApplicationEntity>()
+    private let cancelApplyButtonDidTap = PublishRelay<ApplicationEntity>()
     private let navigateToAlarmButton = UIButton().then {
         $0.setImage(.jobisIcon(.bell).resize(size: 28), for: .normal)
     }
@@ -167,6 +168,19 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        cancelApplyButtonDidTap
+            .bind(with: self, onNext: { owner, application in
+                AlertBuilder(viewController: owner)
+                    .setTitle("지원을 취소할까요?")
+                    .setMessage("취소한 지원은 되돌릴 수 없어요.")
+                    .setPlainStyle()
+                    .addActionConfirm("확인") {
+                        owner.reactor.action.onNext(.cancelApplyConfirmed(application))
+                    }
+                    .show()
+            })
+            .disposed(by: disposeBag)
+
         applicationStatusTableView.rx.modelSelected(ApplicationEntity.self)
             .map { HomeReactor.Action.applicationStatusTableViewDidTap(
                 recruitmentID: $0.recruitmentID,
@@ -220,7 +234,23 @@ public final class HomeViewController: BaseReactorViewController<HomeReactor> {
                 cell.reApplyButtonDidTap = {
                     self.reApplyButtonDidTap.accept($0)
                 }
+                cell.cancelApplyButtonDidTap = {
+                    self.cancelApplyButtonDidTap.accept($0)
+                }
             }
+            .disposed(by: disposeBag)
+
+        reactor.pulse(\.$cancelApplyFailed)
+            .compactMap { $0 }
+            .bind(with: self, onNext: { owner, _ in
+                AlertBuilder(viewController: owner)
+                    .setTitle("지원 취소에 실패했어요")
+                    .setMessage("일시적인 문제가 발생했어요.\n잠시 후 다시 시도해주세요.")
+                    .setAlertType(.positive)
+                    .setPlainStyle()
+                    .addActionConfirm("확인")
+                    .show()
+            })
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.banners }
