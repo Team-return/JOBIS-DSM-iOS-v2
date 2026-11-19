@@ -4,13 +4,13 @@ import AppNetwork
 import Domain
 
 protocol RemotePresignedURLDataSource {
-    func uploadImageToS3(presignedURL: String, data: Data) -> Completable
+    func uploadImageToS3(presignedURL: String, data: Data, contentType: String) -> Completable
 }
 
 final class RemotePresignedURLDataSourceImpl: RemoteBaseDataSource<PresignedURLAPI>,
                                               RemotePresignedURLDataSource {
-    func uploadImageToS3(presignedURL: String, data: Data) -> Completable {
-        request(.uploadImageToS3(presignedURL: presignedURL, data: data))
+    func uploadImageToS3(presignedURL: String, data: Data, contentType: String) -> Completable {
+        request(.uploadImageToS3(presignedURL: presignedURL, data: data, contentType: contentType))
             .asCompletable()
     }
 }
