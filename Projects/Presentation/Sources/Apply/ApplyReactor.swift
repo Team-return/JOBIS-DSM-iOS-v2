@@ -121,7 +121,7 @@ extension ApplyReactor {
             return applyRequest
                 .andThen(Observable<Mutation>.empty())
                 .do(onCompleted: { [weak self] in
-                    self?.steps.accept(ApplyStep.popToRecruitmentDetail)
+                    self?.steps.accept(ApplyStep.homeIsRequired)
                 })
                 .catch { [weak self] _ in
                     self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))

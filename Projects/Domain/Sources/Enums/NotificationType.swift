@@ -5,5 +5,4 @@ public enum NotificationType: String, Codable, CaseIterable {
     case recruitment = "RECRUITMENT"
     case application = "APPLICATION"
     case winterIntern = "WINTER_INTERN"
-    case interview = "INTERVIEW"
 }

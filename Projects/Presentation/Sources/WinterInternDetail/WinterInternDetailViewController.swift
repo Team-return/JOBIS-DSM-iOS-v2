@@ -169,7 +169,7 @@ public class WinterInternDetailViewController: BaseReactorViewController<WinterI
 
                 if UserDefaults.standard.string(forKey: "user_grade") != "2" {
                     self.applyButton.isEnabled = false
-                    self.applyButton.setText("지원하기")
+                    self.applyButton.setText("2학년만 지원할 수 있어요")
                 } else {
                     if detail.isApplicable {
                         self.applyButton.setText("지원하기")

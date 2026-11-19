@@ -6,6 +6,6 @@ public protocol ApplicationsRepository {
     func cancelApply(id: Int) -> Completable
     func fetchApplication() -> Single<[ApplicationEntity]>
     func fetchTotalPassStudent(year: Int) -> Single<TotalPassStudentEntity>
-    func fetchRejectionReason(id: Int) -> Single<String>
+    func fetchRejectionReason(id: Int) -> Single<RejectionEntity>
     func fetchEmploymentStatus(year: Int) -> Single<[EmploymentEntity]>
 }

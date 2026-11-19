@@ -33,8 +33,8 @@ public final class ApplyFlow: Flow {
         case .applyIsRequired:
             return navigateToApply()
 
-        case .popToRecruitmentDetail:
-            return popToRecruitmentDetail()
+        case .homeIsRequired:
+            return navigateToHome()
 
         case let .reApplyIsRequired(id, name, imageURL):
             return navigateToReApply(id: id, name: name, imageURL: imageURL)
@@ -60,8 +60,12 @@ private extension ApplyFlow {
         ))
     }
 
-    func popToRecruitmentDetail() -> FlowContributors {
-        self.rootViewController.navigationController?.popViewController(animated: true)
+    func navigateToHome() -> FlowContributors {
+        let navigationController = rootViewController.navigationController
+        let tabBarController = rootViewController.tabBarController
+
+        navigationController?.popToRootViewController(animated: false)
+        tabBarController?.selectedIndex = 0
         return .none
     }
 
