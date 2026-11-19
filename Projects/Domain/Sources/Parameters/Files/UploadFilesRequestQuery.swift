@@ -1,4 +1,5 @@
 import Foundation
+import UniformTypeIdentifiers
 
 public struct UploadFileModel {
     public let file: Data
@@ -7,6 +8,11 @@ public struct UploadFileModel {
     public init(file: Data, fileName: String) {
         self.file = file
         self.fileName = fileName
+    }
+
+    public var contentType: String {
+        UTType(filenameExtension: (fileName as NSString).pathExtension)?.preferredMIMEType
+            ?? "application/octet-stream"
     }
 }
 
