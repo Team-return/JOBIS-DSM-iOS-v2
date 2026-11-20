@@ -105,20 +105,7 @@ extension ApplyReactor {
             )
 
         case .applyButtonDidTap:
-            guard !currentState.isLoading else { return .empty() }
-            return .concat(
-                .just(.setLoading(true)),
-                uploadDocuments(currentState.documents)
-                    .asObservable()
-                    .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
-                        guard let self else { return .empty() }
-                        return self.apply(attachments: fileAttachments + self.currentState.urls)
-                    }
-                    .catch { [weak self] _ in
-                        self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
-                        return .just(.setLoading(false))
-                    }
-            )
+            return submitApplication()
 
         case let .removeUrl(index):
             var newUrls = currentState.urls
@@ -181,6 +168,23 @@ extension ApplyReactor {
 }
 
 private extension ApplyReactor {
+    func submitApplication() -> Observable<Mutation> {
+        guard !currentState.isLoading else { return .empty() }
+        return .concat(
+            .just(.setLoading(true)),
+            uploadDocuments(currentState.documents)
+                .asObservable()
+                .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
+                    guard let self else { return .empty() }
+                    return self.apply(attachments: fileAttachments + self.currentState.urls)
+                }
+                .catch { [weak self] _ in
+                    self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
+                    return .just(.setLoading(false))
+                }
+        )
+    }
+
     func uploadDocuments(_ documents: [UploadFileModel]) -> Single<[AttachmentsRequestQuery]> {
         guard !documents.isEmpty else { return .just([]) }
 
