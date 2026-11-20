@@ -43,6 +43,7 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
         $0.setText("지원하기")
         $0.isEnabled = false
     }
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
     private let docsPicker = UIDocumentPickerViewController(forOpeningContentTypes: [
         .pdf,
         .png,
@@ -58,7 +59,8 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
     public override func addView() {
         [
             backStackView,
-            applyButton
+            applyButton,
+            loadingIndicator
         ].forEach(self.view.addSubview(_:))
         [
             companyView,
@@ -81,6 +83,10 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
 
         companyLogoImageView.snp.makeConstraints {
             $0.width.height.equalTo(48)
+        }
+
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
 
         applyButton.snp.makeConstraints {
@@ -144,6 +150,19 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
             .map { $0.applyButtonEnabled }
             .distinctUntilChanged()
             .bind(to: applyButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.isLoading }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isLoading in
+                self?.view.isUserInteractionEnabled = !isLoading
+                if isLoading {
+                    self?.loadingIndicator.startAnimating()
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
             .disposed(by: disposeBag)
     }
 
