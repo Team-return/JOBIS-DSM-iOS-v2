@@ -90,9 +90,6 @@ extension HomeReactor {
                 .just(.resetEasterEggCount),
                 fetchStudentInfoUseCase.execute()
                     .asObservable()
-                    .do(onNext: {
-                        UserDefaults.standard.set($0.studentGcn.prefix(1), forKey: "user_grade")
-                    })
                     .flatMap { studentInfo -> Observable<Mutation> in
                         .just(.setStudentInfo(studentInfo))
                     },
