@@ -16,6 +16,8 @@ public final class ApplyReactor: BaseReactor, Stepper {
     private let disposeBag = DisposeBag()
     private let applyCompanyUseCase: ApplyCompanyUseCase
     private let reApplyCompanyUseCase: ReApplyCompanyUseCase
+    private let fetchPresignedURLUseCase: FetchPresignedURLUseCase
+    private let uploadImageToS3UseCase: UploadImageToS3UseCase
     private let recruitmentId: Int?
     private let applicationId: Int?
     private let applyType: ApplyType
@@ -25,6 +27,8 @@ public final class ApplyReactor: BaseReactor, Stepper {
     public init(
         applyCompanyUseCase: ApplyCompanyUseCase,
         reApplyCompanyUseCase: ReApplyCompanyUseCase,
+        fetchPresignedURLUseCase: FetchPresignedURLUseCase,
+        uploadImageToS3UseCase: UploadImageToS3UseCase,
         recruitmentId: Int? = nil,
         applicationId: Int? = nil,
         companyName: String,
@@ -33,6 +37,8 @@ public final class ApplyReactor: BaseReactor, Stepper {
     ) {
         self.applyCompanyUseCase = applyCompanyUseCase
         self.reApplyCompanyUseCase = reApplyCompanyUseCase
+        self.fetchPresignedURLUseCase = fetchPresignedURLUseCase
+        self.uploadImageToS3UseCase = uploadImageToS3UseCase
         self.recruitmentId = recruitmentId
         self.applicationId = applicationId
         self.companyName = companyName
@@ -42,7 +48,7 @@ public final class ApplyReactor: BaseReactor, Stepper {
     }
 
     public enum Action {
-        case documentDidAdd(AttachmentsRequestQuery)
+        case documentDidAdd(UploadFileModel)
         case urlAddButtonDidTap
         case urlDidChange(Int, String)
         case applyButtonDidTap
@@ -51,7 +57,7 @@ public final class ApplyReactor: BaseReactor, Stepper {
     }
 
     public enum Mutation {
-        case addDocument(AttachmentsRequestQuery)
+        case addDocument(UploadFileModel)
         case addUrl
         case updateUrl(Int, String)
         case removeUrl(Int)
@@ -60,7 +66,7 @@ public final class ApplyReactor: BaseReactor, Stepper {
     }
 
     public struct State {
-        var documents: [AttachmentsRequestQuery] = []
+        var documents: [UploadFileModel] = []
         var urls: [AttachmentsRequestQuery] = []
         var applyButtonEnabled: Bool = false
     }
@@ -97,34 +103,14 @@ extension ApplyReactor {
             )
 
         case .applyButtonDidTap:
-            let attachments = currentState.documents + currentState.urls
-
-            let applyRequest: Completable
-            if applyType == .apply {
-                guard let recruitmentId = recruitmentId else {
-                    return .empty()
+            return uploadDocuments(currentState.documents)
+                .asObservable()
+                .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
+                    guard let self else { return .empty() }
+                    return self.apply(attachments: fileAttachments + self.currentState.urls)
                 }
-                applyRequest = applyCompanyUseCase.execute(
-                    id: recruitmentId,
-                    req: .init(attachments: attachments)
-                )
-            } else {
-                guard let applicationId = applicationId else {
-                    return .empty()
-                }
-                applyRequest = reApplyCompanyUseCase.execute(
-                    id: applicationId,
-                    req: .init(attachments: attachments)
-                )
-            }
-
-            return applyRequest
-                .andThen(Observable<Mutation>.empty())
-                .do(onCompleted: { [weak self] in
-                    self?.steps.accept(ApplyStep.homeIsRequired)
-                })
                 .catch { [weak self] _ in
-                    self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
+                    self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
                     return .empty()
                 }
 
@@ -183,4 +169,57 @@ extension ApplyReactor {
 
         return newState
     }
+}
+
+private extension ApplyReactor {
+    func uploadDocuments(_ documents: [UploadFileModel]) -> Single<[AttachmentsRequestQuery]> {
+        guard !documents.isEmpty else { return .just([]) }
+
+        return fetchPresignedURLUseCase.execute(req: .init(files: documents.toRequestDTO()))
+            .flatMap { [uploadImageToS3UseCase] presignedURLs -> Single<[AttachmentsRequestQuery]> in
+                guard presignedURLs.count == documents.count else {
+                    return .error(ApplyUploadError.presignedURLMismatch)
+                }
+                let uploads = zip(documents, presignedURLs).map { document, presigned in
+                    uploadImageToS3UseCase.execute(
+                        presignedURL: presigned.presignedUrl,
+                        data: document.file,
+                        contentType: document.contentType
+                    )
+                }
+                return Completable.zip(uploads)
+                    .andThen(.just(presignedURLs.map { .init(url: $0.filePath, type: .file) }))
+            }
+    }
+
+    func apply(attachments: [AttachmentsRequestQuery]) -> Observable<Mutation> {
+        let applyRequest: Completable
+        if applyType == .apply {
+            guard let recruitmentId else { return .empty() }
+            applyRequest = applyCompanyUseCase.execute(
+                id: recruitmentId,
+                req: .init(attachments: attachments)
+            )
+        } else {
+            guard let applicationId else { return .empty() }
+            applyRequest = reApplyCompanyUseCase.execute(
+                id: applicationId,
+                req: .init(attachments: attachments)
+            )
+        }
+
+        return applyRequest
+            .andThen(Observable<Mutation>.empty())
+            .do(onCompleted: { [weak self] in
+                self?.steps.accept(ApplyStep.homeIsRequired)
+            })
+            .catch { [weak self] _ in
+                self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
+                return .empty()
+            }
+    }
+}
+
+private enum ApplyUploadError: Error {
+    case presignedURLMismatch
 }

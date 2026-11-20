@@ -161,6 +161,8 @@ public final class MainPresentationAssembly: Assembly {
             ApplyReactor(
                 applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
                 reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!,
+                fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
+                uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!,
                 recruitmentId: recruitmentId,
                 applicationId: applicationId,
                 companyName: companyName,
