@@ -63,12 +63,14 @@ public final class ApplyReactor: BaseReactor, Stepper {
         case removeUrl(Int)
         case removeDocument(Int)
         case updateApplyButtonEnabled(Bool)
+        case setLoading(Bool)
     }
 
     public struct State {
         var documents: [UploadFileModel] = []
         var urls: [AttachmentsRequestQuery] = []
         var applyButtonEnabled: Bool = false
+        var isLoading: Bool = false
     }
 }
 
@@ -103,16 +105,7 @@ extension ApplyReactor {
             )
 
         case .applyButtonDidTap:
-            return uploadDocuments(currentState.documents)
-                .asObservable()
-                .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
-                    guard let self else { return .empty() }
-                    return self.apply(attachments: fileAttachments + self.currentState.urls)
-                }
-                .catch { [weak self] _ in
-                    self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
-                    return .empty()
-                }
+            return submitApplication()
 
         case let .removeUrl(index):
             var newUrls = currentState.urls
@@ -165,6 +158,9 @@ extension ApplyReactor {
 
         case let .updateApplyButtonEnabled(enabled):
             newState.applyButtonEnabled = enabled
+
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
         }
 
         return newState
@@ -172,6 +168,23 @@ extension ApplyReactor {
 }
 
 private extension ApplyReactor {
+    func submitApplication() -> Observable<Mutation> {
+        guard !currentState.isLoading else { return .empty() }
+        return .concat(
+            .just(.setLoading(true)),
+            uploadDocuments(currentState.documents)
+                .asObservable()
+                .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
+                    guard let self else { return .empty() }
+                    return self.apply(attachments: fileAttachments + self.currentState.urls)
+                }
+                .catch { [weak self] _ in
+                    self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
+                    return .just(.setLoading(false))
+                }
+        )
+    }
+
     func uploadDocuments(_ documents: [UploadFileModel]) -> Single<[AttachmentsRequestQuery]> {
         guard !documents.isEmpty else { return .just([]) }
 
@@ -215,7 +228,7 @@ private extension ApplyReactor {
             })
             .catch { [weak self] _ in
                 self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
-                return .empty()
+                return .just(.setLoading(false))
             }
     }
 }
