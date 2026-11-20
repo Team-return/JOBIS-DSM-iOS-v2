@@ -158,20 +158,15 @@ public class RecruitmentDetailViewController: BaseReactorViewController<Recruitm
                 self.isBookmarked = detail.bookmarked
                 self.fieldTypeDetailStackView.setFieldType(detail.areas)
 
-                if UserDefaults.standard.string(forKey: "user_grade") != "3" {
-                    self.applyButton.isEnabled = false
-                    self.applyButton.setText("3학년만 지원할 수 있어요")
+                if detail.isApplicable {
+                    self.applyButton.setText("지원하기")
                 } else {
-                    if detail.isApplicable {
-                        self.applyButton.setText("지원하기")
-                    } else {
-                        self.applyButton.setText(
-                            (detail.unapplicableReason ?? .unknown).localizedString()
-                        )
-                    }
-
-                    self.applyButton.isEnabled = detail.isApplicable
+                    self.applyButton.setText(
+                        (detail.unapplicableReason ?? .unknown).localizedString()
+                    )
                 }
+
+                self.applyButton.isEnabled = detail.isApplicable
             }
             .disposed(by: disposeBag)
     }
