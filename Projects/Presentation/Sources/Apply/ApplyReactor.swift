@@ -79,7 +79,7 @@ extension ApplyReactor {
         switch action {
         case let .documentDidAdd(document):
             let newDocuments = currentState.documents + [document]
-            let isEnabled = !newDocuments.isEmpty || !currentState.urls.isEmpty
+            let isEnabled = isApplyEnabled(documents: newDocuments, urls: currentState.urls)
             return .concat(
                 .just(.addDocument(document)),
                 .just(.updateApplyButtonEnabled(isEnabled))
@@ -87,7 +87,7 @@ extension ApplyReactor {
 
         case .urlAddButtonDidTap:
             let newUrls = currentState.urls + [.init(url: "", type: .url)]
-            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            let isEnabled = isApplyEnabled(documents: currentState.documents, urls: newUrls)
             return .concat(
                 .just(.addUrl),
                 .just(.updateApplyButtonEnabled(isEnabled))
@@ -98,7 +98,7 @@ extension ApplyReactor {
             if index < newUrls.count {
                 newUrls[index] = .init(url: url, type: .url)
             }
-            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            let isEnabled = isApplyEnabled(documents: currentState.documents, urls: newUrls)
             return .concat(
                 .just(.updateUrl(index, url)),
                 .just(.updateApplyButtonEnabled(isEnabled))
@@ -112,7 +112,7 @@ extension ApplyReactor {
             if index < newUrls.count {
                 newUrls.remove(at: index)
             }
-            let isEnabled = !currentState.documents.isEmpty || !newUrls.isEmpty
+            let isEnabled = isApplyEnabled(documents: currentState.documents, urls: newUrls)
             return .concat(
                 .just(.removeUrl(index)),
                 .just(.updateApplyButtonEnabled(isEnabled))
@@ -123,7 +123,7 @@ extension ApplyReactor {
             if index < newDocuments.count {
                 newDocuments.remove(at: index)
             }
-            let isEnabled = !newDocuments.isEmpty || !currentState.urls.isEmpty
+            let isEnabled = isApplyEnabled(documents: newDocuments, urls: currentState.urls)
             return .concat(
                 .just(.removeDocument(index)),
                 .just(.updateApplyButtonEnabled(isEnabled))
@@ -168,6 +168,14 @@ extension ApplyReactor {
 }
 
 private extension ApplyReactor {
+    func isApplyEnabled(documents: [UploadFileModel], urls: [AttachmentsRequestQuery]) -> Bool {
+        !documents.isEmpty || !nonEmptyUrls(urls).isEmpty
+    }
+
+    func nonEmptyUrls(_ urls: [AttachmentsRequestQuery]) -> [AttachmentsRequestQuery] {
+        urls.filter { !$0.url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+
     func submitApplication() -> Observable<Mutation> {
         guard !currentState.isLoading else { return .empty() }
         return .concat(
@@ -176,7 +184,8 @@ private extension ApplyReactor {
                 .asObservable()
                 .flatMap { [weak self] fileAttachments -> Observable<Mutation> in
                     guard let self else { return .empty() }
-                    return self.apply(attachments: fileAttachments + self.currentState.urls)
+                    let urls = self.nonEmptyUrls(self.currentState.urls)
+                    return self.apply(attachments: fileAttachments + urls)
                 }
                 .catch { [weak self] _ in
                     self?.steps.accept(ApplyStep.errorToast(message: "파일 업로드에 실패했습니다"))
