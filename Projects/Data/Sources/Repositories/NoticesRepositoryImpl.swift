@@ -10,8 +10,8 @@ struct NoticesRepositoryImpl: NoticesRepository {
         self.remoteNoticesDataSource = remoteNoticesDataSource
     }
 
-    func fetchNoticeList() -> Single<[NoticeEntity]> {
-        remoteNoticesDataSource.fetchNoticeList()
+    func fetchNoticeList(page: Int) -> Single<[NoticeEntity]> {
+        remoteNoticesDataSource.fetchNoticeList(page: page)
     }
 
     func fetchNotcieDetail(id: Int) -> Single<NoticeDetailEntity> {

@@ -3,7 +3,7 @@ import Domain
 import AppNetwork
 
 enum NoticeAPI {
-    case fetchNoticeList
+    case fetchNoticeList(page: Int)
     case fetchNoticeDetail(id: Int)
 }
 
@@ -32,6 +32,11 @@ extension NoticeAPI: JobisAPI {
 
     public var task: Task {
         switch self {
+        case let .fetchNoticeList(page):
+            return .requestParameters(
+                parameters: ["page": page],
+                encoding: URLEncoding.queryString
+            )
         default:
             return .requestPlain
         }
