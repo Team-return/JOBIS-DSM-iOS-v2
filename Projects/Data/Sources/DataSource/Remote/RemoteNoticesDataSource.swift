@@ -3,13 +3,13 @@ import RxCocoa
 import Domain
 
 public protocol RemoteNoticesDataSource {
-    func fetchNoticeList() -> Single<[NoticeEntity]>
+    func fetchNoticeList(page: Int) -> Single<[NoticeEntity]>
     func fetchNoticeDetail(id: Int) -> Single<NoticeDetailEntity>
 }
 
 final class RemoteNoticesDataSourceDataSourceImpl: RemoteBaseDataSource<NoticeAPI>, RemoteNoticesDataSource {
-    public func fetchNoticeList() -> Single<[NoticeEntity]> {
-        request(.fetchNoticeList)
+    public func fetchNoticeList(page: Int) -> Single<[NoticeEntity]> {
+        request(.fetchNoticeList(page: page))
             .map(NoticeListResponseDTO.self)
             .map { $0.toDomain() }
     }
