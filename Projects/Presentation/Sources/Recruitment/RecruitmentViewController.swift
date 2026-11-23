@@ -176,6 +176,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
                     }
                 } else {
                     self.recruitmentTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.25))
+                    self.recruitmentTableView.reloadData()
                     self.listEmptyView.isHidden = !list.isEmpty
                 }
             })
