@@ -348,6 +348,13 @@ extension BugReportViewController: UICollectionViewDelegate, UICollectionViewDat
 
             let image = self.imageList[indexPath.row].bugReportResize(to: CGSize(width: 92, height: 92))
             cell?.bugImageView.image = image
+            cell?.removeButtonDidTap = { [weak self] in
+                guard let self, indexPath.item < self.imageList.count else { return }
+                if indexPath.item < self.selectedAssetIdentifiers.count {
+                    self.selectedAssetIdentifiers.remove(at: indexPath.item)
+                }
+                self.reactor.action.onNext(.removeImage(indexPath.item))
+            }
 
             return cell!
         }

@@ -28,6 +28,7 @@ public final class BugReportReactor: BaseReactor, Stepper {
         case updateTitle(String)
         case updateContent(String)
         case setImages([UploadFileModel])
+        case removeImage(Int)
         case updateMajorType(String)
         case majorViewDidTap
         case bugReportButtonDidTap
@@ -37,6 +38,7 @@ public final class BugReportReactor: BaseReactor, Stepper {
         case setTitle(String)
         case setContent(String)
         case setImages([UploadFileModel])
+        case removeImage(Int)
         case setMajorType(String)
         case setBugReportButtonIsEnabled(Bool)
         case setBugReportCompleted
@@ -76,6 +78,9 @@ extension BugReportReactor {
         case let .setImages(images):
             return .just(.setImages(Array(images.prefix(Self.maxImageCount))))
 
+        case let .removeImage(index):
+            return .just(.removeImage(index))
+
         case let .updateMajorType(majorType):
             return .just(.setMajorType(majorType))
 
@@ -99,6 +104,11 @@ extension BugReportReactor {
 
         case let .setImages(images):
             newState.imageList = images
+
+        case let .removeImage(index):
+            if index < newState.imageList.count {
+                newState.imageList.remove(at: index)
+            }
 
         case let .setMajorType(majorType):
             newState.majorType = majorType
