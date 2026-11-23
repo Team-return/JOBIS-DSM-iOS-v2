@@ -186,6 +186,13 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
             .bind(to: bugReportButton.rx.isEnabled)
             .disposed(by: disposeBag)
 
+        reactor.state.map { $0.isBugReportButtonEnabled }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isEnabled in
+                self?.bugReportButton.setText(isEnabled ? "버그 제보하기" : "내용을 전부 입력해주세요")
+            })
+            .disposed(by: disposeBag)
+
         reactor.state.map { $0.majorType }
             .distinctUntilChanged()
             .bind(to: bugReportMajorView.majorLabel.rx.text)
