@@ -35,26 +35,4 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return resizedImage
     }
-
-    func toURLString() -> String {
-        guard let imageData = self.jpegData(compressionQuality: 1.0) else {
-            return ""
-        }
-
-        let fileManager = FileManager.default
-        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return ""
-        }
-
-        let fileName = UUID().uuidString + ".jpg"
-        let fileURL = documentsDirectory.appendingPathComponent(fileName)
-
-        do {
-            try imageData.write(to: fileURL)
-            return fileURL.absoluteString
-        } catch {
-            print("Error saving image: \(error)")
-            return ""
-        }
-    }
 }

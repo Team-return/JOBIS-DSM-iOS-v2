@@ -83,7 +83,9 @@ public final class SettingPresentationAssembly: Assembly {
         }
         container.register(BugReportReactor.self) { resolver in
             BugReportReactor(
-                reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!
+                reportBugUseCase: resolver.resolve(ReportBugUseCase.self)!,
+                fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
+                uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!
             )
         }
 
