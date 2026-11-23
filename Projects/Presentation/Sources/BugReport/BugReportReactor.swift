@@ -9,18 +9,25 @@ public final class BugReportReactor: BaseReactor, Stepper {
     public let steps = PublishRelay<Step>()
     public let initialState: State
     private let reportBugUseCase: ReportBugUseCase
+    private let fetchPresignedURLUseCase: FetchPresignedURLUseCase
+    private let uploadImageToS3UseCase: UploadImageToS3UseCase
+    public static let maxImageCount = 5
 
     public init(
-        reportBugUseCase: ReportBugUseCase
+        reportBugUseCase: ReportBugUseCase,
+        fetchPresignedURLUseCase: FetchPresignedURLUseCase,
+        uploadImageToS3UseCase: UploadImageToS3UseCase
     ) {
         self.initialState = .init()
         self.reportBugUseCase = reportBugUseCase
+        self.fetchPresignedURLUseCase = fetchPresignedURLUseCase
+        self.uploadImageToS3UseCase = uploadImageToS3UseCase
     }
 
     public enum Action {
         case updateTitle(String)
         case updateContent(String)
-        case updateImageList([String])
+        case setImages([UploadFileModel])
         case updateMajorType(String)
         case majorViewDidTap
         case bugReportButtonDidTap
@@ -29,19 +36,23 @@ public final class BugReportReactor: BaseReactor, Stepper {
     public enum Mutation {
         case setTitle(String)
         case setContent(String)
-        case setImageList([String])
+        case setImages([UploadFileModel])
         case setMajorType(String)
         case setBugReportButtonIsEnabled(Bool)
         case setBugReportCompleted
+        case setBugReportFailed
+        case setLoading(Bool)
     }
 
     public struct State {
         var title: String = ""
         var content: String = ""
-        var imageList: [String] = []
+        var imageList: [UploadFileModel] = []
         var majorType: String = "전체"
         var isBugReportButtonEnabled: Bool = false
         var isBugReportCompleted: Bool = false
+        var isLoading: Bool = false
+        @Pulse var bugReportFailed: Void?
     }
 }
 
@@ -62,8 +73,8 @@ extension BugReportReactor {
                 .just(.setBugReportButtonIsEnabled(isEnabled))
             ])
 
-        case let .updateImageList(imageList):
-            return .just(.setImageList(imageList))
+        case let .setImages(images):
+            return .just(.setImages(Array(images.prefix(Self.maxImageCount))))
 
         case let .updateMajorType(majorType):
             return .just(.setMajorType(majorType))
@@ -73,13 +84,7 @@ extension BugReportReactor {
             return .empty()
 
         case .bugReportButtonDidTap:
-            return reportBugUseCase.execute(req: .init(
-                title: currentState.title,
-                content: currentState.content,
-                developmentArea: DevelopmentType(localizedString: currentState.majorType) ?? .all,
-                attachmentUrls: currentState.imageList
-            ))
-            .andThen(.just(.setBugReportCompleted))
+            return submitBugReport()
         }
     }
 
@@ -92,8 +97,8 @@ extension BugReportReactor {
         case let .setContent(content):
             newState.content = content
 
-        case let .setImageList(imageList):
-            newState.imageList = imageList
+        case let .setImages(images):
+            newState.imageList = images
 
         case let .setMajorType(majorType):
             newState.majorType = majorType
@@ -103,7 +108,64 @@ extension BugReportReactor {
 
         case .setBugReportCompleted:
             newState.isBugReportCompleted = true
+
+        case .setBugReportFailed:
+            newState.bugReportFailed = ()
+
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
         }
         return newState
     }
+}
+
+private extension BugReportReactor {
+    func submitBugReport() -> Observable<Mutation> {
+        guard !currentState.isLoading else { return .empty() }
+        let title = currentState.title
+        let content = currentState.content
+        let developmentArea = DevelopmentType(localizedString: currentState.majorType) ?? .all
+
+        return .concat(
+            .just(.setLoading(true)),
+            uploadImages(currentState.imageList)
+                .flatMapCompletable { [reportBugUseCase] filePaths in
+                    reportBugUseCase.execute(req: .init(
+                        title: title,
+                        content: content,
+                        developmentArea: developmentArea,
+                        attachmentUrls: filePaths
+                    ))
+                }
+                .andThen(Observable<Mutation>.just(.setBugReportCompleted))
+                .catch { _ in .concat(
+                    .just(.setBugReportFailed),
+                    .just(.setLoading(false))
+                ) }
+        )
+    }
+
+    func uploadImages(_ images: [UploadFileModel]) -> Single<[String]> {
+        guard !images.isEmpty else { return .just([]) }
+
+        return fetchPresignedURLUseCase.execute(req: .init(files: images.toRequestDTO()))
+            .flatMap { [uploadImageToS3UseCase] presignedURLs -> Single<[String]> in
+                guard presignedURLs.count == images.count else {
+                    return .error(BugReportUploadError.presignedURLMismatch)
+                }
+                let uploads = zip(images, presignedURLs).map { image, presigned in
+                    uploadImageToS3UseCase.execute(
+                        presignedURL: presigned.presignedUrl,
+                        data: image.file,
+                        contentType: image.contentType
+                    )
+                }
+                return Completable.zip(uploads)
+                    .andThen(.just(presignedURLs.map { $0.filePath }))
+            }
+    }
+}
+
+private enum BugReportUploadError: Error {
+    case presignedURLMismatch
 }
