@@ -5,11 +5,12 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
+import Domain
 import PhotosUI
 
 public final class BugReportViewController: BaseReactorViewController<BugReportReactor> {
-    var imageStringList: [String] = []
     var imageList: [UIImage] = []
+    private var selectedAssetIdentifiers: [String] = []
 
     private let bugReportMajorView = BugReportMajorView()
     private let bugReportTitleTextField = JobisTextField().then {
@@ -64,11 +65,13 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
         $0.keyboardDismissMode = .onDrag
     }
     private let contentView = UIView()
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
 
     public override func addView() {
         [
             scrollView,
-            bugReportButton
+            bugReportButton,
+            loadingIndicator
         ].forEach(self.view.addSubview(_:))
         scrollView.addSubview(contentView)
 
@@ -88,6 +91,10 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
     }
 
     public override func setLayout() {
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+
         scrollView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
@@ -168,10 +175,6 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
             .disposed(by: disposeBag)
 
         bugReportButton.rx.tap
-            .do(onNext: { [weak self] in
-                guard let self = self else { return }
-                self.reactor.action.onNext(.updateImageList(self.imageStringList))
-            })
             .map { BugReportReactor.Action.bugReportButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -187,6 +190,34 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
             .distinctUntilChanged()
             .bind(to: bugReportMajorView.majorLabel.rx.text)
             .disposed(by: disposeBag)
+
+        reactor.state.map { $0.imageList }
+            .distinctUntilChanged { $0.map(\.fileName) == $1.map(\.fileName) }
+            .bind(onNext: { [weak self] images in
+                self?.imageList = images.compactMap { UIImage(data: $0.file) }
+                self?.emptyImageButton.isHidden = !images.isEmpty
+                self?.bugImageCollectionView.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.isLoading }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isLoading in
+                self?.view.isUserInteractionEnabled = !isLoading
+                if isLoading {
+                    self?.loadingIndicator.startAnimating()
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.pulse(\.$bugReportFailed)
+            .compactMap { $0 }
+            .bind(onNext: { [weak self] _ in
+                self?.showJobisToast(text: "버그 제보에 실패했습니다.", inset: 70)
+            })
+            .disposed(by: disposeBag)
     }
 
     public override func configureViewController() {
@@ -200,13 +231,8 @@ public final class BugReportViewController: BaseReactorViewController<BugReportR
 
         self.emptyImageButton.isHidden = !imageList.isEmpty
         emptyImageButton.rx.tap.asObservable()
-            .subscribe(onNext: {
-                var configuration = PHPickerConfiguration()
-                configuration.selectionLimit = 0
-                configuration.filter = .any(of: [.images, .videos])
-                let picker = PHPickerViewController(configuration: configuration)
-                picker.delegate = self
-                self.present(picker, animated: true, completion: nil)
+            .subscribe(onNext: { [weak self] in
+                self?.presentImagePicker()
             })
             .disposed(by: disposeBag)
 
@@ -244,29 +270,50 @@ extension BugReportViewController: UIGestureRecognizerDelegate {
 }
 
 extension BugReportViewController: PHPickerViewControllerDelegate {
-    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        if !results.isEmpty {
-            self.imageList.removeAll()
+    func presentImagePicker() {
+        var configuration = PHPickerConfiguration(photoLibrary: .shared())
+        configuration.selectionLimit = BugReportReactor.maxImageCount
+        configuration.selection = .ordered
+        configuration.filter = .images
+        configuration.preselectedAssetIdentifiers = selectedAssetIdentifiers
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
 
-            for result in results {
-                let itemProvider = result.itemProvider
-                if itemProvider.canLoadObject(ofClass: UIImage.self) {
-                    itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, _ ) in
-                        if let uiImage = image as? UIImage {
-                            self?.imageList.append(uiImage)
-                            self?.imageStringList.append(uiImage.toURLString())
-                        }
-                    }
-                }
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
+
+        var loadedImages = [UIImage?](repeating: nil, count: results.count)
+        let lock = NSLock()
+        let group = DispatchGroup()
+
+        for (index, result) in results.enumerated()
+        where result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+            group.enter()
+            result.itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
+                lock.lock()
+                loadedImages[index] = image as? UIImage
+                lock.unlock()
+                group.leave()
             }
         }
 
-        picker.dismiss(animated: true, completion: {
-            if !self.imageList.isEmpty {
-                self.emptyImageButton.isHidden = true
+        group.notify(queue: .main) { [weak self] in
+            var files: [UploadFileModel] = []
+            var identifiers: [String] = []
+            for (index, result) in results.enumerated() {
+                guard let data = loadedImages[index]?.jpegData(compressionQuality: 0.8) else { continue }
+                files.append(UploadFileModel(file: data, fileName: UUID().uuidString + ".jpg"))
+                if let identifier = result.assetIdentifier {
+                    identifiers.append(identifier)
+                }
             }
-            self.bugImageCollectionView.reloadData()
-        })
+            guard !files.isEmpty else { return }
+            self?.selectedAssetIdentifiers = identifiers
+            self?.reactor.action.onNext(.setImages(files))
+        }
     }
 }
 
@@ -316,12 +363,7 @@ extension BugReportViewController: UICollectionViewDelegate, UICollectionViewDat
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == imageList.count {
-            var configuration = PHPickerConfiguration()
-            configuration.selectionLimit = 0
-            configuration.filter = .any(of: [.images, .videos])
-            let picker = PHPickerViewController(configuration: configuration)
-            picker.delegate = self
-            self.present(picker, animated: true, completion: nil)
+            presentImagePicker()
         }
     }
 }
