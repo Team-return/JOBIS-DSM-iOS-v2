@@ -6,7 +6,8 @@ struct CompanyInfoDetailResponseDTO: Decodable {
     let companyName: String
     let companyProfileURL: String
     let companyIntroduce: String
-    let mainZipCode, mainAddress, mainAddressDetail: String
+    let mainZipCode, mainAddress: String
+    let mainAddressDetail: String?
     let managerName: String
     let managerPhoneNo: String
     let email, representativeName, foundedAt: String
@@ -52,7 +53,7 @@ extension CompanyInfoDetailResponseDTO {
             companyIntroduce: companyIntroduce,
             mainZipCode: mainZipCode,
             mainAddress: mainAddress,
-            mainAddressDetail: mainAddressDetail,
+            mainAddressDetail: mainAddressDetail ?? "",
             managerName: managerName,
             managerPhoneNo: managerPhoneNo,
             email: email,
