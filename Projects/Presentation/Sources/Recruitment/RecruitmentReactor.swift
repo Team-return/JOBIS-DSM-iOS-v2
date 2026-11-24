@@ -200,6 +200,7 @@ extension RecruitmentReactor {
                     .just(.setLoading(false))
                 ])
             }
+            .catch { _ in .just(.setLoading(false)) }
         ])
     }
 

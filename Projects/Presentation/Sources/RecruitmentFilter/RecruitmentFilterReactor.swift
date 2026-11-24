@@ -173,7 +173,7 @@ extension RecruitmentFilterReactor {
         state.techCode = filter.techCode ?? []
         state.years = filter.years ?? []
         state.regionCode = LocationType.allCases
-            .firstIndex { $0.rawValue == filter.region }
+            .firstIndex { regionValue(of: $0) == filter.region }
             .map { "\($0)" } ?? ""
         switch filter.status {
         case "RECRUITING":
@@ -202,6 +202,11 @@ extension RecruitmentFilterReactor {
         guard let code = Int(code) else { return "" }
         let allCases = LocationType.allCases
         guard code < allCases.count else { return "" }
-        return allCases[code].rawValue
+        return Self.regionValue(of: allCases[code])
+    }
+
+    // 모집의뢰서 지역 필터의 '기타'는 서버에서 OTHERS를 사용 (후기의 면접 장소는 OTHER)
+    private static func regionValue(of location: LocationType) -> String {
+        location == .other ? "OTHERS" : location.rawValue
     }
 }
