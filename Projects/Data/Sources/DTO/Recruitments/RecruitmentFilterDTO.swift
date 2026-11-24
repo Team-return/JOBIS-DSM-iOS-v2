@@ -22,7 +22,8 @@ extension RecruitmentFilterDTO {
             jobCode: jobCode,
             techCode: techCode,
             years: years,
-            region: region,
+            // 이전 버전에서 저장된 지역 '기타'(OTHER)는 서버 값(OTHERS)으로 변환
+            region: region == "OTHER" ? "OTHERS" : region,
             status: status
         )
     }
