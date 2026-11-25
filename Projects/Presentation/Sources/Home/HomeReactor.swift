@@ -157,7 +157,8 @@ extension HomeReactor {
                 recruitmentID: application.recruitmentID,
                 applicationID: application.applicationID,
                 companyName: application.company,
-                companyImageURL: application.companyLogoUrl
+                companyImageURL: application.companyLogoUrl,
+                isReapplicable: application.isReapplicable
             ))
             return .empty()
 

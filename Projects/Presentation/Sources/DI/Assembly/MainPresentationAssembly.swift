@@ -369,14 +369,16 @@ public final class MainPresentationAssembly: Assembly {
             applicationID: Int,
             recruitmentID: Int,
             companyName: String,
-            companyImageUrl: String
+            companyImageUrl: String,
+            isReapplicable: Bool
         ) in
             RejectReasonReactor(
                 fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!,
                 applicationID: applicationID,
                 recruitmentID: recruitmentID,
                 companyName: companyName,
-                companyImageUrl: companyImageUrl
+                companyImageUrl: companyImageUrl,
+                isReapplicable: isReapplicable
             )
         }
         container.register(RejectReasonViewController.self) { (
@@ -384,12 +386,13 @@ public final class MainPresentationAssembly: Assembly {
             applicationID: Int,
             recruitmentID: Int,
             companyName: String,
-            companyImageUrl: String
+            companyImageUrl: String,
+            isReapplicable: Bool
         ) in
             RejectReasonViewController(
                 resolver.resolve(
                     RejectReasonReactor.self,
-                    arguments: applicationID, recruitmentID, companyName, companyImageUrl
+                    arguments: applicationID, recruitmentID, companyName, companyImageUrl, isReapplicable
                 )!,
                 state: .custom(height: 360)
             )

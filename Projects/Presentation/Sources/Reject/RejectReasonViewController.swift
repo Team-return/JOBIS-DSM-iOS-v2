@@ -90,6 +90,16 @@ public final class RejectReasonViewController: BaseBottomSheetReactorViewControl
     }
 
     public override func bindState() {
+        reactor.state.map { $0.isReapplicable }
+            .distinctUntilChanged()
+            .bind(with: self, onNext: { owner, isReapplicable in
+                owner.reApplyButton.isEnabled = isReapplicable
+                owner.reApplyButton.setText(
+                    isReapplicable ? "재지원 하기" : "진행 중이거나 합격한 지원이 있어요"
+                )
+            })
+            .disposed(by: disposeBag)
+
         reactor.state.map { $0.rejectReason }
             .distinctUntilChanged()
             .bind(to: contentLabel.rx.text)

@@ -37,8 +37,20 @@ public final class HomeFlow: Flow {
         case .easterEggIsRequired:
             return navigateToEasterEgg()
 
-        case let .rejectReasonIsRequired(recruitmentID, applicationID, companyName, companyImageUrl):
-            return navigateToRejectReason(recruitmentID, applicationID, companyName, companyImageUrl)
+        case let .rejectReasonIsRequired(
+            recruitmentID,
+            applicationID,
+            companyName,
+            companyImageUrl,
+            isReapplicable
+        ):
+            return navigateToRejectReason(
+                recruitmentID,
+                applicationID,
+                companyName,
+                companyImageUrl,
+                isReapplicable
+            )
 
         case let .reApplyIsRequired(recruitmentID, applicationID, companyName, companyImageURL):
             return navigateToReApply(recruitmentID, applicationID, companyName, companyImageURL)
@@ -153,14 +165,16 @@ private extension HomeFlow {
         _ recruitmentID: Int,
         _ applicationID: Int,
         _ companyName: String,
-        _ companyImageUrl: String
+        _ companyImageUrl: String,
+        _ isReapplicable: Bool
     ) -> FlowContributors {
         let rejectReasonFlow = RejectReasonFlow(
             container: container,
             applicationID: applicationID,
             recruitmentID: recruitmentID,
             companyName: companyName,
-            companyImageUrl: companyImageUrl
+            companyImageUrl: companyImageUrl,
+            isReapplicable: isReapplicable
         )
         Flows.use(rejectReasonFlow, when: .created) { root in
             self.rootViewController.present(

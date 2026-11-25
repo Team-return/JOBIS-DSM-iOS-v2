@@ -11,7 +11,8 @@ public enum HomeStep: Step {
         recruitmentID: Int,
         applicationID: Int,
         companyName: String,
-        companyImageURL: String
+        companyImageURL: String,
+        isReapplicable: Bool
     )
     case reApplyIsRequired(
         recruitmentID: Int,
