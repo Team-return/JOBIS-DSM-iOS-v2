@@ -28,11 +28,13 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
         $0.setText("모집의뢰서 보러 가기")
         $0.isHidden = true
     }
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
 
     public override func addView() {
         self.view.addSubview(bookmarkTableView)
         self.view.addSubview(emptyBookmarkView)
         self.view.addSubview(navigateToRecruitmentButton)
+        self.view.addSubview(loadingIndicator)
     }
 
     public override func setLayout() {
@@ -49,6 +51,10 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.centerX.equalToSuperview()
             $0.top.equalTo(emptyBookmarkView.snp.bottom).offset(24)
+        }
+
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
 
@@ -70,16 +76,29 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
     }
 
     public override func bindState() {
-        reactor.state.map { $0.bookmarkList }
-            .distinctUntilChanged { $0.count == $1.count }
-            .do(onNext: { [weak self] list in
+        reactor.state.map { $0.isLoading }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isLoading in
+                isLoading
+                    ? self?.loadingIndicator.startAnimating()
+                    : self?.loadingIndicator.stopAnimating()
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { ($0.bookmarkList, $0.isLoading) }
+            .distinctUntilChanged { $0 == $1 }
+            .bind(onNext: { [weak self] list, isLoading in
                 [
                     self?.emptyBookmarkView,
                     self?.navigateToRecruitmentButton
                 ].forEach {
-                    $0?.isHidden = !list.isEmpty
+                    $0?.isHidden = isLoading || !list.isEmpty
                 }
             })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.bookmarkList }
+            .distinctUntilChanged()
             .bind(to: bookmarkTableView.rx.items(
                 cellIdentifier: BookmarkTableViewCell.identifier,
                 cellType: BookmarkTableViewCell.self
@@ -96,7 +115,16 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
     public override func configureViewController() {
         navigateToRecruitmentButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.tabBarController?.selectedIndex = 1
+                guard let tabBarController = self?.tabBarController,
+                      let navigationController = self?.navigationController else { return }
+                tabBarController.selectedIndex = 1
+                guard let coordinator = tabBarController.transitionCoordinator else {
+                    navigationController.popToRootViewController(animated: false)
+                    return
+                }
+                coordinator.animate(alongsideTransition: nil) { _ in
+                    navigationController.popToRootViewController(animated: false)
+                }
             })
             .disposed(by: disposeBag)
 
