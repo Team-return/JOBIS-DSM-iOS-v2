@@ -115,7 +115,16 @@ public final class BookmarkViewController: BaseReactorViewController<BookmarkRea
     public override func configureViewController() {
         navigateToRecruitmentButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.tabBarController?.selectedIndex = 1
+                guard let tabBarController = self?.tabBarController,
+                      let navigationController = self?.navigationController else { return }
+                tabBarController.selectedIndex = 1
+                guard let coordinator = tabBarController.transitionCoordinator else {
+                    navigationController.popToRootViewController(animated: false)
+                    return
+                }
+                coordinator.animate(alongsideTransition: nil) { _ in
+                    navigationController.popToRootViewController(animated: false)
+                }
             })
             .disposed(by: disposeBag)
 
