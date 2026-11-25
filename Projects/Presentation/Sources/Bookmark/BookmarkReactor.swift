@@ -16,10 +16,12 @@ public final class BookmarkReactor: BaseReactor, Reactor {
     public enum Mutation {
         case setBookmarkList([BookmarkEntity])
         case removeBookmarkFromList(Int)
+        case setLoading(Bool)
     }
 
     public struct State {
         public var bookmarkList: [BookmarkEntity] = []
+        public var isLoading: Bool = true
     }
 
     public var initialState: State
@@ -41,8 +43,13 @@ public final class BookmarkReactor: BaseReactor, Reactor {
         case .viewWillAppear:
             return fetchBookmarkListUseCase.execute()
                 .asObservable()
-                .map { Mutation.setBookmarkList($0) }
-                .catch { _ in .empty() }
+                .flatMap { list -> Observable<Mutation> in
+                    .concat([
+                        .just(.setBookmarkList(list)),
+                        .just(.setLoading(false))
+                    ])
+                }
+                .catch { _ in .just(.setLoading(false)) }
 
         case let .removeBookmark(id):
             return .concat([
@@ -67,6 +74,9 @@ public final class BookmarkReactor: BaseReactor, Reactor {
 
         case let .removeBookmarkFromList(id):
             newState.bookmarkList = state.bookmarkList.filter { $0.recruitmentID != id }
+
+        case let .setLoading(isLoading):
+            newState.isLoading = isLoading
         }
 
         return newState
