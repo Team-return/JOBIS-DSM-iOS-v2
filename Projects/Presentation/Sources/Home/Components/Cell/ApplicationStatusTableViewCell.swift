@@ -102,6 +102,8 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
         companyNameLabel.snp.contentCompressionResistanceHorizontalPriority = 1
         rejectReasonButton.isHidden = model.applicationStatus != .rejected
         reApplyButton.isHidden = model.applicationStatus != .requested
+        reApplyButton.isEnabled = model.isReapplicable
+        reApplyButton.alpha = model.isReapplicable ? 1 : 0.4
         cancelApplyButton.isHidden = model.applicationStatus != .requested
         cancelApplyButton.snp.updateConstraints {
             $0.width.lessThanOrEqualTo(cancelApplyButton.intrinsicContentSize.width)

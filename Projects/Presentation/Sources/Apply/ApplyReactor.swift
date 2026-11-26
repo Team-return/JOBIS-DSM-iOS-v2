@@ -235,8 +235,11 @@ private extension ApplyReactor {
             .do(onCompleted: { [weak self] in
                 self?.steps.accept(ApplyStep.homeIsRequired)
             })
-            .catch { [weak self] _ in
-                self?.steps.accept(ApplyStep.errorToast(message: "합격된 회사가 존재합니다"))
+            .catch { [weak self] error in
+                let message = (error as? ApplicationsError) == .conflict
+                    ? "진행 중이거나 합격한 지원이 있어 지원할 수 없습니다"
+                    : "지원에 실패했습니다"
+                self?.steps.accept(ApplyStep.errorToast(message: message))
                 return .just(.setLoading(false))
             }
     }
