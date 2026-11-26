@@ -88,13 +88,14 @@ extension RecruitmentFilterReactor {
 
         case let .selectJobCode(code):
             let jobCodeString = "\(code.code)"
+            let nextJobCode = currentState.jobCode == jobCodeString ? "" : jobCodeString
             return .concat([
                 .just(.toggleJobCode(jobCodeString)),
                 .just(.resetTechCode),
                 fetchCodeListUseCase.execute(
                     keyword: nil,
                     type: .tech,
-                    parentCode: currentState.jobCode
+                    parentCode: nextJobCode.isEmpty ? nil : nextJobCode
                 )
                 .asObservable()
                 .map { Mutation.setTechList($0) }
