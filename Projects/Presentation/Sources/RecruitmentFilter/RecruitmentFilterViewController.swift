@@ -10,7 +10,7 @@ import Domain
 public final class RecruitmentFilterViewController: BaseReactorViewController<RecruitmentFilterReactor> {
     private let collectionViewDidTap = PublishRelay<String>()
     private let filterApplyButtonDidTap = PublishRelay<Void>()
-    private var appendTechCode = PublishRelay<CodeEntity>()
+    private var toggleTechCode = PublishRelay<CodeEntity>()
     private var resetTechCode = PublishRelay<Void>()
 
     private let searchTextField = JobisSearchTextField().then {
@@ -209,8 +209,8 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        appendTechCode
-            .map { RecruitmentFilterReactor.Action.appendTechCode($0) }
+        toggleTechCode
+            .map { RecruitmentFilterReactor.Action.toggleTechCode($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
@@ -241,7 +241,7 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
                     selectedCodes: self.reactor.currentState.techCode
                 )
                 self.techStackView.techDidTap = { [weak self] code in
-                    self?.appendTechCode.accept(code)
+                    self?.toggleTechCode.accept(code)
                 }
             }
             .disposed(by: disposeBag)

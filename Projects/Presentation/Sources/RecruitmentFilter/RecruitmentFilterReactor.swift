@@ -30,7 +30,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case selectRegion(CodeEntity)
         case selectStatus(CodeEntity)
         case filterApplyButtonDidTap
-        case appendTechCode(CodeEntity)
+        case toggleTechCode(CodeEntity)
         case resetTechCode
     }
 
@@ -41,7 +41,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case toggleYear(String)
         case toggleRegion(String)
         case toggleStatus(Int)
-        case appendTechCode(String)
+        case toggleTechCode(String)
         case resetTechCode
     }
 
@@ -121,12 +121,12 @@ extension RecruitmentFilterReactor {
             steps.accept(RecruitmentFilterStep.popToRecruitment)
             return .empty()
 
-        case let .appendTechCode(code):
+        case let .toggleTechCode(code):
             let codeString = "\(code.code)"
             guard !codeString.isEmpty else {
                 return .empty()
             }
-            return .just(.appendTechCode(codeString))
+            return .just(.toggleTechCode(codeString))
 
         case .resetTechCode:
             return .just(.resetTechCode)
@@ -158,8 +158,12 @@ extension RecruitmentFilterReactor {
         case let .toggleStatus(code):
             newState.statusCode = (newState.statusCode == code) ? nil : code
 
-        case let .appendTechCode(code):
-            newState.techCode.append(code)
+        case let .toggleTechCode(code):
+            if let index = newState.techCode.firstIndex(of: code) {
+                newState.techCode.remove(at: index)
+            } else {
+                newState.techCode.append(code)
+            }
 
         case .resetTechCode:
             newState.techCode = []
