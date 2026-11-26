@@ -7,12 +7,15 @@ import SnapKit
 final class AlertButton: UIButton {
     private var buttonStyle: AlertButtonStyle = .cancel
     private var labelText: String = ""
+    private var showsArrow = true
 
     init(
-        style: AlertButtonStyle
+        style: AlertButtonStyle,
+        showsArrow: Bool = true
     ) {
         super.init(frame: .zero)
         self.buttonStyle = style
+        self.showsArrow = showsArrow
     }
 
     required init?(coder: NSCoder) {
@@ -25,18 +28,20 @@ final class AlertButton: UIButton {
     }
 
     private func configureUI() {
-        let image: UIImage? = .jobisIcon(.arrowRight)
-            .withTintColor(buttonStyle.foregroundColor, renderingMode: .alwaysTemplate)
-            .resize(size: 24)
-
         var config = UIButton.Configuration.plain()
-        config.image = image
+        if showsArrow {
+            config.image = UIImage.jobisIcon(.arrowRight)
+                .withTintColor(buttonStyle.foregroundColor, renderingMode: .alwaysTemplate)
+                .resize(size: 24)
+        }
         config.title = self.labelText
         config.attributedTitle?.foregroundColor = buttonStyle.foregroundColor
         config.attributedTitle?.font = UIFont.jobisFont(.subHeadLine)
         config.imagePadding = 4
         config.imagePlacement = .trailing
-        config.contentInsets = .init(top: 16, leading: 12, bottom: 16, trailing: 0)
+        config.contentInsets = showsArrow
+            ? .init(top: 16, leading: 12, bottom: 16, trailing: 0)
+            : .init(top: 16, leading: 0, bottom: 16, trailing: 0)
 
         self.configuration = config
         self.layer.cornerRadius = 12

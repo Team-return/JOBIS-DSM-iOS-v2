@@ -7,6 +7,7 @@ public struct ApplicationEntity: Equatable {
     public let companyLogoUrl: String
     public let attachments: [AttachmentsEntity]
     public let applicationStatus: ApplicationStatusType
+    public let isReapplicable: Bool
 
     public init(
         applicationID: Int,
@@ -14,8 +15,10 @@ public struct ApplicationEntity: Equatable {
         company: String,
         companyLogoUrl: String,
         attachments: [AttachmentsEntity],
-        applicationStatus: ApplicationStatusType
+        applicationStatus: ApplicationStatusType,
+        isReapplicable: Bool = true
     ) {
+        self.isReapplicable = isReapplicable
         self.applicationID = applicationID
         self.recruitmentID = recruitmentID
         self.company = company

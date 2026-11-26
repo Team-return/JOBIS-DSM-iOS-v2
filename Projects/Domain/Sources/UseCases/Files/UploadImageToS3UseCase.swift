@@ -8,7 +8,15 @@ public struct UploadImageToS3UseCase {
 
     private let presignedURLRepository: PresignedURLRepository
 
-    public func execute(presignedURL: String, data: Data) -> Completable {
-        presignedURLRepository.uploadImageToS3(presignedURL: presignedURL, data: data)
+    public func execute(
+        presignedURL: String,
+        data: Data,
+        contentType: String = "image/jpg"
+    ) -> Completable {
+        presignedURLRepository.uploadImageToS3(
+            presignedURL: presignedURL,
+            data: data,
+            contentType: contentType
+        )
     }
 }

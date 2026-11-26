@@ -7,7 +7,7 @@ public struct CancelApplyUseCase {
         self.applicationsRepository = applicationsRepository
     }
 
-    func execute(id: Int) -> Completable {
+    public func execute(id: Int) -> Completable {
         applicationsRepository.cancelApply(id: id)
     }
 }

@@ -9,6 +9,7 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
     static let identifier = "ApplicationStatusTableViewCell"
     public var rejectReasonButtonDidTap: ((ApplicationEntity) -> Void)?
     public var reApplyButtonDidTap: ((ApplicationEntity) -> Void)?
+    public var cancelApplyButtonDidTap: ((ApplicationEntity) -> Void)?
     private let disposeBag = DisposeBag()
     private let companyProfileImageView = UIImageView().then {
         $0.image = .jobisIcon(.profile)
@@ -36,6 +37,11 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
         $0.setUnderline()
         $0.isHidden = true
     }
+    private let cancelApplyButton = UIButton(type: .system).then {
+        $0.setJobisText("지원 취소", font: .subBody, color: .GrayScale.gray90)
+        $0.setUnderline()
+        $0.isHidden = true
+    }
 
     override func addView() {
         contentView.addSubview(stateStackView)
@@ -45,7 +51,8 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
             companyNameLabel,
             applicationStatusLabel,
             rejectReasonButton,
-            reApplyButton
+            reApplyButton,
+            cancelApplyButton
         ].forEach(stateStackView.addArrangedSubview(_:))
     }
 
@@ -73,6 +80,12 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
                 owner.reApplyButtonDidTap?(owner.model!)
             })
             .disposed(by: disposeBag)
+
+        cancelApplyButton.rx.tap
+            .bind(with: self, onNext: { owner, _ in
+                owner.cancelApplyButtonDidTap?(owner.model!)
+            })
+            .disposed(by: disposeBag)
         self.selectionStyle = .none
     }
 
@@ -89,6 +102,12 @@ final class ApplicationStatusTableViewCell: BaseTableViewCell<ApplicationEntity>
         companyNameLabel.snp.contentCompressionResistanceHorizontalPriority = 1
         rejectReasonButton.isHidden = model.applicationStatus != .rejected
         reApplyButton.isHidden = model.applicationStatus != .requested
+        reApplyButton.isEnabled = model.isReapplicable
+        reApplyButton.alpha = model.isReapplicable ? 1 : 0.4
+        cancelApplyButton.isHidden = model.applicationStatus != .requested
+        cancelApplyButton.snp.updateConstraints {
+            $0.width.lessThanOrEqualTo(cancelApplyButton.intrinsicContentSize.width)
+        }
         rejectReasonButton.snp.updateConstraints {
             $0.width.lessThanOrEqualTo(rejectReasonButton.intrinsicContentSize.width)
         }

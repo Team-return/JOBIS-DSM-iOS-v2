@@ -9,7 +9,11 @@ struct PresignedURLRepositoryImpl: PresignedURLRepository {
         self.remotePresignedURLDataSource = remotePresignedURLDataSource
     }
 
-    func uploadImageToS3(presignedURL: String, data: Data) -> Completable {
-        remotePresignedURLDataSource.uploadImageToS3(presignedURL: presignedURL, data: data)
+    func uploadImageToS3(presignedURL: String, data: Data, contentType: String) -> Completable {
+        remotePresignedURLDataSource.uploadImageToS3(
+            presignedURL: presignedURL,
+            data: data,
+            contentType: contentType
+        )
     }
 }

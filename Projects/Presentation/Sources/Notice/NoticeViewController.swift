@@ -34,6 +34,18 @@ public final class NoticeViewController: BaseReactorViewController<NoticeReactor
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        noticeTableView.rx.willDisplayCell
+            .filter { [weak self] in
+                guard let self else { return false }
+                return !self.reactor.currentState.isLoading &&
+                    $0.indexPath.row == self.noticeTableView.numberOfRows(
+                        inSection: $0.indexPath.section
+                    ) - 1
+            }
+            .map { _ in NoticeReactor.Action.loadMoreNotices }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         noticeTableView.rx.modelSelected(NoticeEntity.self)
             .map { NoticeReactor.Action.noticeDidSelect($0.companyId) }
             .bind(to: reactor.action)
@@ -42,6 +54,7 @@ public final class NoticeViewController: BaseReactorViewController<NoticeReactor
 
     public override func bindState() {
         reactor.state.map { $0.noticeList }
+            .distinctUntilChanged()
             .bind(to: noticeTableView.rx.items(
                 cellIdentifier: NoticeTableViewCell.identifier,
                 cellType: NoticeTableViewCell.self

@@ -43,6 +43,7 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
         $0.setText("지원하기")
         $0.isEnabled = false
     }
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
     private let docsPicker = UIDocumentPickerViewController(forOpeningContentTypes: [
         .pdf,
         .png,
@@ -51,14 +52,15 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
         "doc", "docx", "hwp", "pptx"
     ].compactMap { .init(filenameExtension: $0) })
 
-    private let documents = PublishRelay<AttachmentsRequestQuery>()
+    private let documents = PublishRelay<UploadFileModel>()
     private let urls = BehaviorRelay<[AttachmentsRequestQuery]>(value: [])
     private let urlsWillChanged = PublishRelay<(Int, String)>()
 
     public override func addView() {
         [
             backStackView,
-            applyButton
+            applyButton,
+            loadingIndicator
         ].forEach(self.view.addSubview(_:))
         [
             companyView,
@@ -81,6 +83,10 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
 
         companyLogoImageView.snp.makeConstraints {
             $0.width.height.equalTo(48)
+        }
+
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
 
         applyButton.snp.makeConstraints {
@@ -126,7 +132,9 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
             .map { $0.documents }
             .distinctUntilChanged { $0.count == $1.count }
             .bind(onNext: { [weak self] documents in
-                self?.attachmentDocsStackView.updateList(documents)
+                self?.attachmentDocsStackView.updateList(
+                    documents.map { .init(url: $0.fileName, type: .file) }
+                )
             })
             .disposed(by: disposeBag)
 
@@ -142,6 +150,19 @@ public final class ApplyViewController: BaseReactorViewController<ApplyReactor> 
             .map { $0.applyButtonEnabled }
             .distinctUntilChanged()
             .bind(to: applyButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.isLoading }
+            .distinctUntilChanged()
+            .bind(onNext: { [weak self] isLoading in
+                self?.view.isUserInteractionEnabled = !isLoading
+                if isLoading {
+                    self?.loadingIndicator.startAnimating()
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
             .disposed(by: disposeBag)
     }
 
@@ -172,6 +193,12 @@ extension ApplyViewController: UIDocumentPickerDelegate {
         _ controller: UIDocumentPickerViewController,
         didPickDocumentsAt urls: [URL]
     ) {
-        documents.accept(.init(url: urls.first?.lastPathComponent ?? "", type: .file))
+        guard let url = urls.first else { return }
+        let isScoped = url.startAccessingSecurityScopedResource()
+        defer {
+            if isScoped { url.stopAccessingSecurityScopedResource() }
+        }
+        guard let data = try? Data(contentsOf: url) else { return }
+        documents.accept(.init(file: data, fileName: url.lastPathComponent))
     }
 }

@@ -15,6 +15,7 @@ public final class HomeReactor: BaseReactor, Stepper {
     private let fetchRecentCompanyListUseCase: FetchRecentCompanyListUseCase
     private let fetchWinterInternUseCase: FetchWinterInternSeasonUseCase
     private let fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+    private let cancelApplyUseCase: CancelApplyUseCase
 
     public init(
         fetchStudentInfoUseCase: FetchStudentInfoUseCase,
@@ -22,7 +23,8 @@ public final class HomeReactor: BaseReactor, Stepper {
         fetchBannerListUseCase: FetchBannerListUseCase,
         fetchRecentCompanyListUseCase: FetchRecentCompanyListUseCase,
         fetchWinterInternUseCase: FetchWinterInternSeasonUseCase,
-        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase
+        fetchTotalPassStudentUseCase: FetchTotalPassStudentUseCase,
+        cancelApplyUseCase: CancelApplyUseCase
     ) {
         self.initialState = .init()
         self.fetchStudentInfoUseCase = fetchStudentInfoUseCase
@@ -31,6 +33,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         self.fetchRecentCompanyListUseCase = fetchRecentCompanyListUseCase
         self.fetchWinterInternUseCase = fetchWinterInternUseCase
         self.fetchTotalPassStudentUseCase = fetchTotalPassStudentUseCase
+        self.cancelApplyUseCase = cancelApplyUseCase
     }
 
     public enum Action {
@@ -43,6 +46,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         case navigateToWinterInternButtonDidTap
         case rejectButtonDidTap(ApplicationEntity)
         case reApplyButtonDidTap(ApplicationEntity)
+        case cancelApplyConfirmed(ApplicationEntity)
         case applicationStatusTableViewDidTap(recruitmentID: Int, status: ApplicationStatusType)
         case employStatusButtonDidTap
     }
@@ -56,6 +60,7 @@ public final class HomeReactor: BaseReactor, Stepper {
         case setTotalPassStudentInfo(TotalPassStudentEntity)
         case incrementEasterEggCount
         case resetEasterEggCount
+        case setCancelApplyFailed
     }
 
     public struct State {
@@ -73,6 +78,7 @@ public final class HomeReactor: BaseReactor, Stepper {
             approvedCount: 0
         )
         var touchedPopcatCount: Int = 0
+        @Pulse var cancelApplyFailed: Void?
     }
 }
 
@@ -84,9 +90,6 @@ extension HomeReactor {
                 .just(.resetEasterEggCount),
                 fetchStudentInfoUseCase.execute()
                     .asObservable()
-                    .do(onNext: {
-                        UserDefaults.standard.set($0.studentGcn.prefix(1), forKey: "user_grade")
-                    })
                     .flatMap { studentInfo -> Observable<Mutation> in
                         .just(.setStudentInfo(studentInfo))
                     },
@@ -154,7 +157,8 @@ extension HomeReactor {
                 recruitmentID: application.recruitmentID,
                 applicationID: application.applicationID,
                 companyName: application.company,
-                companyImageURL: application.companyLogoUrl
+                companyImageURL: application.companyLogoUrl,
+                isReapplicable: application.isReapplicable
             ))
             return .empty()
 
@@ -166,6 +170,16 @@ extension HomeReactor {
                 companyImageURL: application.companyLogoUrl
             ))
             return .empty()
+
+        case let .cancelApplyConfirmed(application):
+            return cancelApplyUseCase.execute(id: application.applicationID)
+                .andThen(
+                    fetchApplicationUseCase.execute()
+                        .asObservable()
+                        .map { Mutation.setApplicationList($0) }
+                        .catch { _ in .empty() }
+                )
+                .catch { _ in .just(.setCancelApplyFailed) }
 
         case let .applicationStatusTableViewDidTap(recruitmentID, status):
             if status == .pass || status == .fieldTrain {
@@ -204,6 +218,9 @@ extension HomeReactor {
 
         case .resetEasterEggCount:
             newState.touchedPopcatCount = 0
+
+        case .setCancelApplyFailed:
+            newState.cancelApplyFailed = ()
 
         case let .setRecentCompanyList(list):
             newState.recentCompanyList = list.map { RecentCompanyItem(entity: $0) }

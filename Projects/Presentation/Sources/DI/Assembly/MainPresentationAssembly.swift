@@ -20,7 +20,8 @@ public final class MainPresentationAssembly: Assembly {
                 fetchBannerListUseCase: resolver.resolve(FetchBannerListUseCase.self)!,
                 fetchRecentCompanyListUseCase: resolver.resolve(FetchRecentCompanyListUseCase.self)!,
                 fetchWinterInternUseCase: resolver.resolve(FetchWinterInternSeasonUseCase.self)!,
-                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!
+                fetchTotalPassStudentUseCase: resolver.resolve(FetchTotalPassStudentUseCase.self)!,
+                cancelApplyUseCase: resolver.resolve(CancelApplyUseCase.self)!
             )
         }
 
@@ -160,6 +161,8 @@ public final class MainPresentationAssembly: Assembly {
             ApplyReactor(
                 applyCompanyUseCase: resolver.resolve(ApplyCompanyUseCase.self)!,
                 reApplyCompanyUseCase: resolver.resolve(ReApplyCompanyUseCase.self)!,
+                fetchPresignedURLUseCase: resolver.resolve(FetchPresignedURLUseCase.self)!,
+                uploadImageToS3UseCase: resolver.resolve(UploadImageToS3UseCase.self)!,
                 recruitmentId: recruitmentId,
                 applicationId: applicationId,
                 companyName: companyName,
@@ -366,14 +369,16 @@ public final class MainPresentationAssembly: Assembly {
             applicationID: Int,
             recruitmentID: Int,
             companyName: String,
-            companyImageUrl: String
+            companyImageUrl: String,
+            isReapplicable: Bool
         ) in
             RejectReasonReactor(
                 fetchRejectionReasonUseCase: resolver.resolve(FetchRejectionReasonUseCase.self)!,
                 applicationID: applicationID,
                 recruitmentID: recruitmentID,
                 companyName: companyName,
-                companyImageUrl: companyImageUrl
+                companyImageUrl: companyImageUrl,
+                isReapplicable: isReapplicable
             )
         }
         container.register(RejectReasonViewController.self) { (
@@ -381,14 +386,15 @@ public final class MainPresentationAssembly: Assembly {
             applicationID: Int,
             recruitmentID: Int,
             companyName: String,
-            companyImageUrl: String
+            companyImageUrl: String,
+            isReapplicable: Bool
         ) in
             RejectReasonViewController(
                 resolver.resolve(
                     RejectReasonReactor.self,
-                    arguments: applicationID, recruitmentID, companyName, companyImageUrl
+                    arguments: applicationID, recruitmentID, companyName, companyImageUrl, isReapplicable
                 )!,
-                state: .custom(height: 280)
+                state: .custom(height: 360)
             )
         }
         // swiftlint:enable closure_parameter_position

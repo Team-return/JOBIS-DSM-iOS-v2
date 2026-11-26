@@ -30,7 +30,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case selectRegion(CodeEntity)
         case selectStatus(CodeEntity)
         case filterApplyButtonDidTap
-        case appendTechCode(CodeEntity)
+        case toggleTechCode(CodeEntity)
         case resetTechCode
     }
 
@@ -41,7 +41,7 @@ public final class RecruitmentFilterReactor: BaseReactor, Stepper {
         case toggleYear(String)
         case toggleRegion(String)
         case toggleStatus(Int)
-        case appendTechCode(String)
+        case toggleTechCode(String)
         case resetTechCode
     }
 
@@ -88,13 +88,14 @@ extension RecruitmentFilterReactor {
 
         case let .selectJobCode(code):
             let jobCodeString = "\(code.code)"
+            let nextJobCode = currentState.jobCode == jobCodeString ? "" : jobCodeString
             return .concat([
                 .just(.toggleJobCode(jobCodeString)),
                 .just(.resetTechCode),
                 fetchCodeListUseCase.execute(
                     keyword: nil,
                     type: .tech,
-                    parentCode: currentState.jobCode
+                    parentCode: nextJobCode.isEmpty ? nil : nextJobCode
                 )
                 .asObservable()
                 .map { Mutation.setTechList($0) }
@@ -121,12 +122,12 @@ extension RecruitmentFilterReactor {
             steps.accept(RecruitmentFilterStep.popToRecruitment)
             return .empty()
 
-        case let .appendTechCode(code):
+        case let .toggleTechCode(code):
             let codeString = "\(code.code)"
             guard !codeString.isEmpty else {
                 return .empty()
             }
-            return .just(.appendTechCode(codeString))
+            return .just(.toggleTechCode(codeString))
 
         case .resetTechCode:
             return .just(.resetTechCode)
@@ -158,8 +159,12 @@ extension RecruitmentFilterReactor {
         case let .toggleStatus(code):
             newState.statusCode = (newState.statusCode == code) ? nil : code
 
-        case let .appendTechCode(code):
-            newState.techCode.append(code)
+        case let .toggleTechCode(code):
+            if let index = newState.techCode.firstIndex(of: code) {
+                newState.techCode.remove(at: index)
+            } else {
+                newState.techCode.append(code)
+            }
 
         case .resetTechCode:
             newState.techCode = []
@@ -173,7 +178,7 @@ extension RecruitmentFilterReactor {
         state.techCode = filter.techCode ?? []
         state.years = filter.years ?? []
         state.regionCode = LocationType.allCases
-            .firstIndex { $0.rawValue == filter.region }
+            .firstIndex { regionValue(of: $0) == filter.region }
             .map { "\($0)" } ?? ""
         switch filter.status {
         case "RECRUITING":
@@ -202,6 +207,11 @@ extension RecruitmentFilterReactor {
         guard let code = Int(code) else { return "" }
         let allCases = LocationType.allCases
         guard code < allCases.count else { return "" }
-        return allCases[code].rawValue
+        return Self.regionValue(of: allCases[code])
+    }
+
+    // 모집의뢰서 지역 필터의 '기타'는 서버에서 OTHERS를 사용 (후기의 면접 장소는 OTHER)
+    private static func regionValue(of location: LocationType) -> String {
+        location == .other ? "OTHERS" : location.rawValue
     }
 }

@@ -6,7 +6,6 @@ import SnapKit
 import Then
 import Core
 import DesignSystem
-import SkeletonView
 
 public final class RecruitmentViewController: BaseReactorViewController<RecruitmentReactor> {
     public var viewWillappearWithTap: (() -> Void)?
@@ -32,10 +31,13 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             RecruitmentTableViewCell.self,
             forCellReuseIdentifier: RecruitmentTableViewCell.identifier
         )
+        $0.register(
+            RecruitmentSkeletonTableViewCell.self,
+            forCellReuseIdentifier: RecruitmentSkeletonTableViewCell.identifier
+        )
         $0.separatorStyle = .none
         $0.rowHeight = 72
         $0.showsVerticalScrollIndicator = false
-        $0.isSkeletonable = true
         $0.backgroundColor = .GrayScale.gray10
     }
     private let refreshControl = UIRefreshControl()
@@ -163,21 +165,7 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
             .bind(onNext: { [weak self] list, isLoading in
                 guard let self = self else { return }
                 self.listEmptyView.isHidden = isLoading || !list.isEmpty
-
-                if isLoading {
-                    self.recruitmentTableView.reloadData()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-                        guard let self = self,
-                              self.reactor.currentState.isLoading else { return }
-                        self.recruitmentTableView.showAnimatedSkeleton(
-                            usingColor: .systemGray5,
-                            transition: .crossDissolve(0.25)
-                        )
-                    }
-                } else {
-                    self.recruitmentTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.25))
-                    self.listEmptyView.isHidden = !list.isEmpty
-                }
+                self.recruitmentTableView.reloadData()
             })
             .disposed(by: disposeBag)
     }
@@ -215,37 +203,39 @@ public final class RecruitmentViewController: BaseReactorViewController<Recruitm
     }
 }
 
-extension RecruitmentViewController: SkeletonTableViewDataSource {
-    public func collectionSkeletonView(
-        _ skeletonView: UITableView,
-        cellIdentifierForRowAt indexPath: IndexPath
-    ) -> ReusableCellIdentifier {
-        return RecruitmentTableViewCell.identifier
-    }
-
-    public func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+extension RecruitmentViewController: UITableViewDataSource {
+    private var skeletonRowCount: Int {
+        let rowHeight = recruitmentTableView.rowHeight
+        let height = recruitmentTableView.bounds.height > 0
+            ? recruitmentTableView.bounds.height
+            : UIScreen.main.bounds.height
+        return Int(ceil(height / rowHeight)) + 1
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reactor.currentState.isLoading ? 8 : reactor.currentState.recruitmentList.count
+        return reactor.currentState.isLoading ? skeletonRowCount : reactor.currentState.recruitmentList.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if reactor.currentState.isLoading {
+            return tableView.dequeueReusableCell(
+                withIdentifier: RecruitmentSkeletonTableViewCell.identifier,
+                for: indexPath
+            )
+        }
+
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: RecruitmentTableViewCell.identifier,
             for: indexPath
-        ) as? RecruitmentTableViewCell else {
+        ) as? RecruitmentTableViewCell,
+              indexPath.row < reactor.currentState.recruitmentList.count else {
             return UITableViewCell()
         }
 
-        if !reactor.currentState.isLoading {
-            guard indexPath.row < reactor.currentState.recruitmentList.count else { return cell }
-            let recruitment = reactor.currentState.recruitmentList[indexPath.row]
-            cell.adapt(model: recruitment)
-            cell.bookmarkButtonDidTap = { [weak self] in
-                self?.bookmarkButtonDidClicked.accept(recruitment.recruitID)
-            }
+        let recruitment = reactor.currentState.recruitmentList[indexPath.row]
+        cell.adapt(model: recruitment)
+        cell.bookmarkButtonDidTap = { [weak self] in
+            self?.bookmarkButtonDidClicked.accept(recruitment.recruitID)
         }
 
         return cell

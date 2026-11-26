@@ -7,7 +7,7 @@ public struct FetchNoticeListUseCase {
         self.noticesRepository = noticesRepository
     }
 
-    public func execute() -> Single<[NoticeEntity]> {
-        return noticesRepository.fetchNoticeList()
+    public func execute(page: Int) -> Single<[NoticeEntity]> {
+        return noticesRepository.fetchNoticeList(page: page)
     }
 }

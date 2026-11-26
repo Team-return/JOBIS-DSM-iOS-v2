@@ -19,9 +19,10 @@ public final class RejectReasonReactor: BaseReactor, Stepper {
         applicationID: Int,
         recruitmentID: Int,
         companyName: String,
-        companyImageUrl: String
+        companyImageUrl: String,
+        isReapplicable: Bool
     ) {
-        self.initialState = .init()
+        self.initialState = .init(isReapplicable: isReapplicable)
         self.fetchRejectionReasonUseCase = fetchRejectionReasonUseCase
         self.applicationID = applicationID
         self.recruitmentID = recruitmentID
@@ -35,11 +36,13 @@ public final class RejectReasonReactor: BaseReactor, Stepper {
     }
 
     public enum Mutation {
-        case setRejectReason(String)
+        case setRejection(RejectionEntity)
     }
 
     public struct State {
         var rejectReason: String = "반려 사유 불러오는중..."
+        var attachments: [AttachmentsEntity] = []
+        var isReapplicable: Bool
     }
 }
 
@@ -49,7 +52,7 @@ extension RejectReasonReactor {
         case .fetchRejectReason:
             return fetchRejectionReasonUseCase.execute(id: applicationID)
                 .asObservable()
-                .map { Mutation.setRejectReason($0) }
+                .map { Mutation.setRejection($0) }
 
         case .reApplyButtonDidTap:
             steps.accept(RejectReasonStep.reApplyIsRequired(
@@ -65,8 +68,9 @@ extension RejectReasonReactor {
     public func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case let .setRejectReason(reason):
-            newState.rejectReason = reason
+        case let .setRejection(rejection):
+            newState.rejectReason = rejection.reason
+            newState.attachments = rejection.attachments
         }
         return newState
     }

@@ -16,12 +16,13 @@ public final class RejectReasonFlow: Flow {
         applicationID: Int,
         recruitmentID: Int,
         companyName: String,
-        companyImageUrl: String
+        companyImageUrl: String,
+        isReapplicable: Bool
     ) {
         self.container = container
         self.rootViewController = container.resolve(
             RejectReasonViewController.self,
-            arguments: applicationID, recruitmentID, companyName, companyImageUrl
+            arguments: applicationID, recruitmentID, companyName, companyImageUrl, isReapplicable
         )!
     }
 

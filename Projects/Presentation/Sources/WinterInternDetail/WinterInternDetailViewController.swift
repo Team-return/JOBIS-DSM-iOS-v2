@@ -167,20 +167,15 @@ public class WinterInternDetailViewController: BaseReactorViewController<WinterI
                     self.useSkillsLabel.setSubTitle(data.tech.joined(separator: ","))
                 }
 
-                if UserDefaults.standard.string(forKey: "user_grade") != "2" {
-                    self.applyButton.isEnabled = false
+                if detail.isApplicable {
                     self.applyButton.setText("지원하기")
                 } else {
-                    if detail.isApplicable {
-                        self.applyButton.setText("지원하기")
-                    } else {
-                        self.applyButton.setText(
-                            (detail.unapplicableReason ?? .unknown).localizedString()
-                        )
-                    }
-
-                    self.applyButton.isEnabled = detail.isApplicable
+                    self.applyButton.setText(
+                        (detail.unapplicableReason ?? .unknown).localizedString()
+                    )
                 }
+
+                self.applyButton.isEnabled = detail.isApplicable
             }
             .disposed(by: disposeBag)
     }
