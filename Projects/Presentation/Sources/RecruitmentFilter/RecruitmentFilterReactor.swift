@@ -160,8 +160,8 @@ extension RecruitmentFilterReactor {
             newState.statusCode = (newState.statusCode == code) ? nil : code
 
         case let .toggleTechCode(code):
-            if let index = newState.techCode.firstIndex(of: code) {
-                newState.techCode.remove(at: index)
+            if newState.techCode.contains(code) {
+                newState.techCode.removeAll { $0 == code }
             } else {
                 newState.techCode.append(code)
             }

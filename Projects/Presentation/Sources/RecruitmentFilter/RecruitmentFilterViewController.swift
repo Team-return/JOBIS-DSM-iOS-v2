@@ -234,6 +234,7 @@ public final class RecruitmentFilterViewController: BaseReactorViewController<Re
             .disposed(by: disposeBag)
 
         reactor.state.map { $0.techList }
+            .distinctUntilChanged()
             .bind { [weak self] techList in
                 guard let self = self else { return }
                 self.techStackView.setTech(
